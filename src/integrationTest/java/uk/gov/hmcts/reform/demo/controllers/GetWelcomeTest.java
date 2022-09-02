@@ -1,3 +1,4 @@
+/*
 package uk.gov.hmcts.reform.demo.controllers;
 
 import org.junit.jupiter.api.DisplayName;
@@ -25,3 +26,4 @@ class GetWelcomeTest {
         assertThat(response.getResponse().getContentAsString()).startsWith("Welcome");
     }
 }
+*/
