@@ -1,0 +1,15 @@
+java:
+  applicationPort: 4045
+  image: 'hmctspublic.azurecr.io/fis/hmc-api:latest'
+  ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  aadIdentityName: fis
+#  Uncomment once the vault containing the app insights key has been set up
+#  keyVaults:
+#    fis:
+#      secrets:
+#        - name: AppInsightsInstrumentationKey
+#          alias: azure.application-insights.instrumentation-key
+  environment:
+    REFORM_SERVICE_NAME: fis_hmc_api
+
+
