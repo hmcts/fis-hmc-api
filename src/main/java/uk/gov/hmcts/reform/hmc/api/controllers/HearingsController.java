@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.demo.controllers;
+package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.reform.demo.model.request.HearingsRequest;
-import uk.gov.hmcts.reform.demo.model.response.HearingsResponseDummy;
-import uk.gov.hmcts.reform.demo.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
+import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 /**
@@ -32,14 +32,13 @@ public class HearingsController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "get hearings data successfully",
             content = @Content(mediaType = "application/json",
-                schema = @Schema(implementation = HearingsResponseDummy.class))),
+                schema = @Schema(implementation = Categories.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)})
-    public ResponseEntity<HearingsResponseDummy> getHearingsData(
+    public ResponseEntity<Categories> getHearingsData(
         @RequestHeader("authorisation") String authorisation,
-        @RequestHeader("serviceAuthorisation") String serviceAuthorisation,
         @RequestBody HearingsRequest hearingsRequest
     ) {
-        return ResponseEntity.ok(hearingsService.getHearingsData(hearingsRequest));
+        return ResponseEntity.ok(hearingsService.getRefData(hearingsRequest, authorisation));
     }
 }
 

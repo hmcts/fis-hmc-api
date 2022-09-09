@@ -1,9 +1,16 @@
-package uk.gov.hmcts.reform.demo;
+package uk.gov.hmcts.reform.hmc.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@SpringBootApplication
+@EnableFeignClients(basePackages =
+    {
+        "uk.gov.hmcts.reform.hmc.api",
+        "uk.gov.hmcts.reform.idam.client",
+    })
+@SpringBootApplication(
+    scanBasePackages = {"uk.gov.hmcts.ccd.sdk", "uk.gov.hmcts.reform.hmc.api", "uk.gov.hmcts.reform.idam"})
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
 
