@@ -1,12 +1,14 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
+import uk.gov.hmcts.reform.hmc.api.mapper.CcdObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.restclient.ServiceAuthorisationTokenApi;
 
 @Service
@@ -22,11 +24,14 @@ public class CaseApiService {
     @Autowired
     ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
 
-    public CaseDetails getCaseDetails(Long caseId, String authorization) {
-        String serviceToken = serviceAuthorisationTokenApi.serviceToken(MicroserviceInfo.builder().microservice(microserviceName.trim()).build());
-        return coreCaseDataApi.getCase(
+    public CaseDetails getCaseDetails(String caseId, String authorization, String serviceToken) throws JsonProcessingException {
+        ObjectMapper objectMapper = CcdObjectMapper.getObjectMapper();
+        CaseDetails caseDetails = coreCaseDataApi.getCase(
             authorization,
             serviceToken,
-            String.valueOf(caseId));
+            caseId
+        );
+        objectMapper.writeValueAsString(caseDetails);
+        return caseDetails;
     }
 }

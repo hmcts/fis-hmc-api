@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,7 +38,7 @@ public class HearingsController {
     public ResponseEntity<Categories> getHearingsData(
         @RequestHeader("authorisation") String authorisation,
         @RequestBody HearingsRequest hearingsRequest
-    ) {
+    ) throws JsonProcessingException {
         return ResponseEntity.ok(hearingsService.getRefData(hearingsRequest, authorisation));
     }
 }

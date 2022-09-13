@@ -49,7 +49,7 @@ spring:
   config:
     import: "optional:configtree:/mnt/secrets/rpe/"
   application:
-    name: fis-hmc-api
+    name: fis_hmc_api
 
 azure:
   application-insights:
