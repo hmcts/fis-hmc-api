@@ -29,6 +29,7 @@ plugins {
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.25.16'
   id 'au.com.dius.pact' version '4.1.7'
+  id 'com.diffplug.spotless' version '6.9.0'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -37,6 +38,20 @@ apply plugin: 'net.serenity-bdd.aggregator'
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
+
+spotless {
+
+  java {
+    target 'src/**/*.java'
+    importOrder()
+    removeUnusedImports()
+    trimTrailingWhitespace()
+    indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+    endWithNewline()
+    googleJavaFormat('1.11.0').aosp().reflowLongStrings()
+
+  }
+}
 
 java {
   toolchain {
@@ -232,7 +247,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
   implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
-
+  implementation group: 'com.microsoft.azure', name: 'azure-servicebus-spring-boot-starter', version: '2.1.6'
   compileOnly 'org.projectlombok:lombok:1.18.24'
   annotationProcessor 'org.projectlombok:lombok:1.18.24'
 

@@ -28,7 +28,12 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
-
+azure:
+  service-bus:
+    connection-string: ${ASB_CONNECTION_STRING:dummy}
+    topic-name:
+  application-insights:
+    instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
 idam:
   s2s-auth:
@@ -50,7 +55,3 @@ spring:
     import: "optional:configtree:/mnt/secrets/rpe/"
   application:
     name: fis_hmc_api
-
-azure:
-  application-insights:
-    instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
