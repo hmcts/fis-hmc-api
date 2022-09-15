@@ -1,6 +1,6 @@
 java:
   applicationPort: 4550
-  image: 'hmctspublic.azurecr.io/fis/fis-hmc-api:latest'
+  image: 'hmctspublic.azurecr.io/fis/hmc-api:latest'
   ingressHost: rpe-spring-boot-template-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fis
 
