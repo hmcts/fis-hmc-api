@@ -165,7 +165,7 @@ jacocoTestReport {
   }
 }
 
-p//roject.tasks['sonarqube'].dependsOn jacocoTestReport
+//roject.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
 
 /*
