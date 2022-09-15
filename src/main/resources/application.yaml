@@ -28,13 +28,6 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
-azure:
-  service-bus:
-    connection-string: ${ASB_CONNECTION_STRING:dummy}
-    topic-name:
-  application-insights:
-    instrumentation-key: ${rpe.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
-
 idam:
   s2s-auth:
     url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
@@ -51,7 +44,34 @@ springdoc:
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
+  cloud:
+    azure:
+      servicebus:
+        connection-string: Endpoint=sb://hmc-servicebus-demo.servicebus.windows.net/;SharedAccessKeyName=manage;SharedAccessKey=ZUbLtgJAoJRSrhkgOpwZlGOyLXq5QL447DKW/bWPyyM=
+    stream:
+      bindings:
+        consume-in-0:
+          destination: murshad-topic
+          group: hmcts
+        #supply-out-0:
+          #destination: exampletopic
+      servicebus:
+        bindings:
+          consume-in-0:
+            consumer:
+              auto-complete: false
+          #supply-out-0:
+            #producer:
+              #entity-type: topic
+      function:
+        definition: consume;supply;
+      poller:
+        fixed-delay: 1000
+        initial-delay: 0
   config:
     import: "optional:configtree:/mnt/secrets/rpe/"
   application:
     name: fis_hmc_api
+
+
+

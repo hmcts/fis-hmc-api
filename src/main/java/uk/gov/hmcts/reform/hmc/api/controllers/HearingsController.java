@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,13 +17,14 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
 /** Hearings controller to get data hearings data. */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 public class HearingsController {
     private final HearingsService hearingsService;
-
     @GetMapping(path = "/hearingsdata", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Operation(description = "get hearings data")
     @ApiResponses(
