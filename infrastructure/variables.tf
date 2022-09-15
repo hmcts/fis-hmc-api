@@ -1,12 +1,20 @@
-variable "product" {}
+variable "product" {
+  type        = string
+  default     = "fis-hmc-api"
+  description = "The name of your application"
+}
 
-variable "component" {}
+variable "env" {
+  type        = string
+  description = "The deployment environment (sandbox, aat, prod etc..)"
+}
 
 variable "location" {
+  type    = string
   default = "UK South"
 }
 
-variable "env" {}
+variable "component" {}
 
 variable "subscription" {}
 

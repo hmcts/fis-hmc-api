@@ -1,13 +1,14 @@
 package uk.gov.hmcts.reform.hmc.api;
 
+import java.util.function.Consumer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.messaging.Message;
 
-import java.util.function.Consumer;
-
+@Slf4j
 @EnableFeignClients(
         basePackages = {
             "uk.gov.hmcts.reform.hmc.api",
@@ -29,7 +30,7 @@ public class Application {
     @Bean
     public Consumer<Message<String>> consume() {
         return message -> {
-            System.out.println("New message received: " + message.getPayload());
+            log.info("New message received: " + message.getPayload());
         };
     }
 }

@@ -1,10 +1,24 @@
-#HMC to Hearings API
-module "servicebus-subscription" {
+#HMC to Hearings API Azure service bus Topic
+locals {
+  topic_name                        = "hmc-to-cft-${var.env}"
+  subscription_name                 = "${var.product}-case-events-sub-${var.env}"
+  servicebus_namespace_name         = "hmc-servicebus-${var.env}"
+  resource_group_name               = "hmc-shared-${var.env}"
+  ccd_case_events_subscription_name = "fis-hmc-api-subscription-${var.env}"
+}
+module "topic-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=master"
-  name                  = "fis-hmc-api-subscription-${var.env}"
-  namespace_name        = "hmc-servicebus-${var.env}"
-  topic_name            = "hmc-to-cft-${var.env}"
-  resource_group_name   = "hmc-shared-${var.env}"
+  name                  = local.ccd_case_events_subscription_name
+  namespace_name        = local.servicebus_namespace_name
+  topic_name            = local.topic_name
+  resource_group_name   = local.resource_group_name
+}
+
+resource "azurerm_servicebus_subscription_rule" "message_context" {
+  name                = "${var.product}-message-context-sub-rule-${var.env}"
+  subscription_id     = module.topic-subscription.id
+  filter_type         = "SqlFilter"
+  sql_filter          = "message_context LIKE 'hmctsServiceCode: BBA3%'"
 }
 
 data "azurerm_key_vault" "fis-key-vault" {
