@@ -1,6 +1,6 @@
 apiVersion: v2
 appVersion: "1.0"
-description: A Helm chart for spring-boot-template App
+description: A Helm chart for fis-hmc-api App
 name: fis-hmc-api
 home: https://github.com/hmcts/fis-hmc-api
 version: 0.0.1

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.demo.controllers;
+package uk.gov.hmcts.reform.hmc.controllers;
 
 import static io.restassured.RestAssured.given;
 

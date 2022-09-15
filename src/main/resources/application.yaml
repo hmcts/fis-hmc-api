@@ -40,7 +40,7 @@ core_case_data:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
 springdoc:
-  packagesToScan: uk.gov.hmcts.reform.demo.controllers
+  packagesToScan: uk.gov.hmcts.reform.hmc.controllers
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
@@ -69,9 +69,12 @@ spring:
         fixed-delay: 1000
         initial-delay: 0
   config:
-    import: "optional:configtree:/mnt/secrets/rpe/"
+    import: "optional:configtree:/mnt/secrets/fis/"
   application:
     name: fis_hmc_api
 
 
 
+azure:
+  application-insights:
+    instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
