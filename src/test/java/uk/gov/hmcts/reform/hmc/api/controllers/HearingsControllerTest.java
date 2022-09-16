@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,18 +22,13 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Category;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class HearingsControllerTest {
-    @Mock
-    private HearingsService hearingsService;
+    @Mock private HearingsService hearingsService;
 
-    @InjectMocks
-    private HearingsController hearingsController;
+    @InjectMocks private HearingsController hearingsController;
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
@@ -48,14 +45,10 @@ class HearingsControllerTest {
         categoryList.add(category);
         categories.setListOfCategory(categoryList);
         Mockito.when(hearingsService.getRefData(HearingsRequest.builder().build(), "authorisation"))
-            .thenReturn(categories);
-        ResponseEntity<Categories> hearingsData = hearingsController.getHearingsData(
-            "authorisation",
-            new HearingsRequest()
-        );
+                .thenReturn(categories);
+        ResponseEntity<Categories> hearingsData =
+                hearingsController.getHearingsData("authorisation", new HearingsRequest());
         Categories categoryListActual = hearingsData.getBody();
         Assertions.assertEquals(1, categoryListActual.getListOfCategory().size());
     }
 }
-
-

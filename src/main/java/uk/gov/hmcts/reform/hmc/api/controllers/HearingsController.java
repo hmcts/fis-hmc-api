@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,7 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @Slf4j
 @RestController
 public class HearingsController {
-    @Autowired
-    private HearingsService hearingsService;
+    @Autowired private HearingsService hearingsService;
 
     @GetMapping(path = "/hearingsdata", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Operation(description = "get hearings data")
