@@ -1,8 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
@@ -30,15 +28,13 @@ class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
 
-    private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void getHearingsData() throws JsonProcessingException {
+    void hearingsDataTest() throws JsonProcessingException {
         Categories categories = new Categories();
         List<Category> categoryList = new ArrayList<>();
         Category category = new Category();
