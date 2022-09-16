@@ -202,8 +202,9 @@ jacocoTestCoverageVerification {
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
 
-/*def sonarExclusions = [
-]*/
+def sonarExclusions = [
+  '**/uk/gov/hmcts/reform/hmc/api/**',
+]
 
 sonarqube {
   properties {
