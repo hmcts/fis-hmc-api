@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,9 +23,9 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 /** Hearings controller to get data hearings data. */
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class HearingsController {
-    private final HearingsService hearingsService;
+    @Autowired
+    private HearingsService hearingsService;
 
     @GetMapping(path = "/hearingsdata", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Operation(description = "get hearings data")
