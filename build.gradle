@@ -118,6 +118,7 @@ tasks.withType(Test) {
 
 test {
   failFast = true
+  useJUnitPlatform()
 }
 
 task functional(type: Test) {
@@ -125,6 +126,8 @@ task functional(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
+  finalizedBy(aggregate)
+  failFast = true
 }
 
 task integration(type: Test) {
@@ -165,14 +168,34 @@ jacocoTestReport {
   }
 }
 
+jacoco {
+  toolVersion = "0.8.5"
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 0.0
+      }
+    }
+  }
+}
+
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
 
+def sonarExclusions = [
+]
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: fis-hmc-api"
+    property "sonar.projectName", "fis :: fis-hmc-api"
     property "sonar.projectKey", "uk.gov.hmcts.reform:fis-hmc-api"
+    property "sonar.exclusions", sonarExclusions.join(', ')
+    property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
   }
 }
@@ -285,7 +308,9 @@ dependencies {
 mainClassName = 'uk.gov.hmcts.reform.hmc.Application'
 
 bootJar {
-  archiveFileName = "fis-hmc-api.jar"
+  getArchiveFileName().set(provider {
+    'fis-hmc-api.jar'
+  })
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
