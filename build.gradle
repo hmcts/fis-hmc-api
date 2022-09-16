@@ -318,7 +318,7 @@ dependencies {
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
-    testImplementation(platform('org.junit:junit-bom:5.8.2'))
+    testImplementation(platform('org.junit:junit-bom:5.9.0'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
