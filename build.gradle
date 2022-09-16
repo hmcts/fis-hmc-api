@@ -205,10 +205,6 @@ project.tasks['check'].dependsOn integration
 def sonarExclusions = [
 ]
 
-/*sonarqube {
-  skipProject = true
-}*/
-
 sonarqube {
   properties {
     property "sonar.projectName", "fis :: fis-hmc-api"
