@@ -1,4 +1,6 @@
-package uk.gov.hmcts.reform.demo.controllers;
+package uk.gov.hmcts.reform.hmc.controllers;
+
+import static io.restassured.RestAssured.given;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -8,8 +10,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static io.restassured.RestAssured.given;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class SampleSmokeTest {
@@ -26,14 +26,10 @@ class SampleSmokeTest {
 
     @Test
     void smokeTest() {
-        Response response = given()
-            .contentType(ContentType.JSON)
-            .when()
-            .get()
-            .then()
-            .extract().response();
+        Response response =
+                given().contentType(ContentType.JSON).when().get().then().extract().response();
 
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertTrue(response.asString().startsWith("Welcome"));
-    } 
+    }
 }

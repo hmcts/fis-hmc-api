@@ -71,7 +71,7 @@ git mv src/integrationTest/java/uk/gov/hmcts/reform/demo/ src/integrationTest/ja
 git mv src/main/java/uk/gov/hmcts/reform/demo/ src/main/java/uk/gov/hmcts/reform/${package}
 
 # Rename CNP file
-git mv Jenkinsfile_template Jenkinsfile_CNP
+git mv Jenkinsfile_CNP Jenkinsfile_CNP
 
 declare -a headers_to_delete=("Purpose" "What's inside" "Plugins" "Setup" "Hystrix")
 

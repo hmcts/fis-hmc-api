@@ -1,3 +1,21 @@
+buildscript {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+      url "https://jitpack.io"
+      content {
+        excludeGroup "com.github.ben-manes.versions"
+      }
+    }
+
+  }
+  dependencies {
+    classpath "net.serenity-bdd:serenity-gradle-plugin:2.4.34"
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.36.1070'
+  }
+}
+
 plugins {
   id 'application'
   id 'checkstyle'
@@ -5,17 +23,39 @@ plugins {
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
   id 'org.springframework.boot' version '2.6.7'
-  id 'org.owasp.dependencycheck' version '6.5.3'
-  id 'com.github.ben-manes.versions' version '0.42.0'
+  id 'org.owasp.dependencycheck' version '7.1.0.1'
+  id 'com.github.ben-manes.versions' version '0.41.0'
   id 'org.sonarqube' version '3.3'
+  id 'idea'
+  id 'hmcts.ccd.sdk' version '0.25.16'
+  id 'au.com.dius.pact' version '4.1.7'
+  id 'com.diffplug.spotless' version '6.9.0'
 }
+
+apply plugin: 'cz.habarta.typescript-generator'
+apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'net.serenity-bdd.aggregator'
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
+spotless {
+
+  java {
+    target 'src/**/*.java'
+    importOrder()
+    removeUnusedImports()
+    trimTrailingWhitespace()
+    indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+    endWithNewline()
+    googleJavaFormat('1.11.0').aosp().reflowLongStrings()
+
+  }
+}
+
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(11)
   }
 }
 
@@ -38,6 +78,14 @@ sourceSets {
     resources.srcDir file('src/integrationTest/resources')
   }
 
+  contractTest {
+    java {
+      compileClasspath += main.output
+      runtimeClasspath += main.output
+      srcDir file('src/contractTest/java')
+    }
+    resources.srcDir file('src/contractTest/resources')
+  }
   smokeTest {
     java {
       compileClasspath += main.output
@@ -50,13 +98,18 @@ sourceSets {
 
 configurations {
   functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom runtimeOnly
+  functionalTestRuntimeOnly.extendsFrom testRuntime
 
   integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntimeOnly.extendsFrom runtimeOnly
+  integrationTestRuntimeOnly.extendsFrom testRuntime
 
   smokeTestImplementation.extendsFrom testImplementation
-  smokeTestRuntimeOnly.extendsFrom runtimeOnly
+  smokeTestRuntime.extendsFrom testRuntime
+  smokeTestCompile.extendsFrom testCompile
+
+  contractTestImplementation.extendsFrom testImplementation
+  contractTestRuntime.extendsFrom testRuntime
+  contractTestCompile.extendsFrom testCompile
 }
 
 tasks.withType(JavaCompile) {
@@ -78,6 +131,7 @@ tasks.withType(Test) {
 
 test {
   failFast = true
+  useJUnitPlatform()
 }
 
 task functional(type: Test) {
@@ -85,6 +139,8 @@ task functional(type: Test) {
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
+  finalizedBy(aggregate)
+  failFast = true
 }
 
 task integration(type: Test) {
@@ -97,8 +153,10 @@ task integration(type: Test) {
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
-  testClassesDirs = sourceSets.smokeTest.output.classesDirs
-  classpath = sourceSets.smokeTest.runtimeClasspath
+  setTestClassesDirs(sourceSets.smokeTest.output.classesDirs)
+  setClasspath(sourceSets.smokeTest.runtimeClasspath)
+  include "uk/gov/hmcts/reform/cosapi/smoketests/**"
+  failFast = true
 }
 
 checkstyle {
@@ -125,13 +183,35 @@ jacocoTestReport {
   }
 }
 
+jacoco {
+  toolVersion = "0.8.5"
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        counter = 'LINE'
+        value = 'COVEREDRATIO'
+        minimum = 0.0
+      }
+    }
+  }
+}
+
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
 
+def sonarExclusions = [
+  '**/uk/gov/hmcts/reform/hmc/api/**',
+]
+
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: spring-boot-template"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:spring-boot-template"
+    property "sonar.projectName", "fis :: fis-hmc-api"
+    property "sonar.projectKey", "uk.gov.hmcts.reform:fis-hmc-api"
+    property "sonar.exclusions", sonarExclusions.join(', ')
+    property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
   }
 }
@@ -150,10 +230,9 @@ dependencyUpdates {
 
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
-  // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-  // range of 0-10 fails the build, anything greater and it doesn't fail the build
-  failBuildOnCVSS = 0
+  failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
   suppressionFile = 'config/owasp/suppressions.xml'
+  outputDirectory = 'build/reports/'
 
   analyzers {
     // Disable scanning of .NET related binaries
@@ -175,32 +254,71 @@ repositories {
   mavenLocal()
   mavenCentral()
   maven { url 'https://jitpack.io' }
+  jcenter()
 }
 
 ext {
-  log4JVersion = "2.17.0"
+  log4JVersion = '2.18.0'
+  set('springCloudAzureVersion', "4.3.0")
+  set('springCloudVersion', "2021.0.4")
 }
 
+dependencyManagement {
+  imports {
+    mavenBom "com.azure.spring:spring-cloud-azure-dependencies:${springCloudAzureVersion}"
+  }
+  dependencies {
+    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    // CVE-2018-10237 - Unbounded memory allocation
+    dependencySet(group: 'com.google.guava', version: '31.1-jre') {
+      entry 'guava'
+    }
+    dependency group: 'org.yaml',name: 'snakeyaml', version: '1.31'
+  }
+}
 dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
 
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.11'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
 
   // temporary work around for dependency check
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.4'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.13.3', ext: 'pom'
 
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.3'
+  implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.9.1'
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.9.1'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: '5.1.9'
+  implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+  implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+  implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
+  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.8.6'
+  //implementation group: 'com.microsoft.azure', name: 'azure-servicebus-spring-boot-starter', version: '2.1.6'
+  implementation group: 'com.microsoft.azure', name: 'spring-cloud-azure-servicebus-topic-stream-binder', version: '1.2.8'
+  implementation group: 'com.azure.spring', name: 'spring-messaging-azure', version: '4.3.0'
+  //implementation group: 'com.microsoft.azure', name: 'azure-servicebus-jms-spring-boot-starter', version: '2.3.5'
+  //implementation 'com.azure.spring:spring-cloud-azure-starter'
+  //implementation 'org.springframework.cloud:spring-cloud-stream'
+  //implementation group: 'org.apache.qpid', name: 'qpid-jms-client', version: '1.6.0'
+  //implementation group: 'org.springframework', name: 'spring-jms', version: '5.3.22'
 
+  compileOnly 'org.projectlombok:lombok:1.18.24'
+  annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+  testCompileOnly 'org.projectlombok:lombok:1.18.24'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
   implementation group: 'io.rest-assured', name: 'rest-assured'
-
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+    testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
@@ -208,10 +326,12 @@ dependencies {
   }
 }
 
-mainClassName = 'uk.gov.hmcts.reform.demo.Application'
+mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'
 
 bootJar {
-  archiveFileName = "spring-boot-template.jar"
+  getArchiveFileName().set(provider {
+    'fis-hmc-api.jar'
+  })
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
@@ -220,6 +340,11 @@ bootJar {
 
 // Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
 rootProject.tasks.named("processSmokeTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+// Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
+rootProject.tasks.named("processIntegrationTestResources") {
   duplicatesStrategy = 'include'
 }
 
