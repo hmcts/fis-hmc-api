@@ -78,6 +78,14 @@ sourceSets {
     resources.srcDir file('src/integrationTest/resources')
   }
 
+  contractTest {
+    java {
+      compileClasspath += main.output
+      runtimeClasspath += main.output
+      srcDir file('src/contractTest/java')
+    }
+    resources.srcDir file('src/contractTest/resources')
+  }
   smokeTest {
     java {
       compileClasspath += main.output
@@ -90,13 +98,18 @@ sourceSets {
 
 configurations {
   functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom runtimeOnly
+  functionalTestRuntimeOnly.extendsFrom testRuntime
 
   integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntimeOnly.extendsFrom runtimeOnly
+  integrationTestRuntimeOnly.extendsFrom testRuntime
 
   smokeTestImplementation.extendsFrom testImplementation
-  smokeTestRuntimeOnly.extendsFrom runtimeOnly
+  smokeTestRuntime.extendsFrom testRuntime
+  smokeTestCompile.extendsFrom testCompile
+
+  contractTestImplementation.extendsFrom testImplementation
+  contractTestRuntime.extendsFrom testRuntime
+  contractTestCompile.extendsFrom testCompile
 }
 
 tasks.withType(JavaCompile) {
@@ -140,8 +153,10 @@ task integration(type: Test) {
 
 task smoke(type: Test) {
   description = "Runs Smoke Tests"
-  testClassesDirs = sourceSets.smokeTest.output.classesDirs
-  classpath = sourceSets.smokeTest.runtimeClasspath
+  setTestClassesDirs(sourceSets.smokeTest.output.classesDirs)
+  setClasspath(sourceSets.smokeTest.runtimeClasspath)
+  include "uk/gov/hmcts/reform/cosapi/smoketests/**"
+  failFast = true
 }
 
 checkstyle {
@@ -214,10 +229,9 @@ dependencyUpdates {
 
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
-  // Specifies if the build should be failed if a CVSS score above a specified level is identified.
-  // range of 0-10 fails the build, anything greater and it doesn't fail the build
-  failBuildOnCVSS = 0
+  failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
   suppressionFile = 'config/owasp/suppressions.xml'
+  outputDirectory = 'build/reports/'
 
   analyzers {
     // Disable scanning of .NET related binaries
@@ -234,6 +248,7 @@ dependencyCheck {
     "contractTestCompileClasspath"
   ]
 }
+
 repositories {
   mavenLocal()
   mavenCentral()
@@ -305,7 +320,7 @@ dependencies {
   }
 }
 
-mainClassName = 'uk.gov.hmcts.reform.hmc.Application'
+mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'
 
 bootJar {
   getArchiveFileName().set(provider {
@@ -319,6 +334,11 @@ bootJar {
 
 // Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
 rootProject.tasks.named("processSmokeTestResources") {
+  duplicatesStrategy = 'include'
+}
+
+// Gradle 7.x issue, workaround from: https://github.com/gradle/gradle/issues/17236#issuecomment-894768083
+rootProject.tasks.named("processIntegrationTestResources") {
   duplicatesStrategy = 'include'
 }
 
