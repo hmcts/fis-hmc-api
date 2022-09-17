@@ -25,6 +25,6 @@ public class OpenAPIConfiguration {
                 .externalDocs(
                         new ExternalDocumentation()
                                 .description("README")
-                                .url("https://github.com/hmcts/spring-boot-template"));
+                                .url("https://github.com/hmcts/fis-hmc-api"));
     }
 }
