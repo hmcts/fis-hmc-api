@@ -13,18 +13,13 @@ public class OpenAPIConfiguration {
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
-                .info(
-                        new Info()
-                                .title("rpe demo")
-                                .description("rpe demo")
-                                .version("v0.0.1")
-                                .license(
-                                        new License()
-                                                .name("MIT")
-                                                .url("https://opensource.org/licenses/MIT")))
-                .externalDocs(
-                        new ExternalDocumentation()
-                                .description("README")
-                                .url("https://github.com/hmcts/spring-boot-template"));
+            .info(new Info().title("fis-hmc-api")
+                      .description("Create & update case and Upload and delete docs ")
+                      .version("v0.0.1")
+                      .license(new License().name("MIT").url("https://opensource.org/licenses/MIT")))
+            .externalDocs(new ExternalDocumentation()
+                              .description("README")
+                              .url("https://github.com/hmcts/spring-boot-template"));
     }
+
 }
