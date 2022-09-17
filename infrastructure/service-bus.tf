@@ -7,7 +7,7 @@ locals {
   ccd_case_events_subscription_name = "fis-hmc-api-subscription-${var.env}"
 }
 module "topic-subscription" {
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=master"
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=feature/ISDB-374"
   name                  = local.ccd_case_events_subscription_name
   namespace_name        = local.servicebus_namespace_name
   topic_name            = local.topic_name
