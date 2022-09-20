@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.hmc.api.config.openapi;
+package uk.gov.hmcts.reform.hmc.api.config;
 
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -15,8 +15,8 @@ public class OpenAPIConfiguration {
         return new OpenAPI()
                 .info(
                         new Info()
-                                .title("rpe demo")
-                                .description("rpe demo")
+                                .title("fis-hmc-api")
+                                .description("Create & update case and Upload and delete docs ")
                                 .version("v0.0.1")
                                 .license(
                                         new License()
@@ -25,6 +25,6 @@ public class OpenAPIConfiguration {
                 .externalDocs(
                         new ExternalDocumentation()
                                 .description("README")
-                                .url("https://github.com/hmcts/spring-boot-template"));
+                                .url("https://github.com/hmcts/fis-hmc-api"));
     }
 }

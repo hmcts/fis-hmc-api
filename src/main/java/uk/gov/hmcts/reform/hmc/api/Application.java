@@ -6,7 +6,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.messaging.Message;
+import uk.gov.hmcts.reform.hmc.api.config.OpenAPIConfiguration;
 
 @Slf4j
 @EnableFeignClients(
@@ -20,6 +22,7 @@ import org.springframework.messaging.Message;
             "uk.gov.hmcts.reform.hmc.api",
             "uk.gov.hmcts.reform.idam"
         })
+@Import(OpenAPIConfiguration.class)
 @SuppressWarnings(
         "HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
