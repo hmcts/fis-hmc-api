@@ -155,7 +155,7 @@ task smoke(type: Test) {
   description = "Runs Smoke Tests"
   setTestClassesDirs(sourceSets.smokeTest.output.classesDirs)
   setClasspath(sourceSets.smokeTest.runtimeClasspath)
-  include "uk/gov/hmcts/reform/controllers/**"
+  include "uk/gov/hmcts/reform/hmc/api/**"
   failFast = true
 }
 
