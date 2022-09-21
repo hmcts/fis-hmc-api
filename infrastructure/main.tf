@@ -11,7 +11,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 data "azurerm_key_vault" "fis_key_vault" {
-  name = join("-", [var.product + "-kv", var.env])
+  name = join("-", [var.product, "kv", var.env])
   resource_group_name = join("-", [var.product, var.env])
 }
 
