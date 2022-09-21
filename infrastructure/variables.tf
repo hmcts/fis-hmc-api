@@ -5,20 +5,13 @@ variable "product" {
 }
 
 variable "env" {
-  type        = string
-  description = "The deployment environment (sandbox, aat, prod etc..)"
+type = string
 }
 
 variable "location" {
   type    = string
   default = "UK South"
 }
-
-variable "component" {}
-
-variable "subscription" {}
-
-variable "deployment_namespace" {}
 
 variable "common_tags" {
 type = map(string)
