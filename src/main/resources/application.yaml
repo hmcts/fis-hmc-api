@@ -40,7 +40,7 @@ core_case_data:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
 springdoc:
-  packagesToScan: uk.gov.hmcts.reform.hmc.controllers
+  packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:

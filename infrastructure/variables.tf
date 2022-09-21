@@ -1,11 +1,10 @@
 variable "product" {
-  type        = string
-  default     = "fis"
-  description = "The name of your application"
+  type    = string
+  default = "fis"
 }
 
-variable "env" {
-type = string
+variable "component" {
+  type    = string
 }
 
 variable "location" {
@@ -13,8 +12,16 @@ variable "location" {
   default = "UK South"
 }
 
-variable "common_tags" {
-type = map(string)
+variable "env" {
+  type = string
 }
 
-variable "aks_subscription_id" {}
+variable "subscription" {
+type = string
+}
+
+variable "deployment_namespace" {}
+
+variable "common_tags" {
+  type = map(string)
+}
