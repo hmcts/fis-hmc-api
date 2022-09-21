@@ -22,7 +22,6 @@ import uk.gov.hmcts.reform.hmc.api.config.OpenAPIConfiguration;
             "uk.gov.hmcts.reform.hmc.api",
             "uk.gov.hmcts.reform.idam"
         })
-@Import(OpenAPIConfiguration.class)
 @SuppressWarnings(
         "HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
