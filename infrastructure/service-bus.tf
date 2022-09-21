@@ -14,12 +14,6 @@ module "topic-subscription" {
   resource_group_name   = local.resource_group_name
 }
 
-resource "azurerm_servicebus_subscription_rule" "message_context" {
-  name                = "${var.product}-message-context-sub-rule-${var.env}"
-  subscription_id     = module.topic-subscription.id
-  filter_type         = "SqlFilter"
-  sql_filter          = "message_context LIKE 'hmctsServiceCode: BBA3%'"
-}
 
 data "azurerm_key_vault" "fis-key-vault" {
   name                = "fis-kv-${var.env}"
