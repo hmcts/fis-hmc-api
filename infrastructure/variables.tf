@@ -1,6 +1,6 @@
 variable "product" {
   type        = string
-  default     = "fis-hmc-api"
+  default     = "fis"
   description = "The name of your application"
 }
 
