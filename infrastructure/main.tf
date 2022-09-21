@@ -20,16 +20,17 @@ data "azurerm_servicebus_namespace" "fis_servicebus_namespace" {
   resource_group_name = join("-", ["hmc-shared", var.env])
 }
 
-data "azurerm_servicebus_topic" "fis_servicebus_topic"  {
+data "azurerm_servicebus_topic" "servicebus-topic"  {
   source              = "git@github.com:hmcts/terraform-module-servicebus-topic"
   name                = join("-", ["hmc-to-cft", var.env])
   connection_string   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.default_primary_connection_string
   resource_group_name = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  namespace_name = ""
 }
 
 # primary connection string for send and listen operations
 output "connection_string" {
-  value     = data.azurerm_servicebus_topic.fis_servicebus_topic.connection_string
+  value     = data.azurerm_servicebus_topic.servicebus-topic.connection_string
   sensitive = true
 }
 
