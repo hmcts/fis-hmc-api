@@ -24,14 +24,14 @@ module "servicebus_topic" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-topic"
   name                = join("-", ["hmc-to-cft", var.env])
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
-  resource_group_name   = data.azurerm_resource_group.rg.name
+  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
 }
 
 module "servicebus_topic_subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
   name                  = local.subscription_name
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
-  resource_group_name   = data.azurerm_resource_group.rg.name
+  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
   topic_name            = module.servicebus_topic.name
 }
 
