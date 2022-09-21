@@ -9,6 +9,8 @@ locals {
   ccd_case_events_subscription_name = "fis-hmc-api-subscription-${var.env}"
   fis_key_vault = join("-", ["fis-kv", var.env])
   fis_resource_group_name = join("-", ["fis", var.env])
+  tags = var.common_tags
+
 }
 
 data "azurerm_key_vault" "fis_key_vault" {

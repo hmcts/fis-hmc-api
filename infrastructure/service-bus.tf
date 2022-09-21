@@ -8,6 +8,7 @@ module "servicebus-namespace" {
   name                = "${var.product}-servicebus-${var.env}"
   location            = var.location
   env                 = var.env
+  common_tags         = local.tags
   resource_group_name = local.resource_group_name
 }
 
