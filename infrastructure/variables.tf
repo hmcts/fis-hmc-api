@@ -16,3 +16,5 @@ variable "location" {
 variable "common_tags" {
 type = map(string)
 }
+
+variable "aks_subscription_id" {}
