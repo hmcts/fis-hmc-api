@@ -1,11 +1,4 @@
 #HMC to Hearings API Azure service bus Topic
-locals {
-  topic_name                        = "hmc-to-cft-${var.env}"
-  subscription_name                 = "${var.product}-case-events-sub-${var.env}"
-  servicebus_namespace_name         = "hmc-servicebus-${var.env}"
-  resource_group_name               = "hmc-shared-${var.env}"
-  ccd_case_events_subscription_name = "fis-hmc-api-subscription-${var.env}"
-}
 module "topic-subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=master"
   name                  = local.ccd_case_events_subscription_name
