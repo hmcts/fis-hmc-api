@@ -15,7 +15,7 @@ java:
 
 
     keyVaults:
-      fis:
+      fis-kv:
         secrets:
           - idam-ui-secret
           - idam-system-user-name

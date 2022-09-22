@@ -7,7 +7,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
 
 def type = "java"
-def product = "fis"
+def product = "fiservice"
 def component = "hmc-api"
 def branchesToSync = ['demo']
 
