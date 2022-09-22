@@ -3,35 +3,18 @@ provider "azurerm" {
 }
 
 locals {
-  subscription_name = "fis-hmc-api-subscription"
+  subscription_name = "hmc-to-fis-subscription-${var.env}"
+  fis_key_vault = join("-", ["fis-kv", var.env])
+  fis_key_vault_rg = join("-", ["fis", var.env])
 }
 
 data "azurerm_resource_group" "rg" {
   name     = join("-", [var.product, var.env])
 }
 
-data "azurerm_key_vault" "fis_key_vault" {
-  name = join("-", [var.product, "kv", var.env])
-  resource_group_name = join("-", [var.product, var.env])
-}
-
 data "azurerm_servicebus_namespace" "fis_servicebus_namespace" {
   name                = join("-", ["hmc-servicebus", var.env])
   resource_group_name = join("-", ["hmc-shared", var.env])
-}
-
-data "azurerm_servicebus_topic" "servicebus-topic"  {
-  source              = "git@github.com:hmcts/terraform-module-servicebus-topic"
-  name                = join("-", ["hmc-to-cft", var.env])
-  connection_string   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.default_primary_connection_string
-  resource_group_name = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
-  namespace_name = ""
-}
-
-# primary connection string for send and listen operations
-output "connection_string" {
-  value     = data.azurerm_servicebus_topic.servicebus-topic.connection_string
-  sensitive = true
 }
 
 module "servicebus_topic_subscription" {
@@ -41,3 +24,9 @@ module "servicebus_topic_subscription" {
   resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
+
+
+
+
+
+
