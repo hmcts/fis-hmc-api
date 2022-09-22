@@ -8,10 +8,6 @@ locals {
   fis_key_vault_rg = join("-", ["fis", var.env])
 }
 
-data "azurerm_resource_group" "rg" {
-  name     = join("-", [var.product, var.env])
-}
-
 data "azurerm_servicebus_namespace" "fis_servicebus_namespace" {
   name                = join("-", ["hmc-servicebus", var.env])
   resource_group_name = join("-", ["hmc-shared", var.env])
