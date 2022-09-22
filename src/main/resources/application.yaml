@@ -47,22 +47,17 @@ spring:
   cloud:
     azure:
       servicebus:
-        connection-string:
+        connection-string: ${hmc-servicebus-connection-string}
     stream:
       bindings:
         consume-in-0:
-          destination: murshad-topic
-          group: hmcts
-        #supply-out-0:
-          #destination: exampletopic
+          destination: hmc-to-cft-demo
+          group: hmc-to-fis-subscription-demo
       servicebus:
         bindings:
           consume-in-0:
             consumer:
               auto-complete: false
-          #supply-out-0:
-            #producer:
-              #entity-type: topic
       function:
         definition: consume;supply;
       poller:

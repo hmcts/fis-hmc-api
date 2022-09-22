@@ -22,5 +22,3 @@ module "servicebus_topic_subscription" {
 
 
 
-
-

@@ -17,9 +17,6 @@ java:
     keyVaults:
       fis-kv:
         secrets:
-          - idam-ui-secret
-          - idam-system-user-name
-          - idam-system-user-password
-          - s2s-secret
+          - hmc-servicebus-connection-string
           - name: AppInsightsInstrumentationKey
             alias: APP_INSIGHTS_KEY
