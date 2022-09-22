@@ -4,8 +4,6 @@ provider "azurerm" {
 
 locals {
   subscription_name = "hmc-to-fis-subscription-${var.env}"
-  fis_key_vault = join("-", ["fis-kv", var.env])
-  fis_key_vault_rg = join("-", ["fis", var.env])
 }
 
 data "azurerm_servicebus_namespace" "fis_servicebus_namespace" {
