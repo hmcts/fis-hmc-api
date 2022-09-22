@@ -1,3 +1,8 @@
+variable "product" {
+  type    = string
+  default = "fis"
+}
+
 variable "component" {
   type    = string
 }
