@@ -19,10 +19,13 @@ module "servicebus_topic_subscription" {
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
-
-resource "azurerm_servicebus_subscription_rule" "hmc_to_fis_subscription_filter" {
-  name            = "hmc_to_fis_subscription_filter-${var.env}"
-  subscription_id = module.servicebus_topic_subscription.id
+resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
+  name                = "hmc_to_fis_subscription_filter-${var.env}"
+  topic_name          = join("-", ["hmc-to-cft", var.env])
+  subscription_name   = local.subscription_name
+  resource_group_name = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  namespace_name      = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
+  filter_type         = "SqlFilter"
   sql_filter      = "hmctsServiceCode = 'BBA3'"
 }
 
