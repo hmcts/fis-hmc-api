@@ -27,7 +27,7 @@ data "servicebus_topic_subscription" "hmc_to_fis_subscription_rule"{
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
-resource "azurerm_servicebus_subscription_filter" "hmc_to_fis_subscription_filter" {
+resource "azurerm_servicebus_subscription_rule" "hmc_to_fis_subscription_filter" {
   name            = "hmc_to_fis_subscription_filter-${var.env}"
   subscription_id = data.servicebus_topic_subscription.hmc_to_fis_subscription_rule.id
   filter_type     = "SqlFilter"
