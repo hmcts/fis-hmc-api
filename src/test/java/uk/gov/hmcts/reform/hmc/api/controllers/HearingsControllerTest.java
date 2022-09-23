@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,6 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Category;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
