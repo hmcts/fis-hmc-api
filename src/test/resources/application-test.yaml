@@ -44,25 +44,8 @@ springdoc:
 
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
-  cloud:
-    azure:
-      servicebus:
-        connection-string: ${hmc-servicebus-connection-string:XXXXXXXXXXX}
-    stream:
-      bindings:
-        consume-in-0:
-          destination: hmc-to-cft-demo
-          group: hmc-to-fis-subscription-demo
-      servicebus:
-        bindings:
-          consume-in-0:
-            consumer:
-              auto-complete: false
-      function:
-        definition: consume;supply;
-      poller:
-        fixed-delay: 1000
-        initial-delay: 0
+  autoconfigure:
+    exclude: com.microsoft.azure.spring.cloud.autoconfigure.servicebus.AzureServiceBusQueueAutoConfiguration,  com.microsoft.azure.spring.cloud.autoconfigure.servicebus.AzureServiceBusTopicAutoConfiguration
   config:
     import: "optional:configtree:/mnt/secrets/fis/"
   application:
