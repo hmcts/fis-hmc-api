@@ -19,21 +19,12 @@ module "servicebus_topic_subscription" {
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
-data "servicebus_topic_subscription" "hmc_to_fis_subscription_rule"{
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
-  name                  = local.subscription_name
-  namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
-  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
-  topic_name            = join("-", ["hmc-to-cft", var.env])
-}
-
-resource "azurerm_servicebus_subscription_rule" "hmc_to_fis_subscription_filter" {
-  name            = "hmc_to_fis_subscription_filter-${var.env}"
-  subscription_id = data.servicebus_topic_subscription.hmc_to_fis_subscription_rule.id
-  filter_type     = "SqlFilter"
+resource "azurerm_servicebus_subscription_rule" "message_context" {
+  name                = "${var.product}-message-context-sub-rule-${var.env}"
+  subscription_id     = module.servicebus_topic_subscription.id
+  filter_type         = "SqlFilter"
   sql_filter      = "hmctsServiceCode = 'BBA3'"
 }
-
 
 
 
