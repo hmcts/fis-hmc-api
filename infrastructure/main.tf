@@ -22,6 +22,9 @@ module "servicebus_topic_subscription" {
 resource "azurerm_servicebus_subscription_rule" "message_context" {
   name                = "${var.product}-message-context-sub-rule-${var.env}"
   subscription_id     = module.servicebus_topic_subscription.id
+  namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
+  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  topic_name            = join("-", ["hmc-to-cft", var.env])
   filter_type         = "SqlFilter"
   sql_filter      = "hmctsServiceCode = 'BBA3'"
 }
