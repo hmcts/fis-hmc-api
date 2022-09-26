@@ -47,7 +47,7 @@ spring:
   cloud:
     azure:
       servicebus:
-        connection-string: Endpoint=sb://hmc-servicebus-demo.servicebus.windows.net/;SharedAccessKeyName=SendAndListenSharedAccessKey;SharedAccessKey=uULWmHY4zg1Zhf9B7KChykZxv+4x80CE2HcW1LASBwE=;EntityPath=hmc-to-cft-demo
+        connection-string: ${hmc-servicebus-connection-string}
     stream:
       bindings:
         consume-in-0:
