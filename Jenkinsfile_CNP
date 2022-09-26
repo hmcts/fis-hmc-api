@@ -23,10 +23,6 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 
 def secrets = [
   'fis-kv-${env}'    :[
-    secret('idam-ui-secret', 'OAUTH2_CLIENT_SECRET'),
-    secret('idam-system-user-name', 'IDAM_SYSTEM_UPDATE_USERNAME'),
-    secret('idam-system-user-password', 'IDAM_SYSTEM_UPDATE_PASSWORD'),
-    secret('s2s-secret-bulkscan-api', 'S2S_SECRET'),
     secret('AppInsightsInstrumentationKey', 'APP_INSIGHTS_KEY')
   ]
 ]

@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@EnableAutoConfiguration
 @ActiveProfiles("test")
 class HearingsControllerTest {
     @Mock private HearingsService hearingsService;

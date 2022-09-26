@@ -26,8 +26,10 @@ public class HearingsService {
         String serviceToken =
                 serviceAuthorisationTokenApi.serviceToken(
                         MicroserviceInfo.builder().microservice(microserviceName.trim()).build());
+
         caseApiService.getCaseDetails(
                 hearingsRequest.getCaseReference(), authorisation, serviceToken);
+
         return hmcHearingApi.retrieveListOfValuesByCategoryId(
                 authorisation, serviceToken, HEARING_SUB_CHANNEL);
     }

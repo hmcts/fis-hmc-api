@@ -1,12 +1,10 @@
 variable "product" {
-  type        = string
-  default     = "fis-hmc-api"
-  description = "The name of your application"
+  type    = string
+  default = "fis"
 }
 
-variable "env" {
-  type        = string
-  description = "The deployment environment (sandbox, aat, prod etc..)"
+variable "component" {
+  type    = string
 }
 
 variable "location" {
@@ -14,12 +12,14 @@ variable "location" {
   default = "UK South"
 }
 
-variable "component" {}
+variable "env" {
+  type = string
+}
 
-variable "subscription" {}
-
-variable "deployment_namespace" {}
+variable "subscription" {
+type = string
+}
 
 variable "common_tags" {
-  type = "map"
+  type = map(string)
 }
