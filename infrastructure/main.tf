@@ -19,7 +19,7 @@ module "servicebus_topic_subscription" {
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
-resource "azurerm_servicebus_subscription_filter" "hmctsServiceCode" {
+resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
   name            = "hmc_to_fis_subscription_rule"
   subscription_id = module.servicebus_topic_subscription.id
   filter_type     = "SqlFilter"
