@@ -26,3 +26,4 @@ resource "azurerm_servicebus_subscription_filter" "hmctsServiceCode" {
   sql_filter      = "hmctsServiceCode = 'BBA3'"
 }
 
+
