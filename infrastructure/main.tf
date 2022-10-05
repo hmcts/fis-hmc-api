@@ -3,7 +3,7 @@ provider "azurerm" {
 }
 
 locals {
-  subscription_name = "hmc-to-fis-subscription-${var.env}"
+  subscription_name = "hmc-fis-subscription-${var.env}"
 }
 
 data "azurerm_servicebus_namespace" "fis_servicebus_namespace" {
