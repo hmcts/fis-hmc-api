@@ -16,7 +16,7 @@ java:
   keyVaults:
     fis-kv:
       secrets:
-        - hmc-fis-servicebus-connection-string
+        - name: hmc-fis-servicebus-connection-string
           alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
         - name: AppInsightsInstrumentationKey
           alias: APP_INSIGHTS_KEY
