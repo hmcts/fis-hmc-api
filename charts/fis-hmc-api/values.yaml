@@ -13,11 +13,10 @@ java:
     IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net/o/token'
 
-
-    keyVaults:
-      fis-kv:
-        secrets:
-          - hmc-fis-servicebus-connection-string
-            alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
-          - name: AppInsightsInstrumentationKey
-            alias: APP_INSIGHTS_KEY
+  keyVaults:
+    fis-kv:
+      secrets:
+        - hmc-fis-servicebus-connection-string
+          alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
+        - name: AppInsightsInstrumentationKey
+          alias: APP_INSIGHTS_KEY
