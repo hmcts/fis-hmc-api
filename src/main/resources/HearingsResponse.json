@@ -1,0 +1,182 @@
+{
+  "caseDeepLink": "https://manage-case.demo.platform.hmcts.net/cases/case-details/1655456908025109",
+  "caseManagementLocationCode": "372653",
+  "externalCaseReference": null,
+  "hearingChannels": [
+    "INTER"
+  ],
+  "hmctsInternalCaseName": "Ojdbtpip Xihrzpip",
+  "publicCaseName": "Ojdbtpip Xihrzpip",
+  "autoListFlag": false,
+  "hearingType": "BBA3-SUB",
+  "caseType": "Benefit",
+  "caseCategories": [
+    {
+      "categoryType": "caseType",
+      "categoryValue": "BBA3-002"
+    },
+    {
+      "categoryType": "caseSubType",
+      "categoryValue": "BBA3-002CE",
+      "categoryParent": "BBA3-002"
+    }
+  ],
+  "duration": 60,
+  "hearingPriorityType": "Standard",
+  "numberOfPhysicalAttendees": 1,
+  "hearingInWelshFlag": false,
+  "caseAdditionalSecurityFlag": false,
+  "facilitiesRequired": [],
+  "listingComments": null,
+  "hearingRequester": null,
+  "privateHearingRequiredFlag": false,
+  "leadJudgeContractType": null,
+  "hearingIsLinkedFlag": true,
+  "hmctsServiceID": "BBA3",
+  "caseInterpreterRequiredFlag": false,
+  "caserestrictedFlag": false,
+  "caseSLAStartDate": "2022-06-17",
+  "hearingWindow": {
+    "dateRangeStart": "2022-08-11"
+  },
+  "hearingLocations": [
+    {
+      "locationType": "court",
+      "locationId": "372653"
+    }
+  ],
+  "panelRequirements": null,
+  "judiciary": {
+    "roleType": [],
+    "authorisationTypes": [],
+    "authorisationSubType": [],
+    "panelComposition": null,
+    "judiciaryPreferences": [],
+    "judiciarySpecialisms": []
+  },
+  "parties": [
+    {
+      "partyID": "1",
+      "partyType": "IND",
+      "partyName": "Ojdbtpip Xihrzpip",
+      "partyChannel": "INTER",
+      "partyRole": "APEL",
+      "individualDetails": {
+        "firstName": "Ojdbtpip",
+        "lastName": "Xihrzpip",
+        "preferredHearingChannel": "INTER",
+        "reasonableAdjustments": [],
+        "vulnerableFlag": false,
+        "hearingChannelEmail": [],
+        "hearingChannelPhone": [],
+        "relatedParties": []
+      },
+      "organisationDetails": null,
+      "unavailabilityRanges": [],
+      "unavailabilityDOW": []
+    }
+  ],
+  "caseFlags": {
+    "flags": [],
+    "flagAmendURL": ""
+  },
+  "screenFlow": [
+    {
+      "screenName": "hearing-requirements",
+      "navigation": [
+        {
+          "resultValue": "hearing-facilities"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-facilities",
+      "navigation": [
+        {
+          "resultValue": "hearing-stage"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-stage",
+      "navigation": [
+        {
+          "resultValue": "hearing-attendance"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-attendance",
+      "navigation": [
+        {
+          "resultValue": "hearing-venue"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-venue",
+      "conditionKey": "region",
+      "navigation": [
+        {
+          "conditionOperator": "INCLUDE",
+          "conditionValue": "Wales",
+          "resultValue": "hearing-welsh"
+        },
+        {
+          "conditionOperator": "NOT INCLUDE",
+          "conditionValue": "Wales",
+          "resultValue": "hearing-judge"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-welsh",
+      "navigation": [
+        {
+          "resultValue": "hearing-judge"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-judge",
+      "navigation": [
+        {
+          "resultValue": "hearing-panel"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-panel",
+      "navigation": [
+        {
+          "resultValue": "hearing-timing"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-timing",
+      "navigation": [
+        {
+          "resultValue": "hearing-link"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-link",
+      "navigation": [
+        {
+          "resultValue": "hearing-additional-instructions"
+        }
+      ]
+    },
+    {
+      "screenName": "hearing-additional-instructions",
+      "navigation": [
+        {
+          "resultValue": "hearing-create-edit-summary"
+        }
+      ]
+    }
+  ],
+  "vocabulary": null
+}
