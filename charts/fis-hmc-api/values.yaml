@@ -18,5 +18,6 @@ java:
       fis-kv:
         secrets:
           - hmc-servicebus-connection-string
+            alias: HMC_SERVICEBUS_CONNECTION_STRING
           - name: AppInsightsInstrumentationKey
             alias: APP_INSIGHTS_KEY

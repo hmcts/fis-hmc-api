@@ -47,12 +47,12 @@ spring:
   cloud:
     azure:
       servicebus:
-        connection-string: ${hmc-servicebus-connection-string:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
+        connection-string: ${HMC_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
     stream:
       bindings:
         consume-in-0:
           destination: hmc-to-cft-demo
-          group: hmc-to-fis-subscription-demo
+          group: hmc-fis-subscription-demo
       servicebus:
         bindings:
           consume-in-0:

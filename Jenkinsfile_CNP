@@ -23,7 +23,8 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 
 def secrets = [
   'fis-kv-${env}'    :[
-    secret('AppInsightsInstrumentationKey', 'APP_INSIGHTS_KEY')
+    secret('AppInsightsInstrumentationKey', 'APP_INSIGHTS_KEY'),
+    secret('hmc-servicebus-connection-string', 'HMC_SERVICEBUS_CONNECTION_STRING')
   ]
 ]
 
