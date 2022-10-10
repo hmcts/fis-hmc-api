@@ -68,8 +68,6 @@ spring:
   application:
     name: fis_hmc_api
 
-
-
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
