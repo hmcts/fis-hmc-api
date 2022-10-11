@@ -12,9 +12,9 @@ import org.springframework.messaging.Message;
 public class TopicMessageListenerConfiguration {
     @Value("${spring.cloud.azure.servicebus.connection-string}")
     private String connectionString;
-    @Value("${spring.cloud.stream.bindings.consume-in.destination}")
+    @Value("${spring.cloud.stream.bindings.consume-in-0.destination}")
     private String topicName;
-    @Value("${spring.cloud.stream.bindings.consume-in.group}")
+    @Value("${spring.cloud.stream.bindings.consume-in-0.group}")
     private String subscriptionName;
     @Bean
     public Consumer<Message<String>> consume() {
