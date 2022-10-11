@@ -25,7 +25,7 @@ public class TopicMessageListenerConfiguration {
             String messagePayload = message.getPayload();
             log.info("Message:" + messagePayload);
             log.info("connection string : " + connectionString);
-            log.info("topic name : " + connectionString);
+            log.info("topic name : " + topicName);
             log.info("topic name : " + subscriptionName);
         };
     }
