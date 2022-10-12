@@ -51,8 +51,8 @@ spring:
     stream:
       bindings:
         consume-in-0:
-          destination: hmc-to-cft-demo
-          group: hmc-fis-subscription-demo
+          destination: ${HMC_FIS_TOPIC_NAME:Dummy}
+          group: ${HMC_FIS_SUBSCRIPTION_NAME:Dummy}
       servicebus:
         bindings:
           consume-in-0:
@@ -67,8 +67,6 @@ spring:
     import: "optional:configtree:/mnt/secrets/fis/"
   application:
     name: fis_hmc_api
-
-
 
 azure:
   application-insights:
