@@ -68,7 +68,8 @@ spring:
     import: "optional:configtree:/mnt/secrets/fis/"
   application:
     name: fis_hmc_api
-
+  main:
+    allow-bean-definition-overriding: true
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
