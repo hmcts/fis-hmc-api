@@ -48,7 +48,7 @@ spring:
   cloud:
     azure:
       servicebus:
-        connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:dummy}
+        connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
     stream:
       bindings:
         consume-in-0:
@@ -68,8 +68,6 @@ spring:
     import: "optional:configtree:/mnt/secrets/fis/"
   application:
     name: fis_hmc_api
-  main:
-    allow-bean-definition-overriding: true
 
 azure:
   application-insights:
