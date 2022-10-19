@@ -23,11 +23,10 @@ public class TopicMessageListenerConfiguration {
     public Consumer<Message<String>> consume() {
         return message -> {
             String messagePayload = message.getPayload();
-            log.info("Message:" + messagePayload);
+            log.info("Messages:" + messagePayload);
             log.info("connection string : " + connectionString);
             log.info("topic name : " + topicName);
             log.info("topic name : " + subscriptionName);
         };
     }
 }
-
