@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.ExceptionPhase;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageHandler;
-import com.microsoft.azure.servicebus.MessageHandlerOptions;
 import com.microsoft.azure.servicebus.ReceiveMode;
 import com.microsoft.azure.servicebus.SubscriptionClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
@@ -16,18 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
+@Configuration
 public class ServiceBusConfiguration {
 
     @Value("${amqp.host}")
@@ -90,9 +86,9 @@ public class ServiceBusConfiguration {
                 result.set(true);
                 if (result.get()) {
                     return receiveClient.completeAsync(message.getLockToken());
-                }
-                else
+                } else {
                     return null;
+                }
             }
 
             @Override
@@ -102,11 +98,6 @@ public class ServiceBusConfiguration {
             }
         };
 
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-        receiveClient.registerMessageHandler(
-            messageHandler, new MessageHandlerOptions(threadCount,
-                                                      false, Duration.ofHours(1), Duration.ofMinutes(5)),
-            executorService);
         return null;
     }
 }
