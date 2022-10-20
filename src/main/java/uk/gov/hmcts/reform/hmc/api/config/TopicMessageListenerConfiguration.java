@@ -1,32 +1,59 @@
 package uk.gov.hmcts.reform.hmc.api.config;
 
-import java.util.function.Consumer;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import com.azure.messaging.servicebus.ServiceBusClientBuilder;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.Message;
+import reactor.core.Disposable;
 
-@Slf4j
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 @Configuration
 public class TopicMessageListenerConfiguration {
-    @Value("${spring.cloud.azure.servicebus.connection-string}")
-    private String connectionString;
 
-    @Value("${spring.cloud.stream.bindings.consume-in-0.destination}")
-    private String topicName;
-
-    @Value("${spring.cloud.stream.bindings.consume-in-0.group}")
-    private String subscriptionName;
+    private static Logger log = LoggerFactory.getLogger(TopicMessageListenerConfiguration.class);
 
     @Bean
-    public Consumer<Message<String>> consume() {
-        return message -> {
-            String messagePayload = message.getPayload();
-            log.info("Message:" + messagePayload);
-            log.info("connection string : " + connectionString);
-            log.info("topic name : " + topicName);
-            log.info("topic name : " + subscriptionName);
-        };
+    public void run() throws InterruptedException {
+        AtomicBoolean sampleSuccessful = new AtomicBoolean(true);
+        CountDownLatch countdownLatch = new CountDownLatch(1);
+        String connectionString = "dummy";
+
+        ServiceBusReceiverAsyncClient receiver = new ServiceBusClientBuilder()
+            .connectionString(connectionString)
+            .receiver()
+            .disableAutoComplete()
+            .topicName("hmc-to-cft-demo")
+            .subscriptionName("hmc-subs-to-cft-demo")
+            .buildAsyncClient();
+
+        Disposable subscription = receiver.receiveMessages()
+            .flatMap(message -> {
+                boolean messageProcessed = processMessage(message);
+                if (messageProcessed) {
+                    return receiver.complete(message);
+                } else {
+                    return receiver.abandon(message);
+                }
+            }).subscribe(
+                (ignore) -> log.info("Message processed."),
+                error -> sampleSuccessful.set(false)
+            );
+
+        countdownLatch.await(10, TimeUnit.SECONDS);
+        receiver.close();
+
+    }
+
+    private static boolean processMessage(ServiceBusReceivedMessage message) {
+        log.info("Sequence #: %s. Contents: %s%n", message.getSequenceNumber(),
+                          message.getBody());
+
+        return true;
     }
 }
