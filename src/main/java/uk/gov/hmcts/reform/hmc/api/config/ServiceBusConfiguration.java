@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.ExceptionPhase;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageHandler;
+import com.microsoft.azure.servicebus.MessageHandlerOptions;
 import com.microsoft.azure.servicebus.ReceiveMode;
 import com.microsoft.azure.servicebus.SubscriptionClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
@@ -21,6 +22,8 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Configuration
@@ -76,7 +79,6 @@ public class ServiceBusConfiguration {
             @SneakyThrows
             @Override
             public CompletableFuture<Void> onMessageAsync(IMessage message) {
-                log.info("RECEIVED");
                 List<byte[]> body = message.getMessageBody().getBinaryData();
                 log.info("Received message" + body);
                 AtomicBoolean result = new AtomicBoolean();
@@ -97,6 +99,11 @@ public class ServiceBusConfiguration {
                 log.error(exceptionPhase + "-" + throwable.getMessage());
             }
         };
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        receiveClient.registerMessageHandler(
+            messageHandler, new MessageHandlerOptions(threadCount,
+                                                      false, Duration.ofHours(1), Duration.ofMinutes(5)),
+            executorService);
 
         return null;
     }
