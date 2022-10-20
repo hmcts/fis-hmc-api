@@ -11,19 +11,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Category;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@EnableAutoConfiguration
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class HearingsControllerTest {
     @Mock private HearingsService hearingsService;
