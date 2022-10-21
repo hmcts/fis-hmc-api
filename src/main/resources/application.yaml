@@ -39,11 +39,21 @@ core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
-springdoc:
-  packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
+#springdoc:
+#  packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
 
 
 #If you use a database then uncomment below lines and update db properties accordingly
+springdoc:
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter : alpha
+    doc-expansion : none
+  model-converters:
+    pageable-converter:
+      enabled: true
+    polymorphic-converter:
+      enabled: true
 spring:
   cloud:
     azure:
