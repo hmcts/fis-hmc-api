@@ -12,7 +12,7 @@ java:
     IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net/o/token'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
-    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-fis-subscription-{{ .Values.global.environment }}'
+    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-{{ .Values.global.environment }}'
 
   keyVaults:
     fis-kv:
