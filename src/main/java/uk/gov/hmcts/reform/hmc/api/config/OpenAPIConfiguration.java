@@ -26,5 +26,6 @@ public class OpenAPIConfiguration {
                         new ExternalDocumentation()
                                 .description("README")
                                 .url("https://github.com/hmcts/fis-hmc-api"));
+
     }
 }
