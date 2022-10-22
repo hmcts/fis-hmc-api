@@ -10,6 +10,7 @@
     <exclude name="GuardLogStatement"/>
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="SystemPrintln" />
   </rule>
   <exclude-pattern>.*/config/.*</exclude-pattern>
 

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +24,16 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @Slf4j
 @RestController
 public class HearingsController {
+
+    @Value("${spring.cloud.azure.servicebus.connection-string}")
+    private String connectionString;
+
+    @Value("${spring.cloud.stream.bindings.consume-in-0.destination}")
+    private String topicName;
+
+    @Value("${spring.cloud.stream.bindings.consume-in-0.group}")
+    private String subscription;
+
     @Autowired private HearingsService hearingsService;
 
     @GetMapping(path = "/hearingsdata", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
@@ -42,6 +53,9 @@ public class HearingsController {
             @RequestHeader("authorisation") String authorisation,
             @RequestBody HearingsRequest hearingsRequest)
             throws JsonProcessingException {
+        System.out.println("Connection string : " + connectionString);
+        System.out.println("Topic name string : " + topicName);
+        System.out.println("Subscription string : " + subscription);
         return ResponseEntity.ok(hearingsService.getRefData(hearingsRequest, authorisation));
     }
 }
