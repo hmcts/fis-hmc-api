@@ -16,7 +16,7 @@ public class OpenAPIConfiguration {
                 .info(
                         new Info()
                                 .title("fis-hmc-api")
-                                .description("Create & update case and Upload and delete docs ")
+                                .description("Create & update case and Upload and delete the docs ")
                                 .version("v0.0.1")
                                 .license(
                                         new License()
@@ -26,6 +26,5 @@ public class OpenAPIConfiguration {
                         new ExternalDocumentation()
                                 .description("README")
                                 .url("https://github.com/hmcts/fis-hmc-api"));
-
     }
 }
