@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.Disposable;
@@ -18,20 +17,16 @@ public class ServiceBus {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceBus.class);
 
-    @Value("${service.connection-string}")
-    private String connectionString;
-
-    @Value("${service.topicname}")
-    private String topicName;
-
-    @Value("${service.subscription}")
-    private String subscription;
-
     @Bean
     public void run() throws InterruptedException {
+
+        String connectionString = "dummy";
+        String topicName = "hmc-to-cft-aat";
+        String subscriptionName = "hmc-subs-to-cft-aat";
+
         log.info("Connection String  : ", connectionString);
         log.info("Topic name   : ", topicName);
-        log.info("subscription  : ", subscription);
+        log.info("subscription  : ", subscriptionName);
 
         AtomicBoolean sampleSuccessful = new AtomicBoolean(true);
         CountDownLatch countdownLatch = new CountDownLatch(1);
@@ -41,7 +36,7 @@ public class ServiceBus {
                         .receiver()
                         .disableAutoComplete()
                         .topicName(topicName)
-                        .subscriptionName(subscription)
+                        .subscriptionName(subscriptionName)
                         .buildAsyncClient();
 
         Disposable subscription =

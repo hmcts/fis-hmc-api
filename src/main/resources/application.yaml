@@ -45,7 +45,7 @@ springdoc:
 service:
   connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
   topicname: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
-  subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-fis-subscription-demo}
+  subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-subs-to-cft-demo}
 
 main:
   allow-bean-definition-overriding: true
