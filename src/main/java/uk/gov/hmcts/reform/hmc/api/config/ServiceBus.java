@@ -18,13 +18,13 @@ public class ServiceBus {
 
     private static final Logger log = LoggerFactory.getLogger(ServiceBus.class);
 
-    @Value("${spring.cloud.azure.servicebus.connection-string}")
+    @Value("${service.connection-string}")
     private String connectionString;
 
-    @Value("${spring.cloud.stream.bindings.consume-in-0.destination}")
+    @Value("${service.topicname}")
     private String topicName;
 
-    @Value("${spring.cloud.stream.bindings.consume-in-0.group}")
+    @Value("${service.subscription}")
     private String subscription;
 
     @Bean

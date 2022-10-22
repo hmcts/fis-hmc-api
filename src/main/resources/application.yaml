@@ -42,34 +42,13 @@ core_case_data:
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
 
+service:
+  connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
+  topicname: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
+  subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-fis-subscription-demo}
 
-#If you use a database then uncomment below lines and update db properties accordingly
-spring:
-  cloud:
-    azure:
-      servicebus:
-        connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
-    stream:
-      bindings:
-        consume-in-0:
-          destination: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
-          group: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-fis-subscription-demo}
-      servicebus:
-        bindings:
-          consume-in-0:
-            consumer:
-              auto-complete: false
-      function:
-        definition: consume;
-      poller:
-        fixed-delay: 1000
-        initial-delay: 0
-  config:
-    import: "optional:configtree:/mnt/secrets/fis/"
-  application:
-    name: fis_hmc_api
-  main:
-    allow-bean-definition-overriding: true
+main:
+  allow-bean-definition-overriding: true
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
