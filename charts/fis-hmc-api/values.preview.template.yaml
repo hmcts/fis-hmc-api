@@ -2,3 +2,20 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  environment:
+    NODE_ENV: production
+    REFORM_TEAM: fis
+    REFORM_SERVICE_NAME: fis-hmc-api
+    SERVICE_AUTH_PROVIDER_URL: 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+    IDAM_WEB_URL: 'https://idam-web-public.aat.platform.hmcts.net/login'
+    IDAM_API_URL: 'https://idam-api.aat.platform.hmcts.net/o/token'
+    HMC_FIS_TOPIC_NAME: 'hmc-to-cft-aat'
+    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-aat'
+
+  keyVaults:
+    fis-kv:
+      secrets:
+        - name: hmc-fis-servicebus-connection-string
+          alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
+        - name: AppInsightsInstrumentationKey
+          alias: APP_INSIGHTS_KEY
