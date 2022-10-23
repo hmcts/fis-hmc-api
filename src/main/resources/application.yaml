@@ -27,11 +27,11 @@ feign:
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-aat.service.core-compute-aat.internal}
-
-#If you use a database then uncomment below lines and update db properties accordingly
 spring:
+  #  config:
+  #    import: "optional:configtree:/mnt/secrets/ccpay/"
   application:
-    name: fis-hmc-api
+    name: FisHmcApi
   main:
     allow-bean-definition-overriding: true
 
