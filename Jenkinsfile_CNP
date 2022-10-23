@@ -24,7 +24,8 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 def secrets = [
   'fis-kv-${env}'    :[
     secret('AppInsightsInstrumentationKey', 'APP_INSIGHTS_KEY'),
-    secret('hmc-fis-servicebus-connection-string', 'HMC_FIS_SERVICEBUS_CONNECTION_STRING')
+    secret('hmc-fis-servicebus-connection-string', 'HMC_FIS_SERVICEBUS_CONNECTION_STRING'),
+    secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY')
   ]
 ]
 

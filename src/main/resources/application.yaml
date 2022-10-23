@@ -28,6 +28,13 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-aat.service.core-compute-aat.internal}
 
+#If you use a database then uncomment below lines and update db properties accordingly
+spring:
+  application:
+    name: fis-hmc-api
+  main:
+    allow-bean-definition-overriding: true
+
 idam:
   s2s-auth:
     url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
