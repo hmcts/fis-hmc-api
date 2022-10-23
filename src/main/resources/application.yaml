@@ -42,34 +42,26 @@ core_case_data:
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
 
-
 #If you use a database then uncomment below lines and update db properties accordingly
-spring:
-  cloud:
-    azure:
-      servicebus:
-        connection-string: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:Endpoint=sb://demo.sKeyName=;SharedAccessKey=}
-    stream:
-      bindings:
-        consume-in-0:
-          destination: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
-          group: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-fis-subscription-demo}
-      servicebus:
-        bindings:
-          consume-in-0:
-            consumer:
-              auto-complete: false
-      function:
-        definition: consume;
-      poller:
-        fixed-delay: 1000
-        initial-delay: 0
-  config:
-    import: "optional:configtree:/mnt/secrets/fis/"
-  application:
-    name: fis_hmc_api
-  main:
-    allow-bean-definition-overriding: true
+#spring:
+
+amqp:
+  host: ${HMC_HOST:hmc-servicebus-aat.servicebus.windows.net}
+  sharedAccessKeyName: "SendAndListenSharedAccessKey"
+  jrd:
+    topic: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-aat}
+    sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy}
+    subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-subs-to-cft-aat}
+
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+
+
+thread:
+  count: ${THREAD_COUNT:4}
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG

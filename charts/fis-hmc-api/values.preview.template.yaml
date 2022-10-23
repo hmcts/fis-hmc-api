@@ -11,6 +11,7 @@ java:
     IDAM_API_URL: 'https://idam-api.aat.platform.hmcts.net/o/token'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-aat'
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-aat'
+    HMC_HOST: 'hmc-servicebus-aat.servicebus.windows.net'
 
   keyVaults:
     fis-kv:
