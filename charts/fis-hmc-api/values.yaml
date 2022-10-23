@@ -13,11 +13,14 @@ java:
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net/o/token'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-{{ .Values.global.environment }}'
+    HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
 
   keyVaults:
     fis-kv:
       secrets:
         - name: hmc-fis-servicebus-connection-string
           alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
+        - name: hmc-topic-shared-access-key
+          alias: HMC_TOPIC_SHARED_ACCESS_KEY
         - name: AppInsightsInstrumentationKey
           alias: APP_INSIGHTS_KEY
