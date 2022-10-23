@@ -3,7 +3,6 @@ java:
   image: 'hmctspublic.azurecr.io/fis/hmc-api:latest'
   ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fis
-
   environment:
     NODE_ENV: production
     REFORM_TEAM: fis
@@ -14,9 +13,9 @@ java:
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-{{ .Values.global.environment }}'
     HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
-
   keyVaults:
-    fis-kv:
+    "fis-kv":
+      resourceGroup: fis
       secrets:
         - name: hmc-fis-servicebus-connection-string
           alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
