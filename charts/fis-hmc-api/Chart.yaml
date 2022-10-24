@@ -1,11 +1,11 @@
 apiVersion: v2
 appVersion: "1.0"
-description: A Helm chart for fis-hmc-api App
+description: A Helm chart for fis-hmc-api Application
 name: fis-hmc-api
 home: https://github.com/hmcts/fis-hmc-api
-version: 0.0.14
+version: 0.0.15
 maintainers:
-  - name: HMCTS fis team
+  - name: HMCTS family integration team
 dependencies:
   - name: java
     version: 4.0.1
