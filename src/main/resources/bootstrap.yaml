@@ -6,3 +6,4 @@ spring:
       paths: /mnt/secrets/fis-kv
       aliases:
         hmc-topic-shared-access-key: AMQP_SHARED_ACCESS_KEY_VALUE
+        hmc-fis-servicebus-connection-string: HMC_FIS_SERVICEBUS_CONNECTION_STRING

@@ -60,7 +60,7 @@ public class ServiceBusConfiguration {
         log.info(" topic {}", topic);
         log.info(" sharedAccessKeyValue {}", sharedAccessKeyValue);
         log.info(" subscription {}", subscription);
-        log.info(" subscription {}", connectionString);
+        log.info(" connection string {}", connectionString);
         URI endpoint = new URI("sb://" + host);
 
         String destination = topic.concat("/subscriptions/").concat(subscription);

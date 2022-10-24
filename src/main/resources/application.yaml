@@ -52,7 +52,7 @@ amqp:
     topic: ${HMC_FIS_TOPIC_NAME:dummy}
     sharedAccessKeyValue: ${AMQP_SHARED_ACCESS_KEY_VALUE:dummy}
     subscription: ${HMC_FIS_SUBSCRIPTION_NAME:dummy}
-    connectionString: ${hmc-fis-servicebus-connection-string}
+    connectionString: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:newdummy}
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   application:
