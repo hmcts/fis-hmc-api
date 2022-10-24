@@ -23,7 +23,7 @@ def vaultOverrides = [
 ]
 def secrets = [
   'fis-kv-${env}': [
-    secret('hmc-topic-shared-access-key', 'AMQP_SHARED_ACCESS_KEY_VALUE'),
+    secret('hmc-topic-shared-access-key', 'AMQP_SHARED_ACCESS_KEY_VALUE')
   ]
 ]
 static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
