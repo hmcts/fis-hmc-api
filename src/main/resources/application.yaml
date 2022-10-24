@@ -27,13 +27,6 @@ feign:
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-aat.service.core-compute-aat.internal}
-spring:
-  #  config:
-  #    import: "optional:configtree:/mnt/secrets/ccpay/"
-  application:
-    name: FisHmcApi
-  main:
-    allow-bean-definition-overriding: true
 
 idam:
   s2s-auth:
@@ -59,11 +52,17 @@ amqp:
     topic: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-aat}
     sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy}
     subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-subs-to-cft-aat}
-
+#If you use a database then uncomment below lines and update db properties accordingly
+spring:
+  config:
+    import: "optional:configtree:/mnt/secrets/fis/"
+  application:
+    name: fis-hmc-api
+  main:
+    allow-bean-definition-overriding: true
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
-
 
 thread:
   count: ${THREAD_COUNT:4}
