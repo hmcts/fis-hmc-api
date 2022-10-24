@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 
 @Configuration
-public class ServiceBus {
+public class ServiceBusConfiguration {
 
     @Value("${amqp.host}")
     private String host;
@@ -47,7 +47,7 @@ public class ServiceBus {
     @Value("${thread.count}")
     private int threadCount;
 
-    private static Logger log = LoggerFactory.getLogger(ServiceBus.class);
+    private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
     @Bean
     public SubscriptionClient receiveClient()
