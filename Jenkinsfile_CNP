@@ -21,12 +21,7 @@ def vaultOverrides = [
   'preview': 'aat',
   'hmctsdemo': 'aat',
 ]
-def secrets = [
-  'fis-kv-${env}': [
-    secret('hmc-topic-shared-access-key', 'AMQP_SHARED_ACCESS_KEY_VALUE'),
-    secret('hmc-fis-servicebus-connection-string','HMC_FIS_SERVICEBUS_CONNECTION_STRING')
-  ]
-]
+
 static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
   [ $class: 'AzureKeyVaultSecret',
     secretType: 'Secret',
@@ -35,6 +30,14 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
     envVariable: envVar
   ]
 }
+
+def secrets = [
+  'fis-kv-${env}': [
+    secret('hmc-topic-shared-access-key', 'AMQP_SHARED_ACCESS_KEY_VALUE'),
+    secret('hmc-fis-servicebus-connection-string','HMC_FIS_SERVICEBUS_CONNECTION_STRING')
+  ]
+]
+
 
 withPipeline(type, product, component) {
   enableAksStagingDeployment()
