@@ -49,9 +49,9 @@ amqp:
   host: ${HMC_HOST:hmc-servicebus-aat.servicebus.windows.net}
   sharedAccessKeyName: "SendAndListenSharedAccessKey"
   jrd:
-    topic: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-aat}
+    topic: ${HMC_FIS_TOPIC_NAME:dummy}
     sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy}
-    subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-subs-to-cft-aat}
+    subscription: ${HMC_FIS_SUBSCRIPTION_NAME:dummy}
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
