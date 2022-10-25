@@ -50,6 +50,9 @@ public class ServiceBusConfiguration {
     @Value("${thread.count}")
     private int threadCount;
 
+    @Value("${azure.application-insights.instrumentation-key}")
+    private int appinsigtskey;
+
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
     @Bean
@@ -61,6 +64,7 @@ public class ServiceBusConfiguration {
         log.info(" sharedAccessKeyValue {}", sharedAccessKeyValue);
         log.info(" subscription {}", subscription);
         log.info(" connection string {}", connectionString);
+        log.info(" app insights key {}", appinsigtskey);
         URI endpoint = new URI("sb://" + host);
 
         String destination = topic.concat("/subscriptions/").concat(subscription);
