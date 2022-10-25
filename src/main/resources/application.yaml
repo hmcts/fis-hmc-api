@@ -73,7 +73,7 @@ amqp:
 
 azure:
   application-insights:
-    instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
+    instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
 
 thread:
   count: ${THREAD_COUNT:4}
