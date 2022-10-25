@@ -4,13 +4,10 @@ java:
   ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fis
   keyVaults:
-    "fis-kv":
-      resourceGroup: fis
+    fis-kv:
       secrets:
-        - name: hmc-fis-servicebus-connection-string
-          alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
-        - name: hmc-topic-shared-access-key
-          alias: HMC_TOPIC_SHARED_ACCESS_KEY
+        - hmc-fis-servicebus-connection-string
+        - hmc-topic-shared-access-key
         - name: AppInsightsInstrumentationKey
           alias: APP_INSIGHTS_KEY
   environment:
