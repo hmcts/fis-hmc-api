@@ -27,6 +27,7 @@ public class CaseApiService {
         ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
         CaseDetails caseDetails = coreCaseDataApi.getCase(authorization, serviceToken, caseId);
         objectMapper.writeValueAsString(caseDetails);
+        System.out.println(caseDetails);
         return caseDetails;
     }
 }

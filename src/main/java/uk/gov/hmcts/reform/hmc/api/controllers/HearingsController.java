@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
 /** Hearings controller to get data hearings data. */
@@ -38,10 +39,13 @@ public class HearingsController {
                                         schema = @Schema(implementation = Categories.class))),
                 @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
             })
-    public ResponseEntity<Categories> getHearingsData(
-            @RequestHeader("authorisation") String authorisation,
-            @RequestBody HearingsRequest hearingsRequest)
+    public ResponseEntity<Hearings> getHearingsData(
+            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("caseReference") String caseReferenceRequest,
+            @RequestHeader("hearingId") String hearingIdRequest)
             throws JsonProcessingException {
+            HearingsRequest hearingsRequest =  HearingsRequest.hearingRequestWith()
+            .caseReference(caseReferenceRequest).hearingId(hearingIdRequest).build();
         return ResponseEntity.ok(hearingsService.getRefData(hearingsRequest, authorisation));
     }
 }
