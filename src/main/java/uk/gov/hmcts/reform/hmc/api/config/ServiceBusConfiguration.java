@@ -44,6 +44,9 @@ public class ServiceBusConfiguration {
     @Value("${amqp.jrd.subscription}")
     private String subscription;
 
+    @Value("${amqp.jrd.connectionString}")
+    private String connectionString;
+
     @Value("${thread.count}")
     private int threadCount;
 
@@ -57,6 +60,7 @@ public class ServiceBusConfiguration {
         log.info(" topic {}", topic);
         log.info(" sharedAccessKeyValue {}", sharedAccessKeyValue);
         log.info(" subscription {}", subscription);
+        log.info(" connection string {}", connectionString);
         URI endpoint = new URI("sb://" + host);
 
         String destination = topic.concat("/subscriptions/").concat(subscription);

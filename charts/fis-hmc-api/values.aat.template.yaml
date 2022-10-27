@@ -1,4 +1,21 @@
-# Don't modify this file, it is only needed for the pipeline to set the image and ingressHost
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  keyVaults:
+    fis-kv:
+      secrets:
+        - name: hmc-fis-servicebus-connection-string
+          alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
+        - name: hmc-topic-shared-access-key
+          alias: HMC_TOPIC_SHARED_ACCESS_KEY
+        - name: AppInsightsInstrumentationKey
+          alias: APP_INSIGHTS_KEY
+  environment:
+    REFORM_TEAM: fis
+    REFORM_SERVICE_NAME: fis-hmc-api
+    SERVICE_AUTH_PROVIDER_URL: 'http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
+    IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net/o/token'
+    HMC_FIS_TOPIC_NAME: 'hmc-to-cft-aat'
+    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-aat'
+    HMC_HOST: 'hmc-servicebus-aat.servicebus.windows.net'

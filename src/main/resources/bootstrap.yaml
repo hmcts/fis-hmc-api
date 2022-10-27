@@ -1,8 +1,0 @@
-spring:
-  cloud:
-    propertiesvolume:
-      enabled: true
-      prefixed: true
-      paths: /mnt/secrets/fis
-      aliases:
-        hmc-topic-shared-access-key: AMQP_SHARED_ACCESS_KEY_VALUE
