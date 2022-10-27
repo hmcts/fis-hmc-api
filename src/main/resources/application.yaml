@@ -24,6 +24,22 @@ feign:
       maxPeriod: 2000
       maxAttempts: 3
 
+#If you use a database then uncomment below lines and update db properties accordingly
+spring:
+  config:
+    import: "configtree:/mnt/secrets/fis-kv/"
+  application:
+    name: Fis Hmc API
+  main:
+    allow-bean-definition-overriding: true
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-aat.service.core-compute-aat.internal}
@@ -54,17 +70,11 @@ amqp:
   sharedAccessKeyName: "SendAndListenSharedAccessKey"
   jrd:
     topic: ${HMC_FIS_TOPIC_NAME:dummy}
-    sharedAccessKeyValue: ${AMQP_SHARED_ACCESS_KEY_VALUE:dummy}
-
+    sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy2}
     subscription: ${HMC_FIS_SUBSCRIPTION_NAME:dummy}
+    connectionString: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:newdummy}
 #If you use a database then uncomment below lines and update db properties accordingly
-spring:
-  config:
-    import: "optional:configtree:/mnt/secrets/fis/"
-  application:
-    name: fis-hmc-api
-  main:
-    allow-bean-definition-overriding: true
+
 azure:
   application-insights:
     instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
