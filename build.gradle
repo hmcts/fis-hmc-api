@@ -282,6 +282,9 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
+  // https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
+
 
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.11'
 
