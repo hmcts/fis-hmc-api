@@ -1,9 +1,13 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
-import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Getter
 @Setter
 @Builder(builderMethodName = "hearingDayScheduleWith")
@@ -19,12 +23,11 @@ public class HearingDaySchedule {
 
     private String hearingVenueId;
 
-    private String  hearingRoomId;
+    private String hearingRoomId;
 
     private String hearingJudgeId;
 
     private List<String> panelMemberIds;
 
     private List<Attendee> attendees;
-
 }

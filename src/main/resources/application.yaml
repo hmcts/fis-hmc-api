@@ -27,7 +27,7 @@ feign:
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
-    import: "configtree:/mnt/secrets/fis-kv/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Hmc API
   main:
