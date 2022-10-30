@@ -35,7 +35,7 @@ public class Hearings {
 
     private String caseManagementLocationCode;
 
-    private String caseSLAStartDate;
+    private String caseSlaStartDate;
 
     private Boolean autoListFlag;
 

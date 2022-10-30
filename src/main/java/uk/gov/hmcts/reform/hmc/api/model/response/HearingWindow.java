@@ -14,11 +14,11 @@ import lombok.Setter;
 
 public class HearingWindow {
 
-    private String categoryType;
+    private String dateRangeStart;
 
-    private String categoryValue;
+    private String dateRangeEnd;
 
-    private String categoryParent;
+    private String firstDateTimeMustBe;
 
 }
 

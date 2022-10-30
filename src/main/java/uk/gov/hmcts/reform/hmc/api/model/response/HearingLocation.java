@@ -14,10 +14,8 @@ import lombok.Setter;
 
 public class HearingLocation {
 
-    private String categoryType;
+    private String locationType;
 
-    private String categoryValue;
-
-    private String categoryParent;
+    private String  locationId;
 
 }

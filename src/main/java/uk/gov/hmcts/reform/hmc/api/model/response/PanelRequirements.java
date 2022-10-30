@@ -15,11 +15,7 @@ import lombok.Setter;
 
 public class PanelRequirements {
 
-    private String categoryType;
-
-    private String categoryValue;
-
-    private String categoryParent;
+    private String panelRequirements;
 
 }
 

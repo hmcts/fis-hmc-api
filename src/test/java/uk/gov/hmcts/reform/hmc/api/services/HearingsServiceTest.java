@@ -21,6 +21,9 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.restclient.ServiceAuthorisationTokenApi;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -30,10 +33,10 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 class HearingsServiceTest {
 
-    @Autowired
+    @InjectMocks
     HearingsServiceImpl hearingservice ;
 
-    @MockBean
+    @Mock
     CaseApiService caseApiService;
 
     @MockBean
@@ -56,7 +59,11 @@ class HearingsServiceTest {
 
         String authorisation = "xyz";
 
-        CaseDetails caseDetails = CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").build();
+        Map<String,Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("applicantCaseName","PrivateLaw");
+
+        CaseDetails caseDetails = CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap)
+            .build();
         String microservice = "zzxy";
         MicroserviceInfo microserviceName = MicroserviceInfo.builder().microservice(microservice).build();
         when(caseApiService.getCaseDetails(anyString(),anyString(),anyString())).thenReturn(caseDetails);
