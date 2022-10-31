@@ -50,7 +50,7 @@ public class HearingsController {
         return ResponseEntity.ok(hearingsService1.getRefData(hearingsRequest, authorisation));
     }
 
-    @GetMapping(path = "/hearings", produces = APPLICATION_JSON)
+    @GetMapping(path = "/hearings")
     @Operation(description = "get hearings by case reference number")
     @ApiResponses(
             value = {
@@ -60,7 +60,7 @@ public class HearingsController {
                         content =
                                 @Content(
                                         mediaType = "application/json",
-                                        schema = @Schema(implementation = Categories.class))),
+                                        schema = @Schema(implementation = Hearings.class))),
                 @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
             })
     public Hearings getHearingsByCaseRefNo(
