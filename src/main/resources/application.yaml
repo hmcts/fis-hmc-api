@@ -27,7 +27,7 @@ feign:
 #If you use a database then uncomment below lines and update db properties accordingly
 spring:
   config:
-    import: "configtree:/mnt/secrets/fis-kv/"
+    import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
     name: Fis Hmc API
   main:
@@ -54,6 +54,10 @@ idam:
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
+
+hearing_component:
+  api:
+    url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
