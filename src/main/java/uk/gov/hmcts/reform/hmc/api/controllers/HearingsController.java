@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,7 +64,7 @@ public class HearingsController {
                 @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content)
             })
     public Hearings getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
 
