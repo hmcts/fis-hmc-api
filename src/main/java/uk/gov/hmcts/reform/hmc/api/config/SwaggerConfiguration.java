@@ -17,26 +17,19 @@ public class SwaggerConfiguration implements WebMvcConfigurer {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-            .useDefaultResponseMessages(false)
-            .select()
-            .apis(
-                RequestHandlerSelectors.basePackage(
-                    Application.class.getPackage().getName() + ".endpoints"))
-            .paths(PathSelectors.any())
-            .build();
+                .useDefaultResponseMessages(false)
+                .select()
+                .apis(
+                        RequestHandlerSelectors.basePackage(
+                                Application.class.getPackage().getName() + ".endpoints"))
+                .paths(PathSelectors.any())
+                .build();
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/swagger-ui/**")
-            .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
-            .resourceChain(false);
+                .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/")
+                .resourceChain(false);
     }
 }
-
-
-
-
-
-
-
