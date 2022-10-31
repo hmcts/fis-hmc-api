@@ -22,4 +22,5 @@ java:
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-{{ .Values.global.environment }}'
     HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
     APPLICATION_NAME: 'fis_hmc_api'
+    HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/hearings/'
 
