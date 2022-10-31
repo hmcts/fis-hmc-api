@@ -5,41 +5,51 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
 import uk.gov.hmcts.reform.hmc.api.model.response.*;
-import uk.gov.hmcts.reform.hmc.api.restclient.HmcHearingApi;
+
 import uk.gov.hmcts.reform.hmc.api.restclient.ServiceAuthorisationTokenApi;
 
 import java.util.Arrays;
 
 @Service
-@RequiredArgsConstructor
+
 public class HearingsServiceImpl implements HearingsService{
     @Value("${idam.s2s-auth.microservice}")
     private String microserviceName;
 
+//    @Autowired
+//    ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
+
+    @Autowired
+    CaseApiService caseApiService;
+
+    AuthTokenGenerator authTokenGenerator;
+
     public static final String HEARING_SUB_CHANNEL = "HearingSubChannel";
     public static final String CASE_URL = " https://manage-case.demo.platform.hmcts.net/cases/case-details/";
-    private final HmcHearingApi hmcHearingApi;
-    private final ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
-    private final CaseApiService caseApiService;
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     public Hearings getCaseData(HearingsRequest hearingsRequest, String authorisation)
         throws JsonProcessingException {
         String microserviceName = "fis_hmc_api";
-        String serviceToken =
-            serviceAuthorisationTokenApi.serviceToken(
-                MicroserviceInfo.builder().microservice(microserviceName.trim()).build());
+//        String serviceToken =
+//            serviceAuthorisationTokenApi.serviceToken(
+//                MicroserviceInfo.builder().microservice(microserviceName.trim()).build());
+
+        String serviceAuthToken = authTokenGenerator.generate();
+
         System.out.println("microserviceName:" + microserviceName);
-        System.out.println("serviceToken:" + serviceToken);
+//        System.out.println("serviceToken:" + serviceToken);
         System.out.print("auth token : " + authorisation);
         CaseDetails caseDetails = caseApiService.getCaseDetails(
-            hearingsRequest.getCaseReference(), authorisation, serviceToken);
+            hearingsRequest.getCaseReference(), authorisation, serviceAuthToken);
 
 //        log.info("caseTypeOfApplication: {}" , caseDetails.getData().get("caseTypeOfApplication"));
 //        log.info("get data details : {} " , caseDetails.getData().get("applicantCaseName"));

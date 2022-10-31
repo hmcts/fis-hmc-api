@@ -6,14 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
@@ -28,19 +25,22 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class HearingsServiceTest {
 
     @InjectMocks
-    HearingsServiceImpl hearingservice ;
+    private HearingsServiceImpl hearingservice ;
 
     @Mock
-    CaseApiService caseApiService;
+    private CaseApiService caseApiService;
 
-    @MockBean
-    ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
+
+    @Mock
+    private ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
 
     @Test
     public void shouldReturnHearingDetailsTest() throws JsonProcessingException {
@@ -61,13 +61,15 @@ class HearingsServiceTest {
 
         Map<String,Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName","PrivateLaw");
+        caseDataMap.put("caseTypeOfApplication","FL401");
 
         CaseDetails caseDetails = CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap)
             .build();
         String microservice = "zzxy";
         MicroserviceInfo microserviceName = MicroserviceInfo.builder().microservice(microservice).build();
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+//        when(serviceAuthorisationTokenApi.serviceToken(microserviceName)).thenReturn("12321");
         when(caseApiService.getCaseDetails(anyString(),anyString(),anyString())).thenReturn(caseDetails);
-        when(serviceAuthorisationTokenApi.serviceToken(microserviceName)).thenReturn("12321");
         Hearings hearingsResponse = hearingservice.getCaseData(hearingsRequest, authorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
