@@ -57,7 +57,7 @@ core_case_data:
 
 hearing_component:
   api:
-    url: ${HMC_CFT_HEARING_BASEURL:https://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
+    url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
