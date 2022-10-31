@@ -48,6 +48,7 @@ public class HearingsServiceImpl implements HearingsService {
         } catch (Exception e) {
             log.info("Fetch hearings call exception {}", e.getMessage());
         }
+        log.info("Fetch hearings call completed successfully {} finalll", caseHearingsResponse);
         return caseHearingsResponse.getBody();
     }
 
