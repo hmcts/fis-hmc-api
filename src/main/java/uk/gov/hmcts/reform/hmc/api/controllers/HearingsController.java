@@ -49,8 +49,8 @@ public class HearingsController {
         return ResponseEntity.ok(hearingsService1.getRefData(hearingsRequest, authorisation));
     }
 
-    @GetMapping(path = "/hearings", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
-    @Operation(description = "get hearings by caseRefNo")
+    @GetMapping(path = "/hearings", produces = APPLICATION_JSON)
+    @Operation(description = "get hearings by case reference number")
     @ApiResponses(
             value = {
                 @ApiResponse(
