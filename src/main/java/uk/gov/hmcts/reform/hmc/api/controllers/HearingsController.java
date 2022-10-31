@@ -51,7 +51,7 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public Hearings getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader("Authorisation") String authorization,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
 
