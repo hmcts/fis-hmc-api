@@ -47,7 +47,7 @@ public class HearingsController {
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(
             value = {
-                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfullyy"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public Hearings getHearingsByCaseRefNo(
