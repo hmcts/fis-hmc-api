@@ -5,5 +5,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 public interface CaseApiService {
 
-    CaseDetails getCaseDetails(String caseId, String authorization, String serviceToken) throws JsonProcessingException;
+    CaseDetails getCaseDetails(String caseId, String authorization, String serviceToken)
+            throws JsonProcessingException;
 }

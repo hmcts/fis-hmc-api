@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
-import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -26,44 +24,43 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @RestController
 @Api(value = "/", description = "Standard API")
 public class HearingsController {
-    @Autowired
-    private HearingsDataService hearingsDataService;
+    @Autowired private HearingsDataService hearingsDataService;
 
-    @Autowired
-    private HearingsService hearingsService;
-
+    @Autowired private HearingsService hearingsService;
 
     @GetMapping(path = "/hearingsdata")
     @ApiOperation("get hearings data")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 200, message = "get hearings data successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(code = 200, message = "get hearings data successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<HearingsData> getHearingsData(
-        @RequestHeader("Authorization") String authorisation,
-        @RequestHeader("caseReference") String caseReferenceRequest,
-        @RequestHeader("hearingId") String hearingIdRequest)
-        throws JsonProcessingException {
-        HearingsRequest hearingsRequest =  HearingsRequest.hearingRequestWith()
-            .caseReference(caseReferenceRequest).hearingId(hearingIdRequest).build();
+            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("caseReference") String caseReferenceRequest,
+            @RequestHeader("hearingId") String hearingIdRequest)
+            throws JsonProcessingException {
+        HearingsRequest hearingsRequest =
+                HearingsRequest.hearingRequestWith()
+                        .caseReference(caseReferenceRequest)
+                        .hearingId(hearingIdRequest)
+                        .build();
         return ResponseEntity.ok(hearingsDataService.getCaseData(hearingsRequest, authorisation));
-
     }
 
     @GetMapping(path = "/hearings")
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public Hearings getHearingsByCaseRefNo(
-        @RequestHeader("Authorisation") String authorization,
-        @RequestHeader("ServiceAuthorization") String serviceAuthorization,
-        @RequestHeader("caseReference") String caseReference) {
+            @RequestHeader("Authorisation") String authorization,
+            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
 
         return hearingsService.getHearingsByCaseRefNo(
-            authorization, serviceAuthorization, caseReference);
+                authorization, serviceAuthorization, caseReference);
     }
 }

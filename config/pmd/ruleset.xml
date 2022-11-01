@@ -10,6 +10,7 @@
     <exclude name="GuardLogStatement"/>
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="JUnit5TestShouldBePackagePrivate"/>
   </rule>
   <exclude-pattern>.*/config/.*</exclude-pattern>
 
@@ -70,5 +71,10 @@
   </rule>
   <rule ref="category/java/performance.xml"/>
   <rule ref="category/java/security.xml"/>
+  <rule ref="category/java/design.xml/TooManyFields">
+    <properties>
+      <property name="maxfields" value="50" />
+    </properties>
+  </rule>
 
 </ruleset>

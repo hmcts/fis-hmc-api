@@ -11,11 +11,9 @@ import lombok.Setter;
 @Builder(builderMethodName = "hearingLocationWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class HearingLocation {
 
     private String locationType;
 
-    private String  locationId;
-
+    private String locationId;
 }

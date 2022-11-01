@@ -11,7 +11,6 @@ import lombok.Setter;
 @Builder(builderMethodName = "hearingWindowWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class HearingWindow {
 
     private String dateRangeStart;
@@ -19,6 +18,4 @@ public class HearingWindow {
     private String dateRangeEnd;
 
     private String firstDateTimeMustBe;
-
 }
-

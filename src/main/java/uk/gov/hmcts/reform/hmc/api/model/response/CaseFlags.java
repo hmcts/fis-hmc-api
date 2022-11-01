@@ -11,16 +11,11 @@ import lombok.Setter;
 @Builder(builderMethodName = "judiciaryWith")
 @NoArgsConstructor
 @AllArgsConstructor
+public class CaseFlags {
 
-public class CaseFlags  {
+    private PartyFlags flags;
 
-    private PartyFlags  flags;
-
-    private String flagAmendURL;
+    private String flagAmendUrl;
 
     private String categoryParent;
-
 }
-
-
-

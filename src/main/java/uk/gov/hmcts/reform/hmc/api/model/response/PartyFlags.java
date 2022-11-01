@@ -11,13 +11,7 @@ import lombok.Setter;
 @Builder(builderMethodName = "vocabularyWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class PartyFlags {
 
-    private String PartyFlags;
-
+    private String flagDetails;
 }
-
-
-
-

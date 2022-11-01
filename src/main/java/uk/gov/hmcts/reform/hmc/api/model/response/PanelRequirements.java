@@ -1,4 +1,3 @@
-
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
 import lombok.AllArgsConstructor;
@@ -12,11 +11,7 @@ import lombok.Setter;
 @Builder(builderMethodName = "panelRequirementsWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class PanelRequirements {
 
-    private String panelRequirements;
-
+    private String requirementDetails;
 }
-
-

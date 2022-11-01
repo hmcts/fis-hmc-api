@@ -1,4 +1,3 @@
-
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import lombok.Setter;
 @Builder(builderMethodName = "judiciaryWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Judiciary {
 
     private String categoryType;
@@ -20,8 +18,4 @@ public class Judiciary {
     private String categoryValue;
 
     private String categoryParent;
-
 }
-
-
-

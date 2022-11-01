@@ -11,7 +11,6 @@ import lombok.Setter;
 @Builder(builderMethodName = "partyDetailsWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class PartyDetails {
 
     private String categoryType;
@@ -19,8 +18,4 @@ public class PartyDetails {
     private String categoryValue;
 
     private String categoryParent;
-
 }
-
-
-

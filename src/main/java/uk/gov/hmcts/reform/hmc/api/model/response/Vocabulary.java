@@ -11,7 +11,6 @@ import lombok.Setter;
 @Builder(builderMethodName = "vocabularyWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Vocabulary {
 
     private String categoryType;
@@ -19,8 +18,4 @@ public class Vocabulary {
     private String categoryValue;
 
     private String categoryParent;
-
 }
-
-
-

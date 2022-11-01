@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import lombok.Setter;
 @Builder(builderMethodName = "hearingsDataWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HearingsData  {
+public class HearingsData {
 
     private String hmctsServiceID;
 
@@ -72,11 +71,10 @@ public class HearingsData  {
     private PartyDetails parties;
 
     private CaseFlags caseFlags;
+
     private ScreenNavigation screenFlow;
 
     private Vocabulary vocabulary;
 
     private List<String> hearingChannels;
-
-
-    }
+}

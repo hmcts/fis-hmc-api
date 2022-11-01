@@ -11,7 +11,6 @@ import lombok.Setter;
 @Builder(builderMethodName = "screenNavigationWith")
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class ScreenNavigation {
 
     private String categoryType;
@@ -19,8 +18,4 @@ public class ScreenNavigation {
     private String categoryValue;
 
     private String categoryParent;
-
 }
-
-
-
