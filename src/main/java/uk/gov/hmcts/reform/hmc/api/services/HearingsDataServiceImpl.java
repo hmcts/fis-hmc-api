@@ -2,6 +2,8 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
+
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +22,9 @@ import uk.gov.hmcts.reform.hmc.api.model.response.ScreenNavigation;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 
 @Service
+@RequiredArgsConstructor
 public class HearingsDataServiceImpl implements HearingsDataService {
-    @Value("${idam.s2s-auth.microservice}")
+
     CaseApiService caseApiService;
 
     AuthTokenGenerator authTokenGenerator;
