@@ -1,48 +1,201 @@
 #!groovy
-properties(
-  [
-    [
-      $class       : 'GithubProjectProperty',
-      projectUrlStr: 'https://github.com/hmcts/fis-hmc-api'
-    ],
-    pipelineTriggers([[$class: 'GitHubPushTrigger']])
-  ]
-)
 
 @Library("Infrastructure")
+
+import uk.gov.hmcts.contino.AppPipelineDsl
+import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.AppPipelineConfig
 
 def type = "java"
 def product = "fis"
 def component = "hmc-api"
+def branchesToSync = ['demo']
 
-def branchesToSync = ['demo', 'ithc', 'perftest']
+GradleBuilder builder = new GradleBuilder(this, product)
 
-def vaultOverrides = [
-  'preview': 'aat',
-  'hmctsdemo': 'aat',
-]
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   envVariable: envVariable
+  ]
+}
 
 def secrets = [
-  'fis-kv-${env}': [
+  'fis-kv-${env}'    :[
     secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
     secret('hmc-fis-servicebus-connection-string','HMC_FIS_SERVICEBUS_CONNECTION_STRING')
   ]
 ]
 
-static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
-  [ $class: 'AzureKeyVaultSecret',
-    secretType: 'Secret',
-    name: secretName,
-    version: '',
-    envVariable: envVar
-  ]
-}
+def pipelineConf = new AppPipelineConfig()
+pipelineConf.vaultSecrets = secrets
+
+def vaultOverrides = [
+  'preview': 'aat',
+  'prod': 'aat',
+]
 
 withPipeline(type, product, component) {
   enableAksStagingDeployment()
+  disableLegacyDeployment()
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
-  disableLegacyDeploymentOnAAT()
-  disableLegacyDeployment()
-  syncBranchesWithMaster(branchesToSync)
+  syncBranchesWithMaster(['demo', 'ithc', 'perftest'])
+  enableSlackNotifications('#family-integration-devsch') //?
+
+  after('test') {
+    builder.gradle('integration')
+    builder.gradle('jacocoTestReport')
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "main.html",
+      reportName           : "Checkstyle Main Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "test.html",
+      reportName           : "Checkstyle Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "functionalTest.html",
+      reportName           : "Checkstyle Functional Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/checkstyle",
+      reportFiles          : "integrationTest.html",
+      reportName           : "Checkstyle Integration Test Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/test",
+      reportFiles          : "index.html",
+      reportName           : "Unit Tests Report"
+    ]
+  }
+
+  after('functionalTest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "target/site/serenity/",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+
+    dir("${WORKSPACE}") {
+      steps.archiveArtifacts artifacts: "**/*"
+    }
+  }
+
+  after('functionalTest:aat') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/functional",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "target/site/serenity/",
+      reportFiles          : "index.html",
+      reportName           : "Functional Tests Report"
+    ]
+
+    dir("${WORKSPACE}") {
+      steps.archiveArtifacts artifacts: "**/*"
+    }
+  }
+
+  after('smokeTest:preview') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
+
+  after('smokeTest:aat') {
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/smoke",
+      reportFiles          : "index.html",
+      reportName           : "Smoke Test Report"
+    ]
+  }
+
+
+  onPR {
+    env.ENVIRONMENT = "preview"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    setCommonEnvVariables()
+  }
+
+  onMaster {
+    env.ENVIRONMENT = "aat"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-aat.service.core-compute-aat.internal"
+    setCommonEnvVariables()
+  }
+
+  onDemo {
+    env.ENVIRONMENT = "demo"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-demo.service.core-compute-demo.internal"
+  }
+
+  onPerftest {
+    env.ENVIRONMENT = "perftest"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-perftest.service.core-compute-perftest.internal"
+  }
+
+  onIthc {
+    env.ENVIRONMENT = "ithc"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-ithc.service.core-compute-ithc.internal"
+  }
+
+}
+
+def setCommonEnvVariables() {
+  env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+  env.IDAM_API_BASEURL = "https://idam-api.aat.platform.hmcts.net"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
 }

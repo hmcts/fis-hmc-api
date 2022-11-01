@@ -32,7 +32,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     public static final String CASE_URL = " https://manage-case.demo.platform.hmcts.net/cases/case-details/";
     private static Logger log = LoggerFactory.getLogger(HearingsDataServiceImpl.class);
 
-    public Hearings getCaseData(HearingsRequest hearingsRequest, String authorisation)
+    public HearingsData getCaseData(HearingsRequest hearingsRequest, String authorisation)
         throws JsonProcessingException {
         String microserviceName = "fis_hmc_api";
 //        String serviceToken =
@@ -63,7 +63,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             publicCaseNameMapper = "NA";
         }
 
-        Hearings hearings = Hearings.hearingsWith()
+        HearingsData hearingsData = HearingsData.hearingsDataWith()
             .hmctsServiceID("BBA3")
             .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
             .publicCaseName(publicCaseNameMapper)
@@ -103,7 +103,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             .vocabulary(Vocabulary.vocabularyWith().build())
             .hearingChannels(Arrays.asList("NA"))
             .build();
-        return hearings;
+        return hearingsData;
 
     }
 }
