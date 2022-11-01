@@ -2,11 +2,9 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
-
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
