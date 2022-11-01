@@ -205,7 +205,7 @@ project.tasks['check'].dependsOn integration
 def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/config/**',
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
-  '**/uk/gov/hmcts/reform/hmc/api/controllers',
+  '**/uk/gov/hmcts/reform/hmc/api/controllers/**',
   '**/uk/gov/hmcts/reform/hmc/api/services/**'
 ]
 
