@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
 @RestController
 public class HearingsController {
-    @Autowired private HearingsService hearingsService;
+    @Autowired private HearingsDataService hearingsDataService;
 
     @GetMapping(path = "/hearingsdata", consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Operation(description = "get hearings data")
@@ -46,6 +46,6 @@ public class HearingsController {
             throws JsonProcessingException {
             HearingsRequest hearingsRequest =  HearingsRequest.hearingRequestWith()
             .caseReference(caseReferenceRequest).hearingId(hearingIdRequest).build();
-        return ResponseEntity.ok(hearingsService.getCaseData(hearingsRequest, authorisation));
+        return ResponseEntity.ok(hearingsDataService.getCaseData(hearingsRequest, authorisation));
     }
 }

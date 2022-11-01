@@ -16,14 +16,14 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class HearingsControllerTest {
     @Mock
-    private HearingsService hearingsService;
+    private HearingsDataService hearingsDataService;
 
     @InjectMocks
     private HearingsController hearingsController;

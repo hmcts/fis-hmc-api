@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +10,13 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
-import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
 import uk.gov.hmcts.reform.hmc.api.model.response.*;
-
-import uk.gov.hmcts.reform.hmc.api.restclient.ServiceAuthorisationTokenApi;
 
 import java.util.Arrays;
 
 @Service
 
-public class HearingsServiceImpl implements HearingsService{
+public class HearingsDataServiceImpl implements HearingsDataService {
     @Value("${idam.s2s-auth.microservice}")
     private String microserviceName;
 
@@ -34,7 +30,7 @@ public class HearingsServiceImpl implements HearingsService{
 
     public static final String HEARING_SUB_CHANNEL = "HearingSubChannel";
     public static final String CASE_URL = " https://manage-case.demo.platform.hmcts.net/cases/case-details/";
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+    private static Logger log = LoggerFactory.getLogger(HearingsDataServiceImpl.class);
 
     public Hearings getCaseData(HearingsRequest hearingsRequest, String authorisation)
         throws JsonProcessingException {
