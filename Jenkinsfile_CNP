@@ -167,29 +167,29 @@ withPipeline(type, product, component) {
 
   onPR {
     env.ENVIRONMENT = "preview"
-    env.CASE_API_URL = "http://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     setCommonEnvVariables()
   }
 
   onMaster {
     env.ENVIRONMENT = "aat"
-    env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.internal"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-aat.service.core-compute-aat.internal"
     setCommonEnvVariables()
   }
 
   onDemo {
     env.ENVIRONMENT = "demo"
-    env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-demo.service.core-compute-demo.internal"
   }
 
   onPerftest {
     env.ENVIRONMENT = "perftest"
-    env.CASE_API_URL = "http://fis-hmc-api-perftest.service.core-compute-perftest.internal"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-perftest.service.core-compute-perftest.internal"
   }
 
   onIthc {
     env.ENVIRONMENT = "ithc"
-    env.CASE_API_URL = "http://fis-hmc-api-ithc.service.core-compute-ithc.internal"
+    env.CASE_API_URL = "http://privatelaw-hearings-api-ithc.service.core-compute-ithc.internal"
   }
 
 }
