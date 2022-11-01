@@ -26,7 +26,7 @@ class HearingCftServiceTest {
     void shouldReturnCtfHearingsTest() {
 
         Hearings caseHearings =
-                Hearings.caseHearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
+                Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         ResponseEntity<Hearings> response = ResponseEntity.ok(caseHearings);
         Mockito.when(
                         restTemplate.exchange(

@@ -29,7 +29,7 @@ spring:
   config:
     import: "optional:configtree:/mnt/secrets/fis-kv/"
   application:
-    name: Fis Hmc API
+    name: fis-hmc-api
   main:
     allow-bean-definition-overriding: true
   mvc:
@@ -42,13 +42,13 @@ spring:
 
 hearing:
   api:
-    url: ${HEARING_API_URL:http://rd-commondata-api-aat.service.core-compute-aat.internal}
+    url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
 idam:
   s2s-auth:
     url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     secret: ${S2S_SECRET:Y6OORUQWPMUEM3QH}
-    microservice: fis_hmc_api
+    microservice: xui_webapp
   api:
     url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
 core_case_data:

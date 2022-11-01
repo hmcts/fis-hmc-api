@@ -1,35 +1,32 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
-import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
-import uk.gov.hmcts.reform.hmc.api.model.response.Category;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService1;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 class HearingsControllerTest {
-    @Mock private HearingsService1 hearingsService;
-    @Mock private HearingsService hearingsServiceTest;
 
     @InjectMocks private HearingsController hearingsController;
+
+    @Mock private HearingsDataService hearingsDataService;
 
     @BeforeEach
     void setUp() {
@@ -37,28 +34,25 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsDataTest() throws JsonProcessingException {
-        Categories categories = new Categories();
-        List<Category> categoryList = new ArrayList<>();
-        Category category = new Category();
-        categoryList.add(category);
-        categories.setListOfCategory(categoryList);
-        when(hearingsService.getRefData(HearingsRequest.builder().build(), "authorisation"))
-                .thenReturn(categories);
-        ResponseEntity<Categories> hearingsData =
-                hearingsController.getHearingsData("authorisation", new HearingsRequest());
-        Categories categoryListActual = hearingsData.getBody();
-        Assertions.assertEquals(1, categoryListActual.getListOfCategory().size());
-    }
+    public void hearingsDataTest() throws JsonProcessingException {
 
-    @Test
-    void shouldReturnHearingsTest() {
-        Hearings caseHearingsData =
-                Hearings.caseHearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
-        when(hearingsServiceTest.getHearingsByCaseRefNo(anyString(), anyString(), anyString()))
-                .thenReturn(caseHearingsData);
-        Hearings caseHearings =
-                hearingsController.getHearingsByCaseRefNo("authorisation", "serviceAuth", "123");
-        Assertions.assertEquals("BBA3", caseHearings.getHmctsServiceCode());
+        HearingsData hearingsData =
+                HearingsData.hearingsDataWith()
+                        .hmctsServiceID("BBA3")
+                        .hmctsInternalCaseName("123")
+                        .publicCaseName("John Smith")
+                        .caseAdditionalSecurityFlag(false)
+                        .caseCategories(
+                                CaseCategories.caseCategoriesWith()
+                                        .categoryType("NA")
+                                        .categoryValue("NA")
+                                        .categoryParent("NA")
+                                        .build())
+                        .build();
+
+        Mockito.when(hearingsDataService.getCaseData(any(), anyString())).thenReturn(hearingsData);
+        ResponseEntity<HearingsData> hearingsData1 =
+                hearingsController.getHearingsData("Authorization", "caseReference", "hearingId");
+        Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
 }

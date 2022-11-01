@@ -9,15 +9,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
-import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService1;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -25,9 +24,9 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService1;
 @RestController
 @Api(value = "/", description = "Standard API")
 public class HearingsController {
-    @Autowired private HearingsService hearingsService;
+    @Autowired private HearingsDataService hearingsDataService;
 
-    @Autowired private HearingsService1 hearingsService1;
+    @Autowired private HearingsService hearingsService;
 
     @GetMapping(path = "/hearingsdata")
     @ApiOperation("get hearings data")
@@ -36,11 +35,17 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings data successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<Categories> getHearingsData(
-            @RequestHeader("authorisation") String authorisation,
-            @RequestBody HearingsRequest hearingsRequest)
+    public ResponseEntity<HearingsData> getHearingsData(
+            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("caseReference") String caseReferenceRequest,
+            @RequestHeader("hearingId") String hearingIdRequest)
             throws JsonProcessingException {
-        return ResponseEntity.ok(hearingsService1.getRefData(hearingsRequest, authorisation));
+        HearingsRequest hearingsRequest =
+                HearingsRequest.hearingRequestWith()
+                        .caseReference(caseReferenceRequest)
+                        .hearingId(hearingIdRequest)
+                        .build();
+        return ResponseEntity.ok(hearingsDataService.getCaseData(hearingsRequest, authorisation));
     }
 
     @GetMapping(path = "/hearings")

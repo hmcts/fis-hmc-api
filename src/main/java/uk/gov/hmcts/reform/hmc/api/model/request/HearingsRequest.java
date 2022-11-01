@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder(builderMethodName = "hearingRequestWith")
 @Schema(description = "The response object to hearing management")
-@Builder
 public class HearingsRequest {
 
     @JsonProperty("caseReference")

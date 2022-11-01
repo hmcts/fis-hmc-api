@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
-import java.util.List;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,13 +9,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder(builderMethodName = "hearingsWith")
+@Builder(builderMethodName = "caseDataWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hearings {
-    private String hmctsServiceCode;
+public class CaseData {
 
-    private String caseRef;
+    private String jurisdiction;
 
-    private List<CaseHearing> caseHearings;
+    private String caseType;
+
+    private Date createdOn;
 }
