@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService1;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/", description = "Standard API")
 public class HearingsController {
     @Autowired private HearingsService hearingsService;
 
