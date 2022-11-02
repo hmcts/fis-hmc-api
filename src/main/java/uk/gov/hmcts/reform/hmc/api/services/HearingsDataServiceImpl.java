@@ -5,6 +5,8 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
@@ -23,22 +25,22 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 @RequiredArgsConstructor
 public class HearingsDataServiceImpl implements HearingsDataService {
 
-    CaseApiService caseApiService;
+    @Value("${ccd.ui.url}")
+    private String ccdBaseUrl;
+
+    @Autowired CaseApiService caseApiService;
 
     AuthTokenGenerator authTokenGenerator;
 
-    public static final String HEARING_SUB_CHANNEL = "HearingSubChannel";
-    public static final String CASE_URL =
-            " https://manage-case.demo.platform.hmcts.net/cases/case-details/";
     private static Logger log = LoggerFactory.getLogger(HearingsDataServiceImpl.class);
 
     @Override
-    public HearingsData getCaseData(HearingsRequest hearingsRequest, String authorisation)
+    public HearingsData getCaseData(
+            HearingsRequest hearingsRequest, String authorisation, String serviceAuthorization)
             throws JsonProcessingException {
-        String serviceAuthToken = authTokenGenerator.generate();
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
-                        hearingsRequest.getCaseReference(), authorisation, serviceAuthToken);
+                        hearingsRequest.getCaseReference(), authorisation, serviceAuthorization);
         String hmctsInternalCaseNameMapper =
                 hearingsRequest.getCaseReference()
                         + "_"
@@ -61,48 +63,48 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseAdditionalSecurityFlag(false)
                         .caseCategories(
                                 CaseCategories.caseCategoriesWith()
-                                        .categoryType("NA")
-                                        .categoryValue("NA")
-                                        .categoryParent("NA")
+                                        .categoryType("")
+                                        .categoryValue("")
+                                        .categoryParent("")
                                         .build())
-                        .caseDeepLink(CASE_URL + hearingsRequest.getCaseReference())
+                        .caseDeepLink(ccdBaseUrl + hearingsRequest.getCaseReference())
                         .caseRestrictedFlag(false)
-                        .externalCaseReference("NA")
-                        .caseManagementLocationCode("NA")
-                        .caseSlaStartDate("NA")
+                        .externalCaseReference("")
+                        .caseManagementLocationCode("")
+                        .caseSlaStartDate("")
                         .autoListFlag(false)
-                        .hearingType("NA")
+                        .hearingType("")
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
-                                        .dateRangeStart("NA")
-                                        .dateRangeEnd("NA")
-                                        .firstDateTimeMustBe("NA")
+                                        .dateRangeStart("")
+                                        .dateRangeEnd("")
+                                        .firstDateTimeMustBe("")
                                         .build())
                         .duration(60)
-                        .hearingPriorityType("NA")
+                        .hearingPriorityType("")
                         .numberOfPhysicalAttendees(0)
                         .hearingInWelshFlag(false)
                         .hearingLocations(
                                 HearingLocation.hearingLocationWith()
-                                        .locationId("NA")
-                                        .locationId("NA")
+                                        .locationId("")
+                                        .locationId("")
                                         .build())
-                        .facilitiesRequired(Arrays.asList("NA"))
-                        .listingComments("NA")
-                        .hearingRequester("NA")
+                        .facilitiesRequired(Arrays.asList(""))
+                        .listingComments("")
+                        .hearingRequester("")
                         .privateHearingRequiredFlag(false)
                         .caseInterpreterRequiredFlag(false)
                         .panelRequirements(
                                 PanelRequirements.panelRequirementsWith()
-                                        .requirementDetails("NA")
+                                        .requirementDetails("")
                                         .build())
-                        .leadJudgeContractType("NA")
+                        .leadJudgeContractType("")
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(false)
                         .parties(PartyDetails.partyDetailsWith().build())
                         .screenFlow(ScreenNavigation.screenNavigationWith().build())
                         .vocabulary(Vocabulary.vocabularyWith().build())
-                        .hearingChannels(Arrays.asList("NA"))
+                        .hearingChannels(Arrays.asList(""))
                         .build();
         log.info("hearingsData {}", hearingsData);
         return hearingsData;

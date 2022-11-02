@@ -40,9 +40,11 @@ class HearingsDataServiceTest {
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
         String authorisation = "xyz";
+        String serviceAuthorisation = "xyz";
         HearingsRequest hearingsRequest =
                 HearingsRequest.hearingRequestWith().hearingId("123").caseReference("123").build();
-        HearingsData hearingsResponse = hearingservice.getCaseData(hearingsRequest, authorisation);
+        HearingsData hearingsResponse =
+                hearingservice.getCaseData(hearingsRequest, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
 }

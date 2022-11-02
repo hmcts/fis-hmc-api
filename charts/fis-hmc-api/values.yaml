@@ -24,3 +24,4 @@ java:
     APPLICATION_NAME: 'fis_hmc_api'
     HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/hearings/'
     CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    CCD_UI_URL: 'https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/'
