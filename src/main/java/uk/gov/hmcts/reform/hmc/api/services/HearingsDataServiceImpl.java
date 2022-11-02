@@ -5,6 +5,7 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -27,7 +28,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
-    CaseApiService caseApiService;
+    @Autowired CaseApiService caseApiService;
 
     AuthTokenGenerator authTokenGenerator;
 
