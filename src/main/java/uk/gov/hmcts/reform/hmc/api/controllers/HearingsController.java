@@ -37,6 +37,7 @@ public class HearingsController {
             })
     public ResponseEntity<HearingsData> getHearingsData(
             @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReferenceRequest,
             @RequestHeader("hearingId") String hearingIdRequest)
             throws JsonProcessingException {
@@ -45,7 +46,9 @@ public class HearingsController {
                         .caseReference(caseReferenceRequest)
                         .hearingId(hearingIdRequest)
                         .build();
-        return ResponseEntity.ok(hearingsDataService.getCaseData(hearingsRequest, authorisation));
+        return ResponseEntity.ok(
+                hearingsDataService.getCaseData(
+                        hearingsRequest, authorisation, serviceAuthorization));
     }
 
     @GetMapping(path = "/hearings")

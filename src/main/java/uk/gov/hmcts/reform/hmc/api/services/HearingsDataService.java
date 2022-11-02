@@ -8,6 +8,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 @Service
 public interface HearingsDataService {
 
-    HearingsData getCaseData(HearingsRequest hearingsRequest, String authorisation)
+    HearingsData getCaseData(
+            HearingsRequest hearingsRequest, String authorisation, String serviceAuthorization)
             throws JsonProcessingException;
 }

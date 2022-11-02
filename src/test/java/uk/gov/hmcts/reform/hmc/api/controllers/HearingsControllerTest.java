@@ -50,9 +50,10 @@ class HearingsControllerTest {
                                         .build())
                         .build();
 
-        Mockito.when(hearingsDataService.getCaseData(any(), anyString())).thenReturn(hearingsData);
+        Mockito.when(hearingsDataService.getCaseData(any(), anyString(), anyString()))
+                .thenReturn(hearingsData);
         ResponseEntity<HearingsData> hearingsData1 =
-                hearingsController.getHearingsData("Authorization", "caseReference", "hearingId");
+                hearingsController.getHearingsData("Auth", "sauth", "caseRef", "hId");
         Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
 }
