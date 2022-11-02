@@ -1,11 +1,12 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +41,7 @@ public class HearingsController {
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReferenceRequest,
             @RequestHeader("hearingId") String hearingIdRequest)
-            throws JsonProcessingException {
+            throws IOException, ParseException {
         HearingsRequest hearingsRequest =
                 HearingsRequest.hearingRequestWith()
                         .caseReference(caseReferenceRequest)
@@ -62,7 +63,6 @@ public class HearingsController {
             @RequestHeader("Authorisation") String authorization,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
-
         return hearingsService.getHearingsByCaseRefNo(
                 authorization, serviceAuthorization, caseReference);
     }
