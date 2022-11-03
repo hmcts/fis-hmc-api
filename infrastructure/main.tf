@@ -35,7 +35,7 @@ resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
   sql_filter      = "hmctsServiceCode = 'BBA3'"
 }
 
-module "servicebus_topic_subscription" {
+module "servicebus_topic_subscription_new" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
   name                  = local.subscription_name_new
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
