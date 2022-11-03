@@ -4,6 +4,7 @@ provider "azurerm" {
 
 locals {
   subscription_name = "hmc-fis-subscription-${var.env}"
+  subscription_name_new = "hmc-fis-subs-prl-${var.env}"
   s2s_rg_prefix               = "rpe-service-auth-provider"
   s2s_key_vault_name          = var.env == "preview" || var.env == "spreview" ? join("-", ["s2s", "aat"]) : join("-", ["s2s", var.env])
   s2s_vault_resource_group    = var.env == "preview" || var.env == "spreview" ? join("-", [local.s2s_rg_prefix, "aat"]) : join("-", [local.s2s_rg_prefix, var.env])
@@ -22,6 +23,21 @@ data "azurerm_key_vault" "fis_kv_key_vault" {
 module "servicebus_topic_subscription" {
   source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
   name                  = local.subscription_name
+  namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
+  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  topic_name            = join("-", ["hmc-to-cft", var.env])
+}
+
+resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
+  name            = "hmc_to_fis_subscription_rule"
+  subscription_id = module.servicebus_topic_subscription.id
+  filter_type     = "SqlFilter"
+  sql_filter      = "hmctsServiceCode = 'BBA3'"
+}
+
+module "servicebus_topic_subscription" {
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
+  name                  = local.subscription_name_new
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
   resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
   topic_name            = join("-", ["hmc-to-cft", var.env])
