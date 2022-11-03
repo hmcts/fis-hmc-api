@@ -1,8 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
+import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
@@ -18,6 +20,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.ScreenNavigation;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 
@@ -37,23 +40,34 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Override
     public HearingsData getCaseData(
             HearingsRequest hearingsRequest, String authorisation, String serviceAuthorization)
-            throws JsonProcessingException {
+            throws IOException, ParseException {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingsRequest.getCaseReference(), authorisation, serviceAuthorization);
+
+        String publicCaseNameMapper;
+        if ("FL401".equals(caseDetails.getData().get("caseTypeOfApplication"))) {
+            ApplicantTable applicantTable =
+                    (ApplicantTable) caseDetails.getData().get("fl401ApplicantTable");
+            RespondentTable respondentTable =
+                    (RespondentTable) caseDetails.getData().get("fl401RespondentTable");
+            if (applicantTable != null && respondentTable != null) {
+                publicCaseNameMapper =
+                        applicantTable.getLastName() + '_' + respondentTable.getLastName();
+            } else {
+                publicCaseNameMapper = "";
+            }
+        } else if ("C100".equals(caseDetails.getData().get("caseTypeOfApplication"))) {
+            publicCaseNameMapper = "Re-Minor";
+        } else {
+            publicCaseNameMapper = "";
+        }
+
         String hmctsInternalCaseNameMapper =
                 hearingsRequest.getCaseReference()
                         + "_"
                         + caseDetails.getData().get("applicantCaseName");
-
-        String publicCaseNameMapper;
-        if ("FL401".equals(caseDetails.getData().get("caseTypeOfApplication"))) {
-            publicCaseNameMapper = "Re-Minor";
-        } else if ("C100".equals(caseDetails.getData().get("caseTypeOfApplication"))) {
-            publicCaseNameMapper = "Re-Minor";
-        } else {
-            publicCaseNameMapper = "NA";
-        }
+        String caseSlaStartDateMapper = (String) caseDetails.getData().get("issueDate");
 
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
@@ -71,7 +85,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseRestrictedFlag(false)
                         .externalCaseReference("")
                         .caseManagementLocationCode("")
-                        .caseSlaStartDate("")
+                        .caseSlaStartDate(caseSlaStartDateMapper)
                         .autoListFlag(false)
                         .hearingType("")
                         .hearingWindow(

@@ -23,6 +23,17 @@
     <exclude name="TooManyStaticImports"/>
     <exclude name="DefaultPackage"/>
     <exclude name="CommentDefaultAccessModifier"/>
+    <exclude name="ConfusingTernary"/>
+  </rule>
+
+  <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
+    <properties>
+      <property name="separator" value="," />
+      <property name="maxDuplicateLiterals" value="40" />
+      <property name="minimumLength" value="4" />
+      <property name="skipAnnotations" value="false" />
+      <property name="exceptionList" value="" />
+    </properties>
   </rule>
   <rule ref="category/java/codestyle.xml/ClassNamingConventions">
     <properties>
@@ -40,6 +51,7 @@
       <property name="minimum" value="2"/>
     </properties>
   </rule>
+
   <rule ref="category/java/design.xml">
     <exclude name="AvoidCatchingGenericException"/>
     <exclude name="UseUtilityClass"/>

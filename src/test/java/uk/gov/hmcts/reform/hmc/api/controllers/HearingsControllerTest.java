@@ -3,7 +3,8 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.io.IOException;
+import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -28,13 +31,15 @@ class HearingsControllerTest {
 
     @Mock private HearingsDataService hearingsDataService;
 
+    @Mock private HearingsService hearingsService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void hearingsDataTest() throws JsonProcessingException {
+    public void hearingsDataControllerTest() throws IOException, ParseException {
 
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
@@ -55,5 +60,15 @@ class HearingsControllerTest {
         ResponseEntity<HearingsData> hearingsData1 =
                 hearingsController.getHearingsData("Auth", "sauth", "caseRef", "hId");
         Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    public void hearingsControllerTest() throws IOException, ParseException {
+        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
+        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString(), anyString()))
+                .thenReturn(hearings);
+        Hearings hearingsResponse =
+                hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
+        Assertions.assertEquals("123", hearingsResponse.getCaseRef());
     }
 }
