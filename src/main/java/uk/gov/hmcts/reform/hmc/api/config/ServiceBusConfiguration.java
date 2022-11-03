@@ -24,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
+import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 
 @Configuration
 public class ServiceBusConfiguration {
@@ -90,7 +90,7 @@ public class ServiceBusConfiguration {
                         ObjectMapper mapper = new ObjectMapper();
                         String message1 =
                                 mapper.writeValueAsString(
-                                        mapper.readValue(body.get(0), HearingsRequest.class));
+                                        mapper.readValue(body.get(0), Hearing.class));
                         log.info(message1);
                         result.set(true);
                         if (result.get()) {
