@@ -23,7 +23,13 @@
    <notes>tomcat-embed-*</notes>
    <cve>CVE-2022-29885</cve>
    <cve>CVE-2022-34305</cve>
+    <cve> CVE-2022-42252</cve>
  </suppress>
+  <suppress>
+    <notes>spring-*</notes>
+    <cve>CVE-2022-31692</cve>
+    <cve>CVE-2022-31690</cve>
+  </suppress>
  <suppress>
     <notes>log4j-*</notes>
     <cve>CVE-2022-33915</cve>
