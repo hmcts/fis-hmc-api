@@ -10,10 +10,12 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -23,13 +25,13 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/", description = "Standard API")
+@Api(value = "/", description = "get hearings Values")
 public class HearingsController {
     @Autowired private HearingsDataService hearingsDataService;
 
     @Autowired private HearingsService hearingsService;
 
-    @GetMapping(path = "/serviceHearingValues")
+    @PostMapping(path = "/serviceHearingValues")
     @ApiOperation("get hearings Values")
     @ApiResponses(
             value = {
@@ -39,17 +41,11 @@ public class HearingsController {
     public ResponseEntity<HearingsData> getHearingsData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
-            @RequestHeader("caseReference") String caseReferenceRequest,
-            @RequestHeader("hearingId") String hearingIdRequest)
+            @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
-        HearingsRequest hearingsRequest =
-                HearingsRequest.hearingRequestWith()
-                        .caseReference(caseReferenceRequest)
-                        .hearingId(hearingIdRequest)
-                        .build();
         return ResponseEntity.ok(
                 hearingsDataService.getCaseData(
-                        hearingsRequest, authorisation, serviceAuthorization));
+                        hearingValues, authorisation, serviceAuthorization));
     }
 
     @GetMapping(path = "/hearings")

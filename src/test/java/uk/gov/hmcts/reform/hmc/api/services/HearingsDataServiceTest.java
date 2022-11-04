@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingsRequest;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
@@ -51,10 +51,10 @@ class HearingsDataServiceTest {
                 .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
-        HearingsRequest hearingsRequest =
-                HearingsRequest.hearingRequestWith().hearingId("123").caseReference("123").build();
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
-                hearingservice.getCaseData(hearingsRequest, authorisation, serviceAuthorisation);
+                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
 
@@ -72,10 +72,10 @@ class HearingsDataServiceTest {
                 .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
-        HearingsRequest hearingsRequest =
-                HearingsRequest.hearingRequestWith().hearingId("123").caseReference("123").build();
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
-                hearingservice.getCaseData(hearingsRequest, authorisation, serviceAuthorisation);
+                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
 
@@ -93,10 +93,10 @@ class HearingsDataServiceTest {
                 .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
-        HearingsRequest hearingsRequest =
-                HearingsRequest.hearingRequestWith().hearingId("123").caseReference("123").build();
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
-                hearingservice.getCaseData(hearingsRequest, authorisation, serviceAuthorisation);
+                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
 
@@ -114,10 +114,10 @@ class HearingsDataServiceTest {
                 .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
-        HearingsRequest hearingsRequest =
-                HearingsRequest.hearingRequestWith().hearingId("123").caseReference("123").build();
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
-                hearingservice.getCaseData(hearingsRequest, authorisation, serviceAuthorisation);
+                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
     }
 }
