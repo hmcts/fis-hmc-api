@@ -7,7 +7,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
 
 def type = "java"
-def product = "privatelaw"
+def product = "prl"
 def component = "hearings-api"
 def branchesToSync = ['demo']
 
