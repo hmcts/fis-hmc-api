@@ -22,7 +22,7 @@ public class HearingsData {
 
     private Boolean caseAdditionalSecurityFlag;
 
-    private CaseCategories caseCategories;
+    private List<CaseCategories> caseCategories;
 
     private String caseDeepLink;
 
@@ -48,7 +48,7 @@ public class HearingsData {
 
     private Boolean hearingInWelshFlag;
 
-    private HearingLocation hearingLocations;
+    private List<HearingLocation> hearingLocations;
 
     private List<String> facilitiesRequired;
 
@@ -68,13 +68,13 @@ public class HearingsData {
 
     private Boolean hearingIsLinkedFlag;
 
-    private PartyDetails parties;
+    private List<Parties> parties;
 
     private CaseFlags caseFlags;
 
-    private ScreenNavigation screenFlow;
+    private List<ScreenNavigation> screenFlow;
 
-    private Vocabulary vocabulary;
+    private List<Vocabulary> vocabulary;
 
     private List<String> hearingChannels;
 }

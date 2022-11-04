@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "hearingRequestWith")
+@Builder(builderMethodName = "hearingValuesWith")
 @Schema(description = "The response object to hearing management")
-public class HearingsRequest {
+public class HearingValues {
 
     @JsonProperty("caseReference")
     private String caseReference;

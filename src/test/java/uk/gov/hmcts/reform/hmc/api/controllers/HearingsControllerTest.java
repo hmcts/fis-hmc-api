@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -25,6 +25,7 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@SuppressWarnings("unchecked")
 class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
@@ -47,18 +48,16 @@ class HearingsControllerTest {
                         .hmctsInternalCaseName("123")
                         .publicCaseName("John Smith")
                         .caseAdditionalSecurityFlag(false)
-                        .caseCategories(
-                                CaseCategories.caseCategoriesWith()
-                                        .categoryType("NA")
-                                        .categoryValue("NA")
-                                        .categoryParent("NA")
-                                        .build())
                         .build();
 
         Mockito.when(hearingsDataService.getCaseData(any(), anyString(), anyString()))
                 .thenReturn(hearingsData);
+
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
         ResponseEntity<HearingsData> hearingsData1 =
-                hearingsController.getHearingsData("Auth", "sauth", "caseRef", "hId");
+                hearingsController.getHearingsData("Auth", "sauth", hearingValues);
         Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
 
