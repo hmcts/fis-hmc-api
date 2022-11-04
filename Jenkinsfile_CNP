@@ -7,8 +7,8 @@ import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
 
 def type = "java"
-def product = "fis"
-def component = "hmc-api"
+def product = "privatelaw"
+def component = "hearings-api"
 def branchesToSync = ['demo']
 
 GradleBuilder builder = new GradleBuilder(this, product)
