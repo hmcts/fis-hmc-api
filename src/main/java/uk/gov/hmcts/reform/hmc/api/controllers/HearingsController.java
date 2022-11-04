@@ -29,11 +29,11 @@ public class HearingsController {
 
     @Autowired private HearingsService hearingsService;
 
-    @GetMapping(path = "/hearingsdata")
-    @ApiOperation("get hearings data")
+    @GetMapping(path = "/serviceHearingValues")
+    @ApiOperation("get hearings Values")
     @ApiResponses(
             value = {
-                @ApiResponse(code = 200, message = "get hearings data successfully"),
+                @ApiResponse(code = 200, message = "get hearings Values successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<HearingsData> getHearingsData(
