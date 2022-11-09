@@ -90,7 +90,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         CaseCategories.caseCategoriesWith()
                                                 .categoryType("")
                                                 .categoryValue("")
-                                                .categoryParent("")
+                                                .categoryParent("Private Law")
                                                 .build()))
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
                         .caseRestrictedFlag(false)
@@ -112,7 +112,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hearingLocations(
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
-                                                .locationId("")
+                                                .locationType("")
                                                 .locationId("")
                                                 .build()))
                         .facilitiesRequired(Arrays.asList(""))
