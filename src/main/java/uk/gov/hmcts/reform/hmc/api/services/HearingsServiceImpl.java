@@ -19,8 +19,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
-    @Value("${idam.s2s-auth.microservice}")
-    private String microserviceName;
 
     @Value("${hearing_component.api.url}")
     private String basePath;

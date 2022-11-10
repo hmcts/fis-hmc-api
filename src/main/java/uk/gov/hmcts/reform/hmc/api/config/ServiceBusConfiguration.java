@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 
 @Configuration
 public class ServiceBusConfiguration {
@@ -49,6 +50,9 @@ public class ServiceBusConfiguration {
 
     @Value("${thread.count}")
     private int threadCount;
+
+    @Autowired
+    PrlUpdateService prlUpdateService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -86,14 +90,16 @@ public class ServiceBusConfiguration {
                         log.info("RECEIVED");
                         List<byte[]> body = message.getMessageBody().getBinaryData();
                         log.info("Received message" + body);
-                        AtomicBoolean result = new AtomicBoolean();
+
                         ObjectMapper mapper = new ObjectMapper();
                         String message1 =
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
                         log.info(message1);
-                        result.set(true);
-                        if (result.get()) {
+                        Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
+
+                        Boolean isPrlSuccess = prlUpdateService.updatePrlServiceWithHearing(hearing);
+                        if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {
                             return null;
