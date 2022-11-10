@@ -1,8 +1,15 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +86,15 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + caseDetails.getData().get(APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
 
+        String filename = "./src/main/resources/ScreenFlow.json";
+        JSONObject screenFlowJson=null;
+        try (Stream<String> lines = Files.lines(Paths.get(filename))){
+            String screenFlowStr = lines.collect(Collectors.joining(""));
+            JSONParser parser = new JSONParser();
+            screenFlowJson = (JSONObject) parser.parse(screenFlowStr);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
                         .hmctsServiceID(BBA3)
@@ -128,7 +144,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(false)
                         .parties(Arrays.asList(Parties.partyDetailsWith().build()))
-                        .screenFlow(Arrays.asList(ScreenNavigation.screenNavigationWith().build()))
+                        .screenFlow(screenFlowJson)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(""))
                         .build();
