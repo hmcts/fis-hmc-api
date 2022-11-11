@@ -6,8 +6,8 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -28,7 +28,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
-import uk.gov.hmcts.reform.hmc.api.model.response.ScreenNavigation;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 
 @Service
@@ -87,13 +86,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
 
         String filename = "./src/main/resources/ScreenFlow.json";
-        JSONObject screenFlowJson=null;
-        try (Stream<String> lines = Files.lines(Paths.get(filename))){
+        JSONObject screenFlowJson = null;
+        try (Stream<String> lines = Files.lines(Paths.get(filename))) {
             String screenFlowStr = lines.collect(Collectors.joining(""));
             JSONParser parser = new JSONParser();
             screenFlowJson = (JSONObject) parser.parse(screenFlowStr);
-        } catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.info("While reading Screenflow.json file exception {}", e.getMessage());
         }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
@@ -144,7 +143,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(false)
                         .parties(Arrays.asList(Parties.partyDetailsWith().build()))
-                        .screenFlow(screenFlowJson)
+                        .screenFlow((JSONArray) screenFlowJson.get("screenFlow"))
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(""))
                         .build();

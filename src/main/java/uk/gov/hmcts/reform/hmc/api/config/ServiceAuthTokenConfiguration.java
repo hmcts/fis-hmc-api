@@ -11,13 +11,10 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGeneratorFactory;
 public class ServiceAuthTokenConfiguration {
     @Bean
     public AuthTokenGenerator authTokenGenerator(
-        @Value("${idam.s2s-auth.totp_secret}") final String secret,
-        @Value("${idam.s2s-auth.microservice}") final String microservice,
-        ServiceAuthorisationApi serviceAuthorisationApi) {
-        return AuthTokenGeneratorFactory
-            .createDefaultGenerator(
-                secret,
-                microservice,
-                serviceAuthorisationApi);
+            @Value("${idam.s2s-auth.totp_secret}") final String secret,
+            @Value("${idam.s2s-auth.microservice}") final String microservice,
+            ServiceAuthorisationApi serviceAuthorisationApi) {
+        return AuthTokenGeneratorFactory.createDefaultGenerator(
+                secret, microservice, serviceAuthorisationApi);
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,8 +50,7 @@ public class ServiceBusConfiguration {
     @Value("${thread.count}")
     private int threadCount;
 
-    @Autowired
-    PrlUpdateService prlUpdateService;
+    @Autowired PrlUpdateService prlUpdateService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -98,7 +96,8 @@ public class ServiceBusConfiguration {
                         log.info(message1);
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
 
-                        Boolean isPrlSuccess = prlUpdateService.updatePrlServiceWithHearing(hearing);
+                        Boolean isPrlSuccess =
+                                prlUpdateService.updatePrlServiceWithHearing(hearing);
                         if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {
