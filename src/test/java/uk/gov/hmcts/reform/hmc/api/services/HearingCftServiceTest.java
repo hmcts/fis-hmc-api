@@ -19,7 +19,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 @ActiveProfiles("test")
 class HearingCftServiceTest {
 
-    @InjectMocks private final HearingsServiceImpl hearingsService = new HearingsServiceImpl();
+    @InjectMocks HearingsServiceImpl hearingsService;
 
     @Mock RestTemplate restTemplate;
 

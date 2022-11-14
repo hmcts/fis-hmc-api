@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Service
 public class PrlUpdateServiceImpl implements PrlUpdateService {
@@ -33,15 +33,13 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
         Boolean isPrlRespSuccess = false;
         LOG.info("updatePrlServiceWithHearing");
 
-        if ("BBA3".equals(hearing.getHmctsServiceCode())) {
+        if (Constants.BBA3.equals(hearing.getHmctsServiceCode())) {
 
             try {
                 ResponseEntity responseEntity =
-                        prlUpdateApi.prlUpdate(
-                                Arrays.asList(getServiceAuthorisationToken()).toString(), hearing);
+                        prlUpdateApi.prlUpdate(getServiceAuthorisationToken(), hearing);
                 LOG.info("PRL call completed successfully" + responseEntity.getStatusCode());
                 isPrlRespSuccess = true;
-
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
                 LOG.info("PRL call exception {}", exception.getMessage());
                 throw new PrlUpdateException("PRL", exception.getStatusCode(), exception);
