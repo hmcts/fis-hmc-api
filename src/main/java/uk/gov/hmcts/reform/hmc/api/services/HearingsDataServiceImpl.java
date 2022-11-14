@@ -134,21 +134,21 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(""))
                         .build();
-        setCaseFlagData(hearingsData);//TO DO
+        setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
         return hearingsData;
     }
 
-    public   void setCaseFlagData(HearingsData hearingsData){
-        PartyFlagsModel partyFlagsModel = PartyFlagsModel.partyFlagsModelWith()
-            .partyId("P1").
-            partyName("Jane Smith").
-            flagId("RA0042").
-            flagStatus("ACTIVE").
-            flagDescription("Sign language interpreter required").build();
+    public void setCaseFlagData(HearingsData hearingsData) {
+        PartyFlagsModel partyFlagsModel =
+                PartyFlagsModel.partyFlagsModelWith()
+                        .partyId("P1")
+                        .partyName("Jane Smith")
+                        .flagId("RA0042")
+                        .flagStatus("ACTIVE")
+                        .flagDescription("Sign language interpreter required")
+                        .build();
         CaseFlags caseFlags = CaseFlags.judiciaryWith().partyFlagsModel(partyFlagsModel).build();
         hearingsData.setCaseFlags(caseFlags);
     }
 }
-
-
