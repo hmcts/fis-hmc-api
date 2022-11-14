@@ -8,16 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder(builderMethodName = "judiciaryWith")
+@Builder(builderMethodName = "partyFlagsModelWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CaseFlags {
-
-    private PartyFlags flags;
-
-    private String flagAmendUrl;
-
-    private String categoryParent;
-
-    private PartyFlagsModel partyFlagsModel;
+public class PartyFlagsModel {
+    String partyId;
+    String partyName;
+    String flagParentId;
+    String flagId;
+    String flagDescription;
+    String flagStatus;
 }
