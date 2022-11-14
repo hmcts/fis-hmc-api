@@ -14,12 +14,14 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.ScreenNavigation;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
@@ -132,7 +134,21 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(""))
                         .build();
+        setCaseFlagData(hearingsData);//TO DO
         log.info("hearingsData {}", hearingsData);
         return hearingsData;
     }
+
+    public   void setCaseFlagData(HearingsData hearingsData){
+        PartyFlagsModel partyFlagsModel = PartyFlagsModel.partyFlagsModelWith()
+            .partyId("P1").
+            partyName("Jane Smith").
+            flagId("RA0042").
+            flagStatus("ACTIVE").
+            flagDescription("Sign language interpreter required").build();
+        CaseFlags caseFlags = CaseFlags.judiciaryWith().partyFlagsModel(partyFlagsModel).build();
+        hearingsData.setCaseFlags(caseFlags);
+    }
 }
+
+
