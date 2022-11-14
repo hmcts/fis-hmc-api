@@ -6,14 +6,8 @@ java:
   keyVaults:
     fis-kv:
       secrets:
-        - name: hmc-fis-servicebus-connection-string
-          alias: HMC_FIS_SERVICEBUS_CONNECTION_STRING
         - name: hmc-topic-shared-access-key
           alias: HMC_TOPIC_SHARED_ACCESS_KEY
-        - name: idam-hmc-fis-hearing-service-client-secret
-          alias: PRL_UPDATE_ACCOUNT_CLIENT_SECRET
-        - name: prl-update-account-client-password
-          alias: PRL_UPDATE_ACCOUNT_CLIENT_PASSWORD
         - name: fis-hmc-api-s2s-secret
           alias: OIDC_S2S_SECRET
         - name: AppInsightsInstrumentationKey
@@ -25,17 +19,13 @@ java:
     IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
-    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-subs-to-cft-{{ .Values.global.environment }}'
+    HMC_FIS_SUBSCRIPTION_NAME: 'hmc-fis-subs-prl-{{ .Values.global.environment }}'
     HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
     APPLICATION_NAME: 'fis_hmc_api'
     HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/hearings/'
     CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
     CCD_UI_URL: 'https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/'
-    PRL_UPDATE_ACCOUNT_GRANT_TYPE: 'password'
-    PRL_UPDATE_ACCOUNT_SCOPE: 'openid profile roles'
-    PRL_UPDATE_ACCOUNT_USERNAME: 'prl_hearing_update_user@hmcts.net'
     AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
-    PRL_PATH: '/hearing'
-    PRL_UPDATE_SERVICE_ACCOUNT_CLIENT_ID: 'hmc-fis-hearing-service'
+

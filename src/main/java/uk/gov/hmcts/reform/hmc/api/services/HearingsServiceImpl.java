@@ -26,6 +26,14 @@ public class HearingsServiceImpl implements HearingsService {
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
+    /**
+     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @param authorization User authorization token.
+     * @param serviceAuthorization S2S authorization token.
+     * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
+     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     */
     @Override
     public Hearings getHearingsByCaseRefNo(
             String authorization, String serviceAuthorization, String caseReference) {
@@ -46,10 +54,15 @@ public class HearingsServiceImpl implements HearingsService {
         } catch (Exception e) {
             log.info("Fetch hearings call exception {}", e.getMessage());
         }
-        log.info("Fetch hearings call completed successfully {} finalll", caseHearingsResponse);
+        log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
         return caseHearingsResponse.getBody();
     }
 
+    /**
+     * This method will create a map with header inputs.
+     *
+     * @return inputHeaders, which has all the header-inputs to make an API call.
+     */
     private MultiValueMap<String, String> getHttpHeaders(
             String authorization, String serviceAuthorization) {
         MultiValueMap<String, String> inputHeaders = new LinkedMultiValueMap<>();

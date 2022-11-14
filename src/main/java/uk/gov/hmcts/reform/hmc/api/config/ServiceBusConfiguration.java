@@ -44,9 +44,6 @@ public class ServiceBusConfiguration {
     @Value("${amqp.jrd.subscription}")
     private String subscription;
 
-    @Value("${amqp.jrd.connectionString}")
-    private String connectionString;
-
     @Value("${thread.count}")
     private int threadCount;
 
@@ -57,12 +54,11 @@ public class ServiceBusConfiguration {
     @Bean
     public SubscriptionClient receiveClient()
             throws URISyntaxException, ServiceBusException, InterruptedException {
-        log.info(" host {}", host);
-        log.info(" sharedAccessKeyName {}", sharedAccessKeyName);
-        log.info(" topic {}", topic);
-        log.info(" sharedAccessKeyValue {}", sharedAccessKeyValue);
-        log.info(" subscription {}", subscription);
-        log.info(" connection string {}", connectionString);
+        log.debug(" host {}", host);
+        log.debug(" sharedAccessKeyName {}", sharedAccessKeyName);
+        log.debug(" topic {}", topic);
+        log.debug(" sharedAccessKeyValue {}", sharedAccessKeyValue);
+        log.debug(" subscription {}", subscription);
         URI endpoint = new URI("sb://" + host);
 
         String destination = topic.concat("/subscriptions/").concat(subscription);
@@ -85,17 +81,13 @@ public class ServiceBusConfiguration {
                     @SneakyThrows
                     @Override
                     public CompletableFuture<Void> onMessageAsync(IMessage message) {
-                        log.info("RECEIVED");
                         List<byte[]> body = message.getMessageBody().getBinaryData();
-                        log.info("Received message" + body);
-
                         ObjectMapper mapper = new ObjectMapper();
-                        String message1 =
+                        String messageReceived =
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
-                        log.info(message1);
+                        log.debug(messageReceived);
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
-
                         Boolean isPrlSuccess =
                                 prlUpdateService.updatePrlServiceWithHearing(hearing);
                         if (isPrlSuccess) {
