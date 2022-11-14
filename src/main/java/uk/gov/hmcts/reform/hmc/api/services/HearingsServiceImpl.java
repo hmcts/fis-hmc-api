@@ -55,7 +55,7 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Fetch hearings call exception {}", e.getMessage());
         }
         log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
-        return caseHearingsResponse.getBody();
+        return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
     }
 
     /**
