@@ -143,7 +143,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(Constants.FALSE)
                         .parties(Arrays.asList(Parties.partyDetailsWith().build()))
-                        .screenFlow((JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW))
+                        .screenFlow(
+                                screenFlowJson != null
+                                        ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
+                                        : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(Constants.EMPTY))
                         .build();
