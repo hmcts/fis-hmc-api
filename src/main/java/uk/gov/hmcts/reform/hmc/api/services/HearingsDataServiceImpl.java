@@ -4,7 +4,11 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
@@ -83,12 +87,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
         JSONObject screenFlowJson = null;
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            File file = new File(classLoader.getResource("ScreenFlow.json").getFile());
-
-            JSONParser parser = new JSONParser();
-            InputStream inputStream = new FileInputStream(file);
+        ClassLoader classLoader = getClass().getClassLoader();
+        JSONParser parser = new JSONParser();
+        try (InputStream inputStream =
+                Files.newInputStream(
+                        Paths.get(classLoader.getResource("ScreenFlow.json").getFile()))) {
             screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
         } catch (Exception e) {
             log.error(e.getMessage());
