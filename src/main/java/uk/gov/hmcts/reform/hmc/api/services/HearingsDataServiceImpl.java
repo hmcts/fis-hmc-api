@@ -4,13 +4,9 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -86,14 +82,16 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + Constants.UNDERSCORE
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
-
         JSONObject screenFlowJson = null;
-        try (Stream<String> lines = Files.lines(Paths.get(Constants.SCRN_FLOW_JSON_PATH))) {
-            String screenFlowStr = lines.collect(Collectors.joining(""));
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            File file = new File(classLoader.getResource("ScreenFlow.json").getFile());
+
             JSONParser parser = new JSONParser();
-            screenFlowJson = (JSONObject) parser.parse(screenFlowStr);
+            InputStream inputStream = new FileInputStream(file);
+            screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
         } catch (Exception e) {
-            log.info("While reading Screenflow.json file exception {}", e.getMessage());
+            log.error(e.getMessage());
         }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
