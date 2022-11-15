@@ -11,8 +11,8 @@ bin/main/application.yaml
 .project
 .settings
 .springBeans
-./target
-
+/target/
+*/target/**
 ### IntelliJ IDEA ###
 .idea
 /out
