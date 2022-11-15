@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CaseFlags {
 
-    private PartyFlags flags;
+    private List<String> flags;
 
     private String flagAmendUrl;
 

@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -146,9 +147,16 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .partyName("Jane Smith")
                         .flagId("RA0042")
                         .flagStatus("ACTIVE")
+                        .flagParentId("")
                         .flagDescription("Sign language interpreter required")
                         .build();
-        CaseFlags caseFlags = CaseFlags.judiciaryWith().partyFlagsModel(partyFlagsModel).build();
+        CaseFlags caseFlags =
+                CaseFlags.judiciaryWith()
+                        .flags(new ArrayList<>())
+                        .partyFlagsModel(partyFlagsModel)
+                        .flagAmendUrl("")
+                        .categoryParent("")
+                        .build();
         hearingsData.setCaseFlags(caseFlags);
     }
 }
