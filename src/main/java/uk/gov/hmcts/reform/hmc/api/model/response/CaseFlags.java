@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder(builderMethodName = "judiciaryWith")
@@ -13,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CaseFlags {
 
-    private PartyFlags flags;
+    private List<String> flags;
 
     private String flagAmendUrl;
 
