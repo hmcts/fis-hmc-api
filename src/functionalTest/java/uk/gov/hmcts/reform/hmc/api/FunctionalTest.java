@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 class FunctionalTest {
 
     private final String targetInstance =
-            StringUtils.defaultIfBlank(System.getenv("TEST_URL"), "http://localhost:8099");
+            StringUtils.defaultIfBlank(System.getenv("TEST_URL"), "http://localhost:4550");
 
     @Test
     void shouldCheckApplicationHealthUp() {
