@@ -100,6 +100,12 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+
+        try (InputStream inputStream = resource.getInputStream()) {
+            screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
                         .hmctsServiceID(Constants.BBA3)
