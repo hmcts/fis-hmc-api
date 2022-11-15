@@ -17,7 +17,6 @@ public final class Constants {
     public static final String PRIVATE_LAW = "Private Law";
     public static final String UNDERSCORE = "_";
     public static final String SCREEN_FLOW = "screenFlow";
-    public static final String SCRN_FLOW_JSON_PATH = "./src/main/resources/ScreenFlow.json";
 
     private Constants() {}
 }
