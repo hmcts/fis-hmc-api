@@ -50,6 +50,7 @@ public class HearingsControllerFunctionalTest {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 
+    @Ignore
     @Test
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -75,6 +76,7 @@ public class HearingsControllerFunctionalTest {
                 .andReturn();
     }
 
+    @Ignore
     @Test
     public void givenCaseReferenceNoWhenGetRequestToHearingsByCaseReferenceThen200Response()
             throws Exception {
