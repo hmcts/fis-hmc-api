@@ -11,8 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -37,7 +40,6 @@ public class HearingsServiceImpl implements HearingsService {
     @Override
     public Hearings getHearingsByCaseRefNo(
             String authorization, String serviceAuthorization, String caseReference) {
-
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearings = null;
@@ -51,8 +53,11 @@ public class HearingsServiceImpl implements HearingsService {
                     restTemplate.exchange(
                             builder.toUriString(), HttpMethod.GET, httpsHeader, Hearings.class);
             log.info("Fetch hearings call completed successfully {}", caseHearings);
-        } catch (Exception e) {
-            log.info("Fetch hearings call exception {}", e.getMessage());
+        } catch (HttpClientErrorException exception) {
+            log.info("Hearing call exception {}", exception.getMessage());
+            throw new AuthorizationException("Hearing", exception.getStatusCode(), exception);
+        } catch (HttpServerErrorException exception) {
+            log.info("Hearing server exception {}", exception.getMessage());
         }
         log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
         return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
