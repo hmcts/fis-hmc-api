@@ -7,16 +7,16 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,16 +24,19 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
@@ -43,8 +46,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     private String ccdBaseUrl;
 
     @Autowired CaseApiService caseApiService;
-
-    private static Logger log = LoggerFactory.getLogger(HearingsDataServiceImpl.class);
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -150,7 +151,28 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
                         .hearingChannels(Arrays.asList(Constants.EMPTY))
                         .build();
+        setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
         return hearingsData;
+    }
+
+    public void setCaseFlagData(HearingsData hearingsData) {
+        PartyFlagsModel partyFlagsModel =
+                PartyFlagsModel.partyFlagsModelWith()
+                        .partyId("P1")
+                        .partyName("Jane Smith")
+                        .flagId("RA0042")
+                        .flagStatus("ACTIVE")
+                        .flagParentId("")
+                        .flagDescription("Sign language interpreter required")
+                        .build();
+        CaseFlags caseFlags =
+                CaseFlags.judiciaryWith()
+                        .flags(new ArrayList<>())
+                        .partyFlagsModel(partyFlagsModel)
+                        .flagAmendUrl("")
+                        .categoryParent("")
+                        .build();
+        hearingsData.setCaseFlags(caseFlags);
     }
 }

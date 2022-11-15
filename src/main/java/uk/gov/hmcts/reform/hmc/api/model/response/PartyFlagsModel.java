@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,16 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder(builderMethodName = "judiciaryWith")
+@Builder(builderMethodName = "partyFlagsModelWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CaseFlags {
-
-    private List<String> flags;
-
-    private String flagAmendUrl;
-
-    private String categoryParent;
-
-    private PartyFlagsModel partyFlagsModel;
+public class PartyFlagsModel {
+    String partyId;
+    String partyName;
+    String flagParentId;
+    String flagId;
+    String flagDescription;
+    String flagStatus;
 }
