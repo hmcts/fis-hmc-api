@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -30,6 +31,8 @@ class HearingsDataServiceTest {
     @Mock private CaseApiService caseApiService;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
+
+    @Mock ResourceLoader resourceLoader;
 
     @Test
     public void shouldReturnHearingDetailsTest() throws IOException, ParseException {

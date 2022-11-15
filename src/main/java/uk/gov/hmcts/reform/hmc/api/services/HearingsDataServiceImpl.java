@@ -49,8 +49,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired CaseApiService caseApiService;
 
-    @Autowired
-    private ResourceLoader resourceLoader;
+    @Autowired private ResourceLoader resourceLoader;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -96,8 +95,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
 
         try (InputStream inputStream =
-                Files.newInputStream(Paths.get(resource.getFile().getPath())))
-                        {
+                Files.newInputStream(Paths.get(resource.getFile().getPath()))) {
             screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
         } catch (Exception e) {
             log.error(e.getMessage());
