@@ -27,7 +27,6 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.utils.ResourceLoader;
 
-
 @Ignore
 @RunWith(SpringRunner.class)
 @SpringBootTest(
