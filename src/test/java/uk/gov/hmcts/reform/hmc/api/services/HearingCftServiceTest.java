@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -18,13 +19,12 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 @ActiveProfiles("test")
 class HearingCftServiceTest {
 
-    @InjectMocks private final HearingsServiceImpl hearingsService = new HearingsServiceImpl();
+    @InjectMocks HearingsServiceImpl hearingsService;
 
     @Mock RestTemplate restTemplate;
 
     @Test
     void shouldReturnCtfHearingsTest() {
-
         Hearings caseHearings =
                 Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         ResponseEntity<Hearings> response = ResponseEntity.ok(caseHearings);
@@ -35,6 +35,9 @@ class HearingCftServiceTest {
                                 ArgumentMatchers.<HttpEntity<?>>any(),
                                 ArgumentMatchers.<Class<Hearings>>any()))
                 .thenReturn(response);
-        hearingsService.getHearingsByCaseRefNo("authorization", "serviceAuthorization", "123");
+        Hearings hearings =
+                hearingsService.getHearingsByCaseRefNo(
+                        "authorization", "serviceAuthorization", "123");
+        Assertions.assertEquals("BBA3", hearings.getHmctsServiceCode());
     }
 }

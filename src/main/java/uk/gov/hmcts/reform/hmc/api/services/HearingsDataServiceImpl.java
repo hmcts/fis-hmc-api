@@ -1,16 +1,25 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
@@ -24,9 +33,10 @@ import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
-import uk.gov.hmcts.reform.hmc.api.model.response.ScreenNavigation;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
+import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
@@ -37,20 +47,14 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired CaseApiService caseApiService;
 
-    AuthTokenGenerator authTokenGenerator;
-
-    private static Logger log = LoggerFactory.getLogger(HearingsDataServiceImpl.class);
-    public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
-    public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
-    public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
-    public static final String APPLICANT_CASE_NAME = "applicantCaseName";
-
-    public static final String ISSUE_DATE = "issueDate";
-    public static final String BBA3 = "BBA3";
-    public static final String FL401 = "FL401";
-    public static final String C100 = "C100";
-    public static final String RE_MINOR = "Re-Minor";
-
+    /**
+     * This method will fetch the hearingsData info based on the hearingValues passed.
+     *
+     * @param authorisation User authorization token.
+     * @param serviceAuthorization S2S authorization token.
+     * @param hearingValues combination of caseRefNo and hearingId to fetch hearingsData.
+     * @return hearingsData, response data for the input hearingValues.
+     */
     @Override
     public HearingsData getCaseData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization)
@@ -61,79 +65,91 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         String publicCaseNameMapper;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             ApplicantTable applicantTable =
-                    (ApplicantTable) caseDetails.getData().get(FL401_APPLICANT_TABLE);
+                    (ApplicantTable) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
             RespondentTable respondentTable =
-                    (RespondentTable) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
+                    (RespondentTable) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
             if (applicantTable != null && respondentTable != null) {
                 publicCaseNameMapper =
-                        applicantTable.getLastName() + '_' + respondentTable.getLastName();
+                        applicantTable.getLastName()
+                                + Constants.UNDERSCORE
+                                + respondentTable.getLastName();
             } else {
-                publicCaseNameMapper = "";
+                publicCaseNameMapper = Constants.EMPTY;
             }
         } else if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            publicCaseNameMapper = RE_MINOR;
+            publicCaseNameMapper = Constants.RE_MINOR;
         } else {
-            publicCaseNameMapper = "";
+            publicCaseNameMapper = Constants.EMPTY;
         }
-
         String hmctsInternalCaseNameMapper =
                 hearingValues.getCaseReference()
-                        + "_"
-                        + caseDetails.getData().get(APPLICANT_CASE_NAME);
-        String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
+                        + Constants.UNDERSCORE
+                        + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
+        String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
 
+        JSONObject screenFlowJson = null;
+        try (Stream<String> lines = Files.lines(Paths.get(Constants.SCRN_FLOW_JSON_PATH))) {
+            String screenFlowStr = lines.collect(Collectors.joining(""));
+            JSONParser parser = new JSONParser();
+            screenFlowJson = (JSONObject) parser.parse(screenFlowStr);
+        } catch (Exception e) {
+            log.info("While reading Screenflow.json file exception {}", e.getMessage());
+        }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
-                        .hmctsServiceID(BBA3)
+                        .hmctsServiceID(Constants.BBA3)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
-                        .caseAdditionalSecurityFlag(false)
+                        .caseAdditionalSecurityFlag(Constants.FALSE)
                         .caseCategories(
                                 Arrays.asList(
                                         CaseCategories.caseCategoriesWith()
-                                                .categoryType("")
-                                                .categoryValue("")
-                                                .categoryParent("")
+                                                .categoryType(Constants.EMPTY)
+                                                .categoryValue(Constants.EMPTY)
+                                                .categoryParent(Constants.PRIVATE_LAW)
                                                 .build()))
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
-                        .caseRestrictedFlag(false)
-                        .externalCaseReference("")
-                        .caseManagementLocationCode("")
+                        .caseRestrictedFlag(Constants.FALSE)
+                        .externalCaseReference(Constants.EMPTY)
+                        .caseManagementLocationCode(Constants.EMPTY)
                         .caseSlaStartDate(caseSlaStartDateMapper)
-                        .autoListFlag(false)
-                        .hearingType("")
+                        .autoListFlag(Constants.FALSE)
+                        .hearingType(Constants.EMPTY)
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
-                                        .dateRangeStart("")
-                                        .dateRangeEnd("")
-                                        .firstDateTimeMustBe("")
+                                        .dateRangeStart(Constants.EMPTY)
+                                        .dateRangeEnd(Constants.EMPTY)
+                                        .firstDateTimeMustBe(Constants.EMPTY)
                                         .build())
-                        .duration(60)
-                        .hearingPriorityType("")
+                        .duration(0)
+                        .hearingPriorityType(Constants.EMPTY)
                         .numberOfPhysicalAttendees(0)
-                        .hearingInWelshFlag(false)
+                        .hearingInWelshFlag(Constants.FALSE)
                         .hearingLocations(
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
-                                                .locationId("")
-                                                .locationId("")
+                                                .locationType(Constants.EMPTY)
+                                                .locationId(Constants.EMPTY)
                                                 .build()))
-                        .facilitiesRequired(Arrays.asList(""))
-                        .listingComments("")
-                        .hearingRequester("")
-                        .privateHearingRequiredFlag(false)
-                        .caseInterpreterRequiredFlag(false)
+                        .facilitiesRequired(Arrays.asList(Constants.EMPTY))
+                        .listingComments(Constants.EMPTY)
+                        .hearingRequester(Constants.EMPTY)
+                        .privateHearingRequiredFlag(Constants.FALSE)
+                        .caseInterpreterRequiredFlag(Constants.FALSE)
                         .panelRequirements(
                                 PanelRequirements.panelRequirementsWith()
-                                        .requirementDetails("")
+                                        .requirementDetails(Constants.EMPTY)
                                         .build())
-                        .leadJudgeContractType("")
+                        .leadJudgeContractType(Constants.EMPTY)
                         .judiciary(Judiciary.judiciaryWith().build())
-                        .hearingIsLinkedFlag(false)
+                        .hearingIsLinkedFlag(Constants.FALSE)
                         .parties(Arrays.asList(Parties.partyDetailsWith().build()))
-                        .screenFlow(Arrays.asList(ScreenNavigation.screenNavigationWith().build()))
+                        .screenFlow(
+                                screenFlowJson != null
+                                        ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
+                                        : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(Arrays.asList(""))
+                        .hearingChannels(Arrays.asList(Constants.EMPTY))
                         .build();
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);

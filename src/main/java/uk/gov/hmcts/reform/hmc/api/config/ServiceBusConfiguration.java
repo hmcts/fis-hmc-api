@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 
 @Configuration
 public class ServiceBusConfiguration {
@@ -44,23 +44,21 @@ public class ServiceBusConfiguration {
     @Value("${amqp.jrd.subscription}")
     private String subscription;
 
-    @Value("${amqp.jrd.connectionString}")
-    private String connectionString;
-
     @Value("${thread.count}")
     private int threadCount;
+
+    @Autowired PrlUpdateService prlUpdateService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
     @Bean
     public SubscriptionClient receiveClient()
             throws URISyntaxException, ServiceBusException, InterruptedException {
-        log.info(" host {}", host);
-        log.info(" sharedAccessKeyName {}", sharedAccessKeyName);
-        log.info(" topic {}", topic);
-        log.info(" sharedAccessKeyValue {}", sharedAccessKeyValue);
-        log.info(" subscription {}", subscription);
-        log.info(" connection string {}", connectionString);
+        log.debug(" host {}", host);
+        log.debug(" sharedAccessKeyName {}", sharedAccessKeyName);
+        log.debug(" topic {}", topic);
+        log.debug(" sharedAccessKeyValue {}", sharedAccessKeyValue);
+        log.debug(" subscription {}", subscription);
         URI endpoint = new URI("sb://" + host);
 
         String destination = topic.concat("/subscriptions/").concat(subscription);
@@ -83,17 +81,16 @@ public class ServiceBusConfiguration {
                     @SneakyThrows
                     @Override
                     public CompletableFuture<Void> onMessageAsync(IMessage message) {
-                        log.info("RECEIVED");
                         List<byte[]> body = message.getMessageBody().getBinaryData();
-                        log.info("Received message" + body);
-                        AtomicBoolean result = new AtomicBoolean();
                         ObjectMapper mapper = new ObjectMapper();
-                        String message1 =
+                        String messageReceived =
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
-                        log.info(message1);
-                        result.set(true);
-                        if (result.get()) {
+                        log.debug(messageReceived);
+                        Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
+                        Boolean isPrlSuccess =
+                                prlUpdateService.updatePrlServiceWithHearing(hearing);
+                        if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {
                             return null;

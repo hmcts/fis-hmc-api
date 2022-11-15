@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.json.simple.JSONArray;
 
 @Getter
 @Setter
@@ -72,7 +73,7 @@ public class HearingsData {
 
     private CaseFlags caseFlags;
 
-    private List<ScreenNavigation> screenFlow;
+    private JSONArray screenFlow;
 
     private List<Vocabulary> vocabulary;
 

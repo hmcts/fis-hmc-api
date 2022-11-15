@@ -11,8 +11,10 @@
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
     <exclude name="JUnit5TestShouldBePackagePrivate"/>
+    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
   </rule>
   <exclude-pattern>.*/config/.*</exclude-pattern>
+  <exclude-pattern>.*/utils/.*</exclude-pattern>
 
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
@@ -58,15 +60,11 @@
     <exclude name="LoosePackageCoupling"/>
     <exclude name="DataClass"/>
     <exclude name="UseObjectForClearerAPI"/>
+    <exclude name="LawOfDemeter"/>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
       <property name="minimum" value="35"/><!-- should be reduced -->
-    </properties>
-  </rule>
-  <rule ref="category/java/design.xml/LawOfDemeter">
-    <properties>
-      <property name="violationSuppressRegex" value="(.*method chain calls.*|.*object not created locally.*)"/>
     </properties>
   </rule>
   <rule ref="category/java/design.xml/SignatureDeclareThrowsException">

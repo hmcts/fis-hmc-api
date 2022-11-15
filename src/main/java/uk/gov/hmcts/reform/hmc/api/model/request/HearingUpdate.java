@@ -27,5 +27,9 @@ public class HearingUpdate {
 
     private String hearingJudgeId;
 
+    private String hearingRoomId;
+
     private String hmcStatus;
+
+    private String listAssistCaseStatus;
 }

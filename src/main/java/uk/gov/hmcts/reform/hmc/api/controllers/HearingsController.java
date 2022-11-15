@@ -31,6 +31,14 @@ public class HearingsController {
 
     @Autowired private HearingsService hearingsService;
 
+    /**
+     * End point to fetch the hearingsData info based on the hearingValues passed.
+     *
+     * @header authorisation, User authorisation token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch hearingsData.
+     * @return hearingsData, response data for the input hearingValues.
+     */
     @PostMapping(path = "/serviceHearingValues")
     @ApiOperation("get hearings Values")
     @ApiResponses(
@@ -48,6 +56,14 @@ public class HearingsController {
                         hearingValues, authorisation, serviceAuthorization));
     }
 
+    /**
+     * End point to fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @header authorization, User authorization token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
+     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     */
     @GetMapping(path = "/hearings")
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(

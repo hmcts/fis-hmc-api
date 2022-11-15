@@ -45,12 +45,15 @@ hearing:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
 idam:
+  url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   s2s-auth:
-    url: ${SERVICE_AUTH_PROVIDER_URL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
-    secret: ${S2S_SECRET:Y6OORUQWPMUEM3QH}
-    microservice: xui_webapp
+    url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-demo.service.core-compute-demo.internal}
+    totp_secret: ${OIDC_S2S_SECRET:dummy}
+    microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
-    url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
+    url: ${IDAM_API_BASEURL:https://idam-api.demo.platform.hmcts.net}
+prl:
+  baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-demo.service.core-compute-demo.internal}
@@ -70,13 +73,12 @@ springdoc:
 #spring:
 
 amqp:
-  host: ${HMC_HOST:hmc-servicebus-aat.servicebus.windows.net}
+  host: ${HMC_HOST:hmc-servicebus-demo.servicebus.windows.net}
   sharedAccessKeyName: "SendAndListenSharedAccessKey"
   jrd:
-    topic: ${HMC_FIS_TOPIC_NAME:dummy}
-    sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy2}
-    subscription: ${HMC_FIS_SUBSCRIPTION_NAME:dummy}
-    connectionString: ${HMC_FIS_SERVICEBUS_CONNECTION_STRING:newdummy}
+    topic: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
+    sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy}
+    subscription: ${HMC_FIS_SUBSCRIPTION_NAME:hmc-fis-subs-prl-demo}
 #If you use a database then uncomment below lines and update db properties accordingly
 
 azure:
