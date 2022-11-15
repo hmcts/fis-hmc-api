@@ -19,6 +19,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -46,6 +48,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     private String ccdBaseUrl;
 
     @Autowired CaseApiService caseApiService;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -87,11 +92,12 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
         JSONObject screenFlowJson = null;
-        ClassLoader classLoader = getClass().getClassLoader();
         JSONParser parser = new JSONParser();
+        Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
+
         try (InputStream inputStream =
-                Files.newInputStream(
-                        Paths.get(classLoader.getResource("ScreenFlow.json").getFile()))) {
+                Files.newInputStream(Paths.get(resource.getFile().getPath())))
+                        {
             screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
         } catch (Exception e) {
             log.error(e.getMessage());
