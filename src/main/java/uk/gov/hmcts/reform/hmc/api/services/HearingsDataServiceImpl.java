@@ -140,7 +140,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return hearingsData;
     }
 
-    public static void setCaseFlagData(HearingsData hearingsData) {
+    public void setCaseFlagData(HearingsData hearingsData) {
         PartyFlagsModel partyFlagsModel =
                 PartyFlagsModel.partyFlagsModelWith()
                         .partyId("P1")
@@ -150,9 +150,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .flagParentId("")
                         .flagDescription("Sign language interpreter required")
                         .build();
-        CaseFlags caseFlags = CaseFlags.judiciaryWith().flags(new ArrayList<>())
-                .partyFlagsModel(partyFlagsModel).flagAmendUrl("").categoryParent("").build();
+        CaseFlags caseFlags =
+                CaseFlags.judiciaryWith()
+                        .flags(new ArrayList<>())
+                        .partyFlagsModel(partyFlagsModel)
+                        .flagAmendUrl("")
+                        .categoryParent("")
+                        .build();
         hearingsData.setCaseFlags(caseFlags);
     }
-
 }
