@@ -29,7 +29,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
-import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
@@ -138,10 +137,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
                         .caseInterpreterRequiredFlag(Constants.FALSE)
-                        .panelRequirements(
-                                PanelRequirements.panelRequirementsWith()
-                                        .requirementDetails(Constants.EMPTY)
-                                        .build())
+                        .panelRequirements(null)
                         .leadJudgeContractType(Constants.EMPTY)
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(Constants.FALSE)
