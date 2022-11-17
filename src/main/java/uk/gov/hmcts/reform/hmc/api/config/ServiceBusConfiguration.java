@@ -93,7 +93,7 @@ public class ServiceBusConfiguration {
                         if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {
-                            return null;
+                            return receiveClient.abandonAsync(message.getLockToken());
                         }
                     }
 
