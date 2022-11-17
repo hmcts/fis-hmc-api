@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -33,6 +34,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Slf4j
@@ -172,5 +174,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .categoryParent("")
                         .build();
         hearingsData.setCaseFlags(caseFlags);
+    }
+
+    @Override
+    public List<HearingLinkData> getHearingLinkData(
+            HearingValues hearingValues, String authorisation, String serviceAuthorization) {
+        return new ArrayList<>();
     }
 }

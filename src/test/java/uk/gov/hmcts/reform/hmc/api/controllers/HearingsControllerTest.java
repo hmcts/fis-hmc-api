@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.io.IOException;
+import java.util.List;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,5 +70,16 @@ class HearingsControllerTest {
         Hearings hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
         Assertions.assertEquals("123", hearingsResponse.getCaseRef());
+    }
+
+    @Test
+    public void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
+
+        HearingValues hearingsRequestData =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<List> hearingsLinkCaseDataLst =
+                hearingsController.getHearingsLinkData("Auth", "sauth", hearingsRequestData);
+        Assertions.assertEquals(HttpStatus.OK, hearingsLinkCaseDataLst.getStatusCode());
     }
 }

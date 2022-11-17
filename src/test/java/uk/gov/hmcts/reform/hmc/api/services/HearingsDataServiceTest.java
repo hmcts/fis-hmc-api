@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +22,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -122,5 +124,18 @@ class HearingsDataServiceTest {
         HearingsData hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
+    }
+
+    @Test
+    public void shouldReturnHearingLinkDetailsTest() throws IOException, ParseException {
+
+        String authorisation = "xyz";
+        String serviceAuthorisation = "xyz";
+        HearingValues hearingValues =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+        List<HearingLinkData> lst =
+                hearingservice.getHearingLinkData(
+                        hearingValues, authorisation, serviceAuthorisation);
+        Assertions.assertTrue(lst.isEmpty());
     }
 }
