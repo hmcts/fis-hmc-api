@@ -107,14 +107,14 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseCategories(
                                 Arrays.asList(
                                         CaseCategories.caseCategoriesWith()
-                                                .categoryType(Constants.EMPTY)
-                                                .categoryValue(Constants.EMPTY)
+                                                .categoryType(Constants.PRIVATE_LAW)
+                                                .categoryValue(Constants.PRIVATE_LAW)
                                                 .categoryParent(Constants.PRIVATE_LAW)
                                                 .build()))
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
                         .caseRestrictedFlag(Constants.FALSE)
                         .externalCaseReference(Constants.EMPTY)
-                        .caseManagementLocationCode(Constants.EMPTY)
+                        .caseManagementLocationCode(Constants.CASE_MANAGEMENT_LOCATION)
                         .caseSlaStartDate(caseSlaStartDateMapper)
                         .autoListFlag(Constants.FALSE)
                         .hearingType(Constants.EMPTY)
@@ -141,9 +141,18 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseInterpreterRequiredFlag(Constants.FALSE)
                         .panelRequirements(null)
                         .leadJudgeContractType(Constants.EMPTY)
-                        .judiciary(Judiciary.judiciaryWith().build())
+                        .judiciary(
+                                Judiciary.judiciaryWith()
+                                        .categoryValue(Constants.PRIVATE_LAW)
+                                        .categoryType(Constants.PRIVATE_LAW)
+                                        .build())
                         .hearingIsLinkedFlag(Constants.FALSE)
-                        .parties(Arrays.asList(Parties.partyDetailsWith().build()))
+                        .parties(
+                                Arrays.asList(
+                                        Parties.partyDetailsWith()
+                                                .categoryValue(Constants.PRIVATE_LAW)
+                                                .categoryType(Constants.PRIVATE_LAW)
+                                                .build()))
                         .screenFlow(
                                 screenFlowJson != null
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
@@ -173,6 +182,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .flagAmendUrl("")
                         .categoryParent("")
                         .build();
+
         hearingsData.setCaseFlags(caseFlags);
     }
 
