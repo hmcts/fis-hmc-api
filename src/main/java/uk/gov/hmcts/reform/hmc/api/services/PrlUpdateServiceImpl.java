@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,34 +32,23 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     @SuppressWarnings("unused")
     public Boolean updatePrlServiceWithHearing(Hearing hearing) {
         Boolean isPrlRespSuccess = false;
-        LOG.info("updatePrlServiceWithHearing");
+        LOG.info("calling updatePrlServiceWithHearing service " + hearing.getHearingId());
 
         if (Constants.BBA3.equals(hearing.getHmctsServiceCode())) {
-
             try {
                 ResponseEntity responseEntity =
-                        prlUpdateApi.prlUpdate(getServiceAuthorisationToken(), hearing);
+                        prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearing);
                 LOG.info("PRL call completed successfully" + responseEntity.getStatusCode());
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                LOG.info("PRL call exception {}", exception.getMessage());
+                LOG.info("PRL call HttpClientError exception {}", exception.getMessage());
                 throw new PrlUpdateException("PRL", exception.getStatusCode(), exception);
+            } catch (FeignException exception) {
+                LOG.info("PRL call Feign exception {}", exception.getMessage());
+            } catch (Exception exception) {
+                LOG.info("PRL call exception {}", exception.getMessage());
             }
         }
         return isPrlRespSuccess;
-    }
-
-    /**
-     * This method will generate and return ServiceAuthrisationToken.
-     *
-     * @return ServiceAuthrisationToen, a s2s token to call the prl API.
-     */
-    private String getServiceAuthorisationToken() {
-
-        try {
-            return authTokenGenerator.generate();
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            throw new PrlUpdateException("S2S", e.getStatusCode(), e);
-        }
     }
 }
