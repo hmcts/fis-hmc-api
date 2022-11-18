@@ -39,6 +39,8 @@ spring:
     multipart:
       max-file-size: 30MB
       max-request-size: 30MB
+  profiles:
+    active: test
 
 hearing:
   api:
@@ -59,9 +61,9 @@ idam:
     username: ${IDAM_HMC_COMPONENT_USER_NAME:prl_hearing_manager@justice.gov.uk}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
     scope: openid profile roles
+
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
-
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-demo.service.core-compute-demo.internal}
