@@ -104,13 +104,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(Constants.FALSE)
-                        .caseCategories(
-                                Arrays.asList(
-                                        CaseCategories.caseCategoriesWith()
-                                                .categoryType(Constants.PRIVATE_LAW)
-                                                .categoryValue(Constants.PRIVATE_LAW)
-                                                .categoryParent(Constants.PRIVATE_LAW)
-                                                .build()))
+                        .caseCategories(getCaseCategories())
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
                         .caseRestrictedFlag(Constants.FALSE)
                         .externalCaseReference(Constants.EMPTY)
@@ -163,6 +157,26 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
         return hearingsData;
+    }
+
+    private List<CaseCategories> getCaseCategories() {
+        List<CaseCategories> caseCategoriesList = new ArrayList<>();
+        CaseCategories caseCategories =
+                CaseCategories.caseCategoriesWith()
+                        .categoryType(Constants.CASE_TYPE)
+                        .categoryValue(Constants.CATEGORY_VALUE)
+                        .build();
+
+        CaseCategories caseSubCategories =
+                CaseCategories.caseCategoriesWith()
+                        .categoryType(Constants.CASE_SUB_TYPE)
+                        .categoryValue(Constants.CATEGORY_VALUE)
+                        .categoryParent(Constants.CATEGORY_VALUE)
+                        .build();
+
+        caseCategoriesList.add(caseCategories);
+        caseCategoriesList.add(caseSubCategories);
+        return caseCategoriesList;
     }
 
     public void setCaseFlagData(HearingsData hearingsData) {
