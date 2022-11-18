@@ -60,7 +60,7 @@ class HearingsDataServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
-        Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
     @Test
@@ -81,7 +81,7 @@ class HearingsDataServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
-        Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
     @Test
@@ -102,7 +102,7 @@ class HearingsDataServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
-        Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
     @Test
@@ -123,7 +123,7 @@ class HearingsDataServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         HearingsData hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
-        Assertions.assertEquals("BBA3", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
     @Test
