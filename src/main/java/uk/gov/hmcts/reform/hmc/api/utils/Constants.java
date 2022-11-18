@@ -19,5 +19,9 @@ public final class Constants {
     public static final String SCREEN_FLOW = "screenFlow";
     public static final String CASE_MANAGEMENT_LOCATION = "425094";
 
+    public static final String CASE_TYPE = "caseType";
+    public static final String CATEGORY_VALUE = "ABA5-PRL";
+    public static final String CASE_SUB_TYPE = "caseSubType";
+
     private Constants() {}
 }
