@@ -100,7 +100,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         }
         HearingsData hearingsData =
                 HearingsData.hearingsDataWith()
-                        .hmctsServiceID(Constants.BBA3)
+                        .hmctsServiceID(Constants.ABA5)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(Constants.FALSE)
