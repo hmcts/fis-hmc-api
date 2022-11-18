@@ -7,8 +7,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +17,8 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -29,7 +29,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
-import uk.gov.hmcts.reform.hmc.api.model.response.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
@@ -46,6 +45,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     private String ccdBaseUrl;
 
     @Autowired CaseApiService caseApiService;
+
+    @Autowired private ResourceLoader resourceLoader;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -87,11 +88,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
         JSONObject screenFlowJson = null;
-        ClassLoader classLoader = getClass().getClassLoader();
         JSONParser parser = new JSONParser();
-        try (InputStream inputStream =
-                Files.newInputStream(
-                        Paths.get(classLoader.getResource("ScreenFlow.json").getFile()))) {
+        Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
+
+        try (InputStream inputStream = resource.getInputStream()) {
             screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -137,10 +137,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
                         .caseInterpreterRequiredFlag(Constants.FALSE)
-                        .panelRequirements(
-                                PanelRequirements.panelRequirementsWith()
-                                        .requirementDetails(Constants.EMPTY)
-                                        .build())
+                        .panelRequirements(null)
                         .leadJudgeContractType(Constants.EMPTY)
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(Constants.FALSE)

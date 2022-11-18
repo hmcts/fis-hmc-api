@@ -49,7 +49,7 @@
     <cve>CVE-2020-8908</cve>
   </suppress>
   <suppress>
-    <notes>snakeyaml-1.29.jar</notes>
+    <notes>snakeyaml-*</notes>
     <cve>CVE-2022-25857</cve>
     <cve>CVE-2022-38749</cve>
     <cve>CVE-2022-38751</cve>
