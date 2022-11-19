@@ -19,7 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.hmc.api.utils.IdamUserAuthTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.utils.S2sClient;
+import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -36,7 +36,7 @@ public class HearingsContFunctionalTest {
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
 
-    @Autowired S2sClient s2sClient;
+    @Autowired ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
     @Autowired protected IdamUserAuthTokenGenerator idamTokenGenerator;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -58,7 +58,7 @@ public class HearingsContFunctionalTest {
 
         Response response =
                 request.header("Authorization", idamTokenGenerator.getSecurityTokens())
-                        .header(SERV_AUTH_HEADER, s2sClient.serviceAuthTokenGenerator())
+                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
                         .body(hearingValuesRequest)
@@ -71,7 +71,7 @@ public class HearingsContFunctionalTest {
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
                 request.header("Authorisation", idamTokenGenerator.getSecurityTokens())
-                        .header(SERV_AUTH_HEADER, s2sClient.serviceAuthTokenGenerator())
+                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
