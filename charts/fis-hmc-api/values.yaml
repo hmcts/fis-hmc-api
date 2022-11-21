@@ -10,6 +10,10 @@ java:
           alias: HMC_TOPIC_SHARED_ACCESS_KEY
         - name: fis-hmc-api-s2s-secret
           alias: OIDC_S2S_SECRET
+        - name: idam-hmc-fis-hearing-service-client-secret
+          alias: HMC_FIS_HEARING_SERVICE_CLIENT_SECRET
+        - name: idam-hmc-component-user-password
+          alias: IDAM_HMC_COMPONENT_USER_PASSWORD
         - name: AppInsightsInstrumentationKey
           alias: APP_INSIGHTS_KEY
   environment:
