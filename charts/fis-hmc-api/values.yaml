@@ -24,7 +24,7 @@ java:
     APPLICATION_NAME: 'fis_hmc_api'
     HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/hearings/'
     CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
-    CCD_UI_URL: 'https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/'
+    CCD_UI_URL: 'https://manage-case-hearings-int.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/'
     AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'

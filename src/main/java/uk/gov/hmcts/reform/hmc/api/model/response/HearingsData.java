@@ -72,7 +72,7 @@ public class HearingsData {
 
     private Boolean hearingIsLinkedFlag;
 
-    private List<Parties> parties;
+    private List<PartyDetailsModel> parties;
 
     private CaseFlags caseFlags;
 
