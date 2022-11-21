@@ -170,7 +170,8 @@ withPipeline(type, product, component) {
   onPR {
     env.ENVIRONMENT = "preview"
     env.CASE_API_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-    env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+//    env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     setCommonEnvVariables()

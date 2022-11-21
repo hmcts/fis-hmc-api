@@ -11,8 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -37,7 +35,6 @@ public class HearingsContFunctionalTest {
 
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
-    private static final Logger LOG = LoggerFactory.getLogger(HearingsContFunctionalTest.class);
 
     @Autowired ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
@@ -72,8 +69,6 @@ public class HearingsContFunctionalTest {
 
     @Test
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
-        LOG.info("targetInstanceeeeeeeeee" + targetInstance);
-
         Response response =
                 request.header("Authorisation", "Bearer " + idamTokenGenerator.getSecurityTokens())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
