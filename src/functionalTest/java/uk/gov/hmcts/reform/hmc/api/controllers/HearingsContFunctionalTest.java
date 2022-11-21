@@ -70,7 +70,7 @@ public class HearingsContFunctionalTest {
     @Test
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
-                request.header("Authorization", "Bearer " + idamTokenGenerator.getSecurityTokens())
+                request.header("Authorisation", "Bearer " + idamTokenGenerator.getSecurityTokens())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
                         .when()
