@@ -14,11 +14,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Vocabulary {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryType;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryValue;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryParent;
+    private String word1;
 }
