@@ -177,12 +177,14 @@ withPipeline(type, product, component) {
   onMaster {
     env.ENVIRONMENT = "aat"
     env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-aat.service.core-compute-aat.internal"
     setCommonEnvVariables()
   }
 
   onDemo {
     env.ENVIRONMENT = "demo"
     env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
   }
 
   onPerftest {
