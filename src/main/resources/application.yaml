@@ -69,7 +69,7 @@ core_case_data:
 
 ccd:
   ui:
-    url: ${CCD_UI_URL:https://manage-case.demo.platform.hmcts.net/cases/case-details/}
+    url: ${CCD_UI_URL:https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/}
 
 hearing_component:
   api:
