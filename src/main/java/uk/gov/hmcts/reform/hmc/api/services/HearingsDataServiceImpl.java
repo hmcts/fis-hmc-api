@@ -29,6 +29,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
+import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
@@ -128,7 +129,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
                                                 .locationType(Constants.EMPTY)
-                                                .locationId(Constants.EMPTY)
+                                                .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
                         .facilitiesRequired(Arrays.asList(Constants.EMPTY))
                         .listingComments(Constants.EMPTY)
@@ -187,6 +188,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partyFlagsModelList).build();
 
         hearingsData.setCaseFlags(caseFlags);
+        IndividualDetailsModel individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                        .firstName("Jane")
+                        .lastName("Smith")
+                        .build();
 
         PartyDetailsModel partyDetailsModel =
                 PartyDetailsModel.partyDetailsWith()
@@ -194,6 +200,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .partyName(partyFlagsModel.getPartyName())
                         .partyType(PartyType.IND)
                         .partyRole(Constants.APPLICANT)
+                        .individualDetails(individualDetailsModel)
                         .build();
 
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
