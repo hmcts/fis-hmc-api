@@ -14,7 +14,7 @@ import org.json.simple.JSONArray;
 @Builder(builderMethodName = "hearingsDataWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HearingsData {
+public class ServiceHearingValues {
 
     private String hmctsServiceID;
 
