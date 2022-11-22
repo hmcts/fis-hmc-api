@@ -81,4 +81,10 @@ public class HearingsData {
     private List<Vocabulary> vocabulary;
 
     private List<String> hearingChannels;
+
+    private String message;
+
+    public HearingsData(String errorMessage) {
+        this.message = errorMessage;
+    }
 }

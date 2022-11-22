@@ -1,5 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.status;
+
+import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
@@ -28,6 +35,9 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @RestController
 @Api(value = "/", description = "get hearings Values")
 public class HearingsController {
+
+    @Autowired private AuthorisationService authorisationService;
+
     @Autowired private HearingsDataService hearingsDataService;
 
     @Autowired private HearingsService hearingsService;
@@ -52,9 +62,26 @@ public class HearingsController {
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
-        return ResponseEntity.ok(
-                hearingsDataService.getCaseData(
-                        hearingValues, authorisation, serviceAuthorization));
+        try {
+            if (Boolean.TRUE.equals(authorisationService.authoriseUser(authorisation))
+                    && Boolean.TRUE.equals(
+                            authorisationService.authoriseService(serviceAuthorization))) {
+                log.info("processing request after authorization");
+
+                return ResponseEntity.ok(
+                        hearingsDataService.getCaseData(
+                                hearingValues, authorisation, serviceAuthorization));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new HearingsData(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status())
+                    .body(new HearingsData(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new HearingsData(e.getMessage()));
+        }
     }
 
     /**
