@@ -20,13 +20,13 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-class HearingsDataServiceTest {
+class ServiceHearingValuesServiceTest {
 
     @InjectMocks private HearingsDataServiceImpl hearingservice;
 
@@ -58,7 +58,7 @@ class HearingsDataServiceTest {
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-        HearingsData hearingsResponse =
+        ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
@@ -79,7 +79,7 @@ class HearingsDataServiceTest {
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-        HearingsData hearingsResponse =
+        ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
@@ -100,7 +100,7 @@ class HearingsDataServiceTest {
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-        HearingsData hearingsResponse =
+        ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
@@ -121,7 +121,7 @@ class HearingsDataServiceTest {
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-        HearingsData hearingsResponse =
+        ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }

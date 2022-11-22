@@ -29,11 +29,12 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
@@ -60,7 +61,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
      * @return hearingsData, response data for the input hearingValues.
      */
     @Override
-    public HearingsData getCaseData(
+    public ServiceHearingValues getCaseData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization)
             throws IOException, ParseException {
         CaseDetails caseDetails =
@@ -99,8 +100,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        HearingsData hearingsData =
-                HearingsData.hearingsDataWith()
+        ServiceHearingValues hearingsData =
+                ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID(Constants.ABA5)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
@@ -170,7 +171,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return caseCategoriesList;
     }
 
-    public void setCaseFlagData(HearingsData hearingsData) {
+    public void setCaseFlagData(ServiceHearingValues hearingsData) {
         String uuid = UUID.randomUUID().toString();
         PartyFlagsModel partyFlagsModel =
                 PartyFlagsModel.partyFlagsModelWith()
@@ -191,8 +192,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 PartyDetailsModel.partyDetailsWith()
                         .partyID(partyFlagsModel.getPartyId())
                         .partyName(partyFlagsModel.getPartyName())
-                        .partyType("Applicant")
-                        .partyRole("Applicant")
+                        .partyType(PartyType.IND)
+                        .partyRole(Constants.APPLICANT)
                         .build();
 
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
