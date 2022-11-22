@@ -33,6 +33,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -191,8 +192,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 PartyDetailsModel.partyDetailsWith()
                         .partyID(partyFlagsModel.getPartyId())
                         .partyName(partyFlagsModel.getPartyName())
-                        .partyType("Applicant")
-                        .partyRole("Applicant")
+                        .partyType(PartyType.IND)
+                        .partyRole(Constants.APPLICANT)
                         .build();
 
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();

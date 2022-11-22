@@ -23,6 +23,7 @@ public final class Constants {
     public static final String CATEGORY_VALUE = "ABA5-PRL";
     public static final String CASE_SUB_TYPE = "caseSubType";
     public static final String ABA5 = "ABA5";
+    public static final String APPLICANT = "Applicant";
 
     private Constants() {}
 }
