@@ -57,26 +57,27 @@ public class HearingsContFunctionalTest {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
 
         Response response =
-                request.header("Authorization", idamTokenGenerator.getSecurityTokens())
+                request.header("Authorization", "Bearer " + idamTokenGenerator.getSecurityTokens())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
                         .body(hearingValuesRequest)
                         .post("serviceHearingValues");
 
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
 
-    @Test
-    public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
-        Response response =
-                request.header("Authorisation", idamTokenGenerator.getSecurityTokens())
-                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
-                        .header("caseReference", "1667867755895004")
-                        .when()
-                        .contentType(JSON_CONTENT_TYPE)
-                        .get("hearings");
-
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
+    //    @Test
+    //    public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
+    //        Response response =
+    //                request.header("Authorisation", "Bearer " +
+    // idamTokenGenerator.getSecurityTokens())
+    //                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
+    //                        .header("caseReference", "1667867755895004")
+    //                        .when()
+    //                        .contentType(JSON_CONTENT_TYPE)
+    //                        .get("hearings");
+    //
+    //        response.then().assertThat().statusCode(HttpStatus.OK.value());
+    //    }
 }
