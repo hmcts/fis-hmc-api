@@ -10,7 +10,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -64,9 +61,7 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
-            if (Boolean.TRUE.equals(authorisationService.authoriseUser(authorisation))
-                    && Boolean.TRUE.equals(
-                            authorisationService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
                 log.info("processing request after authorization");
 
                 return ResponseEntity.ok(
@@ -78,8 +73,7 @@ public class HearingsController {
         } catch (ResponseStatusException e) {
             return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
         } catch (FeignException feignException) {
-            return status(feignException.status())
-                    .body(new ApiError(feignException.getMessage()));
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
@@ -100,12 +94,26 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public Hearings getHearingsByCaseRefNo(
+    public ResponseEntity getHearingsByCaseRefNo(
             @RequestHeader("Authorisation") String authorization,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
-        return hearingsService.getHearingsByCaseRefNo(
-                authorization, serviceAuthorization, caseReference);
+        try {
+            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
+                log.info("processing request after authorization");
+                return ResponseEntity.ok(
+                        hearingsService.getHearingsByCaseRefNo(
+                                authorization, serviceAuthorization, caseReference));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
     }
 
     /**
@@ -124,13 +132,26 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get Hearings Linked case Data successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<List> getHearingsLinkData(
+    public ResponseEntity getHearingsLinkData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
-        return ResponseEntity.ok(
-                hearingsDataService.getHearingLinkData(
-                        hearingValues, authorisation, serviceAuthorization));
+        try {
+            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
+                log.info("processing request after authorization");
+                return ResponseEntity.ok(
+                        hearingsDataService.getHearingLinkData(
+                                hearingValues, authorisation, serviceAuthorization));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
     }
 }

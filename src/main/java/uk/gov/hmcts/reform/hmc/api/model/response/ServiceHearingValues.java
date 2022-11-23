@@ -81,6 +81,4 @@ public class ServiceHearingValues {
     private List<Vocabulary> vocabulary;
 
     private List<String> hearingChannels;
-
-
 }

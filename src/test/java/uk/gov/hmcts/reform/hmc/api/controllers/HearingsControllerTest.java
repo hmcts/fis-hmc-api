@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
@@ -31,6 +32,8 @@ class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
 
+    @Mock private AuthorisationService authorisationService;
+
     @Mock private HearingsDataService hearingsDataService;
 
     @Mock private HearingsService hearingsService;
@@ -38,6 +41,7 @@ class HearingsControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
     }
 
     @Test
@@ -50,7 +54,7 @@ class HearingsControllerTest {
                         .publicCaseName("John Smith")
                         .caseAdditionalSecurityFlag(false)
                         .build();
-
+        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(hearingsDataService.getCaseData(any(), anyString(), anyString()))
                 .thenReturn(hearingsData);
 
@@ -67,9 +71,9 @@ class HearingsControllerTest {
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString(), anyString()))
                 .thenReturn(hearings);
-        Hearings hearingsResponse =
+        ResponseEntity<Hearings> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
-        Assertions.assertEquals("123", hearingsResponse.getCaseRef());
+        Assertions.assertEquals("123", hearingsResponse.getBody().getCaseRef());
     }
 
     @Test
