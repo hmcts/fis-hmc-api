@@ -14,7 +14,7 @@ import org.json.simple.JSONArray;
 @Builder(builderMethodName = "hearingsDataWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HearingsData {
+public class ServiceHearingValues {
 
     private String hmctsServiceID;
 
@@ -72,7 +72,7 @@ public class HearingsData {
 
     private Boolean hearingIsLinkedFlag;
 
-    private List<Parties> parties;
+    private List<PartyDetailsModel> parties;
 
     private CaseFlags caseFlags;
 
@@ -82,9 +82,5 @@ public class HearingsData {
 
     private List<String> hearingChannels;
 
-    private String message;
 
-    public HearingsData(String errorMessage) {
-        this.message = errorMessage;
-    }
 }

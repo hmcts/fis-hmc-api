@@ -24,7 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
@@ -57,7 +58,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings Values successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<HearingsData> getHearingsData(
+    public ResponseEntity getHearingsData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
@@ -75,12 +76,12 @@ public class HearingsController {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
         } catch (ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new HearingsData(e.getMessage()));
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
         } catch (FeignException feignException) {
             return status(feignException.status())
-                    .body(new HearingsData(feignException.getMessage()));
+                    .body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new HearingsData(e.getMessage()));
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
     }
 

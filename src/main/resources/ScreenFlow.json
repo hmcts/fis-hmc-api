@@ -60,14 +60,6 @@
       "screenName": "hearing-judge",
       "navigation": [
         {
-          "resultValue": "hearing-panel"
-        }
-      ]
-    },
-    {
-      "screenName": "hearing-panel",
-      "navigation": [
-        {
           "resultValue": "hearing-timing"
         }
       ]

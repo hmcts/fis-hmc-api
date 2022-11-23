@@ -24,7 +24,9 @@ static Map<String, Object> secret(String secretName, String envVariable) {
 def secrets = [
   'fis-kv-${env}'    :[
     secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
-    secret('fis-hmc-api-s2s-secret', 'OIDC_S2S_SECRET')
+    secret('fis-hmc-api-s2s-secret', 'OIDC_S2S_SECRET'),
+    secret('idam-hmc-fis-hearing-service-client-secret', 'HMC_FIS_HEARING_SERVICE_CLIENT_SECRET'),
+    secret('idam-hmc-component-user-password', 'IDAM_HMC_COMPONENT_USER_PASSWORD')
   ]
 ]
 
@@ -167,29 +169,32 @@ withPipeline(type, product, component) {
 
   onPR {
     env.ENVIRONMENT = "preview"
-    env.CASE_API_URL = "http://privatelaw-hearings-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CASE_API_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     setCommonEnvVariables()
   }
 
   onMaster {
     env.ENVIRONMENT = "aat"
-    env.CASE_API_URL = "http://privatelaw-hearings-api-aat.service.core-compute-aat.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-staging.service.core-compute-aat.internal"
     setCommonEnvVariables()
   }
 
   onDemo {
     env.ENVIRONMENT = "demo"
-    env.CASE_API_URL = "http://privatelaw-hearings-api-demo.service.core-compute-demo.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
   }
 
   onPerftest {
     env.ENVIRONMENT = "perftest"
-    env.CASE_API_URL = "http://privatelaw-hearings-api-perftest.service.core-compute-perftest.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-perftest.service.core-compute-perftest.internal"
   }
 
   onIthc {
     env.ENVIRONMENT = "ithc"
-    env.CASE_API_URL = "http://privatelaw-hearings-api-ithc.service.core-compute-ithc.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-ithc.service.core-compute-ithc.internal"
   }
 
 }

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,10 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Vocabulary {
-
-    private String categoryType;
-
-    private String categoryValue;
-
-    private String categoryParent;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String word1;
 }

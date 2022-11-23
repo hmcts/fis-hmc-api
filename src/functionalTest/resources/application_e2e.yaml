@@ -39,6 +39,9 @@ spring:
     multipart:
       max-file-size: 30MB
       max-request-size: 30MB
+  profiles:
+    active: test
+
 
 hearing:
   api:
@@ -62,14 +65,13 @@ idam:
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
-
 core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-demo.service.core-compute-demo.internal}
 
 ccd:
   ui:
-    url: ${CCD_UI_URL:https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/}
+    url: ${CCD_UI_URL:https://manage-case.demo.platform.hmcts.net/cases/case-details/}
 
 hearing_component:
   api:
