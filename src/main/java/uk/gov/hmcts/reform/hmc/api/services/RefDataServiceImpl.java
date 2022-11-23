@@ -54,8 +54,6 @@ public class RefDataServiceImpl implements RefDataService {
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             LOG.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
-        } catch (FeignException exception) {
-            LOG.info("PRL call Feign exception {}", exception.getMessage());
         } catch (Exception exception) {
             LOG.info("RefData call exception {}", exception.getMessage());
         }
