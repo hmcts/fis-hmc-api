@@ -62,7 +62,7 @@ idam:
     clientSecret: ${HMC_FIS_HEARING_SERVICE_CLIENT_SECRET:dummy}
     grantType: ${IDAM_HMC_COMPONENT_GRANT_TYPE:password}
     username: ${IDAM_HMC_COMPONENT_USER_NAME:prl_hearing_manager@justice.gov.uk}
-    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummyy}
     scope: openid profile roles
   refDataUserAuth:
     clientId: ${HMC_FIS_HEARING_SERVICE_CLIENT_ID:hmc-fis-hearing-service}
