@@ -18,18 +18,16 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 @SuppressWarnings("unchecked")
 public class RefDataServiceImpl implements RefDataService {
 
-    @Autowired private AuthTokenGenerator authTokenGenerator;
-    @Autowired private UserAuthTokenGenerator userAuthTokenGenerator;
-
-    private static final Logger LOG = LoggerFactory.getLogger(RefDataServiceImpl.class);
-
+    @Autowired AuthTokenGenerator authTokenGenerator;
+    @Autowired UserAuthTokenGenerator userAuthTokenGenerator;
     @Autowired RefDataApi refDataApi;
+    private static final Logger LOG = LoggerFactory.getLogger(RefDataServiceImpl.class);
 
     /**
      * This method will get all the court details of a particular venueId(epimmsId).
      *
      * @param epimmsId data to get court details from refData.
-     * @return courtDetail, particlular Court detail.
+     * @return courtDetail, particular Court detail.
      */
     @Override
     @SuppressWarnings("unused")
@@ -49,15 +47,14 @@ public class RefDataServiceImpl implements RefDataService {
                             .collect(Collectors.toList());
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
+                LOG.info("Court details filtered" + courtDetail);
             }
             return courtDetail;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             LOG.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
         } catch (FeignException exception) {
-            LOG.info("PRL call Feign exception {}", exception.getMessage());
-        } catch (Exception exception) {
-            LOG.info("RefData call exception {}", exception.getMessage());
+            LOG.info("RefData call Feign exception {}", exception.getMessage());
         }
         return courtDetail;
     }
