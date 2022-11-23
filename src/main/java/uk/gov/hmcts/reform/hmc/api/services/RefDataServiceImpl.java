@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import feign.FeignException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
