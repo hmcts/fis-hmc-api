@@ -53,6 +53,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired private ResourceLoader resourceLoader;
 
+    protected static final List<String> HEARING_CHANNELS =
+            Arrays.asList("INTER", "TEL", "VID", "ONPPRS");
+    protected static final List<String> FACILITIES_REQUIRED = Arrays.asList("9", "11", "14");
+
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
      *
@@ -131,7 +135,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                                 .locationType(Constants.EMPTY)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(Constants.FACILITIES_REQUIRED)
+                        .facilitiesRequired(FACILITIES_REQUIRED)
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
@@ -145,7 +149,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(Constants.HEARING_CHANNELS)
+                        .hearingChannels(HEARING_CHANNELS)
                         .build();
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
