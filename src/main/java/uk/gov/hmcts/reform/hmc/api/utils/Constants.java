@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class Constants {
 
     public static final Boolean TRUE = true;
@@ -23,7 +26,12 @@ public final class Constants {
     public static final String CATEGORY_VALUE = "ABA5-PRL";
     public static final String CASE_SUB_TYPE = "caseSubType";
     public static final String ABA5 = "ABA5";
-    public static final String APPLICANT = "Applicant";
+    public static final String APPLICANT = "APPL";
+    public static final String HEARING_TYPE = "ABA5-APL";
+    public static final List<String> HEARING_CHANNELS =
+            Arrays.asList("INTER", "TEL", "VID", "ONPPRS");
+    public static final List<String> FACILITIES_REQUIRED = Arrays.asList("9", "11", "14");
+    public static final String HEARING_PRIORITY = "Standard";
 
     private Constants() {}
 }

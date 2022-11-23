@@ -114,7 +114,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseManagementLocationCode(Constants.CASE_MANAGEMENT_LOCATION)
                         .caseSlaStartDate(caseSlaStartDateMapper)
                         .autoListFlag(Constants.FALSE)
-                        .hearingType(Constants.EMPTY)
+                        .hearingType(Constants.HEARING_TYPE)
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
                                         .dateRangeStart(Constants.EMPTY)
@@ -122,7 +122,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         .firstDateTimeMustBe(Constants.EMPTY)
                                         .build())
                         .duration(0)
-                        .hearingPriorityType(Constants.EMPTY)
+                        .hearingPriorityType(Constants.HEARING_PRIORITY)
                         .numberOfPhysicalAttendees(0)
                         .hearingInWelshFlag(Constants.FALSE)
                         .hearingLocations(
@@ -131,7 +131,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                                 .locationType(Constants.EMPTY)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(Arrays.asList(Constants.EMPTY))
+                        .facilitiesRequired(Constants.FACILITIES_REQUIRED)
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
@@ -145,7 +145,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(Arrays.asList(Constants.EMPTY))
+                        .hearingChannels(Constants.HEARING_CHANNELS)
                         .build();
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
