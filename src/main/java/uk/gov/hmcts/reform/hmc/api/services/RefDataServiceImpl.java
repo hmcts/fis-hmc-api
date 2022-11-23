@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import feign.FeignException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.UserAuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
-import uk.gov.hmcts.reform.hmc.api.utils.UserAuthTokenGenerator;
 
 @Service
 @SuppressWarnings("unchecked")
@@ -53,6 +54,8 @@ public class RefDataServiceImpl implements RefDataService {
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             LOG.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
+        } catch (FeignException exception) {
+            LOG.info("PRL call Feign exception {}", exception.getMessage());
         } catch (Exception exception) {
             LOG.info("RefData call exception {}", exception.getMessage());
         }

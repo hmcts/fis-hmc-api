@@ -19,9 +19,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.UserAuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
-import uk.gov.hmcts.reform.hmc.api.utils.UserAuthTokenGenerator;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")

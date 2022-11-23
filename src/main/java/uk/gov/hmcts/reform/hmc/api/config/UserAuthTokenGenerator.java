@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.hmc.api.utils;
+package uk.gov.hmcts.reform.hmc.api.config;
 
 import static org.springframework.http.HttpHeaders.EMPTY;
 
