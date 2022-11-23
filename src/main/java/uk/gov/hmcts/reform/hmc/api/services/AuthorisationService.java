@@ -17,7 +17,7 @@ public class AuthorisationService {
 
     private final ServiceAuthorisationApi serviceAuthorisationApi;
 
-    @Value("${private-law.authorised-services}")
+    @Value("${private-law.hmc-authorised-services}")
     private String s2sAuthorisedServices;
 
     private final IdamClient idamClient;

@@ -101,3 +101,5 @@ logging:
     org:
       springframework:
         web: DEBUG
+private-law:
+  hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp}
