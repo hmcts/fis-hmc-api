@@ -103,8 +103,7 @@ public class ServiceBusConfiguration {
                                             hearing.getHearingUpdate().getHearingVenueId());
 
                             if (courtDetail != null) {
-                                log.info(
-                                        "courtDetailllllllls " + courtDetail.getHearingVenueName());
+                                log.info("courtDetails " + courtDetail.getHearingVenueName());
                                 HearingUpdate hearingUpdate = hearing.getHearingUpdate();
                                 hearingUpdate.setHearingVenueName(
                                         courtDetail.getHearingVenueName());
