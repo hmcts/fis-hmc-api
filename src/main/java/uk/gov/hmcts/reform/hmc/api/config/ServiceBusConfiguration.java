@@ -25,8 +25,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdate;
-import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
@@ -97,25 +95,10 @@ public class ServiceBusConfiguration {
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
                         if (hearing.getHearingUpdate().getHearingVenueId() != null) {
                             log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
-
-                            CourtDetail courtDetail =
-                                    refDataService.getCourtDetails(
-                                            hearing.getHearingUpdate().getHearingVenueId());
-
-                            if (courtDetail != null) {
-                                log.info("courtDetails " + courtDetail.getHearingVenueName());
-                                HearingUpdate hearingUpdate = hearing.getHearingUpdate();
-                                hearingUpdate.setHearingVenueName(
-                                        courtDetail.getHearingVenueName());
-                                hearingUpdate.setHearingVenueAddress(
-                                        courtDetail.getHearingVenueAddress());
-                                hearingUpdate.setHearingVenueLocationCode(
-                                        courtDetail.getHearingVenueLocationCode());
-                                hearingUpdate.setCourtTypeId(courtDetail.getCourtTypeId());
-                                hearing.hearingRequestWith().hearingUpdate(hearingUpdate).build();
-                            } else {
-                                return receiveClient.abandonAsync(message.getLockToken());
-                            }
+                            hearing = refDataService.getHearingWithCourtDetails(hearing);
+                            log.info(
+                                    "Hearing with Full CourtDetails  "
+                                            + hearing.getHearingUpdate().getHearingVenueName());
                         } else {
                             return receiveClient.abandonAsync(message.getLockToken());
                         }

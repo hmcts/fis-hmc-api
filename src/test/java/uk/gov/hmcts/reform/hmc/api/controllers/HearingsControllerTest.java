@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import java.io.IOException;
+import java.util.List;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
@@ -42,8 +43,8 @@ class HearingsControllerTest {
     @Test
     public void hearingsDataControllerTest() throws IOException, ParseException {
 
-        HearingsData hearingsData =
-                HearingsData.hearingsDataWith()
+        ServiceHearingValues hearingsData =
+                ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID("BBA3")
                         .hmctsInternalCaseName("123")
                         .publicCaseName("John Smith")
@@ -56,7 +57,7 @@ class HearingsControllerTest {
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
-        ResponseEntity<HearingsData> hearingsData1 =
+        ResponseEntity<ServiceHearingValues> hearingsData1 =
                 hearingsController.getHearingsData("Auth", "sauth", hearingValues);
         Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
@@ -69,5 +70,16 @@ class HearingsControllerTest {
         Hearings hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
         Assertions.assertEquals("123", hearingsResponse.getCaseRef());
+    }
+
+    @Test
+    public void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
+
+        HearingValues hearingsRequestData =
+                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<List> hearingsLinkCaseDataLst =
+                hearingsController.getHearingsLinkData("Auth", "sauth", hearingsRequestData);
+        Assertions.assertEquals(HttpStatus.OK, hearingsLinkCaseDataLst.getStatusCode());
     }
 }

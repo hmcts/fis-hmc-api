@@ -9,17 +9,21 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder(builderMethodName = "judiciaryWith")
+@Builder(builderMethodName = "partyDetailsWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Judiciary {
+public class PartyDetailsModel {
+    String partyID;
+    PartyType partyType;
+    String partyName;
+    String partyRole;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryType;
+    String hearingSubChannel;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryValue;
+    IndividualDetailsModel individualDetails;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String categoryParent;
+    OrganisationDetailsModel organisationDetails;
 }

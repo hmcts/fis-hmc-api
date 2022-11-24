@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -27,12 +29,15 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
-import uk.gov.hmcts.reform.hmc.api.model.response.Parties;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Slf4j
@@ -48,6 +53,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired private ResourceLoader resourceLoader;
 
+    protected static final List<String> HEARING_CHANNELS =
+            Arrays.asList("INTER", "TEL", "VID", "ONPPRS");
+    protected static final List<String> FACILITIES_REQUIRED = Arrays.asList("9", "11", "14");
+
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
      *
@@ -57,7 +66,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
      * @return hearingsData, response data for the input hearingValues.
      */
     @Override
-    public HearingsData getCaseData(
+    public ServiceHearingValues getCaseData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization)
             throws IOException, ParseException {
         CaseDetails caseDetails =
@@ -96,26 +105,20 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        HearingsData hearingsData =
-                HearingsData.hearingsDataWith()
-                        .hmctsServiceID(Constants.BBA3)
+        ServiceHearingValues hearingsData =
+                ServiceHearingValues.hearingsDataWith()
+                        .hmctsServiceID(Constants.ABA5)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(Constants.FALSE)
-                        .caseCategories(
-                                Arrays.asList(
-                                        CaseCategories.caseCategoriesWith()
-                                                .categoryType(Constants.EMPTY)
-                                                .categoryValue(Constants.EMPTY)
-                                                .categoryParent(Constants.PRIVATE_LAW)
-                                                .build()))
+                        .caseCategories(getCaseCategories())
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
                         .caseRestrictedFlag(Constants.FALSE)
                         .externalCaseReference(Constants.EMPTY)
-                        .caseManagementLocationCode(Constants.EMPTY)
+                        .caseManagementLocationCode(Constants.CASE_MANAGEMENT_LOCATION)
                         .caseSlaStartDate(caseSlaStartDateMapper)
                         .autoListFlag(Constants.FALSE)
-                        .hearingType(Constants.EMPTY)
+                        .hearingType(Constants.HEARING_TYPE)
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
                                         .dateRangeStart(Constants.EMPTY)
@@ -123,16 +126,16 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         .firstDateTimeMustBe(Constants.EMPTY)
                                         .build())
                         .duration(0)
-                        .hearingPriorityType(Constants.EMPTY)
+                        .hearingPriorityType(Constants.HEARING_PRIORITY)
                         .numberOfPhysicalAttendees(0)
                         .hearingInWelshFlag(Constants.FALSE)
                         .hearingLocations(
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
                                                 .locationType(Constants.EMPTY)
-                                                .locationId(Constants.EMPTY)
+                                                .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(Arrays.asList(Constants.EMPTY))
+                        .facilitiesRequired(FACILITIES_REQUIRED)
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
@@ -141,36 +144,77 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .leadJudgeContractType(Constants.EMPTY)
                         .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(Constants.FALSE)
-                        .parties(Arrays.asList(Parties.partyDetailsWith().build()))
                         .screenFlow(
                                 screenFlowJson != null
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(Arrays.asList(Constants.EMPTY))
+                        .hearingChannels(HEARING_CHANNELS)
                         .build();
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
         return hearingsData;
     }
 
-    public void setCaseFlagData(HearingsData hearingsData) {
+    private List<CaseCategories> getCaseCategories() {
+        List<CaseCategories> caseCategoriesList = new ArrayList<>();
+        CaseCategories caseCategories =
+                CaseCategories.caseCategoriesWith()
+                        .categoryType(Constants.CASE_TYPE)
+                        .categoryValue(Constants.CATEGORY_VALUE)
+                        .build();
+
+        CaseCategories caseSubCategories =
+                CaseCategories.caseCategoriesWith()
+                        .categoryType(Constants.CASE_SUB_TYPE)
+                        .categoryValue(Constants.CATEGORY_VALUE)
+                        .categoryParent(Constants.CATEGORY_VALUE)
+                        .build();
+
+        caseCategoriesList.add(caseCategories);
+        caseCategoriesList.add(caseSubCategories);
+        return caseCategoriesList;
+    }
+
+    public void setCaseFlagData(ServiceHearingValues hearingsData) {
+        String uuid = UUID.randomUUID().toString();
         PartyFlagsModel partyFlagsModel =
                 PartyFlagsModel.partyFlagsModelWith()
-                        .partyId("P1")
+                        .partyId(uuid)
                         .partyName("Jane Smith")
                         .flagId("RA0042")
                         .flagStatus("ACTIVE")
                         .flagParentId("")
                         .flagDescription("Sign language interpreter required")
                         .build();
-        CaseFlags caseFlags =
-                CaseFlags.judiciaryWith()
-                        .flags(new ArrayList<>())
-                        .partyFlagsModel(partyFlagsModel)
-                        .flagAmendUrl("")
-                        .categoryParent("")
-                        .build();
+        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
+        partyFlagsModelList.add(partyFlagsModel);
+        CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partyFlagsModelList).build();
+
         hearingsData.setCaseFlags(caseFlags);
+        IndividualDetailsModel individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                        .firstName("Jane")
+                        .lastName("Smith")
+                        .build();
+
+        PartyDetailsModel partyDetailsModel =
+                PartyDetailsModel.partyDetailsWith()
+                        .partyID(partyFlagsModel.getPartyId())
+                        .partyName(partyFlagsModel.getPartyName())
+                        .partyType(PartyType.IND)
+                        .partyRole(Constants.APPLICANT)
+                        .individualDetails(individualDetailsModel)
+                        .build();
+
+        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
+        partyDetailsModelList.add(partyDetailsModel);
+        hearingsData.setParties(partyDetailsModelList);
+    }
+
+    @Override
+    public List<HearingLinkData> getHearingLinkData(
+            HearingValues hearingValues, String authorisation, String serviceAuthorization) {
+        return new ArrayList<>();
     }
 }

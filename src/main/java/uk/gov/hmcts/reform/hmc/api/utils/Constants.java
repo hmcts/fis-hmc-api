@@ -17,6 +17,16 @@ public final class Constants {
     public static final String PRIVATE_LAW = "Private Law";
     public static final String UNDERSCORE = "_";
     public static final String SCREEN_FLOW = "screenFlow";
+    public static final String CASE_MANAGEMENT_LOCATION = "20262";
+
+    public static final String CASE_TYPE = "caseType";
+    public static final String CATEGORY_VALUE = "ABA5-PRL";
+    public static final String CASE_SUB_TYPE = "caseSubType";
+    public static final String ABA5 = "ABA5";
+    public static final String APPLICANT = "APPL";
+    public static final String HEARING_TYPE = "ABA5-APL";
+
+    public static final String HEARING_PRIORITY = "Standard";
 
     private Constants() {}
 }

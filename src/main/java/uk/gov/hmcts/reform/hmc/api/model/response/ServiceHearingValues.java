@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import org.json.simple.JSONArray;
 @Builder(builderMethodName = "hearingsDataWith")
 @NoArgsConstructor
 @AllArgsConstructor
-public class HearingsData {
+public class ServiceHearingValues {
 
     private String hmctsServiceID;
 
@@ -27,12 +28,14 @@ public class HearingsData {
 
     private String caseDeepLink;
 
+    @JsonProperty("caserestrictedFlag")
     private Boolean caseRestrictedFlag;
 
     private String externalCaseReference;
 
     private String caseManagementLocationCode;
 
+    @JsonProperty("caseSLAStartDate")
     private String caseSlaStartDate;
 
     private Boolean autoListFlag;
@@ -69,7 +72,7 @@ public class HearingsData {
 
     private Boolean hearingIsLinkedFlag;
 
-    private List<Parties> parties;
+    private List<PartyDetailsModel> parties;
 
     private CaseFlags caseFlags;
 

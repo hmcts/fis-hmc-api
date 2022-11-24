@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingsData;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 
@@ -46,7 +47,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings Values successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<HearingsData> getHearingsData(
+    public ResponseEntity<ServiceHearingValues> getHearingsData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
@@ -77,5 +78,31 @@ public class HearingsController {
             @RequestHeader("caseReference") String caseReference) {
         return hearingsService.getHearingsByCaseRefNo(
                 authorization, serviceAuthorization, caseReference);
+    }
+
+    /**
+     * End point to fetch the Hearings Link Data info based on the hearing request Values passed.
+     *
+     * @header authorisation, User authorisation token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch
+     *     hearingsLinkData.
+     * @return hearingsLinkData, response data for the hearing request Values.
+     */
+    @PostMapping(path = "/serviceLinkedCases")
+    @ApiOperation("get service hearings Linked Cases")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 200, message = "get Hearings Linked case Data successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<List> getHearingsLinkData(
+            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestBody final HearingValues hearingValues)
+            throws IOException, ParseException {
+        return ResponseEntity.ok(
+                hearingsDataService.getHearingLinkData(
+                        hearingValues, authorisation, serviceAuthorization));
     }
 }
