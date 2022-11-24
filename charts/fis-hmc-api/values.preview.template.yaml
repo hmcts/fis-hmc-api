@@ -1,9 +1,8 @@
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
-
-environment:
-  CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-demo.service.core-compute-demo.internal'
-  HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+  environment:
+    CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-demo.service.core-compute-demo.internal'
+    HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
 
 
