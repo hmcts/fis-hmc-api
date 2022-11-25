@@ -33,7 +33,6 @@ public class AuthorisationServiceTest {
 
     @Test
     public void authoriseWhenTheServiceIsCalledFromPayment() {
-
         when(serviceAuthorisationApi.getServiceName(any())).thenReturn("payment_api");
         assertTrue(authorisationService.authoriseService("Bearer abcasda"));
     }
