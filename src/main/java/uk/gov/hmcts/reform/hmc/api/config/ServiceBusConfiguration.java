@@ -92,6 +92,7 @@ public class ServiceBusConfiguration {
                         String messageReceived =
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
+                        log.info(messageReceived);
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
                         if (hearing.getHearingUpdate().getHearingVenueId() != null) {
                             log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
