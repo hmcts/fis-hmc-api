@@ -67,16 +67,17 @@ public class HearingsContFunctionalTest {
         response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    @Test
-    public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
-        Response response =
-                request.header("Authorisation", idamTokenGenerator.generateIdamTokenForRefData())
-                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
-                        .header("caseReference", "1667867755895004")
-                        .when()
-                        .contentType(JSON_CONTENT_TYPE)
-                        .get("hearings");
-
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    }
+    //    @Test
+    //    public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
+    //        Response response =
+    //                request.header("Authorisation",
+    // idamTokenGenerator.generateIdamTokenForRefData())
+    //                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
+    //                        .header("caseReference", "1667867755895004")
+    //                        .when()
+    //                        .contentType(JSON_CONTENT_TYPE)
+    //                        .get("hearings");
+    //
+    //        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    //    }
 }
