@@ -209,5 +209,5 @@ withPipeline(type, product, component) {
 def setCommonEnvVariables() {
   env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
   env.IDAM_API_BASEURL = "https://idam-api.demo.platform.hmcts.net"
-  env.S2S_URL_BASE = "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
 }
