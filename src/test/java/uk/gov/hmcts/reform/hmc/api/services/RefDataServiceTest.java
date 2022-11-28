@@ -19,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.config.UserAuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdate;
@@ -35,7 +35,7 @@ class RefDataServiceTest {
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
-    @Mock private UserAuthTokenGenerator userAuthTokenGenerator;
+    @Mock private IdamTokenGenerator idamTokenGenerator;
 
     @Test
     public void shouldFetchVenueDetailsRefDataTest() throws IOException, ParseException {
@@ -44,7 +44,7 @@ class RefDataServiceTest {
         List<CourtDetail> courtDetailsList = new ArrayList<>();
         courtDetailsList.add(courtDetail);
 
-        when(userAuthTokenGenerator.getSecurityTokens()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
 
@@ -62,7 +62,7 @@ class RefDataServiceTest {
         List<CourtDetail> courtDetailsList = new ArrayList<>();
         courtDetailsList.add(courtDetail);
 
-        when(userAuthTokenGenerator.getSecurityTokens()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
@@ -99,7 +99,7 @@ class RefDataServiceTest {
                         .hearingUpdate(hearingupdate)
                         .build();
 
-        when(userAuthTokenGenerator.getSecurityTokens()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
         Hearing hearingResp = refDataService.getHearingWithCourtDetails(hearing);

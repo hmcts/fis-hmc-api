@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.config.UserAuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdate;
@@ -21,7 +21,8 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 public class RefDataServiceImpl implements RefDataService {
 
     @Autowired AuthTokenGenerator authTokenGenerator;
-    @Autowired UserAuthTokenGenerator userAuthTokenGenerator;
+
+    @Autowired IdamTokenGenerator idamTokenGenerator;
     @Autowired RefDataApi refDataApi;
     private static final Logger LOG = LoggerFactory.getLogger(RefDataServiceImpl.class);
 
@@ -39,7 +40,7 @@ public class RefDataServiceImpl implements RefDataService {
         try {
             List<CourtDetail> courtDetailList =
                     refDataApi.getCourtDetails(
-                            userAuthTokenGenerator.getSecurityTokens(),
+                            idamTokenGenerator.generateIdamTokenForRefData(),
                             authTokenGenerator.generate(),
                             epimmsId);
             LOG.info("RefData call completed successfully" + courtDetailList);
