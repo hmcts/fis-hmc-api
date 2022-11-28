@@ -48,6 +48,10 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
             } catch (Exception exception) {
                 LOG.info("PRL call exception {}", exception.getMessage());
             }
+        }else{
+            LOG.info("Not related PRL HmctsServiceCode{} Hence it is ignored " + hearing.getHmctsServiceCode());
+
+            isPrlRespSuccess = true;
         }
         return isPrlRespSuccess;
     }
