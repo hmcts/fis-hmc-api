@@ -89,7 +89,7 @@ public class ServiceBusConfiguration {
                         String messageReceived =
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
-                        log.debug(messageReceived);
+                        log.info(messageReceived);
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
                         Boolean isPrlSuccess =
                                 prlUpdateService.updatePrlServiceWithHearing(hearing);

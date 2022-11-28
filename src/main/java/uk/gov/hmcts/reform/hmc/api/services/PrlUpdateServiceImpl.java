@@ -34,7 +34,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
         Boolean isPrlRespSuccess = false;
         LOG.info("calling updatePrlServiceWithHearing service " + hearing.getHearingId());
 
-        if (Constants.BBA3.equals(hearing.getHmctsServiceCode())) {
+        if (Constants.ABA5.equals(hearing.getHmctsServiceCode())) {
             try {
                 ResponseEntity responseEntity =
                         prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearing);
