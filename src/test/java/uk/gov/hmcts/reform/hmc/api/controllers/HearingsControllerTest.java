@@ -10,7 +10,6 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
@@ -167,7 +166,7 @@ class HearingsControllerTest {
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
-    /////
+
     @Test
     public void hearingsByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
@@ -178,69 +177,6 @@ class HearingsControllerTest {
 
         ResponseEntity<ServiceHearingValues> hearingsData1 =
                 hearingsController.getHearingsByCaseRefNo("", "", "caseRef");
-
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
-    }
-
-    @Test
-    public void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
-
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
-
-        HearingValues hearingsRequestData =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-
-        ResponseEntity<List> hearingsLinkCaseDataLst =
-                hearingsController.getHearingsLinkData("Auth", "sauth", hearingsRequestData);
-        Assertions.assertEquals(HttpStatus.OK, hearingsLinkCaseDataLst.getStatusCode());
-    }
-
-    @Test
-    public void hearingsLinkCaseDataControllerUnauthorisedExceptionTest()
-            throws IOException, ParseException {
-
-        HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
-                hearingsController.getHearingsLinkData("", "", hearingValues);
-
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
-    }
-
-    @Test
-    public void hearingsLinkCaseDataControllerFeignExceptionTest()
-            throws IOException, ParseException {
-
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
-
-        HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-
-        Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
-                .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
-
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
-                hearingsController.getHearingsLinkData("", "", hearingValues);
-
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
-    }
-
-    @Test
-    public void hearingsLinkCaseDataControllerInternalServiceErrorTest()
-            throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
-
-        HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
-
-        Mockito.when(
-                        hearingsDataService.getHearingLinkData(
-                                hearingValues, "Authorization", "ServiceAuthorization"))
-                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
-
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
-                hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
