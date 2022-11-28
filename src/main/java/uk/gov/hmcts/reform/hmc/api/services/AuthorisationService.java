@@ -25,6 +25,15 @@ public class AuthorisationService {
     private UserInfo userInfo;
 
     public Boolean authoriseService(String serviceAuthHeader) {
+        log.info("S2S token is not 1");
+        log.info("S2S token is not 2");
+        log.info("S2S token is not 3");
+        log.info("S2S token is not 4");
+        log.info("S2S token is not 5");
+        log.info("S2S token is not 6");
+        log.info("S2S token is not 7");
+        log.info("S2S token is not 8");
+
         String callingService;
         try {
             callingService = serviceAuthorisationApi.getServiceName(serviceAuthHeader);
