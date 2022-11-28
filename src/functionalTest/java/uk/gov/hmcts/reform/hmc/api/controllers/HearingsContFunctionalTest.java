@@ -64,7 +64,7 @@ public class HearingsContFunctionalTest {
                         .body(hearingValuesRequest)
                         .post("serviceHearingValues");
 
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
 
     //    @Test
