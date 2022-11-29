@@ -44,7 +44,6 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
-
 idam:
   url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   s2s-auth:
@@ -60,6 +59,7 @@ idam:
     username: ${IDAM_HMC_COMPONENT_USER_NAME:prl_hearing_manager@justice.gov.uk}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
     scope: openid profile roles
+
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
