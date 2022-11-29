@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +18,7 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AuthorisationServiceTest {
+public class IdamAuthServiceTest {
 
     @InjectMocks AuthorisationService authorisationService;
 

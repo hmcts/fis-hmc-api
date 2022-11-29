@@ -61,7 +61,7 @@ class HearingsControllerTest {
                         .publicCaseName("John Smith")
                         .caseAdditionalSecurityFlag(false)
                         .build();
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
+
         Mockito.when(hearingsDataService.getCaseData(any(), anyString(), anyString()))
                 .thenReturn(hearingsData);
 
