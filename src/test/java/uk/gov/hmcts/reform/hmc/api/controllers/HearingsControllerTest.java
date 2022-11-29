@@ -74,8 +74,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsDataControllerUnauthorisedExceptionTest()
-            throws IOException, ParseException {
+    void hearingsDataControllerUnauthorisedExceptionTest() throws IOException, ParseException {
 
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
@@ -96,8 +95,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsDataControllerUnauthorisedFeignExceptionTest()
-            throws IOException, ParseException {
+    void hearingsDataControllerUnauthorisedFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
@@ -113,8 +111,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsDataControllerInternalServiceErrorTest()
-            throws IOException, ParseException {
+    void hearingsDataControllerInternalServiceErrorTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
@@ -153,8 +150,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsByCaseRefNoControllerFeignExceptionTest()
-            throws IOException, ParseException {
+    void hearingsByCaseRefNoControllerFeignExceptionTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 

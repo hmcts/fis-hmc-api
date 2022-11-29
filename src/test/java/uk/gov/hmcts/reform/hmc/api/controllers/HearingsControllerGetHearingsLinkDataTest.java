@@ -81,8 +81,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     }
 
     @Test
-    void hearingsLinkCaseDataControllerFeignExceptionTest()
-            throws IOException, ParseException {
+    void hearingsLinkCaseDataControllerFeignExceptionTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
