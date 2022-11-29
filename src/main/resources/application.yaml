@@ -60,6 +60,7 @@ idam:
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
     scope: openid profile roles
 
+
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
 
