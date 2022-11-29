@@ -13,7 +13,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 @Service
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AuthorisationService {
+public class IdamAuthService {
 
     private final ServiceAuthorisationApi serviceAuthorisationApi;
 

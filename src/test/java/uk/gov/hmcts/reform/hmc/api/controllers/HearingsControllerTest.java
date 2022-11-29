@@ -27,9 +27,9 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -38,7 +38,7 @@ class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
 
-    @Mock private AuthorisationService authorisationService;
+    @Mock private IdamAuthService idamAuthService;
 
     @Mock private HearingsDataService hearingsDataService;
 
@@ -52,7 +52,7 @@ class HearingsControllerTest {
     @Test
     public void hearingsDataControllerTest() throws IOException, ParseException {
 
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
 
         ServiceHearingValues hearingsData =
                 ServiceHearingValues.hearingsDataWith()
@@ -98,7 +98,7 @@ class HearingsControllerTest {
     @Test
     public void hearingsDataControllerUnauthorisedFeignExceptionTest()
             throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
@@ -115,7 +115,7 @@ class HearingsControllerTest {
     @Test
     public void hearingsDataControllerInternalServiceErrorTest()
             throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
@@ -133,7 +133,7 @@ class HearingsControllerTest {
 
     @Test
     public void hearingsControllerTest() throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString(), anyString()))
                 .thenReturn(hearings);
@@ -156,7 +156,7 @@ class HearingsControllerTest {
     public void hearingsByCaseRefNoControllerFeignExceptionTest()
             throws IOException, ParseException {
 
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
@@ -170,7 +170,7 @@ class HearingsControllerTest {
     @Test
     public void hearingsByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));

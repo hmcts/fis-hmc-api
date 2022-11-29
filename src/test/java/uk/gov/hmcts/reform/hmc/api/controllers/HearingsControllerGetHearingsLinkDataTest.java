@@ -26,8 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -36,7 +36,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
 
     @InjectMocks private HearingsController hearingsController;
 
-    @Mock private AuthorisationService authorisationService;
+    @Mock private IdamAuthService idamAuthService;
 
     @Mock private HearingsDataService hearingsDataService;
 
@@ -57,7 +57,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     @Test
     public void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
 
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
 
         HearingValues hearingsRequestData =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
@@ -84,7 +84,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     public void hearingsLinkCaseDataControllerFeignExceptionTest()
             throws IOException, ParseException {
 
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
@@ -101,7 +101,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     @Test
     public void hearingsLinkCaseDataControllerInternalServiceErrorTest()
             throws IOException, ParseException {
-        Mockito.when(authorisationService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();

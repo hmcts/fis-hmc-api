@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
-import uk.gov.hmcts.reform.hmc.api.services.AuthorisationService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -34,7 +34,7 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 @Api(value = "/", description = "get hearings Values")
 public class HearingsController {
 
-    @Autowired private AuthorisationService authorisationService;
+    @Autowired private IdamAuthService idamAuthService;
 
     @Autowired private HearingsDataService hearingsDataService;
 
@@ -61,7 +61,7 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
-            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info("processing request after authorization");
 
                 return ResponseEntity.ok(
@@ -99,7 +99,7 @@ public class HearingsController {
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
-            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info("processing request after authorization");
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
@@ -138,7 +138,7 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
-            if (Boolean.TRUE.equals(authorisationService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info("processing request after authorization");
                 return ResponseEntity.ok(
                         hearingsDataService.getHearingLinkData(
