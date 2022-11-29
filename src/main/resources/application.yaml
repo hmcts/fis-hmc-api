@@ -44,6 +44,7 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
 
+
 idam:
   url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   s2s-auth:
