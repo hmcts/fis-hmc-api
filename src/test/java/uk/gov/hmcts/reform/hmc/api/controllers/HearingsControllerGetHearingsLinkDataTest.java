@@ -9,7 +9,6 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
@@ -25,14 +24,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @SuppressWarnings("unchecked")
-public class HearingsControllerGetHearingsLinkDataTest {
+class HearingsControllerGetHearingsLinkDataTest {
 
     @InjectMocks private HearingsController hearingsController;
 
@@ -62,7 +60,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
         HearingValues hearingsRequestData =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
-        ResponseEntity<List> hearingsLinkCaseDataLst =
+        ResponseEntity<? extends Object> hearingsLinkCaseDataLst =
                 hearingsController.getHearingsLinkData("Auth", "sauth", hearingsRequestData);
         Assertions.assertEquals(HttpStatus.OK, hearingsLinkCaseDataLst.getStatusCode());
     }
@@ -74,7 +72,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
+        ResponseEntity<? extends Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
@@ -91,7 +89,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
         Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
+        ResponseEntity<? extends Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
@@ -110,7 +108,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
                                 hearingValues, "Authorization", "ServiceAuthorization"))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
-        ResponseEntity<ServiceHearingValues> hearingsData1 =
+        ResponseEntity<? extends Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());

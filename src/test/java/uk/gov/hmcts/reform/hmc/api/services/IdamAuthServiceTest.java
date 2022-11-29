@@ -16,7 +16,7 @@ import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @ExtendWith(SpringExtension.class)
-public class IdamAuthServiceTest {
+class IdamAuthServiceTest {
 
     @InjectMocks IdamAuthService idamAuthService;
 
@@ -25,43 +25,43 @@ public class IdamAuthServiceTest {
     @Mock IdamClient idamClient;
 
     @Test
-    public void authoriseWhenTheServiceIsCalledFromPayment() {
+    void authoriseWhenTheServiceIsCalledFromPayment() {
         when(serviceAuthorisationApi.getServiceName(any())).thenReturn("payment_api");
         assertFalse(idamAuthService.authoriseService("Bearer abcasda"));
     }
 
     @Test
-    public void doNotAuthoriseWhenTheServiceIsCalledFromUnknownApi() {
+    void doNotAuthoriseWhenTheServiceIsCalledFromUnknownApi() {
         when(serviceAuthorisationApi.getServiceName(any())).thenReturn("unknown_api");
         assertFalse(idamAuthService.authoriseService("Bearer abc"));
     }
 
     @Test
-    public void throwUnAuthorisedExceptionWhenS2sTokenIsMalformed() {
+    void throwUnAuthorisedExceptionWhenS2sTokenIsMalformed() {
         assertFalse(idamAuthService.authoriseService("Bearer malformed"));
     }
 
     @Test
-    public void throwNullPointerAuthServiceException() {
+    void throwNullPointerAuthServiceException() {
         when(idamAuthService.authoriseService(null)).thenThrow(NullPointerException.class);
         assertFalse(idamAuthService.authoriseService(null));
     }
 
     @Test
-    public void throwNullPointerAuthUserException() {
+    void throwNullPointerAuthUserException() {
         when(idamAuthService.authoriseUser(null)).thenThrow(NullPointerException.class);
         assertFalse(idamAuthService.authoriseUser(null));
     }
 
     @Test
-    public void authoriseUserTheServiceIsCalledWithValidToken() {
+    void authoriseUserTheServiceIsCalledWithValidToken() {
         when(idamClient.getUserInfo(any()))
                 .thenReturn(UserInfo.builder().uid(UUID.randomUUID().toString()).build());
         assertTrue(idamAuthService.authoriseUser("Bearer abcasda"));
     }
 
     @Test
-    public void doNotAuthoriseUserWhenCalledWithInvalidToken() {
+    void doNotAuthoriseUserWhenCalledWithInvalidToken() {
         assertFalse(idamAuthService.authoriseUser("Bearer malformed"));
     }
 }
