@@ -34,6 +34,9 @@ import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 @Api(value = "/", description = "get hearings Values")
 public class HearingsController {
 
+    public static final String PROCESSING_REQUEST_AFTER_AUTHORIZATION =
+            "processing request after authorization";
+
     @Autowired private IdamAuthService idamAuthService;
 
     @Autowired private HearingsDataService hearingsDataService;
@@ -62,7 +65,7 @@ public class HearingsController {
             throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info("processing request after authorization");
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
 
                 return ResponseEntity.ok(
                         hearingsDataService.getCaseData(
@@ -100,7 +103,7 @@ public class HearingsController {
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info("processing request after authorization");
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
                                 authorization, serviceAuthorization, caseReference));
@@ -139,7 +142,7 @@ public class HearingsController {
             throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info("processing request after authorization");
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsDataService.getHearingLinkData(
                                 hearingValues, authorisation, serviceAuthorization));
