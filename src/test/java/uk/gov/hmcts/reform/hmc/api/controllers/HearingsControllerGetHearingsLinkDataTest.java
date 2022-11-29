@@ -45,7 +45,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    public static FeignException feignException(int status, String message) {
+    static FeignException feignException(int status, String message) {
         return FeignException.errorStatus(
                 message,
                 Response.builder()
@@ -55,7 +55,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     }
 
     @Test
-    public void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
+    void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
 
@@ -68,7 +68,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     }
 
     @Test
-    public void hearingsLinkCaseDataControllerUnauthorisedExceptionTest()
+    void hearingsLinkCaseDataControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
         HearingValues hearingValues =
@@ -81,7 +81,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     }
 
     @Test
-    public void hearingsLinkCaseDataControllerFeignExceptionTest()
+    void hearingsLinkCaseDataControllerFeignExceptionTest()
             throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -99,7 +99,7 @@ public class HearingsControllerGetHearingsLinkDataTest {
     }
 
     @Test
-    public void hearingsLinkCaseDataControllerInternalServiceErrorTest()
+    void hearingsLinkCaseDataControllerInternalServiceErrorTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 

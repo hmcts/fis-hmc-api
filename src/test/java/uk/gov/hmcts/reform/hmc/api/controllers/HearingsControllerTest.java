@@ -50,7 +50,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsDataControllerTest() throws IOException, ParseException {
+    void hearingsDataControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
 
@@ -74,7 +74,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsDataControllerUnauthorisedExceptionTest()
+    void hearingsDataControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
         HearingValues hearingValues =
@@ -86,7 +86,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
     }
 
-    public static FeignException feignException(int status, String message) {
+    static FeignException feignException(int status, String message) {
         return FeignException.errorStatus(
                 message,
                 Response.builder()
@@ -96,7 +96,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsDataControllerUnauthorisedFeignExceptionTest()
+    void hearingsDataControllerUnauthorisedFeignExceptionTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
@@ -113,7 +113,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsDataControllerInternalServiceErrorTest()
+    void hearingsDataControllerInternalServiceErrorTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
@@ -132,7 +132,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsControllerTest() throws IOException, ParseException {
+    void hearingsControllerTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString(), anyString()))
@@ -143,7 +143,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsByCaseRefNoControllerUnauthorisedExceptionTest()
+    void hearingsByCaseRefNoControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
         ResponseEntity<ServiceHearingValues> hearingsData1 =
@@ -153,7 +153,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsByCaseRefNoControllerFeignExceptionTest()
+    void hearingsByCaseRefNoControllerFeignExceptionTest()
             throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -168,7 +168,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    public void hearingsByCaseRefNoControllerInternalServiceErrorTest()
+    void hearingsByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
