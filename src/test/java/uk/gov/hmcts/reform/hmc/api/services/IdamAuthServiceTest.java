@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +50,18 @@ public class IdamAuthServiceTest {
     }
 
     @Test
+    public void throwNullPointerAuthServiceException() {
+        when(authorisationService.authoriseService(null)).thenThrow(NullPointerException.class);
+        assertFalse(authorisationService.authoriseService(null));
+    }
+
+    @Test
+    public void throwNullPointerAuthUserException() {
+        when(authorisationService.authoriseUser(null)).thenThrow(NullPointerException.class);
+        assertFalse(authorisationService.authoriseUser(null));
+}
+
+    @Test
     public void authoriseUserTheServiceIsCalledWithValidToken() {
         when(idamClient.getUserInfo(any()))
                 .thenReturn(UserInfo.builder().uid(UUID.randomUUID().toString()).build());
@@ -59,4 +72,5 @@ public class IdamAuthServiceTest {
     public void doNotAuthoriseUserWhenCalledWithInvalidToken() {
         assertFalse(authorisationService.authoriseUser("Bearer malformed"));
     }
+
 }
