@@ -40,10 +40,12 @@ spring:
       max-file-size: 30MB
       max-request-size: 30MB
 
+
+
+
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
-
 
 ref_data:
   baseUrl: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
