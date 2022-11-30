@@ -58,7 +58,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings Values successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<? extends Object> getHearingsData(
+    public ResponseEntity<Object> getHearingsData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
@@ -97,7 +97,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<? extends Object> getHearingsByCaseRefNo(
+    public ResponseEntity<Object> getHearingsByCaseRefNo(
             @RequestHeader("Authorisation") String authorization,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
@@ -135,7 +135,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get Hearings Linked case Data successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<? extends Object> getHearingsLinkData(
+    public ResponseEntity<Object> getHearingsLinkData(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)

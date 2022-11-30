@@ -60,7 +60,7 @@ class HearingsControllerGetHearingsLinkDataTest {
         HearingValues hearingsRequestData =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
-        ResponseEntity<? extends Object> hearingsLinkCaseDataLst =
+        ResponseEntity<Object> hearingsLinkCaseDataLst =
                 hearingsController.getHearingsLinkData("Auth", "sauth", hearingsRequestData);
         Assertions.assertEquals(HttpStatus.OK, hearingsLinkCaseDataLst.getStatusCode());
     }
@@ -72,7 +72,7 @@ class HearingsControllerGetHearingsLinkDataTest {
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
-        ResponseEntity<? extends Object> hearingsData1 =
+        ResponseEntity<Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
@@ -89,7 +89,7 @@ class HearingsControllerGetHearingsLinkDataTest {
         Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
-        ResponseEntity<? extends Object> hearingsData1 =
+        ResponseEntity<Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
@@ -108,7 +108,7 @@ class HearingsControllerGetHearingsLinkDataTest {
                                 hearingValues, "Authorization", "ServiceAuthorization"))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
-        ResponseEntity<? extends Object> hearingsData1 =
+        ResponseEntity<Object> hearingsData1 =
                 hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
