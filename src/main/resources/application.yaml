@@ -58,10 +58,10 @@ idam:
   api:
     url: ${IDAM_API_BASEURL:https://idam-api.demo.platform.hmcts.net}
   client:
-    id: ${HMC_FIS_HEARING_SERVICE_CLIENT_ID:hmc-fis-hearing-service}
+    id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
     baseUrl: https://idam-api.demo.platform.hmcts.net
     redirect_uri: https://manage-case.demo.platform.hmcts.net/oauth2/callback
-    secret: ${HMC_FIS_HEARING_SERVICE_CLIENT_SECRET:dummy}
+    secret: ${FIS_HMC_IDAM_CLIENT_SECRET:dummy}
     authorize:
       context-path: /oauth2/authorize
     token:
