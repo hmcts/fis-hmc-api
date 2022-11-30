@@ -1,7 +1,7 @@
 java:
   applicationPort: 4550
   image: 'hmctspublic.azurecr.io/fis/hmc-api:latest'
-  ingressHost: privatelaw-hearings-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   aadIdentityName: fis
   keyVaults:
     fis-kv:
