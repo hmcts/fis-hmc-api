@@ -4,6 +4,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +24,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CCDResponse;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
@@ -96,6 +100,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + Constants.UNDERSCORE
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
+        getCCDCaseData(caseDetails);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
         Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
@@ -216,5 +221,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     public List<HearingLinkData> getHearingLinkData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization) {
         return new ArrayList<>();
+    }
+
+    public CaseDetailResponse getCCDCaseData(CaseDetails caseDetails) throws IOException {
+        ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
+
+        CaseDetailResponse ccdResponse = objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
+
+        return ccdResponse;
     }
 }
