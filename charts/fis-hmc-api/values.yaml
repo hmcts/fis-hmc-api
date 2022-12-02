@@ -37,4 +37,3 @@ java:
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
     REF_DATA_URL: 'http://rd-location-ref-api-demo.service.core-compute-demo.internal/'
-
