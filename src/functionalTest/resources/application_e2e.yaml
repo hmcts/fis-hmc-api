@@ -69,7 +69,7 @@ idam:
     token:
       context-path: /oauth2/token
   refDataUserAuth:
-    username: ${IDAM_HMC_COMPONENT_USER_NAME:prl_hearing_manager@justice.gov.uk}
+    username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
