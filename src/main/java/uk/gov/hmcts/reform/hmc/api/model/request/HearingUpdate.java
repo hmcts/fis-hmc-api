@@ -25,6 +25,14 @@ public class HearingUpdate {
 
     private String hearingVenueId;
 
+    private String hearingVenueName;
+
+    private String hearingVenueAddress;
+
+    private String hearingVenueLocationCode;
+
+    private String courtTypeId;
+
     private String hearingJudgeId;
 
     private String hearingRoomId;

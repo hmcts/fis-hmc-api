@@ -10,8 +10,12 @@ java:
           alias: HMC_TOPIC_SHARED_ACCESS_KEY
         - name: fis-hmc-api-s2s-secret
           alias: OIDC_S2S_SECRET
-        - name: idam-hmc-fis-hearing-service-client-secret
-          alias: HMC_FIS_HEARING_SERVICE_CLIENT_SECRET
+        - name: fis-hmc-idam-client-id
+          alias: FIS_HMC_IDAM_CLIENT_ID
+        - name: fis-hmc-idam-client-secret
+          alias: FIS_HMC_IDAM_CLIENT_SECRET
+        - name: fis-hmc-idam-user-name
+          alias: FIS_HMC_IDAM__USER_NAME
         - name: idam-hmc-component-user-password
           alias: IDAM_HMC_COMPONENT_USER_PASSWORD
         - name: AppInsightsInstrumentationKey
@@ -32,3 +36,4 @@ java:
     AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    REF_DATA_URL: 'http://rd-location-ref-api-demo.service.core-compute-demo.internal/'
