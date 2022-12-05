@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +29,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
@@ -37,7 +38,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
-import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -77,15 +77,15 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
         String publicCaseNameMapper;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            ApplicantTable applicantTable =
-                    (ApplicantTable) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
-            RespondentTable respondentTable =
-                    (RespondentTable) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
-            if (applicantTable != null && respondentTable != null) {
+            Map applicantMap =
+                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
+            Map respondentTableMap =
+                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
+            if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
-                        applicantTable.getLastName()
+                        applicantMap.get("lastName")
                                 + Constants.UNDERSCORE
-                                + respondentTable.getLastName();
+                                + respondentTableMap.get("lastName");
             } else {
                 publicCaseNameMapper = Constants.EMPTY;
             }
