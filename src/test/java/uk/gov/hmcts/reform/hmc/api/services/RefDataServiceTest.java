@@ -93,7 +93,7 @@ class RefDataServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("BBA3")
                         .hearingUpdate(hearingupdate)
