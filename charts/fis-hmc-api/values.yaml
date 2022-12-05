@@ -36,4 +36,5 @@ java:
     AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    PRL_HMC_S2S_AUTHORISED_SERVICES : xui_webapp,prl_cos_api,fis_hmc_api
     REF_DATA_URL: 'http://rd-location-ref-api-demo.service.core-compute-demo.internal/'
