@@ -99,6 +99,5 @@ Here are some other functionalities it provides:
  different code paths to execute Hystrix Commands without worrying about duplicating work
 
 ## License
-
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
 

@@ -1,8 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,12 @@ import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Service
+@Slf4j
 public class PrlUpdateServiceImpl implements PrlUpdateService {
 
     @Autowired private AuthTokenGenerator authTokenGenerator;
 
-    private static final Logger LOG = LoggerFactory.getLogger(PrlUpdateServiceImpl.class);
+    // private static final Logger LOG = LoggerFactory.getLogger(PrlUpdateServiceImpl.class);
 
     @Autowired PrlUpdateApi prlUpdateApi;
 
@@ -32,22 +32,28 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     @SuppressWarnings("unused")
     public Boolean updatePrlServiceWithHearing(Hearing hearing) {
         Boolean isPrlRespSuccess = false;
-        LOG.info("calling updatePrlServiceWithHearing service " + hearing.getHearingId());
+        log.info("calling updatePrlServiceWithHearing service " + hearing.getHearingId());
 
-        if (Constants.BBA3.equals(hearing.getHmctsServiceCode())) {
+        if (Constants.ABA5.equals(hearing.getHmctsServiceCode())) {
             try {
                 ResponseEntity responseEntity =
                         prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearing);
-                LOG.info("PRL call completed successfully" + responseEntity.getStatusCode());
+                log.info("PRL call completed successfully" + responseEntity.getStatusCode());
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                LOG.info("PRL call HttpClientError exception {}", exception.getMessage());
+                log.info("PRL call HttpClientError exception {}", exception.getMessage());
                 throw new PrlUpdateException("PRL", exception.getStatusCode(), exception);
             } catch (FeignException exception) {
-                LOG.info("PRL call Feign exception {}", exception.getMessage());
+                log.info("PRL call Feign exception {}", exception.getMessage());
             } catch (Exception exception) {
-                LOG.info("PRL call exception {}", exception.getMessage());
+                log.info("PRL call exception {}", exception.getMessage());
             }
+        } else {
+            log.info(
+                    "Not related PRL HmctsServiceCode{} Hence it is ignored ",
+                    hearing.getHmctsServiceCode());
+
+            isPrlRespSuccess = true;
         }
         return isPrlRespSuccess;
     }

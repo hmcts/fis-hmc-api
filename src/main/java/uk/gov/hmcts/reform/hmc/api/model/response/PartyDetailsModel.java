@@ -25,5 +25,5 @@ public class PartyDetailsModel {
     IndividualDetailsModel individualDetails;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    OrganisationDetailsModel organisationDetailsModel;
+    OrganisationDetailsModel organisationDetails;
 }

@@ -26,6 +26,7 @@ def secrets = [
     secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
     secret('fis-hmc-api-s2s-secret', 'OIDC_S2S_SECRET'),
     secret('idam-hmc-fis-hearing-service-client-secret', 'HMC_FIS_HEARING_SERVICE_CLIENT_SECRET'),
+    secret('fis-hmc-idam-user-name', 'FIS_HMC_IDAM__USER_NAME'),
     secret('idam-hmc-component-user-password', 'IDAM_HMC_COMPONENT_USER_PASSWORD')
   ]
 ]
@@ -171,6 +172,9 @@ withPipeline(type, product, component) {
     env.ENVIRONMENT = "preview"
     env.CASE_API_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
     env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
+    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
+    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
     setCommonEnvVariables()
   }
 
@@ -178,6 +182,9 @@ withPipeline(type, product, component) {
     env.ENVIRONMENT = "aat"
     env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.internal"
     env.CASE_API_TEST_URL = "https://fis-hmc-api-staging.service.core-compute-aat.internal"
+    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
+    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
     setCommonEnvVariables()
   }
 
@@ -185,6 +192,7 @@ withPipeline(type, product, component) {
     env.ENVIRONMENT = "demo"
     env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
   }
 
   onPerftest {
