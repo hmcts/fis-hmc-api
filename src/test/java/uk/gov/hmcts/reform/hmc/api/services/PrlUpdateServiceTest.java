@@ -36,9 +36,9 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
-                        .hmctsServiceCode("BBA3")
+                        .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
@@ -52,7 +52,7 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("NonBBA3")
                         .build();
@@ -60,7 +60,7 @@ class PrlUpdateServiceTest {
         when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
 
         Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearing);
-        assertEquals(false, isOK);
+        assertEquals(true, isOK);
     }
 
     @Test
@@ -68,9 +68,9 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
-                        .hmctsServiceCode("BBA3")
+                        .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any()))
@@ -87,9 +87,9 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
-                        .hmctsServiceCode("BBA3")
+                        .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));

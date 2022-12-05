@@ -40,9 +40,16 @@ spring:
       max-file-size: 30MB
       max-request-size: 30MB
 
+
+
+
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
+
+ref_data:
+  baseUrl: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
+
 
 idam:
   url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
@@ -52,13 +59,19 @@ idam:
     microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
     url: ${IDAM_API_BASEURL:https://idam-api.demo.platform.hmcts.net}
-  serviceAccount:
-    clientId: ${HMC_FIS_HEARING_SERVICE_CLIENT_ID:hmc-fis-hearing-service}
-    clientSecret: ${HMC_FIS_HEARING_SERVICE_CLIENT_SECRET:dummy}
-    grantType: ${IDAM_HMC_COMPONENT_GRANT_TYPE:password}
-    username: ${IDAM_HMC_COMPONENT_USER_NAME:prl_hearing_manager@justice.gov.uk}
+  client:
+    id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
+    baseUrl: https://idam-api.demo.platform.hmcts.net
+    redirect_uri: https://manage-case.demo.platform.hmcts.net/oauth2/callback
+    secret: ${FIS_HMC_IDAM_CLIENT_SECRET:dummy}
+    authorize:
+      context-path: /oauth2/authorize
+    token:
+      context-path: /oauth2/token
+  refDataUserAuth:
+    username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
-    scope: openid profile roles
+
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
@@ -69,7 +82,7 @@ core_case_data:
 
 ccd:
   ui:
-    url: ${CCD_UI_URL:https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/}
+    url: ${CCD_UI_URL:https://manage-case.demo.platform.hmcts.net/cases/case-details/}
 
 hearing_component:
   api:

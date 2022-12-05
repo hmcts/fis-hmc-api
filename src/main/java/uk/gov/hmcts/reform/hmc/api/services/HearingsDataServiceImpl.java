@@ -9,7 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
@@ -34,7 +35,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
-import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -53,6 +53,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired private ResourceLoader resourceLoader;
 
+    protected static final List<String> HEARING_CHANNELS =
+            Arrays.asList("INTER", "TEL", "VID", "ONPPRS");
+    protected static final List<String> FACILITIES_REQUIRED = Arrays.asList("9", "11", "14");
+
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
      *
@@ -70,15 +74,15 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
         String publicCaseNameMapper;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            ApplicantTable applicantTable =
-                    (ApplicantTable) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
-            RespondentTable respondentTable =
-                    (RespondentTable) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
-            if (applicantTable != null && respondentTable != null) {
+            Map applicantMap =
+                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
+            Map respondentTableMap =
+                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
+            if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
-                        applicantTable.getLastName()
+                        applicantMap.get(Constants.LAST_NAME)
                                 + Constants.UNDERSCORE
-                                + respondentTable.getLastName();
+                                + respondentTableMap.get(Constants.LAST_NAME);
             } else {
                 publicCaseNameMapper = Constants.EMPTY;
             }
@@ -114,7 +118,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .caseManagementLocationCode(Constants.CASE_MANAGEMENT_LOCATION)
                         .caseSlaStartDate(caseSlaStartDateMapper)
                         .autoListFlag(Constants.FALSE)
-                        .hearingType(Constants.EMPTY)
+                        .hearingType(Constants.HEARING_TYPE)
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
                                         .dateRangeStart(Constants.EMPTY)
@@ -122,7 +126,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         .firstDateTimeMustBe(Constants.EMPTY)
                                         .build())
                         .duration(0)
-                        .hearingPriorityType(Constants.EMPTY)
+                        .hearingPriorityType(Constants.HEARING_PRIORITY)
                         .numberOfPhysicalAttendees(0)
                         .hearingInWelshFlag(Constants.FALSE)
                         .hearingLocations(
@@ -131,7 +135,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                                 .locationType(Constants.EMPTY)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(Arrays.asList(Constants.EMPTY))
+                        .facilitiesRequired(FACILITIES_REQUIRED)
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
@@ -145,7 +149,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
                         .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(Arrays.asList(Constants.EMPTY))
+                        .hearingChannels(HEARING_CHANNELS)
                         .build();
         setCaseFlagData(hearingsData);
         log.info("hearingsData {}", hearingsData);
