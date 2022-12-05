@@ -46,7 +46,7 @@ public class HearingsController {
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
      *
-     * @header authorisation, User authorisation tokken.
+     * @header authorisation, User authorisation token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch hearingsData.
      * @return hearingsData, response data for the input hearingValues.
