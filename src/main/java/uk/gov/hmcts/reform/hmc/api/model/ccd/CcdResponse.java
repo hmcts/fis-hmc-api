@@ -16,7 +16,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(toBuilder = true)
 @ToString
-public class CCDResponse {
+public class CcdResponse {
     public int total;
     public List<CaseDetailResponse> cases;
 }
