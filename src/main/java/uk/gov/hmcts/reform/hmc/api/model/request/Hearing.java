@@ -22,8 +22,8 @@ public class Hearing {
     @JsonProperty("caseRef")
     private String caseRef;
 
-    @JsonProperty("hearingId")
-    private String hearingId;
+    @JsonProperty("hearingID")
+    private String hearingID;
 
     private HearingUpdate hearingUpdate;
 }
