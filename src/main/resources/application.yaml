@@ -116,4 +116,4 @@ logging:
         web: DEBUG
 
 private-law:
-  hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp}
+  hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}
