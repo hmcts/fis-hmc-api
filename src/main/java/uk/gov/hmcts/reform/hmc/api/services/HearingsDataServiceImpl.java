@@ -25,7 +25,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.CCDResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
@@ -226,7 +225,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     public CaseDetailResponse getCCDCaseData(CaseDetails caseDetails) throws IOException {
         ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
 
-        CaseDetailResponse ccdResponse = objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
+        CaseDetailResponse ccdResponse =
+                objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
 
         return ccdResponse;
     }

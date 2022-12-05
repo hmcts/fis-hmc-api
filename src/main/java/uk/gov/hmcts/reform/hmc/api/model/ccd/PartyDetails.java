@@ -57,4 +57,6 @@ public class PartyDetails {
     private String solicitorTelephone;
     private String caseTypeOfApplication;
     private YesOrNo respondentLivedWithApplicant;
+
+    private Flags partyLevelFlag;
 }
