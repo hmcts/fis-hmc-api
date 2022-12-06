@@ -95,6 +95,12 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
+    /**
+     * Hearing Base Location id setting for service values fromm ccd record
+     *
+     * @param serviceHearingValues
+     * @param ccdResponse
+     */
     private void setBaseLocation(
             ServiceHearingValues serviceHearingValues, CaseDetailResponse ccdResponse) {
         CaseManagementLocation caseManagementLocation =
