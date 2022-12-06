@@ -64,8 +64,6 @@ public class ServiceHearingValues {
 
     private String leadJudgeContractType;
 
-
-
     private Boolean hearingIsLinkedFlag;
 
     private List<PartyDetailsModel> parties;
@@ -73,5 +71,4 @@ public class ServiceHearingValues {
     private CaseFlags caseFlags;
 
     private JSONArray screenFlow;
-
 }

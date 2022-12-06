@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 public class Data {
-    public ArrayList<Path> path;
+    public List<Path> path;
     public String hearingRelevant;
     public Date dateTimeCreated;
     public String flagComment;

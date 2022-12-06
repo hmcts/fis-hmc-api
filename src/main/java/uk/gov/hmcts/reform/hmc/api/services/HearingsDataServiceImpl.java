@@ -31,12 +31,10 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
-import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
@@ -145,7 +143,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
                         .build();
-        //setCaseFlagData(serviceHearingValues);TO DO clean this method.
+        // setCaseFlagData(serviceHearingValues);TO DO clean this method.
         caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
         log.info("serviceHearingValues {}", serviceHearingValues);
         return serviceHearingValues;
