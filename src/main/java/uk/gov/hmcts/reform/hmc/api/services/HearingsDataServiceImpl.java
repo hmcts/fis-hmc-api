@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -214,7 +215,65 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Override
     public List<HearingLinkData> getHearingLinkData(
-            HearingValues hearingValues, String authorisation, String serviceAuthorization) {
-        return new ArrayList<>();
+            HearingValues hearingValues, String authorisation, String serviceAuthorization)
+            throws IOException, ParseException {
+        CaseDetails caseDetails =
+                caseApiService.getCaseDetails(
+                        hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+
+        log.info("CaseRef==> " + hearingValues.getCaseReference());
+        log.info("CaseName==> " + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME));
+        log.info("Reason==> " + caseDetails.getData().get(Constants.CASE_LINKS).getClass());
+
+        List caseLinksList = (List) caseDetails.getData().get(Constants.CASE_LINKS);
+
+        List reasonList =
+                (List)
+                        caseLinksList.stream()
+                                .map(e -> ((LinkedHashMap) e).get(Constants.VALUE))
+                                .map(e -> ((LinkedHashMap) e).get(Constants.REASON_FOR_LINK))
+                                .map(
+                                        e ->
+                                                ((List) e)
+                                                        .stream()
+                                                                .map(
+                                                                        e2 ->
+                                                                                ((LinkedHashMap) e2)
+                                                                                        .get(
+                                                                                                Constants
+                                                                                                        .VALUE))
+                                                                .collect(Collectors.toList()))
+                                .map(
+                                        e ->
+                                                ((List) e)
+                                                        .stream()
+                                                                .map(
+                                                                        e2 ->
+                                                                                ((LinkedHashMap) e2)
+                                                                                        .get(
+                                                                                                Constants
+                                                                                                        .REASON))
+                                                                .collect(Collectors.toList()))
+                                .collect(Collectors.toList());
+        List<?> flattenedReasonList = flatten(reasonList);
+        log.info("Flattened Reason List " + flattenedReasonList);
+
+        String applicantCaseName =
+                (String) caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
+
+        HearingLinkData hearingLinkData =
+                HearingLinkData.hearingLinkDataWith()
+                        .caseReference(hearingValues.getCaseReference())
+                        .caseName(applicantCaseName)
+                        .reasonsForLink((List<String>) flattenedReasonList)
+                        .build();
+        log.info("hearingLinkData {}", hearingLinkData);
+        List serviceLinkedCases = new ArrayList();
+        serviceLinkedCases.add(hearingLinkData);
+        return serviceLinkedCases;
+    }
+
+    public static <T> List<T> flatten(List<List<T>> listOfLists) {
+        return listOfLists.stream().flatMap(List::stream).collect(Collectors.toList());
     }
 }
