@@ -92,7 +92,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         + Constants.UNDERSCORE
                         + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
-        caseFlagDataService.getCcdCaseData(caseDetails);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
         Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
