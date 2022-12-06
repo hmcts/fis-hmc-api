@@ -53,8 +53,9 @@ import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 @SuppressWarnings("unchecked")
 public class HearingsDataServiceImpl implements HearingsDataService {
 
-public static final String EMPTYSTRING = " ";
-@Value("${ccd.ui.url}")
+    public static final String EMPTYSTRING = " ";
+
+    @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
     @Autowired CaseApiService caseApiService;
@@ -236,70 +237,86 @@ public static final String EMPTYSTRING = " ";
         return ccdResponse;
     }
 
+    public void getCaseFlagData(ServiceHearingValues hearingsData, CaseDetails caseDetails)
+            throws IOException {
 
-public void getCaseFlagData(ServiceHearingValues hearingsData, CaseDetails caseDetails) throws IOException {
-    String uuid = null;
-    PartyDetails partyDetails = null;
-    List <PartyFlagsModel> partiesFlagslList = new ArrayList<>();
-    List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
-    CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
-    List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
-    PartyDetailsModel partyDetailsModel=null;
-    IndividualDetailsModel individualDetailsModel= null;
-        for (Element<PartyDetails> party : applicantLst )
-        {
-            uuid =  party.getId().toString();
-            partyDetails=  party.getValue();
-            partiesFlagslList.addAll(getPartyFlagsModel(partyDetails,uuid));
+        List<PartyFlagsModel> partiesFlagslList = new ArrayList<>();
+        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
+        CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
+        List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
 
-             individualDetailsModel =
-                IndividualDetailsModel.individualDetailsWith()
-                    .firstName(partyDetails.getFirstName())
-                    .lastName(partyDetails.getLastName())
-                    .build();
+        addPartyFlagData(partiesFlagslList, partyDetailsModelList, applicantLst);
 
-             partyDetailsModel =
-                PartyDetailsModel.partyDetailsWith()
-                    .partyID(uuid)
-                    .partyName(partyDetails.getFirstName() + EMPTYSTRING + partyDetails.getLastName())
-                    .partyType(PartyType.IND)
-                    .partyRole(Constants.APPLICANT)
-                    .individualDetails(individualDetailsModel)
-                    .build();
+        List<Element<PartyDetails>> respondedLst = ccdResponse.getCaseData().getRespondents();
+
+        addPartyFlagData(partiesFlagslList, partyDetailsModelList, respondedLst);
+
+        CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagslList).build();
+
+        hearingsData.setCaseFlags(caseFlags);
+
+        hearingsData.setParties(partyDetailsModelList);
+    }
+
+    private void addPartyFlagData(
+            List<PartyFlagsModel> partiesFlagslList,
+            List<PartyDetailsModel> partyDetailsModelList,
+            List<Element<PartyDetails>> applicantLst) {
+        IndividualDetailsModel individualDetailsModel;
+        String uuid;
+        PartyDetails partyDetails;
+        PartyDetailsModel partyDetailsModel;
+        for (Element<PartyDetails> party : applicantLst) {
+            uuid = party.getId().toString();
+            partyDetails = party.getValue();
+            partiesFlagslList.addAll(getPartyFlagsModel(partyDetails, uuid));
+
+            individualDetailsModel =
+                    IndividualDetailsModel.individualDetailsWith()
+                            .firstName(partyDetails.getFirstName())
+                            .lastName(partyDetails.getLastName())
+                            .build();
+
+            partyDetailsModel =
+                    PartyDetailsModel.partyDetailsWith()
+                            .partyID(uuid)
+                            .partyName(
+                                    partyDetails.getFirstName()
+                                            + EMPTYSTRING
+                                            + partyDetails.getLastName())
+                            .partyType(PartyType.IND)
+                            .partyRole(Constants.APPLICANT)
+                            .individualDetails(individualDetailsModel)
+                            .build();
 
             partyDetailsModelList.add(partyDetailsModel);
         }
+    }
 
-
-    CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagslList).build();
-
-    hearingsData.setCaseFlags(caseFlags);
-
-    hearingsData.setParties(partyDetailsModelList);
-}
-
-    private List <PartyFlagsModel> getPartyFlagsModel( PartyDetails partyDetails,String uuid) {
-        PartyFlagsModel partyFlagsModel=null;
-        List <PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
+    private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, String uuid) {
+        PartyFlagsModel partyFlagsModel = null;
+        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
         Flags flag = partyDetails.getPartyLevelFlag();
-        List<Element<FlagDetail>>  detailsLST = flag.getDetails();
+        List<Element<FlagDetail>> detailsLST = flag.getDetails();
 
-        for (Element<FlagDetail> flagDetailElement: detailsLST) {
+        for (Element<FlagDetail> flagDetailElement : detailsLST) {
             FlagDetail flagDetail = flagDetailElement.getValue();
 
             partyFlagsModel =
-                PartyFlagsModel.partyFlagsModelWith()
-                    .partyId(uuid)
-                    .partyName(partyDetails.getFirstName() + EMPTYSTRING + partyDetails.getLastName())
-                    .flagId(flagDetail.getData().getFlagCode())
-                    .flagStatus( flagDetail.getData().getStatus())
-                    .flagParentId("")
-                    .flagDescription(   flagDetail.getData().getFlagComment())
-                    .build();
+                    PartyFlagsModel.partyFlagsModelWith()
+                            .partyId(uuid)
+                            .partyName(
+                                    partyDetails.getFirstName()
+                                            + EMPTYSTRING
+                                            + partyDetails.getLastName())
+                            .flagId(flagDetail.getData().getFlagCode())
+                            .flagStatus(flagDetail.getData().getStatus())
+                            .flagParentId("")
+                            .flagDescription(flagDetail.getData().getFlagComment())
+                            .build();
             partyFlagsModelList.add(partyFlagsModel);
         }
 
         return partyFlagsModelList;
     }
-
 }

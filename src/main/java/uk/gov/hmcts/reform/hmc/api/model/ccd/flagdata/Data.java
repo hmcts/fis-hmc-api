@@ -1,12 +1,11 @@
 package uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata;
 
+import java.util.ArrayList;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 @lombok.Data
 @Builder(toBuilder = true)
