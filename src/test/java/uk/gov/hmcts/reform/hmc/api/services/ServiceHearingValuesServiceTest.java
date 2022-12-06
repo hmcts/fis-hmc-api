@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
@@ -19,8 +20,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.ApplicantTable;
-import uk.gov.hmcts.reform.hmc.api.model.response.RespondentTable;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 
@@ -37,18 +36,26 @@ class ServiceHearingValuesServiceTest {
     @Mock ResourceLoader resourceLoader;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldReturnHearingDetailsTest() throws IOException, ParseException {
 
-        ApplicantTable applicantTable =
-                ApplicantTable.applicantTableWith().lastName("lastName").build();
-        RespondentTable respondentTable =
-                RespondentTable.respondentTableWith().lastName("lastName").build();
+        //        ApplicantTable applicantTable =
+        //                ApplicantTable.applicantTableWith().lastName("lastName").build();
+        //        RespondentTable respondentTable =
+        //                RespondentTable.respondentTableWith().lastName("lastName").build();
+
+        LinkedHashMap applicantMap = new LinkedHashMap();
+        applicantMap.put("lastName", "lastName");
+
+        LinkedHashMap respondentMap = new LinkedHashMap();
+        respondentMap.put("lastName", "lastName");
+
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "FL401");
         caseDataMap.put("issueDate", "test date");
-        caseDataMap.put("fl401ApplicantTable", applicantTable);
-        caseDataMap.put("fl401RespondentTable", respondentTable);
+        caseDataMap.put("fl401ApplicantTable", applicantMap);
+        caseDataMap.put("fl401RespondentTable", respondentMap);
         CaseDetails caseDetails =
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -60,6 +67,7 @@ class ServiceHearingValuesServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+        hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 

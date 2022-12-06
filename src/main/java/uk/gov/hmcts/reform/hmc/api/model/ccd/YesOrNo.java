@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 @JsonSerialize(using = CustomEnumSerializer.class)
 public enum YesOrNo {
     @JsonProperty("Yes")
-    Yes("Yes"),
+    YES("Yes"),
 
     @JsonProperty("No")
-    No("No");
+    NO("No");
 
     private final String value;
 

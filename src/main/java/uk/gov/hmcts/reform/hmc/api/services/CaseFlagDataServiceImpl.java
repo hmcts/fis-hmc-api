@@ -36,27 +36,23 @@ import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 public class CaseFlagDataServiceImpl {
 
     /**
-     * deserialization ccd record for mapping the case flag data
+     * deserialization ccd record for mapping the case flag data.
      *
-     * @param caseDetails
+     * @param caseDetails data which has caseDetails
      * @return CaseDetailResponse deserialization object
-     * @throws IOException
+     * @throws IOException exception to type input/output
      */
     public CaseDetailResponse getCcdCaseData(CaseDetails caseDetails) throws IOException {
         ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
-
-        CaseDetailResponse ccdResponse =
-                objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
-
-        return ccdResponse;
+        return objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
     }
 
     /**
      * mapping the all parties flag data to ServiceHearingValues .
      *
-     * @param serviceHearingValues
-     * @param caseDetails
-     * @throws IOException
+     * @param serviceHearingValues data about hearings
+     * @param caseDetails data about caseDetails
+     * @throws IOException exception to input/output
      */
     public void setCaseFlagData(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
             throws IOException {
@@ -96,10 +92,10 @@ public class CaseFlagDataServiceImpl {
     }
 
     /**
-     * Hearing Base Location id setting for service values fromm ccd record
+     * Hearing Base Location id setting for service values fromm ccd record.
      *
-     * @param serviceHearingValues
-     * @param ccdResponse
+     * @param serviceHearingValues data about Hearing RequestValues
+     * @param ccdResponse data about the ccd record
      */
     private void setBaseLocation(
             ServiceHearingValues serviceHearingValues, CaseDetailResponse ccdResponse) {
@@ -192,15 +188,15 @@ public class CaseFlagDataServiceImpl {
     }
 
     private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, String uuid) {
-        PartyFlagsModel partyFlagsModel = null;
+        PartyFlagsModel partyFlagsModel;
         List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
         Flags flag = partyDetails.getPartyLevelFlag();
         if (flag == null) {
             return partyFlagsModelList;
         }
-        List<Element<FlagDetail>> detailsLST = flag.getDetails();
+        List<Element<FlagDetail>> detailsList = flag.getDetails();
 
-        for (Element<FlagDetail> flagDetailElement : detailsLST) {
+        for (Element<FlagDetail> flagDetailElement : detailsList) {
             FlagDetail flagDetail = flagDetailElement.getValue();
             if (null != flagDetail) {
                 partyFlagsModel =

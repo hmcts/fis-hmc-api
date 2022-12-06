@@ -10,11 +10,11 @@ import lombok.RequiredArgsConstructor;
 @JsonSerialize(using = CustomEnumSerializer.class)
 public enum Gender {
     @JsonProperty("female")
-    female("female", "Female"),
+    FEMALE("female", "Female"),
     @JsonProperty("male")
-    male("male", "Male"),
+    MALE("male", "Male"),
     @JsonProperty("other")
-    other("other", "They identify in another way");
+    OTHER("other", "They identify in another way");
 
     private final String id;
     private final String displayedValue;
@@ -30,12 +30,12 @@ public enum Gender {
     }
 
     public static Gender getDisplayedValueFromEnumString(String enteredValue) {
-        if (enteredValue.equalsIgnoreCase("female")) {
-            return Gender.female;
-        } else if (enteredValue.equalsIgnoreCase("male")) {
-            return Gender.male;
-        } else if (enteredValue.equalsIgnoreCase("other")) {
-            return Gender.other;
+        if ("female".equalsIgnoreCase(enteredValue)) {
+            return Gender.FEMALE;
+        } else if ("male".equalsIgnoreCase(enteredValue)) {
+            return Gender.MALE;
+        } else if ("other".equalsIgnoreCase(enteredValue)) {
+            return Gender.OTHER;
         }
         return null;
     }
