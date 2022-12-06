@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTYSTRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class CaseFlagDataServiceImpl {
      * @param caseDetails
      * @throws IOException
      */
-    public void getCaseFlagData(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
+    public void setCaseFlagData(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
             throws IOException {
 
         List<PartyFlagsModel> partiesFlagslList = new ArrayList<>();
@@ -97,7 +97,7 @@ public class CaseFlagDataServiceImpl {
                             .partyID(uuid)
                             .partyName(
                                     partyDetails.getFirstName()
-                                            + EMPTYSTRING
+                                            + EMPTY_STRING
                                             + partyDetails.getLastName())
                             .partyType(PartyType.IND)
                             .partyRole(Constants.APPLICANT)
@@ -122,7 +122,7 @@ public class CaseFlagDataServiceImpl {
                             .partyId(uuid)
                             .partyName(
                                     partyDetails.getFirstName()
-                                            + EMPTYSTRING
+                                            + EMPTY_STRING
                                             + partyDetails.getLastName())
                             .flagId(flagDetail.getData().getFlagCode())
                             .flagStatus(flagDetail.getData().getStatus())

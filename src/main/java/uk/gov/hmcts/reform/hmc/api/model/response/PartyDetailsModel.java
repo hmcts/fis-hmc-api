@@ -19,9 +19,6 @@ public class PartyDetailsModel {
     String partyRole;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String hearingSubChannel;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     IndividualDetailsModel individualDetails;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
