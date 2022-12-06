@@ -7,6 +7,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -15,16 +16,19 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Slf4j
 @Service
@@ -60,6 +64,7 @@ public class CaseFlagDataServiceImpl {
         List<PartyFlagsModel> partiesFlagslList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
+        setBaseLocation(serviceHearingValues, ccdResponse);
         List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
         if (null != applicantLst) {
             addPartyFlagData(partiesFlagslList, partyDetailsModelList, applicantLst, APPLICANT);
@@ -88,6 +93,23 @@ public class CaseFlagDataServiceImpl {
 
             serviceHearingValues.setParties(partyDetailsModelList);
         }
+    }
+
+    private void setBaseLocation(
+            ServiceHearingValues serviceHearingValues, CaseDetailResponse ccdResponse) {
+        CaseManagementLocation caseManagementLocation =
+                ccdResponse.getCaseData().getCaseManagementLocation();
+
+        if (null != caseManagementLocation && null != caseManagementLocation.getBaseLocation())
+            serviceHearingValues.setCaseManagementLocationCode(
+                    caseManagementLocation.getBaseLocation());
+        List locationList =
+                Arrays.asList(
+                        HearingLocation.hearingLocationWith()
+                                .locationType(Constants.EMPTY)
+                                .locationId(caseManagementLocation.getBaseLocation())
+                                .build());
+        serviceHearingValues.setHearingLocations(locationList);
     }
 
     private void addPartyFlagData(
