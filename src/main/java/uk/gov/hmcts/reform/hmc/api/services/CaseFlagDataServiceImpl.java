@@ -100,16 +100,17 @@ public class CaseFlagDataServiceImpl {
         CaseManagementLocation caseManagementLocation =
                 ccdResponse.getCaseData().getCaseManagementLocation();
 
-        if (null != caseManagementLocation && null != caseManagementLocation.getBaseLocation())
+        if (null != caseManagementLocation && null != caseManagementLocation.getBaseLocation()) {
             serviceHearingValues.setCaseManagementLocationCode(
                     caseManagementLocation.getBaseLocation());
-        List locationList =
-                Arrays.asList(
-                        HearingLocation.hearingLocationWith()
-                                .locationType(Constants.EMPTY)
-                                .locationId(caseManagementLocation.getBaseLocation())
-                                .build());
-        serviceHearingValues.setHearingLocations(locationList);
+            List<HearingLocation> locationList =
+                    Arrays.asList(
+                            HearingLocation.hearingLocationWith()
+                                    .locationType(Constants.EMPTY)
+                                    .locationId(caseManagementLocation.getBaseLocation())
+                                    .build());
+            serviceHearingValues.setHearingLocations(locationList);
+        }
     }
 
     private void addPartyFlagData(
