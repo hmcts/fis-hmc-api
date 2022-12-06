@@ -40,4 +40,7 @@ public class CaseData implements MappableObject {
 
     @JsonProperty("respondentsFL401")
     private PartyDetails respondentsFL401;
+
+    @JsonProperty("caseManagementLocation")
+    private CaseManagementLocation caseManagementLocation;
 }
