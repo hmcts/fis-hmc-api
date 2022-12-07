@@ -26,6 +26,7 @@
     <exclude name="DefaultPackage"/>
     <exclude name="CommentDefaultAccessModifier"/>
     <exclude name="ConfusingTernary"/>
+    <exclude name="FieldNamingConventions"/>
   </rule>
 
   <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">

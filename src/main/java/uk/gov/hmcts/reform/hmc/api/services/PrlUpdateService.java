@@ -1,8 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 
 public interface PrlUpdateService {
 
-    Boolean updatePrlServiceWithHearing(Hearing hearing);
+    Boolean updatePrlServiceWithHearing(HearingDTO hearingDto);
 }
