@@ -11,8 +11,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdate;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 
 @Service
@@ -64,25 +64,26 @@ public class RefDataServiceImpl implements RefDataService {
     /**
      * This method will update the hearing with court details.
      *
-     * @param hearing data to be updated with court details.
+     * @param hearingDto data to be updated with court details.
      * @return hearing, updated hearing with Court detail received from refData.
      */
     @Override
     @SuppressWarnings("unused")
-    public Hearing getHearingWithCourtDetails(Hearing hearing) {
+    public HearingDTO getHearingWithCourtDetails(HearingDTO hearingDto) {
         log.info(
                 "calling getHearingWithCourtDetails service "
-                        + hearing.getHearingUpdate().getHearingVenueId());
-        CourtDetail courtDetail = getCourtDetails(hearing.getHearingUpdate().getHearingVenueId());
+                        + hearingDto.getHearingUpdate().getHearingVenueId());
+        CourtDetail courtDetail =
+                getCourtDetails(hearingDto.getHearingUpdate().getHearingVenueId());
         log.info("courtDetails " + courtDetail);
         if (courtDetail != null) {
-            HearingUpdate hearingUpdate = hearing.getHearingUpdate();
-            hearingUpdate.setHearingVenueName(courtDetail.getHearingVenueName());
-            hearingUpdate.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
-            hearingUpdate.setHearingVenueLocationCode(courtDetail.getHearingVenueLocationCode());
-            hearingUpdate.setCourtTypeId(courtDetail.getCourtTypeId());
-            hearing.hearingRequestWith().hearingUpdate(hearingUpdate).build();
+            HearingUpdateDTO hearingUpdateDto = hearingDto.getHearingUpdate();
+            hearingUpdateDto.setHearingVenueName(courtDetail.getHearingVenueName());
+            hearingUpdateDto.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
+            hearingUpdateDto.setHearingVenueLocationCode(courtDetail.getHearingVenueLocationCode());
+            hearingUpdateDto.setCourtTypeId(courtDetail.getCourtTypeId());
+            hearingDto.hearingRequestDTOWith().hearingUpdate(hearingUpdateDto).build();
         }
-        return hearing;
+        return hearingDto;
     }
 }

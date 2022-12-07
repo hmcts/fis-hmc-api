@@ -29,6 +29,7 @@
     <exclude name="LinguisticNaming"/>
     <exclude name="ShortClassName"/>
     <exclude name="PrematureDeclaration"/>
+    <exclude name="FieldNamingConventions"/>
   </rule>
 
   <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
