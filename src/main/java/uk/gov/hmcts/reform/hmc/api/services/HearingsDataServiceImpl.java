@@ -31,6 +31,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
@@ -131,16 +132,20 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                                 .locationType(Constants.EMPTY)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
+                        .facilitiesRequired(Arrays.asList())
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
                         .caseInterpreterRequiredFlag(Constants.FALSE)
+                        .panelRequirements(null)
                         .leadJudgeContractType(Constants.EMPTY)
+                        .judiciary(Judiciary.judiciaryWith().build())
                         .hearingIsLinkedFlag(Constants.FALSE)
                         .screenFlow(
                                 screenFlowJson != null
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
+                        .hearingChannels(Arrays.asList())
                         .build();
         // setCaseFlagData(serviceHearingValues);TO DO clean this method.
         caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);

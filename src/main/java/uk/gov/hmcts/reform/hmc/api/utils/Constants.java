@@ -26,7 +26,7 @@ public final class Constants {
     public static final String ABA5 = "ABA5";
     public static final String APPLICANT = "APPL";
     public static final String RESPONDENT = "RESP";
-    public static final String HEARING_TYPE = "ABA5-APL";
+    public static final String HEARING_TYPE = "";
 
     public static final String HEARING_PRIORITY = "Standard";
 

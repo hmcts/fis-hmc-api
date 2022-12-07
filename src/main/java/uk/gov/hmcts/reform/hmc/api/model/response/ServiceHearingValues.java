@@ -54,6 +54,8 @@ public class ServiceHearingValues {
 
     private List<HearingLocation> hearingLocations;
 
+    private List<String> facilitiesRequired;
+
     private String listingComments;
 
     private String hearingRequester;
@@ -62,7 +64,11 @@ public class ServiceHearingValues {
 
     private Boolean caseInterpreterRequiredFlag;
 
+    private PanelRequirements panelRequirements;
+
     private String leadJudgeContractType;
+
+    private Judiciary judiciary;
 
     private Boolean hearingIsLinkedFlag;
 
@@ -71,4 +77,6 @@ public class ServiceHearingValues {
     private CaseFlags caseFlags;
 
     private JSONArray screenFlow;
+
+    private List<String> hearingChannels;
 }
