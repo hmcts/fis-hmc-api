@@ -23,7 +23,6 @@ public class HearingDTO {
     @JsonProperty("caseRef")
     private String caseRef;
 
-    @JsonProperty("hearingID")
     private String hearingId;
 
     private HearingUpdateDTO hearingUpdate;
