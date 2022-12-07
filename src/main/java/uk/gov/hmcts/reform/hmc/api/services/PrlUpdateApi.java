@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.gov.hmcts.reform.hmc.api.config.PrlUpdateConfiguration;
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 
 @FeignClient(
         name = "prl-update-api",
@@ -26,5 +26,5 @@ public interface PrlUpdateApi {
             headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
     ResponseEntity prlUpdate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestBody final Hearing hearing);
+            @RequestBody final HearingDTO hearingDto);
 }

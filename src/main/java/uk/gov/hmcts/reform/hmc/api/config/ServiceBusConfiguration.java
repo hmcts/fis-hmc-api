@@ -25,6 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
@@ -93,19 +94,24 @@ public class ServiceBusConfiguration {
                                 mapper.writeValueAsString(
                                         mapper.readValue(body.get(0), Hearing.class));
                         log.info(messageReceived);
+
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
-                        if (hearing.getHearingUpdate().getHearingVenueId() != null) {
+
+                        HearingDTO hearingDto = mapper.readValue(body.get(0), HearingDTO.class);
+                        log.info("Service Bus message for PRL Update " + hearingDto);
+
+                        if (hearingDto.getHearingUpdate().getHearingVenueId() != null
+                                && "LISTED".equals(hearingDto.getHearingUpdate().getHmcStatus())) {
+
                             log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
-                            hearing = refDataService.getHearingWithCourtDetails(hearing);
+                            hearingDto = refDataService.getHearingWithCourtDetails(hearingDto);
                             log.info(
                                     "Hearing with Full CourtDetails  "
-                                            + hearing.getHearingUpdate().getHearingVenueName());
-                        } else {
-                            return receiveClient.abandonAsync(message.getLockToken());
+                                            + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
 
                         Boolean isPrlSuccess =
-                                prlUpdateService.updatePrlServiceWithHearing(hearing);
+                                prlUpdateService.updatePrlServiceWithHearing(hearingDto);
                         if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {

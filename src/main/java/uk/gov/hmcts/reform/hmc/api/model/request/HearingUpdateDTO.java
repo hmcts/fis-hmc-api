@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "hearingUpdateRequestWith")
+@Builder(builderMethodName = "hearingUpdateRequestDTOWith")
 @Schema(description = "The response object to hearing management")
 @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
-public class HearingUpdate {
+public class HearingUpdateDTO {
 
     private String hearingResponseReceivedDateTime;
 
@@ -40,10 +40,8 @@ public class HearingUpdate {
     private String hearingRoomId;
 
     @JsonProperty("HMCStatus")
-    @SuppressWarnings("checkstyle:MemberName")
-    private String HMCStatus;
+    private String hmcStatus;
 
     @JsonProperty("ListAssistCaseStatus")
-    @SuppressWarnings("checkstyle:MemberName")
-    private String ListAssistCaseStatus;
+    private String listAssistCaseStatus;
 }

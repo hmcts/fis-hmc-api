@@ -21,8 +21,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdate;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 
 @ExtendWith(SpringExtension.class)
@@ -85,24 +85,24 @@ class RefDataServiceTest {
         List<CourtDetail> courtDetailsList = new ArrayList<>();
         courtDetailsList.add(courtDetail);
 
-        HearingUpdate hearingupdate =
-                HearingUpdate.hearingUpdateRequestWith()
+        HearingUpdateDTO hearingupdateDto =
+                HearingUpdateDTO.hearingUpdateRequestDTOWith()
                         .hearingVenueId("231596")
                         .hearingVenueName("test")
                         .build();
 
-        Hearing hearing =
-                Hearing.hearingRequestWith()
-                        .hearingID("testHearinID")
+        HearingDTO hearingDto =
+                HearingDTO.hearingRequestDTOWith()
+                        .hearingId("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("BBA3")
-                        .hearingUpdate(hearingupdate)
+                        .hearingUpdate(hearingupdateDto)
                         .build();
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
-        Hearing hearingResp = refDataService.getHearingWithCourtDetails(hearing);
+        HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
 
         assertEquals("test", hearingResp.getHearingUpdate().getHearingVenueName());
     }
