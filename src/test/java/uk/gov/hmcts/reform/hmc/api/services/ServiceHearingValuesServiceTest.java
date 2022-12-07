@@ -31,6 +31,8 @@ class ServiceHearingValuesServiceTest {
 
     @Mock private CaseApiService caseApiService;
 
+    @Mock private CaseFlagDataServiceImpl caseFlagDataService;
+
     @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Mock ResourceLoader resourceLoader;
@@ -38,11 +40,6 @@ class ServiceHearingValuesServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnHearingDetailsTest() throws IOException, ParseException {
-
-        //        ApplicantTable applicantTable =
-        //                ApplicantTable.applicantTableWith().lastName("lastName").build();
-        //        RespondentTable respondentTable =
-        //                RespondentTable.respondentTableWith().lastName("lastName").build();
 
         LinkedHashMap applicantMap = new LinkedHashMap();
         applicantMap.put("lastName", "lastName");
@@ -80,9 +77,13 @@ class ServiceHearingValuesServiceTest {
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
+        ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
+        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
