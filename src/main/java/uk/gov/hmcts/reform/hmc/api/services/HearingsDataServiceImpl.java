@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
@@ -26,8 +27,13 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
+import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
@@ -70,9 +76,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                     (LinkedHashMap) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
-                        applicantMap.get("lastName")
+                        applicantMap.get(Constants.LAST_NAME)
                                 + Constants.UNDERSCORE
-                                + respondentTableMap.get("lastName");
+                                + respondentTableMap.get(Constants.LAST_NAME);
             } else {
                 publicCaseNameMapper = Constants.EMPTY;
             }
@@ -160,6 +166,42 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         caseCategoriesList.add(caseCategories);
         caseCategoriesList.add(caseSubCategories);
         return caseCategoriesList;
+    }
+
+    public void setCaseFlagData(ServiceHearingValues hearingsData) {
+        String uuid = UUID.randomUUID().toString();
+        PartyFlagsModel partyFlagsModel =
+                PartyFlagsModel.partyFlagsModelWith()
+                        .partyId(uuid)
+                        .partyName("Jane Smith")
+                        .flagId("RA0042")
+                        .flagStatus("ACTIVE")
+                        .flagParentId("")
+                        .flagDescription("Sign language interpreter required")
+                        .build();
+        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
+        partyFlagsModelList.add(partyFlagsModel);
+        CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partyFlagsModelList).build();
+
+        hearingsData.setCaseFlags(caseFlags);
+        IndividualDetailsModel individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                        .firstName("Jane")
+                        .lastName("Smith")
+                        .build();
+
+        PartyDetailsModel partyDetailsModel =
+                PartyDetailsModel.partyDetailsWith()
+                        .partyID(partyFlagsModel.getPartyId())
+                        .partyName(partyFlagsModel.getPartyName())
+                        .partyType(PartyType.IND)
+                        .partyRole(Constants.APPLICANT)
+                        .individualDetails(individualDetailsModel)
+                        .build();
+
+        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
+        partyDetailsModelList.add(partyDetailsModel);
+        hearingsData.setParties(partyDetailsModelList);
     }
 
     @Override

@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
+import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
 @Configuration
 public class ServiceBusConfiguration {
@@ -49,6 +50,8 @@ public class ServiceBusConfiguration {
     private int threadCount;
 
     @Autowired PrlUpdateService prlUpdateService;
+
+    @Autowired RefDataService refDataService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -91,6 +94,16 @@ public class ServiceBusConfiguration {
                                         mapper.readValue(body.get(0), Hearing.class));
                         log.info(messageReceived);
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
+                        if (hearing.getHearingUpdate().getHearingVenueId() != null) {
+                            log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
+                            hearing = refDataService.getHearingWithCourtDetails(hearing);
+                            log.info(
+                                    "Hearing with Full CourtDetails  "
+                                            + hearing.getHearingUpdate().getHearingVenueName());
+                        } else {
+                            return receiveClient.abandonAsync(message.getLockToken());
+                        }
+
                         Boolean isPrlSuccess =
                                 prlUpdateService.updatePrlServiceWithHearing(hearing);
                         if (isPrlSuccess) {

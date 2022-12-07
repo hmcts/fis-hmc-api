@@ -9,6 +9,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import uk.gov.hmcts.reform.hmc.api.utils.IdamUserAuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
 
 @SpringBootTest
@@ -38,7 +39,7 @@ public class HearingsContFunctionalTest {
 
     @Autowired ServiceAuthenticationGenerator serviceAuthenticationGenerator;
 
-    @Autowired protected IdamUserAuthTokenGenerator idamTokenGenerator;
+    @Autowired protected IdamTokenGenerator idamTokenGenerator;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final String targetInstance =
@@ -53,30 +54,32 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    @Disabled
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
 
         Response response =
-                request.header("Authorization", idamTokenGenerator.getSecurityTokens())
+                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
                         .body(hearingValuesRequest)
                         .post("serviceHearingValues");
 
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
 
     @Test
+    @Disabled
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
-                request.header("Authorisation", idamTokenGenerator.getSecurityTokens())
+                request.header("Authorisation", idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
                         .get("hearings");
 
-        response.then().assertThat().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
 }

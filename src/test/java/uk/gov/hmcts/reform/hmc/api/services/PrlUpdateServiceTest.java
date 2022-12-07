@@ -36,7 +36,7 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();
@@ -52,7 +52,7 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("NonBBA3")
                         .build();
@@ -68,7 +68,7 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();
@@ -87,7 +87,7 @@ class PrlUpdateServiceTest {
 
         Hearing hearing =
                 Hearing.hearingRequestWith()
-                        .hearingId("testHearinID")
+                        .hearingID("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();

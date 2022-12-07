@@ -30,5 +30,7 @@ public final class Constants {
 
     public static final String HEARING_PRIORITY = "Standard";
 
+    public static final String LAST_NAME = "lastName";
+
     private Constants() {}
 }

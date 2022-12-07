@@ -32,7 +32,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     @SuppressWarnings("unused")
     public Boolean updatePrlServiceWithHearing(Hearing hearing) {
         Boolean isPrlRespSuccess = false;
-        log.info("calling updatePrlServiceWithHearing service " + hearing.getHearingId());
+        log.info("calling updatePrlServiceWithHearing service " + hearing.getHearingID());
 
         if (Constants.ABA5.equals(hearing.getHmctsServiceCode())) {
             try {
