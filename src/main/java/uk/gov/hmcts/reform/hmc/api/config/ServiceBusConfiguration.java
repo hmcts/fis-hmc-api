@@ -113,7 +113,7 @@ public class ServiceBusConfiguration {
                                                 hearing.getHearingUpdate().getHearingJudgeId())
                                         .hearingRoomId(
                                                 hearing.getHearingUpdate().getHearingRoomId())
-                                        .hmcStatus(hearing.getHearingUpdate().getHMCStatus())
+                                        .hmcStatus(hearing.getHearingUpdate().getHmcStatus())
                                         .listAssistCaseStatus(
                                                 hearing.getHearingUpdate()
                                                         .getListAssistCaseStatus())
