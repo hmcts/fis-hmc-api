@@ -26,22 +26,15 @@ public class PartyDetails {
     private LocalDate dateOfBirth;
 
     private DontKnow isDateOfBirthUnknown;
-    private Gender gender;
+
     private String otherGender;
     private String placeOfBirth;
     private DontKnow isAddressUnknown;
-    private YesOrNo isAddressConfidential;
-    private YesOrNo isAtAddressLessThan5Years;
+
     private String addressLivedLessThan5YearsDetails;
-    private YesOrNo canYouProvideEmailAddress;
-    private YesOrNo isEmailAddressConfidential;
     private String landline;
-    private YesOrNo isPhoneNumberConfidential;
+
     private String relationshipToChildren;
-    private YesOrNo isDateOfBirthKnown;
-    private YesOrNo isCurrentAddressKnown;
-    private YesOrNo canYouProvidePhoneNumber;
-    private YesOrNo isPlaceOfBirthKnown;
     private List<Element<OtherPersonRelationshipToChild>> otherPersonRelationshipToChildren;
     private Organisation solicitorOrg;
     private Address solicitorAddress;
@@ -56,7 +49,6 @@ public class PartyDetails {
     private Address address;
     private String solicitorTelephone;
     private String caseTypeOfApplication;
-    private YesOrNo respondentLivedWithApplicant;
 
     private Flags partyLevelFlag;
 }

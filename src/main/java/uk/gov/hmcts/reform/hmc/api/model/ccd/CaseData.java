@@ -23,8 +23,6 @@ public class CaseData implements MappableObject {
     private String dateSubmitted;
     private String caseTypeOfApplication;
 
-    private YesOrNo isInterpreterNeeded;
-
     private List<Element<PartyDetails>> applicants;
 
     private List<Element<PartyDetails>> respondents;

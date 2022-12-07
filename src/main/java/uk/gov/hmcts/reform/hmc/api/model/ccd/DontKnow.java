@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.model.ccd;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @JsonSerialize(using = CustomEnumSerializer.class)
 public enum DontKnow {
+    @JsonProperty("dontKnow")
     DONT_KNOW("Don't know");
 
     private final String displayedValue;
