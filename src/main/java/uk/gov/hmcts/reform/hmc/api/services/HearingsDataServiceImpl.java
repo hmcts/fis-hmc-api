@@ -28,10 +28,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseReason;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
@@ -188,35 +186,26 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
 
-        List listOfReasons = new ArrayList();
         List<CaseLinkElement<CaseLinkData>> caseLinkDataList =
                 ccdResponse.getCaseData().getCaseLinks();
 
-        if (caseLinkDataList != null) {
-            List<List<Element<CaseReason>>> reasonList =
-                    caseLinkDataList.stream()
-                            .map(e -> e.getValue().getReasonForLink())
-                            .collect(Collectors.toList());
-            List<Element<CaseReason>> flattenedReasonList = flatten(reasonList);
-            listOfReasons =
-                    flattenedReasonList.stream()
-                            .map(e -> e.getValue().reason)
-                            .collect(Collectors.toList());
-        }
-
-        String applicantCaseName =
-                (String) caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
-
-        HearingLinkData hearingLinkData =
-                HearingLinkData.hearingLinkDataWith()
-                        .caseReference(hearingValues.getCaseReference())
-                        .caseName(applicantCaseName)
-                        .reasonsForLink((List<String>) listOfReasons)
-                        .build();
-        log.info("hearingLinkData {}", hearingLinkData);
         List serviceLinkedCases = new ArrayList();
-        serviceLinkedCases.add(hearingLinkData);
-
+        for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
+            CaseLinkData caseLinkData = caseLinkDataObj.getValue();
+            if (caseLinkData != null && caseLinkData.getReasonForLink() != null) {
+                List reasonList =
+                        caseLinkData.getReasonForLink().stream()
+                                .map(e -> e.getValue().getReason())
+                                .collect(Collectors.toList());
+                HearingLinkData hearingLinkData =
+                        HearingLinkData.hearingLinkDataWith()
+                                .caseReference(caseLinkData.getCaseReference())
+                                .reasonsForLink(reasonList)
+                                .caseName(Constants.EMPTY)
+                                .build();
+                serviceLinkedCases.add(hearingLinkData);
+            }
+        }
         return serviceLinkedCases;
     }
 
