@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -136,8 +137,35 @@ class ServiceHearingValuesServiceTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void shouldReturnHearingLinkDetailsTest() throws IOException, ParseException {
 
+        LinkedHashMap reasonMap = new LinkedHashMap();
+        reasonMap.put("Reason", "CLRC017");
+
+        LinkedHashMap reasonForLinkMap = new LinkedHashMap();
+        reasonForLinkMap.put("value", reasonMap);
+
+        List reasonForLinkList = new ArrayList();
+        reasonForLinkList.add(reasonForLinkMap);
+
+        LinkedHashMap valueMap = new LinkedHashMap();
+        valueMap.put("ReasonForLink", reasonForLinkList);
+
+        LinkedHashMap caseLinkMap = new LinkedHashMap();
+        caseLinkMap.put("value", valueMap);
+
+        List caseLinksList = new ArrayList();
+        caseLinksList.add(caseLinkMap);
+
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("applicantCaseName", "Test Case 1 DA 31");
+        caseDataMap.put("caseLinks", caseLinksList);
+        CaseDetails caseDetails =
+                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
+                .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
@@ -145,6 +173,7 @@ class ServiceHearingValuesServiceTest {
         List<HearingLinkData> lst =
                 hearingservice.getHearingLinkData(
                         hearingValues, authorisation, serviceAuthorisation);
-        Assertions.assertTrue(lst.isEmpty());
+        // Assertions.assertEquals("Test Case 1 DA 31", lst.get(0).caseName);
+        Assertions.assertFalse(lst.isEmpty());
     }
 }
