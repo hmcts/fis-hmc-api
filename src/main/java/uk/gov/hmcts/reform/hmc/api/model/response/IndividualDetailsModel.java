@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,17 +14,34 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IndividualDetailsModel {
-    String title;
+
     String firstName;
     String lastName;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String preferredHearingChannel;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String interpreterLanguage;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String reasonableAdjustments;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String vulnerableFlag;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String vulnerabilityDetails;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String hearingChannelEmail;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String hearingChannelPhone;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     String custodyStatus;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     List<RelatedPartiesModel> relatedParties;
 }

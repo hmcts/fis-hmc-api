@@ -78,7 +78,5 @@ public class ServiceHearingValues {
 
     private JSONArray screenFlow;
 
-    private List<Vocabulary> vocabulary;
-
     private List<String> hearingChannels;
 }
