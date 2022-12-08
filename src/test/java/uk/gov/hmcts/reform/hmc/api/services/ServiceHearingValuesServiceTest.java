@@ -155,12 +155,12 @@ class ServiceHearingValuesServiceTest {
         LinkedHashMap caseLinkMap = new LinkedHashMap();
         caseLinkMap.put("value", valueMap);
 
-        List aa = new ArrayList();
-        aa.add(caseLinkMap);
+        List caseLinksList = new ArrayList();
+        caseLinksList.add(caseLinkMap);
 
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "Test Case 1 DA 31");
-        caseDataMap.put("caseLinks", aa);
+        caseDataMap.put("caseLinks", caseLinksList);
         CaseDetails caseDetails =
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");

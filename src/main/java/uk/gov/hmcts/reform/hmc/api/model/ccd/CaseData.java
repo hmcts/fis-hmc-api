@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 
 @Data
 @NoArgsConstructor
@@ -41,4 +43,7 @@ public class CaseData implements MappableObject {
 
     @JsonProperty("caseManagementLocation")
     private CaseManagementLocation caseManagementLocation;
+
+    @JsonProperty("caseLinks")
+    public List<CaseLinkElement<CaseLinkData>> caseLinks;
 }

@@ -4,6 +4,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +13,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,16 +26,17 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseReason;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
-import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
-import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
-import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
-import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
@@ -148,7 +149,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         : null)
                         .hearingChannels(Arrays.asList())
                         .build();
-        // setCaseFlagData(serviceHearingValues);TO DO clean this method.
         caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
         log.info("serviceHearingValues {}", serviceHearingValues);
         return serviceHearingValues;
@@ -174,40 +174,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return caseCategoriesList;
     }
 
-    public void setCaseFlagData(ServiceHearingValues hearingsData) {
-        String uuid = UUID.randomUUID().toString();
-        PartyFlagsModel partyFlagsModel =
-                PartyFlagsModel.partyFlagsModelWith()
-                        .partyId(uuid)
-                        .partyName("Jane Smith")
-                        .flagId("RA0042")
-                        .flagStatus("ACTIVE")
-                        .flagParentId("")
-                        .flagDescription("Sign language interpreter required")
-                        .build();
-        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
-        partyFlagsModelList.add(partyFlagsModel);
-        CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partyFlagsModelList).build();
-
-        hearingsData.setCaseFlags(caseFlags);
-        IndividualDetailsModel individualDetailsModel =
-                IndividualDetailsModel.individualDetailsWith()
-                        .firstName("Jane")
-                        .lastName("Smith")
-                        .build();
-
-        PartyDetailsModel partyDetailsModel =
-                PartyDetailsModel.partyDetailsWith()
-                        .partyID(partyFlagsModel.getPartyId())
-                        .partyName(partyFlagsModel.getPartyName())
-                        .partyType(PartyType.IND)
-                        .partyRole(Constants.APPLICANT)
-                        .individualDetails(individualDetailsModel)
-                        .build();
-
-        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
-        partyDetailsModelList.add(partyDetailsModel);
-        hearingsData.setParties(partyDetailsModelList);
+    public CaseDetailResponse getCcdCaseData(CaseDetails caseDetails) throws IOException {
+        ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
+        return objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
     }
 
     @Override
@@ -217,43 +186,23 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+        CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
 
-        log.info("CaseRef==> " + hearingValues.getCaseReference());
-        log.info("CaseName==> " + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME));
-        log.info("Reason==> " + caseDetails.getData().get(Constants.CASE_LINKS).getClass());
+        List listOfReasons = new ArrayList();
+        List<CaseLinkElement<CaseLinkData>> caseLinkDataList =
+                ccdResponse.getCaseData().getCaseLinks();
 
-        List caseLinksList = (List) caseDetails.getData().get(Constants.CASE_LINKS);
-
-        List reasonList =
-                (List)
-                        caseLinksList.stream()
-                                .map(e -> ((LinkedHashMap) e).get(Constants.VALUE))
-                                .map(e -> ((LinkedHashMap) e).get(Constants.REASON_FOR_LINK))
-                                .map(
-                                        e ->
-                                                ((List) e)
-                                                        .stream()
-                                                                .map(
-                                                                        e2 ->
-                                                                                ((LinkedHashMap) e2)
-                                                                                        .get(
-                                                                                                Constants
-                                                                                                        .VALUE))
-                                                                .collect(Collectors.toList()))
-                                .map(
-                                        e ->
-                                                ((List) e)
-                                                        .stream()
-                                                                .map(
-                                                                        e2 ->
-                                                                                ((LinkedHashMap) e2)
-                                                                                        .get(
-                                                                                                Constants
-                                                                                                        .REASON))
-                                                                .collect(Collectors.toList()))
-                                .collect(Collectors.toList());
-        List<?> flattenedReasonList = flatten(reasonList);
-        log.info("Flattened Reason List " + flattenedReasonList);
+        if (caseLinkDataList != null) {
+            List<List<Element<CaseReason>>> reasonList =
+                    caseLinkDataList.stream()
+                            .map(e -> e.getValue().getReasonForLink())
+                            .collect(Collectors.toList());
+            List<Element<CaseReason>> flattenedReasonList = flatten(reasonList);
+            listOfReasons =
+                    flattenedReasonList.stream()
+                            .map(e -> e.getValue().reason)
+                            .collect(Collectors.toList());
+        }
 
         String applicantCaseName =
                 (String) caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
@@ -262,11 +211,12 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 HearingLinkData.hearingLinkDataWith()
                         .caseReference(hearingValues.getCaseReference())
                         .caseName(applicantCaseName)
-                        .reasonsForLink((List<String>) flattenedReasonList)
+                        .reasonsForLink((List<String>) listOfReasons)
                         .build();
         log.info("hearingLinkData {}", hearingLinkData);
         List serviceLinkedCases = new ArrayList();
         serviceLinkedCases.add(hearingLinkData);
+
         return serviceLinkedCases;
     }
 
