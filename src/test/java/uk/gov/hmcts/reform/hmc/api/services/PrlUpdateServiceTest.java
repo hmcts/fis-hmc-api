@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -34,41 +34,41 @@ class PrlUpdateServiceTest {
     @Test
     public void shouldUpdatePrivateLawInPrlcosTest() throws IOException, ParseException {
 
-        Hearing hearing =
-                Hearing.hearingRequestWith()
-                        .hearingID("testHearinID")
+        HearingDTO hearingDto =
+                HearingDTO.hearingRequestDTOWith()
+                        .hearingId("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
 
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearing);
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto);
         assertEquals(true, isOK);
     }
 
     @Test
     public void shouldNotUpdatePrivateLawInPrlcosTest() throws IOException, ParseException {
 
-        Hearing hearing =
-                Hearing.hearingRequestWith()
-                        .hearingID("testHearinID")
+        HearingDTO hearingDto =
+                HearingDTO.hearingRequestDTOWith()
+                        .hearingId("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("NonBBA3")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
 
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearing);
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto);
         assertEquals(true, isOK);
     }
 
     @Test
     public void shouldUpdatePrivateLawInPrlcosReturn401Test() throws IOException, ParseException {
 
-        Hearing hearing =
-                Hearing.hearingRequestWith()
-                        .hearingID("testHearinID")
+        HearingDTO hearingDto =
+                HearingDTO.hearingRequestDTOWith()
+                        .hearingId("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();
@@ -78,16 +78,16 @@ class PrlUpdateServiceTest {
 
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearing));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto));
     }
 
     @Test
     public void shouldUpdatePrivateLawInPrlcosS2sExceptionTest()
             throws IOException, ParseException {
 
-        Hearing hearing =
-                Hearing.hearingRequestWith()
-                        .hearingID("testHearinID")
+        HearingDTO hearingDto =
+                HearingDTO.hearingRequestDTOWith()
+                        .hearingId("testHearinID")
                         .caseRef("testCaseRef")
                         .hmctsServiceCode("ABA5")
                         .build();
@@ -97,6 +97,6 @@ class PrlUpdateServiceTest {
 
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearing));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto));
     }
 }

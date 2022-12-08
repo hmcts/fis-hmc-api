@@ -37,7 +37,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.Vocabulary;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
@@ -54,9 +53,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Autowired private ResourceLoader resourceLoader;
 
-    protected static final List<String> HEARING_CHANNELS =
-            Arrays.asList("INTER", "TEL", "VID", "ONPPRS");
-    protected static final List<String> FACILITIES_REQUIRED = Arrays.asList("9", "11", "14");
+    @Autowired CaseFlagDataServiceImpl caseFlagDataService;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -106,7 +103,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
-        ServiceHearingValues hearingsData =
+        ServiceHearingValues serviceHearingValues =
                 ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID(Constants.ABA5)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
@@ -136,7 +133,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                                 .locationType(Constants.EMPTY)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(FACILITIES_REQUIRED)
+                        .facilitiesRequired(Arrays.asList())
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
                         .privateHearingRequiredFlag(Constants.FALSE)
@@ -149,12 +146,12 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                 screenFlowJson != null
                                         ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
                                         : null)
-                        .vocabulary(Arrays.asList(Vocabulary.vocabularyWith().build()))
-                        .hearingChannels(HEARING_CHANNELS)
+                        .hearingChannels(Arrays.asList())
                         .build();
-        setCaseFlagData(hearingsData);
-        log.info("hearingsData {}", hearingsData);
-        return hearingsData;
+        // setCaseFlagData(serviceHearingValues);TO DO clean this method.
+        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        log.info("serviceHearingValues {}", serviceHearingValues);
+        return serviceHearingValues;
     }
 
     private List<CaseCategories> getCaseCategories() {

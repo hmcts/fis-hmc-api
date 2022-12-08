@@ -32,6 +32,8 @@ class ServiceHearingValuesServiceTest {
 
     @Mock private CaseApiService caseApiService;
 
+    @Mock private CaseFlagDataServiceImpl caseFlagDataService;
+
     @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Mock ResourceLoader resourceLoader;
@@ -63,6 +65,7 @@ class ServiceHearingValuesServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+        hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
@@ -75,9 +78,13 @@ class ServiceHearingValuesServiceTest {
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
+        ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
+        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =

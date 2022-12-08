@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.utils;
 
 public final class Constants {
 
+    public static final String EMPTY_STRING = " ";
     public static final Boolean TRUE = true;
     public static final Boolean FALSE = false;
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
@@ -24,7 +25,8 @@ public final class Constants {
     public static final String CASE_SUB_TYPE = "caseSubType";
     public static final String ABA5 = "ABA5";
     public static final String APPLICANT = "APPL";
-    public static final String HEARING_TYPE = "ABA5-APL";
+    public static final String RESPONDENT = "RESP";
+    public static final String HEARING_TYPE = "";
 
     public static final String HEARING_PRIORITY = "Standard";
 

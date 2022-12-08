@@ -9,7 +9,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
-import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Service
@@ -25,19 +25,19 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     /**
      * This method will update the Prl with hearing data.
      *
-     * @param hearing data to update prl.
+     * @param hearingDto data to update prl.
      * @return isPrlRespSuccess, Boolean - prlHearing update.
      */
     @Override
     @SuppressWarnings("unused")
-    public Boolean updatePrlServiceWithHearing(Hearing hearing) {
+    public Boolean updatePrlServiceWithHearing(HearingDTO hearingDto) {
         Boolean isPrlRespSuccess = false;
-        log.info("calling updatePrlServiceWithHearing service " + hearing.getHearingID());
+        log.info("calling updatePrlServiceWithHearing service " + hearingDto.getHearingId());
 
-        if (Constants.ABA5.equals(hearing.getHmctsServiceCode())) {
+        if (Constants.ABA5.equals(hearingDto.getHmctsServiceCode())) {
             try {
                 ResponseEntity responseEntity =
-                        prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearing);
+                        prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto);
                 log.info("PRL call completed successfully" + responseEntity.getStatusCode());
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
@@ -51,7 +51,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
         } else {
             log.info(
                     "Not related PRL HmctsServiceCode{} Hence it is ignored ",
-                    hearing.getHmctsServiceCode());
+                    hearingDto.getHmctsServiceCode());
 
             isPrlRespSuccess = true;
         }
