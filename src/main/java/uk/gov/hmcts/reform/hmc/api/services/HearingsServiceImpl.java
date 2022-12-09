@@ -45,7 +45,7 @@ public class HearingsServiceImpl implements HearingsService {
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearings = null;
 
-        ResponseEntity<Hearings> caseHearingsResponse = null;
+        ResponseEntity<Hearings> caseHearingsResponse;
         try {
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(authorization, serviceAuthorization);
@@ -54,6 +54,7 @@ public class HearingsServiceImpl implements HearingsService {
                     restTemplate.exchange(
                             builder.toUriString(), HttpMethod.GET, httpsHeader, Hearings.class);
             log.info("Fetch hearings call completed successfully {}", caseHearings);
+            return caseHearingsResponse.getBody();
         } catch (HttpClientErrorException exception) {
             log.info("Hearing call exception {}", exception.getMessage());
             throw new AuthorizationException("Hearing", exception.getStatusCode(), exception);
@@ -61,8 +62,6 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Hearing server exception {}", exception.getMessage());
             throw new ServerErrorException("Hearing", exception.getStatusCode(), exception);
         }
-        log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
-        return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
     }
 
     /**
