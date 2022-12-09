@@ -45,7 +45,7 @@ public class HearingsServiceImpl implements HearingsService {
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearings = null;
 
-        ResponseEntity<Hearings> caseHearingsResponse = null;
+        ResponseEntity<Hearings> caseHearingsResponse;
         try {
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(authorization, serviceAuthorization);
