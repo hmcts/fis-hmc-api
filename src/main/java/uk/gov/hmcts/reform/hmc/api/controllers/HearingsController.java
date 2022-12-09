@@ -65,8 +65,6 @@ public class HearingsController {
             throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-
                 return ResponseEntity.ok(
                         hearingsDataService.getCaseData(
                                 hearingValues, authorisation, serviceAuthorization));
@@ -103,7 +101,6 @@ public class HearingsController {
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
                                 authorization, serviceAuthorization, caseReference));
@@ -142,7 +139,6 @@ public class HearingsController {
             throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
-                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsDataService.getHearingLinkData(
                                 hearingValues, authorisation, serviceAuthorization));
