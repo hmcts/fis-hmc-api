@@ -66,7 +66,6 @@ public class HearingsController {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-
                 return ResponseEntity.ok(
                         hearingsDataService.getCaseData(
                                 hearingValues, authorisation, serviceAuthorization));

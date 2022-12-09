@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.exceptions.ServerErrorException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -42,9 +43,8 @@ public class HearingsServiceImpl implements HearingsService {
             String authorization, String serviceAuthorization, String caseReference) {
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
-        Hearings caseHearings = null;
 
-        ResponseEntity<Hearings> caseHearingsResponse = null;
+        ResponseEntity<Hearings> caseHearingsResponse;
         try {
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(authorization, serviceAuthorization);
@@ -52,15 +52,15 @@ public class HearingsServiceImpl implements HearingsService {
             caseHearingsResponse =
                     restTemplate.exchange(
                             builder.toUriString(), HttpMethod.GET, httpsHeader, Hearings.class);
-            log.info("Fetch hearings call completed successfully {}", caseHearings);
+            log.info("Fetch hearings call completed successfully");
+            return caseHearingsResponse.getBody();
         } catch (HttpClientErrorException exception) {
-            log.info("Hearing call exception {}", exception.getMessage());
-            throw new AuthorizationException("Hearing", exception.getStatusCode(), exception);
+            throw new AuthorizationException(
+                    "Hearing Client Error exception {}", exception.getStatusCode(), exception);
         } catch (HttpServerErrorException exception) {
-            log.info("Hearing server exception {}", exception.getMessage());
+            throw new ServerErrorException(
+                    "Hearing Server Error exception {}", exception.getStatusCode(), exception);
         }
-        log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
-        return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
     }
 
     /**

@@ -12,6 +12,7 @@
     <exclude name="JUnitTestsShouldIncludeAssert"/>
     <exclude name="JUnit5TestShouldBePackagePrivate"/>
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="UnusedAssignment"/>
   </rule>
   <exclude-pattern>.*/config/.*</exclude-pattern>
   <exclude-pattern>.*/utils/.*</exclude-pattern>

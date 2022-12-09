@@ -148,7 +148,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hearingChannels(Arrays.asList())
                         .build();
         caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
-        log.info("serviceHearingValues {}", serviceHearingValues);
         return serviceHearingValues;
     }
 

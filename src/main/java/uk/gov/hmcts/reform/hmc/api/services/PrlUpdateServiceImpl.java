@@ -18,8 +18,6 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
 
     @Autowired private AuthTokenGenerator authTokenGenerator;
 
-    // private static final Logger LOG = LoggerFactory.getLogger(PrlUpdateServiceImpl.class);
-
     @Autowired PrlUpdateApi prlUpdateApi;
 
     /**
