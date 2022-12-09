@@ -51,7 +51,7 @@ class HearingCftServiceTest {
     }
 
     @Test
-    public void shouldReturnCtfHearingsServerErrorExceptionTest()
+    void shouldReturnCtfHearingsServerErrorExceptionTest()
             throws IOException, ParseException {
 
         Mockito.when(
@@ -69,7 +69,7 @@ class HearingCftServiceTest {
     }
 
     @Test
-    public void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
+    void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
 
         Mockito.when(
                         restTemplate.exchange(
