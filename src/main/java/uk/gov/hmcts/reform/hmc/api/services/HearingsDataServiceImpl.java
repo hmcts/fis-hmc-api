@@ -190,22 +190,25 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 ccdResponse.getCaseData().getCaseLinks();
 
         List serviceLinkedCases = new ArrayList();
-        for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
-            CaseLinkData caseLinkData = caseLinkDataObj.getValue();
-            if (caseLinkData != null && caseLinkData.getReasonForLink() != null) {
-                List reasonList =
-                        caseLinkData.getReasonForLink().stream()
-                                .map(e -> e.getValue().getReason())
-                                .collect(Collectors.toList());
-                HearingLinkData hearingLinkData =
-                        HearingLinkData.hearingLinkDataWith()
-                                .caseReference(caseLinkData.getCaseReference())
-                                .reasonsForLink(reasonList)
-                                .caseName(Constants.EMPTY)
-                                .build();
-                serviceLinkedCases.add(hearingLinkData);
+        if (caseLinkDataList != null) {
+            for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
+                CaseLinkData caseLinkData = caseLinkDataObj.getValue();
+                if (caseLinkData != null && caseLinkData.getReasonForLink() != null) {
+                    List reasonList =
+                            caseLinkData.getReasonForLink().stream()
+                                    .map(e -> e.getValue().getReason())
+                                    .collect(Collectors.toList());
+                    HearingLinkData hearingLinkData =
+                            HearingLinkData.hearingLinkDataWith()
+                                    .caseReference(caseLinkData.getCaseReference())
+                                    .reasonsForLink(reasonList)
+                                    .caseName(Constants.EMPTY)
+                                    .build();
+                    serviceLinkedCases.add(hearingLinkData);
+                }
             }
         }
+
         return serviceLinkedCases;
     }
 
