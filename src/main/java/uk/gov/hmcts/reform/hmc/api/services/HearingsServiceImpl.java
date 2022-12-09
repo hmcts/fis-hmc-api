@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.exceptions.ServerErrorException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -58,6 +59,9 @@ public class HearingsServiceImpl implements HearingsService {
             throw new AuthorizationException("Hearing", exception.getStatusCode(), exception);
         } catch (HttpServerErrorException exception) {
             log.info("Hearing server exception {}", exception.getMessage());
+            throw new ServerErrorException("Hearing", exception.getStatusCode(), exception);
+        } catch (Exception exception) {
+            log.info("Hearing - getHearingsByCaseRefNo exception {}", exception.getMessage());
         }
         log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
         return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
