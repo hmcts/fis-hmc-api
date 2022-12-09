@@ -56,9 +56,11 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Fetch hearings call completed successfully {}", caseHearings);
             return caseHearingsResponse.getBody();
         } catch (HttpClientErrorException exception) {
-            throw new AuthorizationException("Hearing Client Error exception {}", exception.getStatusCode(), exception);
+            throw new AuthorizationException(
+                    "Hearing Client Error exception {}", exception.getStatusCode(), exception);
         } catch (HttpServerErrorException exception) {
-            throw new ServerErrorException("Hearing Server Error exception {}", exception.getStatusCode(), exception);
+            throw new ServerErrorException(
+                    "Hearing Server Error exception {}", exception.getStatusCode(), exception);
         }
     }
 
