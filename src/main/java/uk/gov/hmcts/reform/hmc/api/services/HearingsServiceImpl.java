@@ -43,7 +43,6 @@ public class HearingsServiceImpl implements HearingsService {
             String authorization, String serviceAuthorization, String caseReference) {
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
-        Hearings caseHearings = null;
 
         ResponseEntity<Hearings> caseHearingsResponse;
         try {
@@ -53,7 +52,7 @@ public class HearingsServiceImpl implements HearingsService {
             caseHearingsResponse =
                     restTemplate.exchange(
                             builder.toUriString(), HttpMethod.GET, httpsHeader, Hearings.class);
-            log.info("Fetch hearings call completed successfully {}", caseHearings);
+            log.info("Fetch hearings call completed successfully");
             return caseHearingsResponse.getBody();
         } catch (HttpClientErrorException exception) {
             throw new AuthorizationException(

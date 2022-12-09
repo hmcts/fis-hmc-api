@@ -31,7 +31,7 @@ class CaseFlagDataServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnHearingLinkDetailsTest() throws IOException, ParseException {
+    void shouldSetCaseFlagTest() throws IOException, ParseException {
 
         LinkedHashMap reasonMap = new LinkedHashMap();
         reasonMap.put("Reason", "CLRC017");
