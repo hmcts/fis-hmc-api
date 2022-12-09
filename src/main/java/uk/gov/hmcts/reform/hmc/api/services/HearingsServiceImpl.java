@@ -60,8 +60,6 @@ public class HearingsServiceImpl implements HearingsService {
         } catch (HttpServerErrorException exception) {
             log.info("Hearing server exception {}", exception.getMessage());
             throw new ServerErrorException("Hearing", exception.getStatusCode(), exception);
-        } catch (Exception exception) {
-            log.info("Hearing - getHearingsByCaseRefNo exception {}", exception.getMessage());
         }
         log.info("Fetch hearings call completed successfully {} final", caseHearingsResponse);
         return caseHearingsResponse != null ? caseHearingsResponse.getBody() : null;
