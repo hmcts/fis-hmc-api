@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -34,9 +33,8 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
 
         if (Constants.ABA5.equals(hearingDto.getHmctsServiceCode())) {
             try {
-                ResponseEntity responseEntity =
-                        prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto);
-                log.info("PRL call completed successfully" + responseEntity.getStatusCode());
+                prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto);
+                log.info("PRL call completed successfully");
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
                 log.info("PRL call HttpClientError exception {}", exception.getMessage());
