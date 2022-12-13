@@ -5,6 +5,5 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
 public interface HearingsService {
-    Hearings getHearingsByCaseRefNo(
-            String authorization, String serviceAuthorization, String caseReference);
+    Hearings getHearingsByCaseRefNo(String authorization, String caseReference);
 }

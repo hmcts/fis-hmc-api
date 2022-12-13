@@ -132,7 +132,7 @@ class HearingsControllerTest {
     void hearingsControllerTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
-        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString(), anyString()))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), anyString()))
                 .thenReturn(hearings);
         ResponseEntity<Object> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
@@ -154,7 +154,7 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
@@ -168,7 +168,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("", ""))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
