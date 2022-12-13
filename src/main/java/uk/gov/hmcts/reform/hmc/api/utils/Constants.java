@@ -31,6 +31,7 @@ public final class Constants {
     public static final String HEARING_PRIORITY = "Standard";
 
     public static final String LAST_NAME = "lastName";
+
     public static final String CASE_LINKS = "caseLinks";
 
     public static final String VALUE = "value";
@@ -38,6 +39,11 @@ public final class Constants {
     public static final String REASON_FOR_LINK = "ReasonForLink";
 
     public static final String REASON = "Reason";
+
+    public static final String PROCESSING_REQUEST_AFTER_AUTHORIZATION =
+            "processing request after authorization";
+
+    public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
     private Constants() {}
 }

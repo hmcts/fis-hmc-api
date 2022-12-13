@@ -4,6 +4,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 
 import feign.FeignException;
 import io.swagger.annotations.Api;
@@ -35,11 +37,6 @@ import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 @RestController
 @Api(value = "/", description = "get hearings Values")
 public class HearingsController {
-
-    public static final String PROCESSING_REQUEST_AFTER_AUTHORIZATION =
-            "processing request after authorization";
-
-    public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
     @Autowired private IdamAuthService idamAuthService;
 
