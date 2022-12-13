@@ -4,10 +4,10 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,8 +15,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
-import uk.gov.hmcts.reform.hmc.api.exceptions.ServerErrorException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -27,6 +27,8 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
+    @Autowired AuthTokenGenerator authTokenGenerator;
+
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
@@ -34,33 +36,39 @@ public class HearingsServiceImpl implements HearingsService {
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
      * @param authorization User authorization token.
-     * @param serviceAuthorization S2S authorization token.
      * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
      * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      */
     @Override
-    public Hearings getHearingsByCaseRefNo(
-            String authorization, String serviceAuthorization, String caseReference) {
+    public Hearings getHearingsByCaseRefNo(String authorization, String caseReference) {
+
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
-
-        ResponseEntity<Hearings> caseHearingsResponse;
+        Hearings caseHearingsResponse = null;
         try {
             MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(authorization, serviceAuthorization);
+                    getHttpHeaders(authorization, authTokenGenerator.generate());
             HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
             caseHearingsResponse =
-                    restTemplate.exchange(
-                            builder.toUriString(), HttpMethod.GET, httpsHeader, Hearings.class);
+                    restTemplate
+                            .exchange(
+                                    builder.toUriString(),
+                                    HttpMethod.GET,
+                                    httpsHeader,
+                                    Hearings.class)
+                            .getBody();
             log.info("Fetch hearings call completed successfully");
-            return caseHearingsResponse.getBody();
-        } catch (HttpClientErrorException exception) {
+            return caseHearingsResponse;
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info(
+                    "HttpClientErrorException exception during getHearingsByCaseRefNo ",
+                    exception.getStatusCode());
             throw new AuthorizationException(
                     "Hearing Client Error exception {}", exception.getStatusCode(), exception);
-        } catch (HttpServerErrorException exception) {
-            throw new ServerErrorException(
-                    "Hearing Server Error exception {}", exception.getStatusCode(), exception);
+        } catch (Exception exception) {
+            log.info("Exception exception during getHearingsByCaseRefNo ", exception);
         }
+        return caseHearingsResponse;
     }
 
     /**
