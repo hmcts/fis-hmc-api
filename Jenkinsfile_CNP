@@ -175,6 +175,8 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal/hearings/'
+    env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+    env.IDAM_API_BASEURL = "https://idam-api.aat.platform.hmcts.net"
    //setCommonEnvVariables()
   }
 
@@ -185,6 +187,8 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.IDAM_API_URL_BASE = "https://idam-api.aat.platform.hmcts.net"
+    env.IDAM_API_BASEURL = "https://idam-api.aat.platform.hmcts.net"
    // setCommonEnvVariables()
   }
 
