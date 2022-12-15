@@ -4,5 +4,5 @@ java:
 
 
 environment:
-  CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-demo.service.core-compute-demo.internal'
+  CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
 

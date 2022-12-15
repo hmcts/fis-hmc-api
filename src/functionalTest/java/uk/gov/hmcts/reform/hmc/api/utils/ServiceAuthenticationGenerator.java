@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.TestPropertySource;
 
-@TestPropertySource("classpath:application.yaml")
+@TestPropertySource("classpath:application_e2e.yaml")
 @Service
 public class ServiceAuthenticationGenerator {
 
