@@ -176,6 +176,7 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal/hearings/'
+    env.OIDC_S2S_MICROSERVICE_NAME = 'fis_hmc_api'
    //setCommonEnvVariables()
   }
 
@@ -186,6 +187,7 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.OIDC_S2S_MICROSERVICE_NAME = 'fis_hmc_api'
    // setCommonEnvVariables()
   }
 
@@ -194,6 +196,7 @@ withPipeline(type, product, component) {
     env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.OIDC_S2S_MICROSERVICE_NAME = 'fis_hmc_api'
   }
 
   onPerftest {
