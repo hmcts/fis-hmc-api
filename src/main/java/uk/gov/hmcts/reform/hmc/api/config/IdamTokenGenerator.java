@@ -19,7 +19,7 @@ public class IdamTokenGenerator {
     @Autowired IdamClient idamClient;
 
     public String generateIdamTokenForRefData() {
-        log.info("user name=="+refDataUserName);
+        log.info("user name==" + refDataUserName);
         return idamClient.getAccessToken(refDataUserName, refDataPassword);
     }
 }
