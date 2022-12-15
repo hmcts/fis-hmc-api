@@ -52,13 +52,13 @@ ref_data:
 
 
 idam:
-  url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
+  url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
     url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     totp_secret: ${OIDC_S2S_SECRET:dummy}
     microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
-    url: ${IDAM_API_BASEURL:https://idam-api.demo.platform.hmcts.net}
+    url: ${IDAM_API_BASEURL:https://idam-api.aat.platform.hmcts.net}
   client:
     id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
     baseUrl: https://idam-api.demo.platform.hmcts.net
@@ -78,7 +78,7 @@ prl:
 
 core_case_data:
   api:
-    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-demo.service.core-compute-demo.internal}
+    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
 ccd:
   ui:
@@ -117,3 +117,4 @@ logging:
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}
+
