@@ -71,12 +71,12 @@ public class HearingsContFunctionalTest {
     public void givenHearingValuesWhenGetHearingsLinkCasesThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
-            request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
-                .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
-                .when()
-                .contentType(JSON_CONTENT_TYPE)
-                .body(hearingValuesRequest)
-                .post("serviceLinkedCases");
+                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
+                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
+                        .when()
+                        .contentType(JSON_CONTENT_TYPE)
+                        .body(hearingValuesRequest)
+                        .post("serviceLinkedCases");
 
         response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
