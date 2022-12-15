@@ -12,6 +12,8 @@ import org.junit.Before;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -34,6 +36,8 @@ public class HearingsContFunctionalTest {
     public static final String TEST_LOCAL_HOST = "http://localhost:4550";
     public static final String FIS_TEST_URL = "CASE_API_TEST_URL";
 
+    private static final Logger LOG = LoggerFactory.getLogger(HearingsContFunctionalTest.class);
+
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
 
@@ -54,7 +58,6 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
-    @Disabled
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
 
@@ -65,6 +68,8 @@ public class HearingsContFunctionalTest {
                         .contentType(JSON_CONTENT_TYPE)
                         .body(hearingValuesRequest)
                         .post("serviceHearingValues");
+
+        LOG.info("SV Response=== {}", response.statusCode());
 
         response.then().assertThat().statusCode(HttpStatus.OK.value());
     }
