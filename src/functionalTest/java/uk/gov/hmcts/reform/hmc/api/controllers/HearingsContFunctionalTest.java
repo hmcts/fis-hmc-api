@@ -68,10 +68,24 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    public void givenHearingValuesWhenGetHearingsLinkCasesThen200Response() throws Exception {
+        String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
+        Response response =
+            request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
+                .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
+                .when()
+                .contentType(JSON_CONTENT_TYPE)
+                .body(hearingValuesRequest)
+                .post("serviceLinkedCases");
+
+        response.then().assertThat().statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
     @Disabled
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
-                request.header("Authorisation", idamTokenGenerator.generateIdamTokenForRefData())
+                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
                         .when()
