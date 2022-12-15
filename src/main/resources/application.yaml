@@ -54,7 +54,7 @@ ref_data:
 idam:
   url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   s2s-auth:
-    url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-demo.service.core-compute-demo.internal}
+    url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-aat.service.core-compute-aat.internal}
     totp_secret: ${OIDC_S2S_SECRET:dummy}
     microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
