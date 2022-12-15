@@ -60,7 +60,8 @@ public class HearingsContFunctionalTest {
     @Test
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
-
+        LOG.info("Inside SV Test}");
+        LOG.info(idamTokenGenerator.generateIdamTokenForRefData());
         Response response =
                 request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
