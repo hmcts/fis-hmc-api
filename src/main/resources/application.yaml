@@ -67,6 +67,9 @@ idam:
   refDataUserAuth:
     username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+  hearingCftUserAuth:
+    username: prl_hearing_manager@justice.gov.uk
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
