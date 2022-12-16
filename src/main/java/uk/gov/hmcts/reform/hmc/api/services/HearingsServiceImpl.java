@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
@@ -29,25 +30,29 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Autowired AuthTokenGenerator authTokenGenerator;
 
+    @Autowired IdamTokenGenerator idamTokenGenerator;
+
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @param authorization User authorization token.
      * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
      * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      */
     @Override
-    public Hearings getHearingsByCaseRefNo(String authorization, String caseReference) {
+    public Hearings getHearingsByCaseRefNo(String caseReference) {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearingsResponse = null;
+
         try {
             MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(authorization, authTokenGenerator.generate());
+                    getHttpHeaders(
+                            idamTokenGenerator.generateIdamTokenForHearingCftData(),
+                            authTokenGenerator.generate());
             HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
             caseHearingsResponse =
                     restTemplate

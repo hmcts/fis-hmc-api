@@ -16,9 +16,19 @@ public class IdamTokenGenerator {
     @Value("${idam.refDataUserAuth.password}")
     private String refDataPassword;
 
+    @Value("${idam.hearingCftUserAuth.username}")
+    private String hearingCftUserName;
+
+    @Value("${idam.hearingCftUserAuth.password}")
+    private String hearingCftPassword;
+
     @Autowired IdamClient idamClient;
 
     public String generateIdamTokenForRefData() {
         return idamClient.getAccessToken(refDataUserName, refDataPassword);
+    }
+
+    public String generateIdamTokenForHearingCftData() {
+        return idamClient.getAccessToken(hearingCftUserName, hearingCftPassword);
     }
 }

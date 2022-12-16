@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
@@ -33,6 +34,8 @@ class HearingCftServiceTest {
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
+    @Mock private IdamTokenGenerator idamTokenGenerator;
+
     @Test
     void shouldReturnCtfHearingsTest() {
         Hearings caseHearings =
@@ -44,8 +47,9 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenReturn(response);
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        Hearings hearings = hearingsService.getHearingsByCaseRefNo("authoriation", "123");
+        Hearings hearings = hearingsService.getHearingsByCaseRefNo("123");
         Assertions.assertEquals("ABA5", hearings.getHmctsServiceCode());
     }
 
@@ -57,22 +61,23 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_GATEWAY));
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
         assertThrows(
-                AuthorizationException.class,
-                () -> hearingsService.getHearingsByCaseRefNo("authorization", "123"));
+                AuthorizationException.class, () -> hearingsService.getHearingsByCaseRefNo("123"));
     }
 
     @Test
     void shouldReturnCtfHearingsExceptionTest() throws IOException, ParseException {
-
         when(restTemplate.exchange(
                         ArgumentMatchers.anyString(),
                         ArgumentMatchers.any(HttpMethod.class),
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new NullPointerException("Null Point Exception"));
-        Assertions.assertEquals(
-                null, hearingsService.getHearingsByCaseRefNo("authorization", "123"));
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123"));
     }
 }
