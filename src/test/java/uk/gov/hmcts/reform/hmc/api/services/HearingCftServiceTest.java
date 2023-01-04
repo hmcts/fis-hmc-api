@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,9 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @ExtendWith({MockitoExtension.class})
@@ -36,10 +41,35 @@ class HearingCftServiceTest {
 
     @Mock private IdamTokenGenerator idamTokenGenerator;
 
+    @Mock private RefDataServiceImpl refDataService;
+
     @Test
     void shouldReturnCtfHearingsTest() {
+
+        CourtDetail courtDetail =
+                CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        HearingDaySchedule hearingDaySchedule =
+                HearingDaySchedule.hearingDayScheduleWith().hearingVenueId("231596").build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearing =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus("LISTED")
+                        .hearingDaySchedule(hearingDayScheduleList)
+                        .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+
         Hearings caseHearings =
-                Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+                Hearings.hearingsWith()
+                        .caseRef("123")
+                        .hmctsServiceCode("ABA5")
+                        .caseHearings(caseHearingList)
+                        .build();
         ResponseEntity<Hearings> response = ResponseEntity.ok(caseHearings);
         when(restTemplate.exchange(
                         ArgumentMatchers.anyString(),
@@ -49,7 +79,9 @@ class HearingCftServiceTest {
                 .thenReturn(response);
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        Hearings hearings = hearingsService.getHearingsByCaseRefNo("123");
+        when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
+
+        Hearings hearings = hearingsService.getHearingsByCaseRefNo("1671620456009274");
         Assertions.assertEquals("ABA5", hearings.getHmctsServiceCode());
     }
 

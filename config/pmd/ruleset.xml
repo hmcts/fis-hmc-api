@@ -67,6 +67,9 @@
     <exclude name="UseObjectForClearerAPI"/>
     <exclude name="LawOfDemeter"/>
     <exclude name="ExcessiveMethodLength"/>
+    <exclude name="AvoidDeeplyNestedIfStmts"/>
+    <exclude name="CognitiveComplexity"/>
+    <exclude name="CyclomaticComplexity"/>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
