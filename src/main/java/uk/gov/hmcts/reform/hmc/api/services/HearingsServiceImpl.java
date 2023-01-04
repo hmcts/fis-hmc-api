@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+
 import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -31,6 +37,8 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
+
+    @Autowired RefDataService refDataService;
 
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
@@ -62,7 +70,10 @@ public class HearingsServiceImpl implements HearingsService {
                                     httpsHeader,
                                     Hearings.class)
                             .getBody();
-            log.info("Fetch hearings call completed successfully");
+            log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
+
+            integrateVenueDetails(caseHearingsResponse);
+
             return caseHearingsResponse;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info(
@@ -88,5 +99,32 @@ public class HearingsServiceImpl implements HearingsService {
         inputHeaders.put("Authorization", Arrays.asList(authorization));
         inputHeaders.put("ServiceAuthorization", Arrays.asList(serviceAuthorization));
         return inputHeaders;
+    }
+
+    private void integrateVenueDetails(Hearings caseHearingsResponse) {
+        if (caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null) {
+            List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
+            for (CaseHearing caseHearing : caseHearings) {
+                if (caseHearing.getHmcStatus().equals(LISTED)
+                        && caseHearing.getHearingDaySchedule() != null) {
+                    for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
+                        String venueId = hearingSchedule.getHearingVenueId();
+                        if (null != venueId) {
+                            log.info("VenueId {}", venueId);
+                            CourtDetail courtDetail = refDataService.getCourtDetails(venueId);
+                            if (courtDetail != null) {
+                                hearingSchedule.setHearingVenueName(
+                                        courtDetail.getHearingVenueName());
+                                hearingSchedule.setHearingVenueAddress(
+                                        courtDetail.getHearingVenueAddress());
+                                hearingSchedule.setHearingVenueLocationCode(
+                                        courtDetail.getHearingVenueLocationCode());
+                            }
+                        }
+                    }
+                }
+            }
+            caseHearingsResponse.setCaseHearings(caseHearings);
+        }
     }
 }
