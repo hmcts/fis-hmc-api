@@ -179,7 +179,7 @@
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
-      <property name="allowedAbbreviationLength" value="1"/>
+      <property name="allowedAbbreviationLength" value="2"/>
       <property name="allowedAbbreviations" value="API"/>
     </module>
     <module name="OverloadMethodsDeclarationOrder"/>

@@ -25,10 +25,10 @@ public class IndividualDetailsModel {
     String interpreterLanguage;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String reasonableAdjustments;
+    List<String> reasonableAdjustments;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String vulnerableFlag;
+    Boolean vulnerableFlag;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String vulnerabilityDetails;

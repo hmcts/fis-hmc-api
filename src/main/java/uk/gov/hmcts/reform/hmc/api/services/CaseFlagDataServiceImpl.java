@@ -1,8 +1,23 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TWO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -10,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,11 +35,13 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseFlags;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
+import uk.gov.hmcts.reform.hmc.api.model.response.OrganisationDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
@@ -57,37 +75,44 @@ public class CaseFlagDataServiceImpl {
     public void setCaseFlagData(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
             throws IOException {
 
-        List<PartyFlagsModel> partiesFlagslList = new ArrayList<>();
+        List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
         setBaseLocation(serviceHearingValues, ccdResponse);
         List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
+        log.info("c100 appl list {}", applicantLst);
         if (null != applicantLst) {
-            addPartyFlagData(partiesFlagslList, partyDetailsModelList, applicantLst, APPLICANT);
+            addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
         }
 
         List<Element<PartyDetails>> respondedLst = ccdResponse.getCaseData().getRespondents();
+        log.info("c100 resp list {}", respondedLst);
         if (null != respondedLst) {
-            addPartyFlagData(partiesFlagslList, partyDetailsModelList, respondedLst, RESPONDENT);
+            addPartyFlagData(
+                    partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
         }
 
         PartyDetails applicantsFL401 = ccdResponse.getCaseData().getApplicantsFL401();
+        log.info("fl401 appl list {}", applicantsFL401);
         if (null != applicantsFL401) {
             addFL401PartyFlagData(
-                    partiesFlagslList, partyDetailsModelList, applicantsFL401, APPLICANT);
+                    partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
         }
 
         PartyDetails respondentsFL401 = ccdResponse.getCaseData().getRespondentsFL401();
+        log.info("fl401 resp list {}", respondentsFL401);
         if (null != respondentsFL401) {
             addFL401PartyFlagData(
-                    partiesFlagslList, partyDetailsModelList, respondentsFL401, RESPONDENT);
+                    partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
         }
-        if (null != partiesFlagslList && null != partyDetailsModelList) {
-            CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagslList).build();
-
+        if (null != partiesFlagsModelList && null != partyDetailsModelList) {
+            CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagsModelList).build();
             serviceHearingValues.setCaseFlags(caseFlags);
-
             serviceHearingValues.setParties(partyDetailsModelList);
+            serviceHearingValues.setCaseAdditionalSecurityFlag(
+                    isCaseAdditionalSecurityFlag(partiesFlagsModelList));
+            String listingComments = getListingComment(caseFlags.getFlags());
+            serviceHearingValues.setListingComments(listingComments);
         }
     }
 
@@ -108,7 +133,7 @@ public class CaseFlagDataServiceImpl {
             List<HearingLocation> locationList =
                     Arrays.asList(
                             HearingLocation.hearingLocationWith()
-                                    .locationType(Constants.EMPTY)
+                                    .locationType(Constants.COURT)
                                     .locationId(caseManagementLocation.getBaseLocation())
                                     .build());
             serviceHearingValues.setHearingLocations(locationList);
@@ -116,75 +141,133 @@ public class CaseFlagDataServiceImpl {
     }
 
     private void addPartyFlagData(
-            List<PartyFlagsModel> partiesFlagslList,
+            List<PartyFlagsModel> partiesFlagsModelList,
             List<PartyDetailsModel> partyDetailsModelList,
             List<Element<PartyDetails>> partyLst,
             String role) {
-        IndividualDetailsModel individualDetailsModel;
+
         String uuid;
         PartyDetails partyDetails;
-        PartyDetailsModel partyDetailsModel;
+
         for (Element<PartyDetails> party : partyLst) {
             uuid = party.getId().toString();
             partyDetails = party.getValue();
-            partiesFlagslList.addAll(getPartyFlagsModel(partyDetails, uuid));
-
-            individualDetailsModel =
-                    IndividualDetailsModel.individualDetailsWith()
-                            .firstName(partyDetails.getFirstName())
-                            .lastName(partyDetails.getLastName())
-                            .build();
-
-            partyDetailsModel =
-                    PartyDetailsModel.partyDetailsWith()
-                            .partyID(uuid)
-                            .partyName(
-                                    partyDetails.getFirstName()
-                                            + EMPTY_STRING
-                                            + partyDetails.getLastName())
-                            .partyType(PartyType.IND)
-                            .partyRole(role)
-                            .individualDetails(individualDetailsModel)
-                            .build();
-
-            partyDetailsModelList.add(partyDetailsModel);
+            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
+            partiesFlagsModelList.addAll(curPartyFlagsModelList);
+            preparePartyDetailsDTO(
+                    partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
         }
     }
 
     private void addFL401PartyFlagData(
-            List<PartyFlagsModel> partiesFlagslList,
+            List<PartyFlagsModel> partiesFlagsModelList,
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
             String role) {
-        IndividualDetailsModel individualDetailsModel;
         String uuid;
-
-        PartyDetailsModel partyDetailsModel;
         if (null != partyDetails) {
             uuid = UUID.randomUUID().toString();
-
-            partiesFlagslList.addAll(getPartyFlagsModel(partyDetails, uuid));
-
-            individualDetailsModel =
-                    IndividualDetailsModel.individualDetailsWith()
-                            .firstName(partyDetails.getFirstName())
-                            .lastName(partyDetails.getLastName())
-                            .build();
-
-            partyDetailsModel =
-                    PartyDetailsModel.partyDetailsWith()
-                            .partyID(uuid)
-                            .partyName(
-                                    partyDetails.getFirstName()
-                                            + EMPTY_STRING
-                                            + partyDetails.getLastName())
-                            .partyType(PartyType.IND)
-                            .partyRole(role)
-                            .individualDetails(individualDetailsModel)
-                            .build();
-
-            partyDetailsModelList.add(partyDetailsModel);
+            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
+            partiesFlagsModelList.addAll(curPartyFlagsModelList);
+            preparePartyDetailsDTO(
+                    partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
         }
+    }
+
+    private void preparePartyDetailsDTO(
+            List<PartyDetailsModel> partyDetailsModelList,
+            PartyDetails partyDetails,
+            String uuid,
+            String role,
+            List<PartyFlagsModel> curPartyFlagsModelList) {
+
+        List<Element<FlagDetail>> flagsDetailOfCurrParty =
+                partyDetails.getPartyLevelFlag().getDetails();
+
+        List<PartyFlagsModel> interpreterLangCodeList =
+                getInterpreterLangCodes(curPartyFlagsModelList);
+
+        String interpreterLanguageCode = EMPTY;
+        if (interpreterLangCodeList.size() == ONE) {
+            interpreterLanguageCode = interpreterLangCodeList.get(0).getFlagId();
+        }
+        Boolean isVulnerableFlag = isVulnerableFlag(flagsDetailOfCurrParty);
+        String vulnerabilityDetails = getVulnerabilityDetails(flagsDetailOfCurrParty);
+        List<String> reasonableAdjustments =
+                getReasonableAdjustmentsByParty(flagsDetailOfCurrParty);
+        IndividualDetailsModel individualDetailsModel;
+
+        String hearingChannelEmail =
+                partyDetails.getEmail() != null ? partyDetails.getEmail() : EMPTY;
+        String hearingChannelPhone =
+                partyDetails.getPhoneNumber() != null ? partyDetails.getPhoneNumber() : EMPTY;
+
+        individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                        .firstName(partyDetails.getFirstName())
+                        .lastName(partyDetails.getLastName())
+                        .reasonableAdjustments(reasonableAdjustments)
+                        .vulnerableFlag(isVulnerableFlag)
+                        .vulnerabilityDetails(vulnerabilityDetails)
+                        .hearingChannelEmail(hearingChannelEmail)
+                        .hearingChannelPhone(hearingChannelPhone)
+                        .interpreterLanguage(interpreterLanguageCode)
+                        .relatedParties(Arrays.asList())
+                        .build();
+        PartyDetailsModel partyDetailsModel;
+        partyDetailsModel =
+                PartyDetailsModel.partyDetailsWith()
+                        .partyID(uuid)
+                        .partyName(
+                                partyDetails.getFirstName()
+                                        + EMPTY_STRING
+                                        + partyDetails.getLastName())
+                        .partyType(PartyType.IND)
+                        .partyRole(role)
+                        .individualDetails(individualDetailsModel)
+                        .build();
+
+        partyDetailsModelList.add(partyDetailsModel);
+
+        Organisation org = partyDetails.getSolicitorOrg();
+
+        /****** Organisation Party Details********/
+        if (org.getOrganisationID() != null) {
+            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, uuid);
+        }
+
+        /******Solicitor Party Details********/
+        if (partyDetails.getRepresentativeFirstName() != null
+                || partyDetails.getRepresentativeLastName() != null) {
+            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, uuid);
+        }
+    }
+
+    private List<PartyFlagsModel> getInterpreterLangCodes(
+            List<PartyFlagsModel> curPartyFlagsModelList) {
+        return curPartyFlagsModelList.stream()
+                .filter(
+                        eachPartyFlag ->
+                                eachPartyFlag.getFlagId().equals(RA0042)
+                                        || eachPartyFlag.getFlagId().equals(PF0015))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private String getListingComment(List<PartyFlagsModel> flagsList) {
+
+        Boolean isListingCommentNeeded =
+                flagsList.stream()
+                                .filter(
+                                        eachFlag ->
+                                                eachFlag.getFlagId().equals(RA0042)
+                                                        || eachFlag.getFlagId().equals(PF0015))
+                                .distinct()
+                                .collect(Collectors.toList())
+                                .size()
+                        == TWO;
+
+        return isListingCommentNeeded ? LISTING_COMMENTS : EMPTY;
     }
 
     private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, String uuid) {
@@ -208,7 +291,7 @@ public class CaseFlagDataServiceImpl {
                                                 + partyDetails.getLastName())
                                 .flagId(flagDetail.getFlagCode())
                                 .flagStatus(flagDetail.getStatus())
-                                .flagParentId("")
+                                .flagParentId(EMPTY)
                                 .flagDescription(flagDetail.getName())
                                 .build();
                 partyFlagsModelList.add(partyFlagsModel);
@@ -216,5 +299,100 @@ public class CaseFlagDataServiceImpl {
         }
 
         return partyFlagsModelList;
+    }
+
+    private List<String> getReasonableAdjustmentsByParty(
+            List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+
+        return flagsDetailOfCurrParty.stream()
+                .filter(
+                        partyFlag ->
+                                partyFlag.getValue().getFlagCode().startsWith(RA)
+                                        || partyFlag.getValue().getFlagCode().startsWith(SM))
+                .distinct()
+                .map(partyFlag -> partyFlag.getValue().getFlagCode())
+                .collect(Collectors.toList());
+    }
+
+    private Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
+
+        return partiesFlagsModelList.stream()
+                .anyMatch(partyFlag -> partyFlag.getFlagId().equals(PF0007));
+    }
+
+    private Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+
+        return flagsDetailOfCurrParty.stream()
+                .anyMatch(
+                        partyFlag ->
+                                partyFlag.getValue().getFlagCode().equals(PF0002)
+                                        || PF0013.equals(partyFlag.getValue().getFlagCode())
+                                        || PF0018.equals(partyFlag.getValue().getFlagCode())
+                                        || SM0002.equals(partyFlag.getValue().getFlagCode()));
+    }
+
+    private String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+
+        return flagsDetailOfCurrParty.stream()
+                .filter(
+                        partyFlag ->
+                                PF0002.equals(partyFlag.getValue().getFlagCode())
+                                        || PF0013.equals(partyFlag.getValue().getFlagCode())
+                                        || PF0018.equals(partyFlag.getValue().getFlagCode())
+                                        || SM0002.equals(partyFlag.getValue().getFlagCode()))
+                .distinct()
+                .map(p -> p.getValue().getName())
+                .collect(Collectors.joining(PLUS_SIGN));
+    }
+
+    private void addPartyDetailsModelForOrg(
+            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
+        OrganisationDetailsModel organisationDetailsModel = null;
+        PartyDetailsModel partyDetailsModelForOrg;
+        organisationDetailsModel =
+                organisationDetailsModel
+                        .organisationDetailsWith()
+                        .name(partyDetails.getSolicitorOrg().getOrganisationName())
+                        .cftOrganisationID(partyDetails.getSolicitorOrg().getOrganisationID())
+                        .build();
+
+        partyDetailsModelForOrg =
+                PartyDetailsModel.partyDetailsWith()
+                        .partyID(uuid)
+                        .partyName(
+                                partyDetails.getFirstName()
+                                        + EMPTY_STRING
+                                        + partyDetails.getLastName())
+                        .partyType(PartyType.ORG)
+                        .partyRole(ORGANISATION)
+                        .organisationDetails(organisationDetailsModel)
+                        .build();
+        partyDetailsModelList.add(partyDetailsModelForOrg);
+    }
+
+    private void addPartyDetailsModelForSolicitor(
+            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
+        IndividualDetailsModel individualDetailsModel;
+        PartyDetailsModel partyDetailsModelForSol;
+
+        individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                        .firstName(partyDetails.getRepresentativeFirstName())
+                        .lastName(partyDetails.getRepresentativeLastName())
+                        .hearingChannelEmail(partyDetails.getSolicitorEmail())
+                        .build();
+
+        partyDetailsModelForSol =
+                PartyDetailsModel.partyDetailsWith()
+                        .partyID(uuid)
+                        .partyName(
+                                partyDetails.getRepresentativeFirstName()
+                                        + EMPTY_STRING
+                                        + partyDetails.getRepresentativeLastName())
+                        .partyType(PartyType.IND)
+                        .partyRole(ORGANISATION)
+                        .individualDetails(individualDetailsModel)
+                        .build();
+        partyDetailsModelList.add(partyDetailsModelForSol);
     }
 }

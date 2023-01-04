@@ -20,11 +20,17 @@ public final class Constants {
     public static final String SCREEN_FLOW = "screenFlow";
     public static final String CASE_MANAGEMENT_LOCATION = "20262";
 
+    public static final String AND = " and ";
+
+    public static final String COURT = "court";
+
     public static final String CASE_TYPE = "caseType";
     public static final String CATEGORY_VALUE = "ABA5-PRL";
     public static final String CASE_SUB_TYPE = "caseSubType";
     public static final String ABA5 = "ABA5";
     public static final String APPLICANT = "APPL";
+
+    public static final String ORGANISATION = "LGRP";
     public static final String RESPONDENT = "RESP";
     public static final String HEARING_TYPE = "";
 
@@ -39,6 +45,31 @@ public final class Constants {
     public static final String REASON_FOR_LINK = "ReasonForLink";
 
     public static final String REASON = "Reason";
+
+    public static final int ONE = 1;
+
+    public static final int TWO = 2;
+
+    public static final String LISTING_COMMENTS =
+            "Applicant Name/Respondent Name: Multiple Interpreters. See case flags.";
+    public static final String PF0002 = "PF0002";
+    public static final String PF0007 = "PF0007";
+    public static final String PF0013 = "PF0013";
+    public static final String PF0018 = "PF0018";
+
+    public static final String PF0020 = "PF0020";
+
+    public static final String SM0002 = "SM0002";
+
+    public static final String RA0042 = "RA0042"; // Sign  Language Interpreter
+
+    public static final String PF0015 = "PF0015"; // Language Interpreter
+
+    public static final String RA = "RA";
+
+    public static final String SM = "SM";
+
+    public static final String PLUS_SIGN = " + ";
 
     public static final String PROCESSING_REQUEST_AFTER_AUTHORIZATION =
             "processing request after authorization";
