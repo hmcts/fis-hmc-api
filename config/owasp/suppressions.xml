@@ -26,6 +26,7 @@
    <notes>tomcat-embed-*</notes>
    <cve>CVE-2022-29885</cve>
    <cve>CVE-2022-34305</cve>
+    <cve>CVE-2022-45143</cve>
    <cve>CVE-2022-42252</cve>
   </suppress>
  <suppress>
@@ -36,6 +37,8 @@
   <suppress>
     <notes>netty-*</notes>
     <cve>CVE-2022-24823</cve>
+    <cve>CVE-2022-41881</cve>
+    <cve>CVE-2022-41915</cve>
   </suppress>
   <suppress>
     <notes>okhttp-3.14.9.jar</notes>
