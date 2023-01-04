@@ -24,6 +24,8 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
@@ -70,7 +72,7 @@ public class HearingsServiceImpl implements HearingsService {
                             .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
-            caseHearingsResponse = integrateVenueDetails(caseHearingsResponse);
+            integrateVenueDetails(caseHearingsResponse);
 
             return caseHearingsResponse;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
@@ -99,11 +101,11 @@ public class HearingsServiceImpl implements HearingsService {
         return inputHeaders;
     }
 
-    private Hearings integrateVenueDetails(Hearings caseHearingsResponse) {
+    private void integrateVenueDetails(Hearings caseHearingsResponse) {
         if (caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null) {
             List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
             for (CaseHearing caseHearing : caseHearings) {
-                if (caseHearing.getHmcStatus().equals("LISTED")
+                if (caseHearing.getHmcStatus().equals(LISTED)
                         && caseHearing.getHearingDaySchedule() != null) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         String venueId = hearingSchedule.getHearingVenueId();
@@ -122,10 +124,7 @@ public class HearingsServiceImpl implements HearingsService {
                     }
                 }
             }
-
             caseHearingsResponse.setCaseHearings(caseHearings);
-            return caseHearingsResponse;
         }
-        return caseHearingsResponse;
     }
 }
