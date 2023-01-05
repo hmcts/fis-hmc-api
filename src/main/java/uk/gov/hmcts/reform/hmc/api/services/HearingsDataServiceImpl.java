@@ -69,7 +69,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
-        String publicCaseNameMapper;
+        String publicCaseNameMapper = Constants.EMPTY;
         Boolean privateHearingRequiredFlagMapper = Constants.FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             Map applicantMap =
@@ -82,13 +82,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                 + Constants.AND
                                 + respondentTableMap.get(Constants.LAST_NAME);
             } else {
-                privateHearingRequiredFlagMapper = Constants.TRUE;
                 publicCaseNameMapper = Constants.EMPTY;
             }
         } else if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             publicCaseNameMapper = Constants.RE_MINOR;
-        } else {
-            publicCaseNameMapper = Constants.EMPTY;
+            privateHearingRequiredFlagMapper = Constants.TRUE;
         }
         String hmctsInternalCaseNameMapper =
                 hearingValues.getCaseReference()
