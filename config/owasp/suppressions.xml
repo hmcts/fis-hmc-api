@@ -29,6 +29,10 @@
     <cve>CVE-2022-45143</cve>
    <cve>CVE-2022-42252</cve>
   </suppress>
+  <suppress>
+    <notes>org.latencyutils-*</notes>
+    <cve>CVE-2021-4277</cve>
+  </suppress>
  <suppress>
     <notes>log4j-*</notes>
     <cve>CVE-2022-33915</cve>
