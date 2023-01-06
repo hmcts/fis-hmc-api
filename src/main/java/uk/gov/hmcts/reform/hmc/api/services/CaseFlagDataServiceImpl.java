@@ -189,7 +189,11 @@ public class CaseFlagDataServiceImpl {
 
         String interpreterLanguageCode = EMPTY;
         if (interpreterLangCodeList.size() == ONE) {
-            interpreterLanguageCode = interpreterLangCodeList.get(0).getFlagId();
+            // interpreterLanguageCode = interpreterLangCodeList.get(0).getFlagId();
+            interpreterLanguageCode =
+                    (interpreterLangCodeList.get(0).getLanguageCode() != null)
+                            ? interpreterLangCodeList.get(0).getLanguageCode()
+                            : EMPTY;
         }
         Boolean isVulnerableFlag = isVulnerableFlag(flagsDetailOfCurrParty);
         String vulnerabilityDetails = getVulnerabilityDetails(flagsDetailOfCurrParty);
@@ -292,6 +296,7 @@ public class CaseFlagDataServiceImpl {
                                 .flagId(flagDetail.getFlagCode())
                                 .flagStatus(flagDetail.getStatus())
                                 .flagParentId(EMPTY)
+                                .languageCode(flagDetail.getSubTypeKey())
                                 .flagDescription(flagDetail.getName())
                                 .build();
                 partyFlagsModelList.add(partyFlagsModel);
