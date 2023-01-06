@@ -355,8 +355,7 @@ public class CaseFlagDataServiceImpl {
         OrganisationDetailsModel organisationDetailsModel = null;
         PartyDetailsModel partyDetailsModelForOrg;
         organisationDetailsModel =
-                organisationDetailsModel
-                        .organisationDetailsWith()
+                OrganisationDetailsModel.organisationDetailsWith()
                         .name(partyDetails.getSolicitorOrg().getOrganisationName())
                         .cftOrganisationID(partyDetails.getSolicitorOrg().getOrganisationID())
                         .build();
