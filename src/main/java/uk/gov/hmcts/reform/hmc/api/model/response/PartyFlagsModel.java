@@ -16,6 +16,7 @@ public class PartyFlagsModel {
     String partyName;
     String flagParentId;
     String flagId;
+    String languageCode;
     String flagDescription;
     String flagStatus;
 }

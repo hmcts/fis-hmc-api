@@ -69,7 +69,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
-        String publicCaseNameMapper;
+        String publicCaseNameMapper = Constants.EMPTY;
+        Boolean privateHearingRequiredFlagMapper = Constants.FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             Map applicantMap =
                     (LinkedHashMap) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
@@ -78,15 +79,14 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
                         applicantMap.get(Constants.LAST_NAME)
-                                + Constants.UNDERSCORE
+                                + Constants.AND
                                 + respondentTableMap.get(Constants.LAST_NAME);
             } else {
                 publicCaseNameMapper = Constants.EMPTY;
             }
         } else if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             publicCaseNameMapper = Constants.RE_MINOR;
-        } else {
-            publicCaseNameMapper = Constants.EMPTY;
+            privateHearingRequiredFlagMapper = Constants.TRUE;
         }
         String hmctsInternalCaseNameMapper =
                 hearingValues.getCaseReference()
@@ -129,13 +129,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .hearingLocations(
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
-                                                .locationType(Constants.EMPTY)
+                                                .locationType(Constants.COURT)
                                                 .locationId(Constants.CASE_MANAGEMENT_LOCATION)
                                                 .build()))
                         .facilitiesRequired(Arrays.asList())
                         .listingComments(Constants.EMPTY)
                         .hearingRequester(Constants.EMPTY)
-                        .privateHearingRequiredFlag(Constants.FALSE)
+                        .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
                         .caseInterpreterRequiredFlag(Constants.FALSE)
                         .panelRequirements(null)
                         .leadJudgeContractType(Constants.EMPTY)

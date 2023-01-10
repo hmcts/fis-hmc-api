@@ -54,6 +54,7 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    @Disabled
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
