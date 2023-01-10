@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
@@ -43,6 +44,8 @@ class HearingCftServiceTest {
 
     @Mock private RefDataServiceImpl refDataService;
 
+    @Mock private RefDataJudicialServiceImpl refDataJudicialService;
+
     @Test
     void shouldReturnCtfHearingsTest() {
 
@@ -51,8 +54,15 @@ class HearingCftServiceTest {
         List<CourtDetail> courtDetailsList = new ArrayList<>();
         courtDetailsList.add(courtDetail);
 
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+
         HearingDaySchedule hearingDaySchedule =
-                HearingDaySchedule.hearingDayScheduleWith().hearingVenueId("231596").build();
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingVenueId("231596")
+                        .hearingJudgeId("4925644")
+                        .build();
         List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
         hearingDayScheduleList.add(hearingDaySchedule);
 
@@ -80,6 +90,7 @@ class HearingCftServiceTest {
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
+        when(refDataJudicialService.getJudgeDetails("4925644")).thenReturn(judgeDetail);
 
         Hearings hearings = hearingsService.getHearingsByCaseRefNo("1671620456009274");
         Assertions.assertEquals("ABA5", hearings.getHmctsServiceCode());

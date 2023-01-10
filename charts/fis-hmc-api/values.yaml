@@ -38,3 +38,4 @@ java:
     PRL_URL: 'http://prl-cos-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
     PRL_HMC_S2S_AUTHORISED_SERVICES : xui_webapp,prl_cos_api,fis_hmc_api
     REF_DATA_URL: 'http://rd-location-ref-api-demo.service.core-compute-demo.internal/'
+    REF_DATA_JUDICIAL_URL: 'http://rd-judicial-api-demo.service.core-compute-demo.internal/'

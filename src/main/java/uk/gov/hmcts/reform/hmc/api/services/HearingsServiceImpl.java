@@ -25,6 +25,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,8 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired IdamTokenGenerator idamTokenGenerator;
 
     @Autowired RefDataService refDataService;
+
+    @Autowired RefDataJudicialService refDataJudicialService;
 
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
@@ -109,6 +112,9 @@ public class HearingsServiceImpl implements HearingsService {
                         && caseHearing.getHearingDaySchedule() != null) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         String venueId = hearingSchedule.getHearingVenueId();
+
+                        String judgeId = hearingSchedule.getHearingJudgeId();
+                        log.info("judgeId {}", judgeId);
                         if (null != venueId) {
                             log.info("VenueId {}", venueId);
                             CourtDetail courtDetail = refDataService.getCourtDetails(venueId);
@@ -119,6 +125,16 @@ public class HearingsServiceImpl implements HearingsService {
                                         courtDetail.getHearingVenueAddress());
                                 hearingSchedule.setHearingVenueLocationCode(
                                         courtDetail.getHearingVenueLocationCode());
+                            }
+                        }
+
+                        if (null != judgeId) {
+                            log.info("judgeId==> {}", judgeId);
+                            JudgeDetail judgeDetail =
+                                    refDataJudicialService.getJudgeDetails(judgeId);
+                            if (judgeDetail != null) {
+                                hearingSchedule.setHearingJudgeName(
+                                        judgeDetail.getHearingJudgeName());
                             }
                         }
                     }
