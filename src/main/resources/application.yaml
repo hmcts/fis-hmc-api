@@ -47,6 +47,9 @@ hearing:
 ref_data:
   baseUrl: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
 
+ref_data_judicial:
+  baseUrl: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.internal/}
+
 idam:
   url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
