@@ -33,6 +33,8 @@ public class HearingDaySchedule {
 
     private String hearingJudgeId;
 
+    private String hearingJudgeName;
+
     private List<String> panelMemberIds;
 
     private List<Attendee> attendees;
