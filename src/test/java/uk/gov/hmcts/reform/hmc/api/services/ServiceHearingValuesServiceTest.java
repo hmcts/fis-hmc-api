@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -20,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -37,6 +39,8 @@ class ServiceHearingValuesServiceTest {
     @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Mock ResourceLoader resourceLoader;
+
+    @Mock private ElasticSearch elasticSearch;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -151,6 +155,7 @@ class ServiceHearingValuesServiceTest {
 
         LinkedHashMap valueMap = new LinkedHashMap();
         valueMap.put("ReasonForLink", reasonForLinkList);
+        valueMap.put("CaseReference", "123");
 
         LinkedHashMap caseLinkMap = new LinkedHashMap();
         caseLinkMap.put("value", valueMap);
@@ -166,6 +171,12 @@ class ServiceHearingValuesServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
+
+        List<CaseDetails> cases = new ArrayList<>();
+        cases.add(caseDetails);
+        SearchResult searchResult = SearchResult.builder().cases(cases).build();
+        when(elasticSearch.searchCases(anyString(), anyString(), any(), any()))
+                .thenReturn(searchResult);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
