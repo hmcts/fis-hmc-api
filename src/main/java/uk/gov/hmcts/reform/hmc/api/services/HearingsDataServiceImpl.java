@@ -65,11 +65,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Value("${ccd.elastic-search-api.boost}")
     private String ccdElasticSearchApiBoost;
 
-    @Autowired private CaseApiService caseApiService;
+    @Autowired private final CaseApiService caseApiService;
 
-    @Autowired private ResourceLoader resourceLoader;
+    @Autowired private final ResourceLoader resourceLoader;
 
-    @Autowired CaseFlagDataServiceImpl caseFlagDataService;
+    @Autowired private final CaseFlagDataServiceImpl caseFlagDataService;
 
     @Autowired private final ElasticSearch elasticSearch;
 
