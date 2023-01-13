@@ -155,6 +155,7 @@ class ServiceHearingValuesServiceTest {
 
         LinkedHashMap valueMap = new LinkedHashMap();
         valueMap.put("ReasonForLink", reasonForLinkList);
+        valueMap.put("CaseReference", "123");
 
         LinkedHashMap caseLinkMap = new LinkedHashMap();
         caseLinkMap.put("value", valueMap);
@@ -170,7 +171,10 @@ class ServiceHearingValuesServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
-        SearchResult searchResult = SearchResult.builder().build();
+
+        List<CaseDetails> cases = new ArrayList<>();
+        cases.add(caseDetails);
+        SearchResult searchResult = SearchResult.builder().cases(cases).build();
         when(elasticSearch.searchCases(anyString(), anyString(), any(), any()))
                 .thenReturn(searchResult);
         String authorisation = "xyz";
