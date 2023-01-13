@@ -48,9 +48,6 @@ public class CaseData implements MappableObject {
     @JsonProperty("caseLinks")
     public List<CaseLinkElement<CaseLinkData>> caseLinks;
 
-    /**
-     * Case name.
-     */
     @JsonAlias({"applicantCaseName", "applicantOrRespondentCaseName"})
-    private  String applicantCaseName;
+    private String applicantCaseName;
 }
