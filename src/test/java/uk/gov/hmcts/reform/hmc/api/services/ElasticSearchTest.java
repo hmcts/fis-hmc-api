@@ -36,7 +36,7 @@ public class ElasticSearchTest {
 
     @Test
     @DisplayName("test case for CCD elastic search.")
-    public void testSearchCases() throws IOException {
+    void testSearchCases() throws IOException {
 
         String searchString = "";
 
