@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.model.ccd;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,4 +47,10 @@ public class CaseData implements MappableObject {
 
     @JsonProperty("caseLinks")
     public List<CaseLinkElement<CaseLinkData>> caseLinks;
+
+    /**
+     * Case name.
+     */
+    @JsonAlias({"applicantCaseName", "applicantOrRespondentCaseName"})
+    private  String applicantCaseName;
 }
