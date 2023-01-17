@@ -16,7 +16,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @FeignClient(
         name = "ref-data-judicial-api",
         primary = false,
-        url = "${ref_data_judicial.baseUrl}",
+        url = "${ref_data_judicial.api.url}",
         configuration = RefDataConfiguration.class)
 public interface RefDataJudicialApi {
 

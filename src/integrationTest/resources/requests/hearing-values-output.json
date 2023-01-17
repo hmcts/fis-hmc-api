@@ -1,0 +1,180 @@
+{
+  "hmctsServiceID": "BBA3",
+  "hmctsInternalCaseName": "1667397155865258_John Wakefield",
+  "publicCaseName": "Re-Minor",
+  "caseAdditionalSecurityFlag": false,
+  "caseCategories": [
+    {
+      "categoryType": "",
+      "categoryValue": "",
+      "categoryParent": "Private Law"
+    }
+  ],
+  "caseDeepLink": "https://manage-case.demo.platform.hmcts.net/cases/case-details/1667397155865258",
+  "caseRestrictedFlag": false,
+  "externalCaseReference": "",
+  "caseManagementLocationCode": "",
+  "caseSlaStartDate": null,
+  "autoListFlag": false,
+  "hearingType": "",
+  "hearingWindow": {
+    "dateRangeStart": "",
+    "dateRangeEnd": "",
+    "firstDateTimeMustBe": ""
+  },
+  "duration": 0,
+  "hearingPriorityType": "",
+  "numberOfPhysicalAttendees": 0,
+  "hearingInWelshFlag": false,
+  "hearingLocations": [
+    {
+      "locationType": "",
+      "locationId": ""
+    }
+  ],
+  "facilitiesRequired": [
+    ""
+  ],
+  "listingComments": "",
+  "hearingRequester": "",
+  "privateHearingRequiredFlag": false,
+  "caseInterpreterRequiredFlag": false,
+  "panelRequirements": {
+    "requirementDetails": ""
+  },
+  "leadJudgeContractType": "",
+  "judiciary": {
+    "categoryType": null,
+    "categoryValue": null,
+    "categoryParent": null
+  },
+  "hearingIsLinkedFlag": false,
+  "parties": [
+    {
+      "categoryType": null,
+      "categoryValue": null,
+      "categoryParent": null
+    }
+  ],
+  "caseFlags": {
+    "flags": [],
+    "flagAmendUrl": "",
+    "categoryParent": "",
+    "partyFlagsModel": {
+      "partyId": "P1",
+      "partyName": "Jane Smith",
+      "flagParentId": "",
+      "flagId": "RA0042",
+      "flagDescription": "Sign language interpreter required",
+      "flagStatus": "ACTIVE"
+    }
+  },
+  "screenFlow": [
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-facilities"
+        }
+      ],
+      "screenName": "hearing-requirements"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-stage"
+        }
+      ],
+      "screenName": "hearing-facilities"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-attendance"
+        }
+      ],
+      "screenName": "hearing-stage"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-venue"
+        }
+      ],
+      "screenName": "hearing-attendance"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-welsh",
+          "conditionOperator": "INCLUDE",
+          "conditionValue": "Wales"
+        },
+        {
+          "resultValue": "hearing-judge",
+          "conditionOperator": "NOT INCLUDE",
+          "conditionValue": "Wales"
+        }
+      ],
+      "conditionKey": "region",
+      "screenName": "hearing-venue"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-judge"
+        }
+      ],
+      "screenName": "hearing-welsh"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-panel"
+        }
+      ],
+      "screenName": "hearing-judge"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-timing"
+        }
+      ],
+      "screenName": "hearing-panel"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-link"
+        }
+      ],
+      "screenName": "hearing-timing"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-additional-instructions"
+        }
+      ],
+      "screenName": "hearing-link"
+    },
+    {
+      "navigation": [
+        {
+          "resultValue": "hearing-create-edit-summary"
+        }
+      ],
+      "screenName": "hearing-additional-instructions"
+    }
+  ],
+  "vocabulary": [
+    {
+      "categoryType": null,
+      "categoryValue": null,
+      "categoryParent": null
+    }
+  ],
+  "hearingChannels": [
+    ""
+  ]
+}
