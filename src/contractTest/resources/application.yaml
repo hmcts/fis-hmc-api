@@ -43,6 +43,7 @@ spring:
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
+  search-case-type-id: PRLAPPS
 
 ref_data_venue:
   api:
@@ -59,7 +60,7 @@ idam:
     totp_secret: ${OIDC_S2S_SECRET:dummy}
     microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
-    url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
+    url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   client:
     id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
     baseUrl: https://idam-api.demo.platform.hmcts.net
@@ -72,6 +73,9 @@ idam:
   refDataUserAuth:
     username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+  hearingCftUserAuth:
+    username: prl_hearing_manager@justice.gov.uk
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
@@ -83,6 +87,9 @@ core_case_data:
 ccd:
   ui:
     url: ${CCD_UI_URL:https://manage-case.aat.platform.hmcts.net/cases/case-details/}
+  elastic-search-api:
+    result-size: 100
+    boost: 2.0
 
 hearing_component:
   api:

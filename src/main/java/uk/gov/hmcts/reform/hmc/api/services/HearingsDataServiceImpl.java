@@ -1,9 +1,12 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +28,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.request.Query;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.request.QueryParam;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.request.Terms;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
@@ -48,11 +56,24 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
-    @Autowired CaseApiService caseApiService;
+    @Value("${hearing.search-case-type-id}")
+    private String caseTypeId;
 
-    @Autowired private ResourceLoader resourceLoader;
+    @Value("${ccd.elastic-search-api.result-size}")
+    private String ccdElasticSearchApiResultSize;
 
-    @Autowired CaseFlagDataServiceImpl caseFlagDataService;
+    @Value("${ccd.elastic-search-api.boost}")
+    private String ccdElasticSearchApiBoost;
+
+    @Autowired private final CaseApiService caseApiService;
+
+    @Autowired private final ResourceLoader resourceLoader;
+
+    @Autowired private final CaseFlagDataServiceImpl caseFlagDataService;
+
+    @Autowired private final ElasticSearch elasticSearch;
+
+    @Autowired private final AuthTokenGenerator authTokenGenerator;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -91,7 +112,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         String hmctsInternalCaseNameMapper =
                 hearingValues.getCaseReference()
                         + Constants.UNDERSCORE
-                        + caseDetails.getData().get(Constants.APPLICANT_CASE_NAME);
+                        + caseDetails.getData().get(APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
@@ -190,6 +211,15 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
         List serviceLinkedCases = new ArrayList();
         if (caseLinkDataList != null) {
+
+            List<String> caseReferences =
+                    caseLinkDataList.stream()
+                            .map(e -> e.getValue().getCaseReference())
+                            .collect(Collectors.toList());
+
+            final SearchResult searchResult =
+                    getCaseNameForCaseReference(authorisation, caseReferences);
+
             for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
                 CaseLinkData caseLinkData = caseLinkDataObj.getValue();
                 if (caseLinkData != null && caseLinkData.getReasonForLink() != null) {
@@ -201,7 +231,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                             HearingLinkData.hearingLinkDataWith()
                                     .caseReference(caseLinkData.getCaseReference())
                                     .reasonsForLink(reasonList)
-                                    .caseName(Constants.EMPTY)
+                                    .caseName(
+                                            getCaseName(
+                                                    searchResult, caseLinkData.getCaseReference()))
                                     .build();
                     serviceLinkedCases.add(hearingLinkData);
                 }
@@ -211,7 +243,37 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return serviceLinkedCases;
     }
 
-    public static <T> List<T> flatten(List<List<T>> listOfLists) {
-        return listOfLists.stream().flatMap(List::stream).collect(Collectors.toList());
+    private String getCaseName(SearchResult searchResult, String caseReference) {
+
+        if (searchResult != null && searchResult.getCases() != null) {
+            final List<CaseDetails> cases = searchResult.getCases();
+
+            return cases.stream()
+                    .filter(e -> caseReference.equals(e.getId().toString()))
+                    .findFirst()
+                    .map(caseDetails -> (String) caseDetails.getData().get(APPLICANT_CASE_NAME))
+                    .orElse(EMPTY_STRING);
+        }
+        return EMPTY_STRING;
+    }
+
+    private SearchResult getCaseNameForCaseReference(
+            String authorisation, List<String> caseReferences) throws JsonProcessingException {
+
+        final QueryParam elasticSearchQueryParam = buildCcdQueryParam(caseReferences);
+        ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
+        String searchString = objectMapper.writeValueAsString(elasticSearchQueryParam);
+        return elasticSearch.searchCases(
+                authorisation, searchString, authTokenGenerator.generate(), caseTypeId);
+    }
+
+    private QueryParam buildCcdQueryParam(List<String> caseReference) {
+        Terms terms =
+                Terms.builder()
+                        .caseReference(caseReference)
+                        .boost(ccdElasticSearchApiBoost)
+                        .build();
+        Query query = Query.builder().terms(terms).build();
+        return QueryParam.builder().query(query).size(ccdElasticSearchApiResultSize).build();
     }
 }
