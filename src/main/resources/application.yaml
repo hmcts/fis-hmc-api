@@ -45,12 +45,13 @@ hearing:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
   search-case-type-id: PRLAPPS
 
-ref_data:
-  baseUrl: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
+ref_data_venue:
+  api:
+    url: ${REF_DATA_VENUE_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
 
 ref_data_judicial:
-  baseUrl: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.internal/}
-
+  api:
+    url: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.internal/}
 idam:
   url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
@@ -88,10 +89,6 @@ ccd:
   elastic-search-api:
     result-size: 100
     boost: 2.0
-
-rd_venue:
-  api:
-    url: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
 
 hearing_component:
   api:

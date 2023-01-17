@@ -20,7 +20,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.JudgeRequestDTO;
 
 @PactTestFor(providerName = "referenceData_judgeInternal", port = "8894")
 @TestPropertySource(
-        properties = {"ref_data_judicial.baseUrl=localhost:8894", "idam.api.url=localhost:5000"})
+        properties = {"ref_data_judicial.api.url=localhost:8894", "idam.api.url=localhost:5000"})
 public class RefDataJudgeInternalConsumerTest extends RefDataJudgeConsumerTestBase {
 
     @Pact(provider = "referenceData_judgeInternal", consumer = "fpl_judgeConfiguration")

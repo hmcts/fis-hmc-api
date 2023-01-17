@@ -43,18 +43,15 @@ spring:
 hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
+  search-case-type-id: PRLAPPS
 
-ref_data:
-  baseUrl: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
+ref_data_venue:
+  api:
+    url: ${REF_DATA_VENUE_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
 
-rd_venue:
-  api:
-    url: ${REF_DATA_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
-fees-register:
-  api:
-    url: ${FEE_REGISTER_API_URL:http://fees-register-api-aat.service.core-compute-aat.internal}
 ref_data_judicial:
-  baseUrl: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.internal/}
+  api:
+    url: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.internal/}
 
 idam:
   url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
@@ -80,9 +77,6 @@ idam:
     username: prl_hearing_manager@justice.gov.uk
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
-rd_professional:
-  api:
-    url: ${PRD_API_BASEURL:http://rd-professional-api-aat.service.core-compute-aat.internal}
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
 
@@ -93,6 +87,9 @@ core_case_data:
 ccd:
   ui:
     url: ${CCD_UI_URL:https://manage-case.aat.platform.hmcts.net/cases/case-details/}
+  elastic-search-api:
+    result-size: 100
+    boost: 2.0
 
 hearing_component:
   api:

@@ -14,7 +14,7 @@ import uk.gov.hmcts.reform.hmc.api.config.RefDataConfiguration;
 @FeignClient(
         name = "rd-venue-api",
         primary = false,
-        url = "${rd_venue.api.url}",
+        url = "${ref_data_venue.api.url}",
         configuration = RefDataConfiguration.class)
 public interface RefDataVenueApi {
 

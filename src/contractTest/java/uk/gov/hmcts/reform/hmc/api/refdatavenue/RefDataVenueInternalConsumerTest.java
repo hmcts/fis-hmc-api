@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 @PactTestFor(providerName = "referenceData_venueInternal", port = "8894")
-@TestPropertySource(properties = {"rd_venue.api.url=localhost:8894", "idam.api.url=localhost:5000"})
+@TestPropertySource(
+        properties = {"ref_data_venue.api.url=localhost:8894", "idam.api.url=localhost:5000"})
 public class RefDataVenueInternalConsumerTest extends RefDataVenueConsumerTestBase {
 
     @Pact(provider = "referenceData_venueInternal", consumer = "fpl_venueConfiguration")

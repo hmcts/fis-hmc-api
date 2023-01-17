@@ -13,9 +13,9 @@ import uk.gov.hmcts.reform.hmc.api.config.RefDataConfiguration;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 
 @FeignClient(
-        name = "ref-data-api",
+        name = "ref-data-venue-api",
         primary = false,
-        url = "${ref_data.baseUrl}",
+        url = "${ref_data_venue.api.url}",
         configuration = RefDataConfiguration.class)
 public interface RefDataApi {
 
