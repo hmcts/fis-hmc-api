@@ -1,10 +1,29 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MANAGEMENT_LOCATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_SUB_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CATEGORY_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FALSE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401_APPLICANT_TABLE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401_RESPONDENT_TABLE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HEARING_PRIORITY;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HEARING_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ISSUE_DATE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LAST_NAME;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SCREEN_FLOW;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TRUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UNDERSCORE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +64,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.Judiciary;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
-import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Slf4j
 @Service
@@ -90,30 +108,27 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
-        String publicCaseNameMapper;
+        String publicCaseNameMapper = EMPTY;
+        Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            Map applicantMap =
-                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_APPLICANT_TABLE);
+            Map applicantMap = (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
             Map respondentTableMap =
-                    (LinkedHashMap) caseDetails.getData().get(Constants.FL401_RESPONDENT_TABLE);
+                    (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
-                        applicantMap.get(Constants.LAST_NAME)
-                                + Constants.UNDERSCORE
-                                + respondentTableMap.get(Constants.LAST_NAME);
+                        applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
             } else {
-                publicCaseNameMapper = Constants.EMPTY;
+                publicCaseNameMapper = EMPTY;
             }
         } else if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            publicCaseNameMapper = Constants.RE_MINOR;
-        } else {
-            publicCaseNameMapper = Constants.EMPTY;
+            publicCaseNameMapper = RE_MINOR;
+            privateHearingRequiredFlagMapper = TRUE;
         }
         String hmctsInternalCaseNameMapper =
                 hearingValues.getCaseReference()
-                        + Constants.UNDERSCORE
+                        + UNDERSCORE
                         + caseDetails.getData().get(APPLICANT_CASE_NAME);
-        String caseSlaStartDateMapper = (String) caseDetails.getData().get(Constants.ISSUE_DATE);
+        String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
         Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
@@ -125,46 +140,46 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         }
         ServiceHearingValues serviceHearingValues =
                 ServiceHearingValues.hearingsDataWith()
-                        .hmctsServiceID(Constants.ABA5)
+                        .hmctsServiceID(ABA5)
                         .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
                         .publicCaseName(publicCaseNameMapper)
-                        .caseAdditionalSecurityFlag(Constants.FALSE)
+                        .caseAdditionalSecurityFlag(FALSE)
                         .caseCategories(getCaseCategories())
                         .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
-                        .caseRestrictedFlag(Constants.FALSE)
-                        .externalCaseReference(Constants.EMPTY)
-                        .caseManagementLocationCode(Constants.CASE_MANAGEMENT_LOCATION)
+                        .caseRestrictedFlag(FALSE)
+                        .externalCaseReference(EMPTY)
+                        .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
                         .caseSlaStartDate(caseSlaStartDateMapper)
-                        .autoListFlag(Constants.FALSE)
-                        .hearingType(Constants.HEARING_TYPE)
+                        .autoListFlag(FALSE)
+                        .hearingType(HEARING_TYPE)
                         .hearingWindow(
                                 HearingWindow.hearingWindowWith()
-                                        .dateRangeStart(Constants.EMPTY)
-                                        .dateRangeEnd(Constants.EMPTY)
-                                        .firstDateTimeMustBe(Constants.EMPTY)
+                                        .dateRangeStart(EMPTY)
+                                        .dateRangeEnd(EMPTY)
+                                        .firstDateTimeMustBe(EMPTY)
                                         .build())
                         .duration(0)
-                        .hearingPriorityType(Constants.HEARING_PRIORITY)
+                        .hearingPriorityType(HEARING_PRIORITY)
                         .numberOfPhysicalAttendees(0)
-                        .hearingInWelshFlag(Constants.FALSE)
+                        .hearingInWelshFlag(FALSE)
                         .hearingLocations(
                                 Arrays.asList(
                                         HearingLocation.hearingLocationWith()
-                                                .locationType(Constants.EMPTY)
-                                                .locationId(Constants.CASE_MANAGEMENT_LOCATION)
+                                                .locationType(COURT)
+                                                .locationId(CASE_MANAGEMENT_LOCATION)
                                                 .build()))
                         .facilitiesRequired(Arrays.asList())
-                        .listingComments(Constants.EMPTY)
-                        .hearingRequester(Constants.EMPTY)
-                        .privateHearingRequiredFlag(Constants.FALSE)
-                        .caseInterpreterRequiredFlag(Constants.FALSE)
+                        .listingComments(EMPTY)
+                        .hearingRequester(EMPTY)
+                        .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
+                        .caseInterpreterRequiredFlag(FALSE)
                         .panelRequirements(null)
-                        .leadJudgeContractType(Constants.EMPTY)
+                        .leadJudgeContractType(EMPTY)
                         .judiciary(Judiciary.judiciaryWith().build())
-                        .hearingIsLinkedFlag(Constants.FALSE)
+                        .hearingIsLinkedFlag(FALSE)
                         .screenFlow(
                                 screenFlowJson != null
-                                        ? (JSONArray) screenFlowJson.get(Constants.SCREEN_FLOW)
+                                        ? (JSONArray) screenFlowJson.get(SCREEN_FLOW)
                                         : null)
                         .hearingChannels(Arrays.asList())
                         .build();
@@ -176,15 +191,15 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         List<CaseCategories> caseCategoriesList = new ArrayList<>();
         CaseCategories caseCategories =
                 CaseCategories.caseCategoriesWith()
-                        .categoryType(Constants.CASE_TYPE)
-                        .categoryValue(Constants.CATEGORY_VALUE)
+                        .categoryType(CASE_TYPE)
+                        .categoryValue(CATEGORY_VALUE)
                         .build();
 
         CaseCategories caseSubCategories =
                 CaseCategories.caseCategoriesWith()
-                        .categoryType(Constants.CASE_SUB_TYPE)
-                        .categoryValue(Constants.CATEGORY_VALUE)
-                        .categoryParent(Constants.CATEGORY_VALUE)
+                        .categoryType(CASE_SUB_TYPE)
+                        .categoryValue(CATEGORY_VALUE)
+                        .categoryParent(CATEGORY_VALUE)
                         .build();
 
         caseCategoriesList.add(caseCategories);

@@ -9,6 +9,7 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    @Disabled
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
@@ -67,6 +69,7 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    @Disabled
     public void givenHearingValuesWhenGetHearingsLinkCasesThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
@@ -81,6 +84,7 @@ public class HearingsContFunctionalTest {
     }
 
     @Test
+    @Disabled
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
                 request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())

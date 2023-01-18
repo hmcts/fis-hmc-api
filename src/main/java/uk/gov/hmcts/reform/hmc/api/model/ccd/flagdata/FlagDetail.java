@@ -16,10 +16,10 @@ public class FlagDetail {
     public String hearingRelevant;
     public Date dateTimeCreated;
     public String flagComment;
-    // public Object subTypeKey;
+    public String subTypeKey;
     public String flagCode;
     public String name;
-    // public Object subTypeValue;
+    public String subTypeValue;
     // public Object otherDescription;
     public String status;
 }
