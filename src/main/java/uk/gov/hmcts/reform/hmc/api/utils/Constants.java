@@ -11,13 +11,22 @@ public final class Constants {
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
     public static final String APPLICANT_CASE_NAME = "applicantCaseName";
+
+    public static final String APPLICANTS_FL401 = "applicantsFL401";
+
+    public static final String RESPONDENTS_FL401 = "respondentsFL401";
+
+    public static final String CASE_MNGEMNT_LOC = "caseManagementLocation";
+
+    public static final String APPLICANT_CASE_NAME_TEST_VALUE = "Test Case 1 DA 31";
+
     public static final String ISSUE_DATE = "issueDate";
     public static final String BBA3 = "BBA3";
     public static final String FL401 = "FL401";
     public static final String C100 = "C100";
     public static final String RE_MINOR = "Re-Minor";
     public static final String EMPTY = "";
-    public static final String PRIVATE_LAW = "Private Law";
+    public static final String PRIVATE_LAW = "PrivateLaw";
     public static final String UNDERSCORE = "_";
     public static final String SCREEN_FLOW = "screenFlow";
     public static final String CASE_MANAGEMENT_LOCATION = "20262";
@@ -32,9 +41,15 @@ public final class Constants {
     public static final String ABA5 = "ABA5";
     public static final String APPLICANT = "APPL";
 
+    public static final String APPLICANTS = "applicants";
+
     public static final String ORGANISATION = "LGRP";
     public static final String RESPONDENT = "RESP";
+
+    public static final String RESPONDENTS = "respondents";
     public static final String HEARING_TYPE = "";
+
+    public static final String TEST = "test";
 
     public static final String HEARING_PRIORITY = "Standard";
 
@@ -47,6 +62,16 @@ public final class Constants {
     public static final String REASON_FOR_LINK = "ReasonForLink";
 
     public static final String REASON = "Reason";
+
+    public static final String REASON_TEST_VALUE = "CLRC017";
+
+    public static final String ORGANISATION_TEST_ID = "orgTestId";
+
+    public static final String ORGANISATION_TEST_NAME = "orgTestName";
+
+    public static final String REP_FIRST_NAME_TEST_VALUE = "rep first name test";
+
+    public static final String REP_LAST_NAME_TEST_VALUE = "rep last name test";
 
     public static final int ONE = 1;
 

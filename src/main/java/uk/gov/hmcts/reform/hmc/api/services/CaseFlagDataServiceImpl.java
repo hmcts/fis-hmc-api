@@ -80,32 +80,28 @@ public class CaseFlagDataServiceImpl {
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
         setBaseLocation(serviceHearingValues, ccdResponse);
         List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
-        log.info("c100 appl list {}", applicantLst);
         if (null != applicantLst) {
             addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
         }
 
         List<Element<PartyDetails>> respondedLst = ccdResponse.getCaseData().getRespondents();
-        log.info("c100 resp list {}", respondedLst);
         if (null != respondedLst) {
             addPartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
         }
 
         PartyDetails applicantsFL401 = ccdResponse.getCaseData().getApplicantsFL401();
-        log.info("fl401 appl list {}", applicantsFL401);
         if (null != applicantsFL401) {
             addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
         }
 
         PartyDetails respondentsFL401 = ccdResponse.getCaseData().getRespondentsFL401();
-        log.info("fl401 resp list {}", respondentsFL401);
         if (null != respondentsFL401) {
             addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
         }
-        if (null != partiesFlagsModelList && null != partyDetailsModelList) {
+        if (!partiesFlagsModelList.isEmpty() && !partyDetailsModelList.isEmpty()) {
             CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagsModelList).build();
             serviceHearingValues.setCaseFlags(caseFlags);
             serviceHearingValues.setParties(partyDetailsModelList);
@@ -286,6 +282,7 @@ public class CaseFlagDataServiceImpl {
         for (Element<FlagDetail> flagDetailElement : detailsList) {
             FlagDetail flagDetail = flagDetailElement.getValue();
             if (null != flagDetail) {
+                log.info("flagDetail===> {}", flagDetail);
                 partyFlagsModel =
                         PartyFlagsModel.partyFlagsModelWith()
                                 .partyId(uuid)
