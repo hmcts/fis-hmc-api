@@ -34,16 +34,16 @@
     },
     {
       "screenName": "hearing-venue",
-      "conditionKey": "regionId",
+      "conditionKey": "region",
       "navigation": [
         {
           "conditionOperator": "INCLUDE",
-          "conditionValue": "7",
+          "conditionValue": "Wales",
           "resultValue": "hearing-welsh"
         },
         {
           "conditionOperator": "NOT INCLUDE",
-          "conditionValue": "7",
+          "conditionValue": "Wales",
           "resultValue": "hearing-judge"
         }
       ]
