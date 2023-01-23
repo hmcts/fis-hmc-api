@@ -160,13 +160,11 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
             String role) {
-        String uuid;
         if (null != partyDetails) {
-            uuid = UUID.randomUUID().toString();
-            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
+            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, getUUID());
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
             preparePartyDetailsDTO(
-                    partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
+                    partyDetailsModelList, partyDetails, getUUID(), role, curPartyFlagsModelList);
         }
     }
 
@@ -185,7 +183,6 @@ public class CaseFlagDataServiceImpl {
 
         String interpreterLanguageCode = EMPTY;
         if (interpreterLangCodeList.size() == ONE) {
-            // interpreterLanguageCode = interpreterLangCodeList.get(0).getFlagId();
             interpreterLanguageCode =
                     (interpreterLangCodeList.get(0).getLanguageCode() != null)
                             ? interpreterLangCodeList.get(0).getLanguageCode()
@@ -233,14 +230,18 @@ public class CaseFlagDataServiceImpl {
 
         /****** Organisation Party Details********/
         if (org.getOrganisationID() != null) {
-            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, uuid);
+            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUUID());
         }
 
         /******Solicitor Party Details********/
         if (partyDetails.getRepresentativeFirstName() != null
                 || partyDetails.getRepresentativeLastName() != null) {
-            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, uuid);
+            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUUID());
         }
+    }
+
+    private String getUUID() {
+        return UUID.randomUUID().toString();
     }
 
     private List<PartyFlagsModel> getInterpreterLangCodes(
@@ -257,15 +258,15 @@ public class CaseFlagDataServiceImpl {
     private String getListingComment(List<PartyFlagsModel> flagsList) {
 
         Boolean isListingCommentNeeded =
-                flagsList.stream()
-                                .filter(
-                                        eachFlag ->
-                                                eachFlag.getFlagId().equals(RA0042)
-                                                        || eachFlag.getFlagId().equals(PF0015))
-                                .distinct()
-                                .collect(Collectors.toList())
-                                .size()
-                        == TWO;
+            flagsList.stream().map(urEntity -> urEntity.getFlagId())
+                .filter(
+                    eachFlag ->
+                        eachFlag.equals(RA0042)
+                            || eachFlag.equals(PF0015))
+                .distinct()
+                .collect(Collectors.toList())
+                .size()
+                == TWO;
 
         return isListingCommentNeeded ? LISTING_COMMENTS : EMPTY;
     }
@@ -375,7 +376,6 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
-
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                         .firstName(partyDetails.getRepresentativeFirstName())
