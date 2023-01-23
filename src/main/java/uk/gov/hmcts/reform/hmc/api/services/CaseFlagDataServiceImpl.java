@@ -160,13 +160,12 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
             String role) {
-        String uuid;
         if (null != partyDetails) {
-            uuid = UUID.randomUUID().toString();
-            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
+            List<PartyFlagsModel> curPartyFlagsModelList =
+                    getPartyFlagsModel(partyDetails, getUuid());
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
             preparePartyDetailsDTO(
-                    partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
+                    partyDetailsModelList, partyDetails, getUuid(), role, curPartyFlagsModelList);
         }
     }
 
@@ -185,7 +184,6 @@ public class CaseFlagDataServiceImpl {
 
         String interpreterLanguageCode = EMPTY;
         if (interpreterLangCodeList.size() == ONE) {
-            // interpreterLanguageCode = interpreterLangCodeList.get(0).getFlagId();
             interpreterLanguageCode =
                     (interpreterLangCodeList.get(0).getLanguageCode() != null)
                             ? interpreterLangCodeList.get(0).getLanguageCode()
@@ -233,14 +231,18 @@ public class CaseFlagDataServiceImpl {
 
         /****** Organisation Party Details********/
         if (org.getOrganisationID() != null) {
-            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, uuid);
+            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUuid());
         }
 
         /******Solicitor Party Details********/
         if (partyDetails.getRepresentativeFirstName() != null
                 || partyDetails.getRepresentativeLastName() != null) {
-            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, uuid);
+            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUuid());
         }
+    }
+
+    private String getUuid() {
+        return UUID.randomUUID().toString();
     }
 
     private List<PartyFlagsModel> getInterpreterLangCodes(
@@ -258,10 +260,10 @@ public class CaseFlagDataServiceImpl {
 
         Boolean isListingCommentNeeded =
                 flagsList.stream()
+                                .map(urEntity -> urEntity.getFlagId())
                                 .filter(
                                         eachFlag ->
-                                                eachFlag.getFlagId().equals(RA0042)
-                                                        || eachFlag.getFlagId().equals(PF0015))
+                                                eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
                                 .distinct()
                                 .collect(Collectors.toList())
                                 .size()
@@ -375,7 +377,6 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
-
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                         .firstName(partyDetails.getRepresentativeFirstName())
