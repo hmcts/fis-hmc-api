@@ -161,10 +161,11 @@ public class CaseFlagDataServiceImpl {
             PartyDetails partyDetails,
             String role) {
         if (null != partyDetails) {
-            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, getUUID());
+            List<PartyFlagsModel> curPartyFlagsModelList =
+                    getPartyFlagsModel(partyDetails, getUuid());
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
             preparePartyDetailsDTO(
-                    partyDetailsModelList, partyDetails, getUUID(), role, curPartyFlagsModelList);
+                    partyDetailsModelList, partyDetails, getUuid(), role, curPartyFlagsModelList);
         }
     }
 
@@ -230,17 +231,17 @@ public class CaseFlagDataServiceImpl {
 
         /****** Organisation Party Details********/
         if (org.getOrganisationID() != null) {
-            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUUID());
+            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUuid());
         }
 
         /******Solicitor Party Details********/
         if (partyDetails.getRepresentativeFirstName() != null
                 || partyDetails.getRepresentativeLastName() != null) {
-            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUUID());
+            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUuid());
         }
     }
 
-    private String getUUID() {
+    private String getUuid() {
         return UUID.randomUUID().toString();
     }
 
@@ -258,15 +259,15 @@ public class CaseFlagDataServiceImpl {
     private String getListingComment(List<PartyFlagsModel> flagsList) {
 
         Boolean isListingCommentNeeded =
-            flagsList.stream().map(urEntity -> urEntity.getFlagId())
-                .filter(
-                    eachFlag ->
-                        eachFlag.equals(RA0042)
-                            || eachFlag.equals(PF0015))
-                .distinct()
-                .collect(Collectors.toList())
-                .size()
-                == TWO;
+                flagsList.stream()
+                                .map(urEntity -> urEntity.getFlagId())
+                                .filter(
+                                        eachFlag ->
+                                                eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
+                                .distinct()
+                                .collect(Collectors.toList())
+                                .size()
+                        == TWO;
 
         return isListingCommentNeeded ? LISTING_COMMENTS : EMPTY;
     }
