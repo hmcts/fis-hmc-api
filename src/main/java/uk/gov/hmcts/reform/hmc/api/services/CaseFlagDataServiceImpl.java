@@ -101,7 +101,7 @@ public class CaseFlagDataServiceImpl {
             addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
         }
-        if (!partiesFlagsModelList.isEmpty() && !partyDetailsModelList.isEmpty()) {
+        if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
             CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagsModelList).build();
             serviceHearingValues.setCaseFlags(caseFlags);
             serviceHearingValues.setParties(partyDetailsModelList);
@@ -175,9 +175,11 @@ public class CaseFlagDataServiceImpl {
             String uuid,
             String role,
             List<PartyFlagsModel> curPartyFlagsModelList) {
+        List<Element<FlagDetail>> flagsDetailOfCurrParty = null;
 
-        List<Element<FlagDetail>> flagsDetailOfCurrParty =
-                partyDetails.getPartyLevelFlag().getDetails();
+        if (null != partyDetails.getPartyLevelFlag()) {
+            flagsDetailOfCurrParty = partyDetails.getPartyLevelFlag().getDetails();
+        }
 
         List<PartyFlagsModel> interpreterLangCodeList =
                 getInterpreterLangCodes(curPartyFlagsModelList);
@@ -189,10 +191,16 @@ public class CaseFlagDataServiceImpl {
                             ? interpreterLangCodeList.get(0).getLanguageCode()
                             : EMPTY;
         }
-        Boolean isVulnerableFlag = isVulnerableFlag(flagsDetailOfCurrParty);
-        String vulnerabilityDetails = getVulnerabilityDetails(flagsDetailOfCurrParty);
-        List<String> reasonableAdjustments =
-                getReasonableAdjustmentsByParty(flagsDetailOfCurrParty);
+        Boolean isVulnerableFlag = false;
+        String vulnerabilityDetails = "";
+        List<String> reasonableAdjustments = null;
+
+        if (null != flagsDetailOfCurrParty) {
+            isVulnerableFlag = isVulnerableFlag(flagsDetailOfCurrParty);
+            vulnerabilityDetails = getVulnerabilityDetails(flagsDetailOfCurrParty);
+            reasonableAdjustments = getReasonableAdjustmentsByParty(flagsDetailOfCurrParty);
+        }
+
         IndividualDetailsModel individualDetailsModel;
 
         String hearingChannelEmail =

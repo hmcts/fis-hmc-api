@@ -70,6 +70,7 @@
     <exclude name="AvoidDeeplyNestedIfStmts"/>
     <exclude name="CognitiveComplexity"/>
     <exclude name="CyclomaticComplexity"/>
+    <exclude name="NPathComplexity"/>
   </rule>
   <rule ref="category/java/design.xml/ExcessiveImports">
     <properties>
