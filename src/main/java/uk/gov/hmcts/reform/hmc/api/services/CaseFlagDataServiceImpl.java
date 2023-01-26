@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
@@ -204,13 +205,12 @@ public class CaseFlagDataServiceImpl {
         IndividualDetailsModel individualDetailsModel;
 
         List<String> hearingChannelEmail =
-                partyDetails.getEmail() != null && !partyDetails.getEmail().equals(EMPTY)
+                !isBlank(partyDetails.getEmail())
                         ? Arrays.asList(partyDetails.getEmail())
                         : Arrays.asList();
 
         List<String> hearingChannelPhone =
-                partyDetails.getPhoneNumber() != null
-                                && !partyDetails.getPhoneNumber().equals(EMPTY)
+                !isBlank(partyDetails.getPhoneNumber())
                         ? Arrays.asList(partyDetails.getPhoneNumber())
                         : Arrays.asList();
 
@@ -393,8 +393,7 @@ public class CaseFlagDataServiceImpl {
         PartyDetailsModel partyDetailsModelForSol;
 
         List<String> hearingChannelEmail =
-                partyDetails.getSolicitorEmail() != null
-                                && !partyDetails.getSolicitorEmail().equals(EMPTY)
+                !isBlank(partyDetails.getSolicitorEmail())
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
 
