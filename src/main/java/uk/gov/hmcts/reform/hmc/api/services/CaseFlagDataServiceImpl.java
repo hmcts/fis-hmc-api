@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
@@ -203,10 +204,15 @@ public class CaseFlagDataServiceImpl {
 
         IndividualDetailsModel individualDetailsModel;
 
-        String hearingChannelEmail =
-                partyDetails.getEmail() != null ? partyDetails.getEmail() : EMPTY;
-        String hearingChannelPhone =
-                partyDetails.getPhoneNumber() != null ? partyDetails.getPhoneNumber() : EMPTY;
+        List<String> hearingChannelEmail =
+                !isBlank(partyDetails.getEmail())
+                        ? Arrays.asList(partyDetails.getEmail())
+                        : Arrays.asList();
+
+        List<String> hearingChannelPhone =
+                !isBlank(partyDetails.getPhoneNumber())
+                        ? Arrays.asList(partyDetails.getPhoneNumber())
+                        : Arrays.asList();
 
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
@@ -385,11 +391,17 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
+
+        List<String> hearingChannelEmail =
+                !isBlank(partyDetails.getSolicitorEmail())
+                        ? Arrays.asList(partyDetails.getSolicitorEmail())
+                        : Arrays.asList();
+
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                         .firstName(partyDetails.getRepresentativeFirstName())
                         .lastName(partyDetails.getRepresentativeLastName())
-                        .hearingChannelEmail(partyDetails.getSolicitorEmail())
+                        .hearingChannelEmail(hearingChannelEmail)
                         .build();
 
         partyDetailsModelForSol =
