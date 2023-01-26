@@ -34,10 +34,10 @@ public class IndividualDetailsModel {
     String vulnerabilityDetails;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String hearingChannelEmail;
+    List<String> hearingChannelEmail;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    String hearingChannelPhone;
+    List<String> hearingChannelPhone;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     String custodyStatus;

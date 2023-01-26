@@ -203,10 +203,16 @@ public class CaseFlagDataServiceImpl {
 
         IndividualDetailsModel individualDetailsModel;
 
-        String hearingChannelEmail =
-                partyDetails.getEmail() != null ? partyDetails.getEmail() : EMPTY;
-        String hearingChannelPhone =
-                partyDetails.getPhoneNumber() != null ? partyDetails.getPhoneNumber() : EMPTY;
+        List<String> hearingChannelEmail =
+                partyDetails.getEmail() != null && !partyDetails.getEmail().equals(EMPTY)
+                        ? Arrays.asList(partyDetails.getEmail())
+                        : Arrays.asList();
+
+        List<String> hearingChannelPhone =
+                partyDetails.getPhoneNumber() != null
+                                && !partyDetails.getPhoneNumber().equals(EMPTY)
+                        ? Arrays.asList(partyDetails.getPhoneNumber())
+                        : Arrays.asList();
 
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
@@ -385,11 +391,18 @@ public class CaseFlagDataServiceImpl {
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
+
+        List<String> hearingChannelEmail =
+                partyDetails.getSolicitorEmail() != null
+                                && !partyDetails.getSolicitorEmail().equals(EMPTY)
+                        ? Arrays.asList(partyDetails.getSolicitorEmail())
+                        : Arrays.asList();
+
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                         .firstName(partyDetails.getRepresentativeFirstName())
                         .lastName(partyDetails.getRepresentativeLastName())
-                        .hearingChannelEmail(partyDetails.getSolicitorEmail())
+                        .hearingChannelEmail(hearingChannelEmail)
                         .build();
 
         partyDetailsModelForSol =
