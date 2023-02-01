@@ -249,9 +249,8 @@ public class CaseFlagDataServiceImpl {
         }
 
         /******Solicitor Party Details********/
-        if (partyDetails != null
-                && (partyDetails.getRepresentativeFirstName() != null
-                        || partyDetails.getRepresentativeLastName() != null)) {
+        if (partyDetails.getRepresentativeFirstName() != null
+                        || partyDetails.getRepresentativeLastName() != null) {
             addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUuid());
         }
     }
