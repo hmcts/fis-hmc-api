@@ -244,11 +244,11 @@ public class CaseFlagDataServiceImpl {
         Organisation org = partyDetails.getSolicitorOrg();
 
         /****** Organisation Party Details********/
-        if (org.getOrganisationID() != null) {
+        if (org != null && org.getOrganisationID() != null) {
             addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUuid());
         }
 
-        /******Solicitor Party Details********/
+        /******Solicitor Party Details*********/
         if (partyDetails.getRepresentativeFirstName() != null
                 || partyDetails.getRepresentativeLastName() != null) {
             addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUuid());

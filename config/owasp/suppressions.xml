@@ -23,6 +23,10 @@
     <cve>CVE-2022-31569</cve>
   </suppress>
   <suppress>
+    <notes>json-20160212.jar</notes>
+    <cve>CVE-2022-45688</cve>
+  </suppress>
+  <suppress>
     <notes>xercesImpl-2.12.0.jar</notes>
     <cve>CVE-2017-10355</cve>
     <cve>CVE-2022-23437</cve>
