@@ -143,11 +143,11 @@ public class CaseFlagDataServiceImpl {
             List<Element<PartyDetails>> partyLst,
             String role) {
 
-        String uuid;
+        UUID uuid;
         PartyDetails partyDetails;
 
         for (Element<PartyDetails> party : partyLst) {
-            uuid = party.getId().toString();
+            uuid = party.getId();
             partyDetails = party.getValue();
             List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
@@ -163,19 +163,28 @@ public class CaseFlagDataServiceImpl {
             String role) {
         if (null != partyDetails) {
             List<PartyFlagsModel> curPartyFlagsModelList =
-                    getPartyFlagsModel(partyDetails, getUuid());
+                    getPartyFlagsModel(partyDetails, partyDetails.getPartyId());
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
             preparePartyDetailsDTO(
-                    partyDetailsModelList, partyDetails, getUuid(), role, curPartyFlagsModelList);
+                    partyDetailsModelList,
+                    partyDetails,
+                    partyDetails.getPartyId(),
+                    role,
+                    curPartyFlagsModelList);
         }
     }
 
     private void preparePartyDetailsDTO(
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
-            String uuid,
+            UUID uuid,
             String role,
             List<PartyFlagsModel> curPartyFlagsModelList) {
+        String partyId = null;
+
+        if (null != uuid) {
+            partyId = uuid.toString();
+        }
         List<Element<FlagDetail>> flagsDetailOfCurrParty = null;
 
         if (null != partyDetails.getPartyLevelFlag()) {
@@ -229,7 +238,7 @@ public class CaseFlagDataServiceImpl {
         PartyDetailsModel partyDetailsModel;
         partyDetailsModel =
                 PartyDetailsModel.partyDetailsWith()
-                        .partyID(uuid)
+                        .partyID(partyId)
                         .partyName(
                                 partyDetails.getFirstName()
                                         + EMPTY_STRING
@@ -245,18 +254,16 @@ public class CaseFlagDataServiceImpl {
 
         /****** Organisation Party Details********/
         if (org != null && org.getOrganisationID() != null) {
-            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, getUuid());
+            addPartyDetailsModelForOrg(
+                    partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
         }
 
         /******Solicitor Party Details*********/
         if (partyDetails.getRepresentativeFirstName() != null
                 || partyDetails.getRepresentativeLastName() != null) {
-            addPartyDetailsModelForSolicitor(partyDetailsModelList, partyDetails, getUuid());
+            addPartyDetailsModelForSolicitor(
+                    partyDetailsModelList, partyDetails, partyDetails.getSolicitorPartyId());
         }
-    }
-
-    private String getUuid() {
-        return UUID.randomUUID().toString();
     }
 
     private List<PartyFlagsModel> getInterpreterLangCodes(
@@ -286,7 +293,11 @@ public class CaseFlagDataServiceImpl {
         return isListingCommentNeeded ? LISTING_COMMENTS : EMPTY;
     }
 
-    private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, String uuid) {
+    private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, UUID uuid) {
+        String partyId = null;
+        if (null != uuid) {
+            partyId = uuid.toString();
+        }
         PartyFlagsModel partyFlagsModel;
         List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
         Flags flag = partyDetails.getPartyLevelFlag();
@@ -301,7 +312,7 @@ public class CaseFlagDataServiceImpl {
                 log.info("flagDetail===> {}", flagDetail);
                 partyFlagsModel =
                         PartyFlagsModel.partyFlagsModelWith()
-                                .partyId(uuid)
+                                .partyId(partyId)
                                 .partyName(
                                         partyDetails.getFirstName()
                                                 + EMPTY_STRING
@@ -364,7 +375,11 @@ public class CaseFlagDataServiceImpl {
     }
 
     private void addPartyDetailsModelForOrg(
-            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
+            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
+        String partyId = null;
+        if (uuid != null) {
+            partyId = uuid.toString();
+        }
         OrganisationDetailsModel organisationDetailsModel = null;
         PartyDetailsModel partyDetailsModelForOrg;
         organisationDetailsModel =
@@ -375,7 +390,7 @@ public class CaseFlagDataServiceImpl {
 
         partyDetailsModelForOrg =
                 PartyDetailsModel.partyDetailsWith()
-                        .partyID(uuid)
+                        .partyID(partyId)
                         .partyName(
                                 partyDetails.getFirstName()
                                         + EMPTY_STRING
@@ -388,7 +403,13 @@ public class CaseFlagDataServiceImpl {
     }
 
     private void addPartyDetailsModelForSolicitor(
-            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, String uuid) {
+            List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
+
+        String partyId = null;
+        if (uuid != null) {
+            partyId = uuid.toString();
+        }
+
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
 
@@ -406,7 +427,7 @@ public class CaseFlagDataServiceImpl {
 
         partyDetailsModelForSol =
                 PartyDetailsModel.partyDetailsWith()
-                        .partyID(uuid)
+                        .partyID(partyId)
                         .partyName(
                                 partyDetails.getRepresentativeFirstName()
                                         + EMPTY_STRING
