@@ -110,8 +110,9 @@ amqp:
 #If you use a database then uncomment below lines and update db properties accordingly
 
 azure:
+  app_insights_key: ${APP_INSIGHTS_KEY:true}
   application-insights:
-    instrumentation-key: ${fis.AppInsightsInstrumentationKey:00000000-0000-0000-0000-000000000000}
+    instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
 
 thread:
   count: ${THREAD_COUNT:4}
@@ -123,4 +124,3 @@ logging:
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}
-
