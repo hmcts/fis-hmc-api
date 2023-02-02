@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,4 +52,8 @@ public class PartyDetails {
     private String caseTypeOfApplication;
 
     private Flags partyLevelFlag;
+
+    private UUID partyId;
+    private UUID solicitorOrgUuid;
+    private UUID solicitorPartyId;
 }
