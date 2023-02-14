@@ -4,12 +4,15 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MANAGEMENT_LOCATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_SUB_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CATEGORY_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CCD_DEMO_LINK;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.DEMO;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FALSE;
@@ -138,6 +141,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+
+        if (null != ccdBaseUrl && ccdBaseUrl.contains(DEMO)) {
+            ccdBaseUrl = CCD_DEMO_LINK;
+        }
+
         ServiceHearingValues serviceHearingValues =
                 ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID(ABA5)
@@ -145,7 +153,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(FALSE)
                         .caseCategories(getCaseCategories())
-                        .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
+                        .caseDeepLink(
+                                ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
                         .caseRestrictedFlag(FALSE)
                         .externalCaseReference(EMPTY)
                         .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
