@@ -44,8 +44,6 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
                 throw new PrlUpdateException("PRL", exception.getStatusCode(), exception);
             } catch (FeignException exception) {
                 log.info("PRL call Feign exception {}", exception.getMessage());
-            } catch (Exception exception) {
-                log.info("PRL call exception {}", exception.getMessage());
             }
         } else {
             log.info(
@@ -79,8 +77,6 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
         } catch (FeignException exception) {
             log.info(
                     "PRL next hearing date update call Feign exception {}", exception.getMessage());
-        } catch (Exception exception) {
-            log.info("PRL next hearing date update call exception {}", exception.getMessage());
         }
 
         return isPrlRespSuccess;
