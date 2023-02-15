@@ -233,6 +233,7 @@ class HearingsControllerTest {
         ResponseEntity<Object> nextHearingDetails =
                 hearingsController.getNextHearingDateByCaseRefNo("", "", "caseRef");
 
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetails.getStatusCode());
+        Assertions.assertEquals(
+                HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetails.getStatusCode());
     }
 }
