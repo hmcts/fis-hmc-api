@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -40,19 +41,22 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
             Long currHearingID = listHearing.getHearingID();
 
-            LocalDateTime minDate =
+            LocalDateTime nearFuture = null;
+
+            Optional<LocalDateTime> minDate =
                     listHearing.getHearingDaySchedule().stream()
                             .map(u -> u.getHearingStartDateTime())
-                            .min(LocalDateTime::compareTo)
-                            .get();
+                            .min(LocalDateTime::compareTo);
 
-            boolean isFutureDate = minDate.isAfter(timeNow);
+            nearFuture = minDate.get();
+
+            boolean isFutureDate = nearFuture.isAfter(timeNow);
 
             if (isFutureDate) {
                 NextHearingDetails hearingDetails =
                         NextHearingDetails.builder()
                                 .hearingID(currHearingID)
-                                .nextHearingDate(minDate)
+                                .nextHearingDate(nearFuture)
                                 .build();
 
                 nextHearingDateDetailsList.add(hearingDetails);
