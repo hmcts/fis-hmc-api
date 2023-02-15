@@ -100,5 +100,10 @@
       <property name="maxfields" value="50" />
     </properties>
   </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="25" />
+    </properties>
+  </rule>
 
 </ruleset>
