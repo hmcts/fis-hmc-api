@@ -41,22 +41,24 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
             Long currHearingID = listHearing.getHearingID();
 
-            LocalDateTime nearFuture = null;
+            LocalDateTime nearFutureDate = null;
 
             Optional<LocalDateTime> minDate =
                     listHearing.getHearingDaySchedule().stream()
                             .map(u -> u.getHearingStartDateTime())
                             .min(LocalDateTime::compareTo);
 
-            nearFuture = minDate.get();
+            if (minDate.isPresent()) {
+                nearFutureDate = minDate.get();
+            }
 
-            boolean isFutureDate = nearFuture.isAfter(timeNow);
+            boolean isFutureDate = nearFutureDate.isAfter(timeNow);
 
             if (isFutureDate) {
                 NextHearingDetails hearingDetails =
                         NextHearingDetails.builder()
                                 .hearingID(currHearingID)
-                                .nextHearingDate(nearFuture)
+                                .nextHearingDate(nearFutureDate)
                                 .build();
 
                 nextHearingDateDetailsList.add(hearingDetails);
