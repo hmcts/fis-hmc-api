@@ -191,20 +191,20 @@ class HearingsControllerTest {
                         .build();
         Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(anyString()))
                 .thenReturn(nextHearingDetails);
-        ResponseEntity<Object> hearingsResponse =
+        ResponseEntity<Object> nextHearingDetailsResponse =
                 hearingsController.getNextHearingDateByCaseRefNo("Auth", "sauth", "caseRef");
         Assertions.assertEquals(
-                34434L, ((NextHearingDetails) hearingsResponse.getBody()).getHearingID());
+                34434L, ((NextHearingDetails) nextHearingDetailsResponse.getBody()).getHearingID());
     }
 
     @Test
     void nextHearingDateByCaseRefNoControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
-        ResponseEntity<Object> hearingsData1 =
+        ResponseEntity<Object> nextHearingDetails =
                 hearingsController.getNextHearingDateByCaseRefNo("", "", "caseRef");
 
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
 
     @Test
@@ -216,10 +216,10 @@ class HearingsControllerTest {
         Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
-        ResponseEntity<Object> hearingsData1 =
+        ResponseEntity<Object> nextHearingDetails =
                 hearingsController.getNextHearingDateByCaseRefNo("", "", "");
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingDetails.getStatusCode());
     }
 
     @Test
@@ -230,9 +230,9 @@ class HearingsControllerTest {
         Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(""))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
-        ResponseEntity<Object> hearingsData1 =
+        ResponseEntity<Object> nextHearingDetails =
                 hearingsController.getNextHearingDateByCaseRefNo("", "", "caseRef");
 
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetails.getStatusCode());
     }
 }
