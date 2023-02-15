@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.gov.hmcts.reform.hmc.api.config.PrlUpdateConfiguration;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 
 @FeignClient(
         name = "prl-update-api",
@@ -27,4 +28,12 @@ public interface PrlUpdateApi {
     ResponseEntity prlUpdate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingDTO hearingDto);
+
+    @RequestMapping(
+            method = RequestMethod.PUT,
+            value = "/hearing-management-next-hearing-date-update/",
+            headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
+    ResponseEntity prlNextHearingDateUpdate(
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestBody final NextHearingDetailsDTO nextHearingDateDetailsDTO);
 }

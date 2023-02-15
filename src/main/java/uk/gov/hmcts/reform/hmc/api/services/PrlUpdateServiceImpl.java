@@ -9,6 +9,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
 @Service
@@ -18,6 +19,8 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     @Autowired private AuthTokenGenerator authTokenGenerator;
 
     @Autowired PrlUpdateApi prlUpdateApi;
+
+    @Autowired HearingsService hearingsService;
 
     /**
      * This method will update the Prl with hearing data.
@@ -51,6 +54,35 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
 
             isPrlRespSuccess = true;
         }
+        return isPrlRespSuccess;
+    }
+
+    @Override
+    @SuppressWarnings("unused")
+    public Boolean updatePrlServiceWithNextHearingDate(
+            NextHearingDetailsDTO nextHearingDetailsDto) {
+
+        Boolean isPrlRespSuccess = false;
+        log.info(
+                "calling updatePrlServiceWithNextHearingDate service "
+                        + nextHearingDetailsDto.getNextHearingDetails().getHearingID());
+        try {
+            prlUpdateApi.prlNextHearingDateUpdate(
+                    authTokenGenerator.generate(), nextHearingDetailsDto);
+            log.info("PRL next hearing date update call completed successfully");
+            isPrlRespSuccess = true;
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info(
+                    "PRL next hearing date update call HttpClientError exception {}",
+                    exception.getMessage());
+            throw new PrlUpdateException("PRL", exception.getStatusCode(), exception);
+        } catch (FeignException exception) {
+            log.info(
+                    "PRL next hearing date update call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("PRL next hearing date update call exception {}", exception.getMessage());
+        }
+
         return isPrlRespSuccess;
     }
 }

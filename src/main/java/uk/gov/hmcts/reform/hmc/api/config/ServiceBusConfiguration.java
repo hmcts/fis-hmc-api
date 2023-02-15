@@ -24,9 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
+import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
@@ -54,6 +57,8 @@ public class ServiceBusConfiguration {
     @Autowired PrlUpdateService prlUpdateService;
 
     @Autowired RefDataService refDataService;
+
+    @Autowired NextHearingDetailsService nextHearingDetailsService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -137,6 +142,25 @@ public class ServiceBusConfiguration {
                             log.info(
                                     "Hearing with Full CourtDetails  "
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
+                        }
+
+                        NextHearingDetails nextHearingDetails =
+                                nextHearingDetailsService.getNextHearingDateByCaseRefNo(
+                                        hearingDto.getCaseRef());
+
+                        log.info(
+                                "Next Hearing Date Details - ID {} and Date {} ",
+                                nextHearingDetails.getHearingID(),
+                                nextHearingDetails.getNextHearingDate());
+
+                        if (null != nextHearingDetails) {
+                            NextHearingDetailsDTO nextHearingDateDetailsDTO =
+                                    NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                                            .nextHearingDetails(nextHearingDetails)
+                                            .caseRef(hearingDto.getCaseRef())
+                                            .build();
+                            prlUpdateService.updatePrlServiceWithNextHearingDate(
+                                    nextHearingDateDetailsDTO);
                         }
 
                         Boolean isPrlSuccess =
