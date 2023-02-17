@@ -392,10 +392,7 @@ public class CaseFlagDataServiceImpl {
         partyDetailsModelForOrg =
                 PartyDetailsModel.partyDetailsWith()
                         .partyID(partyId)
-                        .partyName(
-                                partyDetails.getFirstName()
-                                        + EMPTY_STRING
-                                        + partyDetails.getLastName())
+                        .partyName(partyDetails.getSolicitorOrg().getOrganisationName())
                         .partyType(PartyType.ORG)
                         .partyRole(ORGANISATION)
                         .organisationDetails(organisationDetailsModel)
