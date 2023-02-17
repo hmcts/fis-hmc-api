@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.config;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.ExceptionPhase;
 import com.microsoft.azure.servicebus.IMessage;
@@ -29,6 +31,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
@@ -59,6 +62,8 @@ public class ServiceBusConfiguration {
     @Autowired RefDataService refDataService;
 
     @Autowired NextHearingDetailsService nextHearingDetailsService;
+
+    @Autowired HearingsService hearingsService;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -135,7 +140,7 @@ public class ServiceBusConfiguration {
                         log.info("Service Bus message for PRL Update " + hearingDto);
 
                         if (hearingDto.getHearingUpdate().getHearingVenueId() != null
-                                && "LISTED".equals(hearingDto.getHearingUpdate().getHmcStatus())) {
+                                && LISTED.equals(hearingDto.getHearingUpdate().getHmcStatus())) {
 
                             log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
                             hearingDto = refDataService.getHearingWithCourtDetails(hearingDto);
@@ -143,26 +148,28 @@ public class ServiceBusConfiguration {
                                     "Hearing with Full CourtDetails  "
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
+                        Boolean isNextHearingDate = false;
 
                         NextHearingDetails nextHearingDetails =
                                 nextHearingDetailsService.getNextHearingDateByCaseRefNo(
                                         hearingDto.getCaseRef());
 
-                        log.info(
-                                "Next Hearing Date Details - ID {} and Date {} ",
-                                nextHearingDetails.getHearingID(),
-                                nextHearingDetails.getNextHearingDate());
-
                         if (null != nextHearingDetails) {
+                            log.info(
+                                    "Next Hearing Date Details - ID {} and Date {} ",
+                                    nextHearingDetails.getHearingId(),
+                                    nextHearingDetails.getNextHearingDate());
                             NextHearingDetailsDTO nextHearingDateDetailsDTO =
                                     NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
                                             .nextHearingDetails(nextHearingDetails)
                                             .caseRef(hearingDto.getCaseRef())
                                             .build();
+                            isNextHearingDate = true;
                             prlUpdateService.updatePrlServiceWithNextHearingDate(
                                     nextHearingDateDetailsDTO);
                         }
 
+                        hearingDto.setIsNextHearingDate(isNextHearingDate);
                         Boolean isPrlSuccess =
                                 prlUpdateService.updatePrlServiceWithHearing(hearingDto);
                         if (isPrlSuccess) {

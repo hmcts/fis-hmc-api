@@ -187,14 +187,14 @@ class HearingsControllerTest {
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()
                         .nextHearingDate(LocalDateTime.now())
-                        .hearingID(34434L)
+                        .hearingId(34434L)
                         .build();
         Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(anyString()))
                 .thenReturn(nextHearingDetails);
         ResponseEntity<Object> nextHearingDetailsResponse =
                 hearingsController.getNextHearingDateByCaseRefNo("Auth", "sauth", "caseRef");
         Assertions.assertEquals(
-                34434L, ((NextHearingDetails) nextHearingDetailsResponse.getBody()).getHearingID());
+                34434L, ((NextHearingDetails) nextHearingDetailsResponse.getBody()).getHearingId());
     }
 
     @Test

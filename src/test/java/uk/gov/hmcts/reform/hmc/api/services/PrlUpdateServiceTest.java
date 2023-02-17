@@ -152,7 +152,7 @@ class PrlUpdateServiceTest {
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()
                         .nextHearingDate(LocalDateTime.now())
-                        .hearingID(4565432L)
+                        .hearingId(4565432L)
                         .build();
 
         NextHearingDetailsDTO nextHearingDetailsDto =
@@ -222,7 +222,7 @@ class PrlUpdateServiceTest {
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()
                         .nextHearingDate(LocalDateTime.now())
-                        .hearingID(4565432L)
+                        .hearingId(4565432L)
                         .build();
 
         NextHearingDetailsDTO nextHearingDetailsDto =
