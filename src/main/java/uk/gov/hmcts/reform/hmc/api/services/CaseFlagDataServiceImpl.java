@@ -389,6 +389,7 @@ public class CaseFlagDataServiceImpl {
                         .organisationType(PartyType.ORG.toString())
                         .build();
 
+
         partyDetailsModelForOrg =
                 PartyDetailsModel.partyDetailsWith()
                         .partyID(partyId)
