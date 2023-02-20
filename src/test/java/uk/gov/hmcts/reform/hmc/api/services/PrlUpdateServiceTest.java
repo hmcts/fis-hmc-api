@@ -53,9 +53,9 @@ class PrlUpdateServiceTest {
                         .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
+        when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
 
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto);
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testState");
         assertEquals(true, isOK);
     }
 
@@ -69,9 +69,9 @@ class PrlUpdateServiceTest {
                         .hmctsServiceCode("NonBBA3")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
+        when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
 
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto);
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState");
         assertEquals(true, isOK);
     }
 
@@ -85,12 +85,12 @@ class PrlUpdateServiceTest {
                         .hmctsServiceCode("ABA5")
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(prlUpdateApi.prlUpdate(anyString(), any()))
+        when(prlUpdateApi.prlUpdate(anyString(), any(), any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
 
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState"));
     }
 
     @Test
@@ -105,11 +105,11 @@ class PrlUpdateServiceTest {
                         .build();
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
-        when(prlUpdateApi.prlUpdate(anyString(), any())).thenReturn(ResponseEntity.ok("OK"));
+        when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
 
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState"));
     }
 
     @Test

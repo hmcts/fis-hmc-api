@@ -5,7 +5,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 
 public interface PrlUpdateService {
 
-    Boolean updatePrlServiceWithHearing(HearingDTO hearingDto);
+    Boolean updatePrlServiceWithHearing(HearingDTO hearingDto, String caseState);
 
     Boolean updatePrlServiceWithNextHearingDate(NextHearingDetailsDTO nextHearingDetailsDto);
 }

@@ -1,15 +1,13 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.mockito.Mockito.when;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
@@ -23,29 +21,62 @@ class NextHearingDetailsServiceTest {
 
     @InjectMocks NextHearingDetailsServiceImpl nextHearingDetailsService;
 
-    @Mock private HearingsServiceImpl hearingsService;
+    @Before
+    public void setup() {}
 
     @Test
     void shouldReturnNextHearingDetailsTest() {
 
-        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
+        LocalDateTime testNextHearingDate1 = LocalDateTime.of(2023, 02, 23, 1, 0);
 
-        HearingDaySchedule hearingDaySchedule =
+        LocalDateTime testNextHearingDate2 = LocalDateTime.of(2023, 02, 24, 1, 0);
+
+        LocalDateTime testNextHearingDate3 = LocalDateTime.of(2023, 02, 21, 1, 0);
+
+        LocalDateTime testNextHearingDate4 = LocalDateTime.of(2023, 02, 25, 1, 0);
+
+        HearingDaySchedule hearingDaySchedule1 =
                 HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingVenueId("231596")
-                        .hearingJudgeId("4925644")
-                        .hearingStartDateTime(testNextHearingDate)
+                        .hearingStartDateTime(testNextHearingDate1)
                         .build();
-        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
-        hearingDayScheduleList.add(hearingDaySchedule);
 
-        CaseHearing caseHearing =
+        HearingDaySchedule hearingDaySchedule2 =
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingStartDateTime(testNextHearingDate2)
+                        .build();
+
+        List<HearingDaySchedule> hearingDayScheduleList1 = new ArrayList<>();
+        hearingDayScheduleList1.add(hearingDaySchedule1);
+        hearingDayScheduleList1.add(hearingDaySchedule2);
+
+        HearingDaySchedule hearingDaySchedule3 =
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingStartDateTime(testNextHearingDate3)
+                        .build();
+
+        HearingDaySchedule hearingDaySchedule4 =
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingStartDateTime(testNextHearingDate4)
+                        .build();
+        List<HearingDaySchedule> hearingDayScheduleList2 = new ArrayList<>();
+        hearingDayScheduleList2.add(hearingDaySchedule3);
+        hearingDayScheduleList2.add(hearingDaySchedule4);
+
+        CaseHearing caseHearing1 =
                 CaseHearing.caseHearingWith()
                         .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList)
+                        .hearingDaySchedule(hearingDayScheduleList1)
                         .build();
+
+        CaseHearing caseHearing2 =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus("LISTED")
+                        .hearingDaySchedule(hearingDayScheduleList2)
+                        .build();
+
         List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing);
+        caseHearingList.add(caseHearing1);
+        caseHearingList.add(caseHearing2);
 
         Hearings hearings =
                 Hearings.hearingsWith()
@@ -54,11 +85,9 @@ class NextHearingDetailsServiceTest {
                         .hmctsServiceCode("BBA3")
                         .build();
 
-        when(hearingsService.getHearingsByCaseRefNo("1671620456009274")).thenReturn(hearings);
-
         NextHearingDetails nextHearingDetailsResponse =
-                nextHearingDetailsService.getNextHearingDateByCaseRefNo("1671620456009274");
+                nextHearingDetailsService.getNextHearingDate(hearings);
         Assertions.assertEquals(
-                testNextHearingDate, nextHearingDetailsResponse.getNextHearingDate());
+                testNextHearingDate3, nextHearingDetailsResponse.getNextHearingDate());
     }
 }

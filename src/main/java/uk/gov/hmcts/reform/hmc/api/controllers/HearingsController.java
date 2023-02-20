@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
@@ -177,15 +178,15 @@ public class HearingsController {
                         message = "get next hearing details by caseRefNo successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<Object> getNextHearingDateByCaseRefNo(
+    public ResponseEntity<Object> getNextHearingDate(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(
-                        nextHearingDetailsService.getNextHearingDateByCaseRefNo(caseReference));
+                Hearings hearings = hearingsService.getHearingsByCaseRefNo(caseReference);
+                return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

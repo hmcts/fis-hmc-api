@@ -26,6 +26,4 @@ public class HearingDTO {
     private String hearingId;
 
     private HearingUpdateDTO hearingUpdate;
-
-    private Boolean isNextHearingDate;
 }

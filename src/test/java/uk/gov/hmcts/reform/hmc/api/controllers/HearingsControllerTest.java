@@ -11,6 +11,8 @@ import feign.Request;
 import feign.Response;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +29,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -49,9 +53,30 @@ class HearingsControllerTest {
 
     @Mock private NextHearingDetailsService nextHearingDetailsService;
 
+    private Hearings hearings;
+
     @BeforeEach
     void setUp() {
+
         MockitoAnnotations.openMocks(this);
+        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
+
+        HearingDaySchedule hearingDaySchedule =
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingVenueId("231596")
+                        .hearingJudgeId("4925644")
+                        .hearingStartDateTime(testNextHearingDate)
+                        .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearing =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus("LISTED")
+                        .hearingDaySchedule(hearingDayScheduleList)
+                        .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
     }
 
     @Test
@@ -189,10 +214,11 @@ class HearingsControllerTest {
                         .nextHearingDate(LocalDateTime.now())
                         .hearingId(34434L)
                         .build();
-        Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(anyString()))
+
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
                 .thenReturn(nextHearingDetails);
         ResponseEntity<Object> nextHearingDetailsResponse =
-                hearingsController.getNextHearingDateByCaseRefNo("Auth", "sauth", "caseRef");
+                hearingsController.getNextHearingDate("Auth", "sauth", "caseRef");
         Assertions.assertEquals(
                 34434L, ((NextHearingDetails) nextHearingDetailsResponse.getBody()).getHearingId());
     }
@@ -202,7 +228,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDateByCaseRefNo("", "", "caseRef");
+                hearingsController.getNextHearingDate("", "", "caseRef");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
@@ -213,11 +239,11 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(""))
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDateByCaseRefNo("", "", "");
+                hearingsController.getNextHearingDate("", "", "");
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingDetails.getStatusCode());
     }
@@ -227,11 +253,11 @@ class HearingsControllerTest {
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.getNextHearingDateByCaseRefNo(""))
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDateByCaseRefNo("", "", "caseRef");
+                hearingsController.getNextHearingDate("", "", "caseRef");
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetails.getStatusCode());

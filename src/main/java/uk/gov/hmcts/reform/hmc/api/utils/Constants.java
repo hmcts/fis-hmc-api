@@ -8,7 +8,13 @@ public final class Constants {
 
     public static final String LISTED = "LISTED";
 
-    public static final String WAITING_TO_BE_LISTED = "AWAITING_ACTUALS";
+    public static final String COMPLETED = "COMPLETED";
+
+    public static final String ADJOURNED = "ADJOURNED";
+
+    public static final String PREPARE_FOR_HEARING_CONDUCT_HEARING = "Prepare for hearing";
+
+    public static final String DECISION_OUTCOME = "Hearing outcome";
 
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";

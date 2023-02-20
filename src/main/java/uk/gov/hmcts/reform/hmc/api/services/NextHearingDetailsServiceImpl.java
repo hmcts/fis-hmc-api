@@ -1,6 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.DECISION_OUTCOME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -9,7 +13,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
@@ -19,13 +22,10 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 @RequiredArgsConstructor
 public class NextHearingDetailsServiceImpl implements NextHearingDetailsService {
 
-    @Autowired HearingsService hearingsService;
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     @Override
-    public NextHearingDetails getNextHearingDateByCaseRefNo(String caseReference) {
-
-        Hearings hearings = hearingsService.getHearingsByCaseRefNo(caseReference);
+    public NextHearingDetails getNextHearingDate(Hearings hearings) {
 
         List<CaseHearing> listedHearings =
                 hearings.getCaseHearings().stream()
@@ -55,5 +55,33 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             }
         }
         return haringDetails.getNextHearingDate() != null ? haringDetails : null;
+    }
+
+    @Override
+    public String fetchStateForUpdate(Hearings hearings, String currHmcStatus) {
+
+        Boolean isAllCompleted =
+                hearings.getCaseHearings().stream()
+                                .filter(
+                                        eachHearing ->
+                                                eachHearing.getHmcStatus().equals(COMPLETED)
+                                                        || eachHearing
+                                                                .getHmcStatus()
+                                                                .equals(ADJOURNED))
+                                .collect(Collectors.toList())
+                                .size()
+                        == hearings.getCaseHearings().size();
+
+        if (isAllCompleted) {
+            return DECISION_OUTCOME;
+        } else {
+            if (currHmcStatus.equals(COMPLETED)) {
+                return getNextHearingDate(hearings) != null
+                        ? PREPARE_FOR_HEARING_CONDUCT_HEARING
+                        : DECISION_OUTCOME;
+            } else {
+                return PREPARE_FOR_HEARING_CONDUCT_HEARING;
+            }
+        }
     }
 }

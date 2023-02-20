@@ -30,13 +30,14 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
      */
     @Override
     @SuppressWarnings("unused")
-    public Boolean updatePrlServiceWithHearing(HearingDTO hearingDto) {
+    public Boolean updatePrlServiceWithHearing(HearingDTO hearingDto, String caseState) {
+
         Boolean isPrlRespSuccess = false;
         log.info("calling updatePrlServiceWithHearing service " + hearingDto.getHearingId());
 
         if (Constants.ABA5.equals(hearingDto.getHmctsServiceCode())) {
             try {
-                prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto);
+                prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto, caseState);
                 log.info("PRL call completed successfully");
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {

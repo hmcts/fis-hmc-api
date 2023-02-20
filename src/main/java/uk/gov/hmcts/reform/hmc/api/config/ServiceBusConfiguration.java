@@ -31,6 +31,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
@@ -149,10 +150,11 @@ public class ServiceBusConfiguration {
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
                         Boolean isNextHearingDate = false;
+                        Hearings hearings =
+                                hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
 
                         NextHearingDetails nextHearingDetails =
-                                nextHearingDetailsService.getNextHearingDateByCaseRefNo(
-                                        hearingDto.getCaseRef());
+                                nextHearingDetailsService.getNextHearingDate(hearings);
 
                         if (null != nextHearingDetails) {
                             log.info(
@@ -164,14 +166,16 @@ public class ServiceBusConfiguration {
                                             .nextHearingDetails(nextHearingDetails)
                                             .caseRef(hearingDto.getCaseRef())
                                             .build();
-                            isNextHearingDate = true;
                             prlUpdateService.updatePrlServiceWithNextHearingDate(
                                     nextHearingDateDetailsDTO);
                         }
 
-                        hearingDto.setIsNextHearingDate(isNextHearingDate);
+                        String caseState =
+                                nextHearingDetailsService.fetchStateForUpdate(
+                                        hearings, hearingDto.getHearingUpdate().getHmcStatus());
+
                         Boolean isPrlSuccess =
-                                prlUpdateService.updatePrlServiceWithHearing(hearingDto);
+                                prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
                         if (isPrlSuccess) {
                             return receiveClient.completeAsync(message.getLockToken());
                         } else {
