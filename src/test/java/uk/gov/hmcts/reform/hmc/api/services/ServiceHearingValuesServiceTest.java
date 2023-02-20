@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
@@ -45,6 +46,11 @@ class ServiceHearingValuesServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnHearingDetailsTest() throws IOException, ParseException {
+
+        ReflectionTestUtils.setField(
+                hearingservice,
+                "ccdBaseUrl",
+                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
 
         LinkedHashMap applicantMap = new LinkedHashMap();
         applicantMap.put("lastName", "lastName");
@@ -76,6 +82,11 @@ class ServiceHearingValuesServiceTest {
     @Test
     public void shouldReturnHearingDetailsTestForfl401() throws IOException, ParseException {
 
+        ReflectionTestUtils.setField(
+                hearingservice,
+                "ccdBaseUrl",
+                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
+
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "FL401");
@@ -84,6 +95,7 @@ class ServiceHearingValuesServiceTest {
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
 
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        // when(resourceLoader.getResource("classpath:ScreenFlow.json")).thenReturn();
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
@@ -100,7 +112,10 @@ class ServiceHearingValuesServiceTest {
 
     @Test
     public void shouldReturnHearingDetailsTestForC100() throws IOException, ParseException {
-
+        ReflectionTestUtils.setField(
+                hearingservice,
+                "ccdBaseUrl",
+                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "C100");
@@ -121,7 +136,10 @@ class ServiceHearingValuesServiceTest {
 
     @Test
     public void shouldReturnHearingDetailsTestForOtherCases() throws IOException, ParseException {
-
+        ReflectionTestUtils.setField(
+                hearingservice,
+                "ccdBaseUrl",
+                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "other");
@@ -143,7 +161,10 @@ class ServiceHearingValuesServiceTest {
     @Test
     @SuppressWarnings("unchecked")
     public void shouldReturnHearingLinkDetailsTest() throws IOException, ParseException {
-
+        ReflectionTestUtils.setField(
+                hearingservice,
+                "ccdBaseUrl",
+                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
         LinkedHashMap reasonMap = new LinkedHashMap();
         reasonMap.put("Reason", "CLRC017");
 
