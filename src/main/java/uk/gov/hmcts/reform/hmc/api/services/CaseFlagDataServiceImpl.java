@@ -281,7 +281,7 @@ public class CaseFlagDataServiceImpl {
 
         Boolean isListingCommentNeeded =
                 flagsList.stream()
-                                .map(urEntity -> urEntity.getFlagId())
+                                .map(PartyFlagsModel::getFlagId)
                                 .filter(
                                         eachFlag ->
                                                 eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
