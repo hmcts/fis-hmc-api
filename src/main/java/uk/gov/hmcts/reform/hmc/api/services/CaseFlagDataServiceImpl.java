@@ -400,6 +400,7 @@ public class CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModelForOrg);
     }
 
+
     private void addPartyDetailsModelForSolicitor(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
 
