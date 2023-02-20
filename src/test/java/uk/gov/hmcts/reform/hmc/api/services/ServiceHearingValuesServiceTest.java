@@ -45,7 +45,7 @@ class ServiceHearingValuesServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnHearingDetailsTest() throws IOException, ParseException {
+    public void shouldReturnHearingDetailsWithDemoTest() throws IOException, ParseException {
 
         ReflectionTestUtils.setField(
                 hearingservice,
@@ -75,6 +75,42 @@ class ServiceHearingValuesServiceTest {
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+        hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+        Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void shouldReturnHearingDetailsWithNonDemoTest() throws IOException, ParseException {
+
+        ReflectionTestUtils.setField(
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.aat.platform.hmcts.net/cases/case-details/");
+
+        LinkedHashMap applicantMap = new LinkedHashMap();
+        applicantMap.put("lastName", "lastName");
+
+        LinkedHashMap respondentMap = new LinkedHashMap();
+        respondentMap.put("lastName", "lastName");
+
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseTypeOfApplication", "FL401");
+        caseDataMap.put("issueDate", "test date");
+        caseDataMap.put("fl401ApplicantTable", applicantMap);
+        caseDataMap.put("fl401RespondentTable", respondentMap);
+        CaseDetails caseDetails =
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
+            .thenReturn(caseDetails);
+        String authorisation = "xyz";
+        String serviceAuthorisation = "xyz";
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+        ServiceHearingValues hearingsResponse =
+            hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
