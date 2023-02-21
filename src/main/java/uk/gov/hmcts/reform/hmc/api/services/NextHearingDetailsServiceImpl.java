@@ -60,7 +60,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
     @Override
     public State fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
-
+        log.info("test state .... {}", DECISION_OUTCOME);
         Boolean isAllCompleted =
                 hearings.getCaseHearings().stream()
                                 .filter(
