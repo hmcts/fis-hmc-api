@@ -115,7 +115,6 @@ class ServiceHearingValuesServiceTest {
                 CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
 
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        // when(resourceLoader.getResource("classpath:ScreenFlow.json")).thenReturn();
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
@@ -225,7 +224,6 @@ class ServiceHearingValuesServiceTest {
         List<HearingLinkData> lst =
                 hearingservice.getHearingLinkData(
                         hearingValues, authorisation, serviceAuthorisation);
-        // Assertions.assertEquals("Test Case 1 DA 31", lst.get(0).caseName);
         Assertions.assertFalse(lst.isEmpty());
     }
 
