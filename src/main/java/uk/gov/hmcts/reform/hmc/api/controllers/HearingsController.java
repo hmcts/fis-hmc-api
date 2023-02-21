@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
@@ -98,7 +97,6 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {

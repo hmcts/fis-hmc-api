@@ -134,7 +134,7 @@ class HearingsControllerTest {
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo(anyString())).thenReturn(hearings);
         ResponseEntity<Object> hearingsResponse =
-                hearingsController.getHearingsByCaseRefNo("Auth", "sauth", "caseRef");
+                hearingsController.getHearingsByCaseRefNo("sauth", "caseRef");
         Assertions.assertEquals("123", ((Hearings) hearingsResponse.getBody()).getCaseRef());
     }
 
@@ -143,7 +143,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
 
         ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseRefNo("", "", "caseRef");
+                hearingsController.getHearingsByCaseRefNo("testserauth", "caseRef");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
     }
@@ -156,8 +156,7 @@ class HearingsControllerTest {
         Mockito.when(hearingsService.getHearingsByCaseRefNo(""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
-        ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseRefNo("", "", "");
+        ResponseEntity<Object> hearingsData1 = hearingsController.getHearingsByCaseRefNo("", "");
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
@@ -171,7 +170,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseRefNo("", "", "caseRef");
+                hearingsController.getHearingsByCaseRefNo("", "caseRef");
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }

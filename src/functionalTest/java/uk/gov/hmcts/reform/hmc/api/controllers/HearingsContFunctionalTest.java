@@ -87,8 +87,7 @@ public class HearingsContFunctionalTest {
     @Disabled
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
-                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
-                        .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
+                request.header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
