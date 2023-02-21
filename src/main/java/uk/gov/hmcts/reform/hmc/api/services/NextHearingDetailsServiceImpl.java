@@ -58,7 +58,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     }
 
     @Override
-    public String fetchStateForUpdate(Hearings hearings, String currHmcStatus) {
+    public String fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
 
         Boolean isAllCompleted =
                 hearings.getCaseHearings().stream()
@@ -75,13 +75,28 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         if (isAllCompleted) {
             return DECISION_OUTCOME;
         } else {
-            if (currHmcStatus.equals(COMPLETED)) {
-                return getNextHearingDate(hearings) != null
+            if (currHearingHmcStatus.equals(COMPLETED) || currHearingHmcStatus.equals(ADJOURNED)) {
+                return anyFutureHearings(hearings)
                         ? PREPARE_FOR_HEARING_CONDUCT_HEARING
                         : DECISION_OUTCOME;
             } else {
                 return PREPARE_FOR_HEARING_CONDUCT_HEARING;
             }
         }
+    }
+
+    private Boolean anyFutureHearings(Hearings hearings) {
+        for (CaseHearing hearing : hearings.getCaseHearings()) {
+            Optional<LocalDateTime> minDateOfHearingDaySche =
+                    hearing.getHearingDaySchedule().stream()
+                            .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
+                            .map(u -> u.getHearingStartDateTime())
+                            .min(LocalDateTime::compareTo);
+
+            if (minDateOfHearingDaySche.isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

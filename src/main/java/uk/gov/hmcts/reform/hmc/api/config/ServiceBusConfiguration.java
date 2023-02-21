@@ -149,7 +149,6 @@ public class ServiceBusConfiguration {
                                     "Hearing with Full CourtDetails  "
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
-                        Boolean isNextHearingDate = false;
                         Hearings hearings =
                                 hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
 
