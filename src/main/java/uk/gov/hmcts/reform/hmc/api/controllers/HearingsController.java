@@ -84,7 +84,6 @@ public class HearingsController {
     /**
      * End point to fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
      * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
