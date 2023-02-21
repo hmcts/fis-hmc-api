@@ -37,7 +37,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
 
         if (Constants.ABA5.equals(hearingDto.getHmctsServiceCode())) {
             try {
-                prlUpdateApi.prlUpdate(authTokenGenerator.generate(), hearingDto, caseState);
+                prlUpdateApi.prlUpdate(authTokenGenerator.generate(), caseState, hearingDto);
                 log.info("PRL call completed successfully");
                 isPrlRespSuccess = true;
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
