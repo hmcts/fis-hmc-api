@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import uk.gov.hmcts.reform.hmc.api.config.PrlUpdateConfiguration;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 
@@ -29,7 +30,7 @@ public interface PrlUpdateApi {
     ResponseEntity prlUpdate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingDTO hearingDto,
-            @PathVariable("caseState") String caseState);
+            @PathVariable("caseState") State caseState);
 
     @RequestMapping(
             method = RequestMethod.PUT,

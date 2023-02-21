@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
@@ -30,7 +31,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
      */
     @Override
     @SuppressWarnings("unused")
-    public Boolean updatePrlServiceWithHearing(HearingDTO hearingDto, String caseState) {
+    public Boolean updatePrlServiceWithHearing(HearingDTO hearingDto, State caseState) {
 
         Boolean isPrlRespSuccess = false;
         log.info("calling updatePrlServiceWithHearing service " + hearingDto.getHearingId());

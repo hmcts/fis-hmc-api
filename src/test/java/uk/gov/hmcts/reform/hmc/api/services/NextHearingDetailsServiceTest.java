@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -153,9 +157,9 @@ class NextHearingDetailsServiceTest {
                         .hmctsServiceCode("BBA3")
                         .build();
         String currHearingHmcStatus = Constants.COMPLETED;
-        String finalCaseState =
+        State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(Constants.PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
+        Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
     }
 
     @Test
@@ -202,13 +206,13 @@ class NextHearingDetailsServiceTest {
                         .hmctsServiceCode("BBA3")
                         .build();
         String currHearingHmcStatus = Constants.COMPLETED;
-        String finalCaseState =
+        State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(Constants.DECISION_OUTCOME, finalCaseState);
+        Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
     }
 
     @Test
-    void shouldFetchStateToUpdateWhenAllCompletedButNoHearingInFuture() {
+    void shouldFetchStateToUpdateWhenAllCompleteddButNoHearingInFuture() {
 
         LocalDateTime pastHearingDate1 = LocalDateTime.of(2023, 01, 18, 1, 0);
 
@@ -252,9 +256,9 @@ class NextHearingDetailsServiceTest {
                         .build();
         String currHearingHmcStatus = Constants.COMPLETED;
 
-        String finalCaseState =
+        State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(Constants.DECISION_OUTCOME, finalCaseState);
+        Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
     }
 
     @Test
@@ -302,8 +306,8 @@ class NextHearingDetailsServiceTest {
                         .build();
         String currHearingHmcStatus = Constants.LISTED;
 
-        String finalCaseState =
+        State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(Constants.PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
+        Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
     }
 }

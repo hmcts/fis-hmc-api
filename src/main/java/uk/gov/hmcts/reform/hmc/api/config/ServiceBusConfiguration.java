@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
@@ -169,7 +170,7 @@ public class ServiceBusConfiguration {
                                     nextHearingDateDetailsDTO);
                         }
 
-                        String caseState =
+                        State caseState =
                                 nextHearingDetailsService.fetchStateForUpdate(
                                         hearings, hearingDto.getHearingUpdate().getHmcStatus());
 

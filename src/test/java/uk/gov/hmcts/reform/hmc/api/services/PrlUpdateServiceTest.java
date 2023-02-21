@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.exceptions.PrlUpdateException;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
@@ -54,8 +56,8 @@ class PrlUpdateServiceTest {
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
-
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testState");
+        State caseState = DECISION_OUTCOME;
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
         assertEquals(true, isOK);
     }
 
@@ -70,8 +72,8 @@ class PrlUpdateServiceTest {
                         .build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
-
-        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState");
+        State caseState = DECISION_OUTCOME;
+        Boolean isOK = prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
         assertEquals(true, isOK);
     }
 
@@ -87,10 +89,10 @@ class PrlUpdateServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlUpdate(anyString(), any(), any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
-
+        State caseState = DECISION_OUTCOME;
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState"));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState));
     }
 
     @Test
@@ -106,10 +108,10 @@ class PrlUpdateServiceTest {
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
         when(prlUpdateApi.prlUpdate(anyString(), any(), any())).thenReturn(ResponseEntity.ok("OK"));
-
+        State caseState = DECISION_OUTCOME;
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, "testCaseState"));
+                () -> prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState));
     }
 
     @Test

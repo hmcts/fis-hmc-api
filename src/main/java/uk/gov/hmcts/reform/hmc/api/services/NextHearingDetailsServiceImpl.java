@@ -1,10 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.DECISION_OUTCOME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
@@ -58,7 +59,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     }
 
     @Override
-    public String fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
+    public State fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
 
         Boolean isAllCompleted =
                 hearings.getCaseHearings().stream()
