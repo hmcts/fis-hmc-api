@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +24,12 @@ public interface PrlUpdateApi {
 
     @RequestMapping(
             method = RequestMethod.PUT,
-            value = "/hearing-management-state-update/",
+            value = "/hearing-management-state-update/{caseState}",
             headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
     ResponseEntity prlUpdate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestHeader("caseState") String caseState,
-            @RequestBody final HearingDTO hearingDto);
+            @RequestBody final HearingDTO hearingDto,
+            @PathVariable("caseState") String caseState);
 
     @RequestMapping(
             method = RequestMethod.PUT,
