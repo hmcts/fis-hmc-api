@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.refdatacategory;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -18,8 +20,6 @@ import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.restclient.HmcHearingApi;
 import uk.gov.hmcts.reform.hmc.api.utils.ResourceLoader;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
