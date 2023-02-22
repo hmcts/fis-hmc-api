@@ -96,10 +96,12 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
+            @RequestHeader("Authorization") String authorisation,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
-            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorisation))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(hearingsService.getHearingsByCaseRefNo(caseReference));
             } else {
