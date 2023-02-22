@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
@@ -97,13 +98,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      */
     private Boolean anyFutureHearings(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
-            Optional<LocalDateTime> minDateOfHearingDaySche =
+            List<HearingDaySchedule> futureHearingDaySches =
                     hearing.getHearingDaySchedule().stream()
                             .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
-                            .map(u -> u.getHearingStartDateTime())
-                            .min(LocalDateTime::compareTo);
+                            .collect(Collectors.toList());
 
-            if (minDateOfHearingDaySche.isPresent()) {
+            if (!futureHearingDaySches.isEmpty()) {
                 return true;
             }
         }
@@ -133,16 +133,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                             .map(u -> u.getHearingStartDateTime())
                             .min(LocalDateTime::compareTo);
 
-            if (minDateOfHearingDaySche.isPresent()) {
-                if (tempNextDateListed == null) {
-                    tempNextDateListed = minDateOfHearingDaySche.get();
-                    nextHearingDetails.setHearingId(listHearing.getHearingID());
-                    nextHearingDetails.setNextHearingDate(tempNextDateListed);
-                } else if (tempNextDateListed.isAfter(minDateOfHearingDaySche.get())) {
-                    tempNextDateListed = minDateOfHearingDaySche.get();
-                    nextHearingDetails.setHearingId(listHearing.getHearingID());
-                    nextHearingDetails.setNextHearingDate(tempNextDateListed);
-                }
+            if (minDateOfHearingDaySche.isPresent()
+                    && (tempNextDateListed == null
+                            || tempNextDateListed.isAfter(minDateOfHearingDaySche.get()))) {
+                tempNextDateListed = minDateOfHearingDaySche.get();
+                nextHearingDetails.setHearingId(listHearing.getHearingID());
+                nextHearingDetails.setNextHearingDate(tempNextDateListed);
             }
         }
         return nextHearingDetails.getNextHearingDate() != null ? nextHearingDetails : null;
