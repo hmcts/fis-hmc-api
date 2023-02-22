@@ -217,7 +217,6 @@ sonarqube {
     property "sonar.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
-    property "sonar.cpd.exclusions", "**/uk/gov/hmcts/reform/hmc/api/controllers/*.java"
   }
 }
 

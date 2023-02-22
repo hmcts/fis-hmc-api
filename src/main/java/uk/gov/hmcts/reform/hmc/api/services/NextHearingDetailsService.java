@@ -9,5 +9,5 @@ public interface NextHearingDetailsService {
 
     State fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus);
 
-    Boolean updateNextHearingDate(Hearings hearings);
+    Boolean updateNextHearingDetails(Hearings hearings);
 }

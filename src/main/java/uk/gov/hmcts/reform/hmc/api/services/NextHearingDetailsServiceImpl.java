@@ -29,11 +29,17 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
     @Autowired PrlUpdateService prlUpdateService;
 
+    /**
+     * This method will update the Prl with next hearing details.
+     *
+     * @param hearings data to update the next hearing details .
+     * @return isNextHearingDetailsUpdated, Boolean - prlNextHearingDetails update.
+     */
     @Override
-    public Boolean updateNextHearingDate(Hearings hearings) {
+    public Boolean updateNextHearingDetails(Hearings hearings) {
         log.info("inside  updateNextHearingDateInCcd .... ");
         NextHearingDetails nextHearingDetails = getNextHearingDate(hearings);
-        Boolean isNextHearingDateUpdated = false;
+        Boolean isNextHearingDetailsUpdated = false;
         if (null != nextHearingDetails) {
             log.info(
                     "Next Hearing Date Details - ID {} and Date {} ",
@@ -44,15 +50,20 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                             .nextHearingDetails(nextHearingDetails)
                             .caseRef(hearings.getCaseRef())
                             .build();
-            isNextHearingDateUpdated =
+            isNextHearingDetailsUpdated =
                     prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDateDetailsDTO);
         }
-        return isNextHearingDateUpdated;
+        return isNextHearingDetailsUpdated;
     }
 
+    /**
+     * This method will find the final Case Ctate based on the existing hearingStatuses.
+     *
+     * @param hearings data is used to get the hmcStatus of all the hearings .
+     * @return caseState, State - finalCaseState derived based on the given hearings.
+     */
     @Override
     public State fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
-        log.info("test state .... {}", DECISION_OUTCOME);
         Boolean isAllCompleted =
                 hearings.getCaseHearings().stream()
                                 .filter(
@@ -78,6 +89,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         }
     }
 
+    /**
+     * This method will find out the hearings which are in the future for a particular caseRefNo.
+     *
+     * @param hearings data is used to get the all the hearings which are in the future.
+     * @return Boolean, Boolean - return boolean value, based on the future hearing's existence .
+     */
     private Boolean anyFutureHearings(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
             Optional<LocalDateTime> minDateOfHearingDaySche =
@@ -93,6 +110,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         return false;
     }
 
+    /**
+     * This method will find one next hearing date out of all the hearings given.
+     *
+     * @param hearings data is used to find the next hearing date.
+     * @return nextHearingDetails, NextHearingDetails - to update prlNextHearingDetails.
+     */
     public NextHearingDetails getNextHearingDate(Hearings hearings) {
 
         List<CaseHearing> listedHearings =
@@ -101,7 +124,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                         .collect(Collectors.toList());
 
         LocalDateTime tempNextDateListed = null;
-        NextHearingDetails haringDetails = new NextHearingDetails();
+        NextHearingDetails nextHearingDetails = new NextHearingDetails();
 
         for (CaseHearing listHearing : listedHearings) {
             Optional<LocalDateTime> minDateOfHearingDaySche =
@@ -113,15 +136,15 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             if (minDateOfHearingDaySche.isPresent()) {
                 if (tempNextDateListed == null) {
                     tempNextDateListed = minDateOfHearingDaySche.get();
-                    haringDetails.setHearingId(listHearing.getHearingID());
-                    haringDetails.setNextHearingDate(tempNextDateListed);
+                    nextHearingDetails.setHearingId(listHearing.getHearingID());
+                    nextHearingDetails.setNextHearingDate(tempNextDateListed);
                 } else if (tempNextDateListed.isAfter(minDateOfHearingDaySche.get())) {
                     tempNextDateListed = minDateOfHearingDaySche.get();
-                    haringDetails.setHearingId(listHearing.getHearingID());
-                    haringDetails.setNextHearingDate(tempNextDateListed);
+                    nextHearingDetails.setHearingId(listHearing.getHearingID());
+                    nextHearingDetails.setNextHearingDate(tempNextDateListed);
                 }
             }
         }
-        return haringDetails.getNextHearingDate() != null ? haringDetails : null;
+        return nextHearingDetails.getNextHearingDate() != null ? nextHearingDetails : null;
     }
 }

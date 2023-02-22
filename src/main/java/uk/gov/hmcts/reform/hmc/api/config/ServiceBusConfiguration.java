@@ -152,13 +152,13 @@ public class ServiceBusConfiguration {
                         Hearings hearings =
                                 hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
 
+                        State caseState = null;
                         if (hearings != null) {
-                            nextHearingDetailsService.updateNextHearingDate(hearings);
+                            nextHearingDetailsService.updateNextHearingDetails(hearings);
+                            caseState =
+                                    nextHearingDetailsService.fetchStateForUpdate(
+                                            hearings, hearingDto.getHearingUpdate().getHmcStatus());
                         }
-
-                        State caseState =
-                                nextHearingDetailsService.fetchStateForUpdate(
-                                        hearings, hearingDto.getHearingUpdate().getHmcStatus());
 
                         Boolean isPrlSuccess =
                                 prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);

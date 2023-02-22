@@ -12,10 +12,6 @@ public final class Constants {
 
     public static final String ADJOURNED = "ADJOURNED";
 
-    public static final String PREPARE_FOR_HEARING_CONDUCT_HEARING = "Prepare for hearing";
-
-    public static final String DECISION_OUTCOME = "Hearing outcome";
-
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";

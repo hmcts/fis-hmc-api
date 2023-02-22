@@ -100,7 +100,7 @@ class NextHearingDetailsServiceTest {
 
         when(prlUpdateService.updatePrlServiceWithNextHearingDate(any())).thenReturn(true);
 
-        Boolean isUpdated = nextHearingDetailsService.updateNextHearingDate(hearings);
+        Boolean isUpdated = nextHearingDetailsService.updateNextHearingDetails(hearings);
         Assertions.assertEquals(Boolean.TRUE, isUpdated);
     }
 

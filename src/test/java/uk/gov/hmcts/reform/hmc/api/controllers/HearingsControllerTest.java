@@ -209,9 +209,9 @@ class HearingsControllerTest {
     void hearingsControllerNextHearingDateTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
 
-        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings)).thenReturn(true);
+        Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings)).thenReturn(true);
         ResponseEntity<Object> nextHearingDetailsResponse =
-                hearingsController.updateNextHearingDate("sauth", "caseRef");
+                hearingsController.updateNextHearingDetails("sauth", "caseRef");
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 
@@ -220,7 +220,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.updateNextHearingDate("", "caseRef");
+                hearingsController.updateNextHearingDetails("", "caseRef");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
@@ -231,11 +231,11 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings))
+        Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDate("", "");
+                hearingsController.updateNextHearingDetails("", "");
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingUpdateResp.getStatusCode());
     }
@@ -245,11 +245,11 @@ class HearingsControllerTest {
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings))
+        Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDate("", "caseRef");
+                hearingsController.updateNextHearingDetails("", "caseRef");
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
