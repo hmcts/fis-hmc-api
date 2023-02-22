@@ -1,5 +1,11 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,13 +33,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 import uk.gov.hmcts.reform.hmc.api.restclient.HmcHearingApi;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
