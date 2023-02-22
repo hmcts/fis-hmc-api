@@ -44,6 +44,7 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
   search-case-type-id: PRLAPPS
+  cateogry-id: HearingType
 
 ref_data_venue:
   api:

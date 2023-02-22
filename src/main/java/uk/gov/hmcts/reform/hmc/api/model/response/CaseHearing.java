@@ -1,18 +1,21 @@
 package uk.gov.hmcts.reform.hmc.api.model.response;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Getter
 @Setter
 @Builder(builderMethodName = "caseHearingWith")
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CaseHearing {
 
     private Long hearingID;
@@ -20,6 +23,8 @@ public class CaseHearing {
     private LocalDateTime hearingRequestDateTime;
 
     private String hearingType;
+
+    private String hearingTypeValue;
 
     private String hmcStatus;
 
