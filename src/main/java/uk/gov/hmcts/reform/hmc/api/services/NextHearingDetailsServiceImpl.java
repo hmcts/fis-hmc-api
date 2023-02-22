@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
@@ -25,37 +27,27 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
+    @Autowired PrlUpdateService prlUpdateService;
+
     @Override
-    public NextHearingDetails getNextHearingDate(Hearings hearings) {
-
-        List<CaseHearing> listedHearings =
-                hearings.getCaseHearings().stream()
-                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED))
-                        .collect(Collectors.toList());
-
-        LocalDateTime tempNextDateListed = null;
-        NextHearingDetails haringDetails = new NextHearingDetails();
-
-        for (CaseHearing listHearing : listedHearings) {
-            Optional<LocalDateTime> minDateOfHearingDaySche =
-                    listHearing.getHearingDaySchedule().stream()
-                            .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
-                            .map(u -> u.getHearingStartDateTime())
-                            .min(LocalDateTime::compareTo);
-
-            if (minDateOfHearingDaySche.isPresent()) {
-                if (tempNextDateListed == null) {
-                    tempNextDateListed = minDateOfHearingDaySche.get();
-                    haringDetails.setHearingId(listHearing.getHearingID());
-                    haringDetails.setNextHearingDate(tempNextDateListed);
-                } else if (tempNextDateListed.isAfter(minDateOfHearingDaySche.get())) {
-                    tempNextDateListed = minDateOfHearingDaySche.get();
-                    haringDetails.setHearingId(listHearing.getHearingID());
-                    haringDetails.setNextHearingDate(tempNextDateListed);
-                }
-            }
+    public Boolean updateNextHearingDate(Hearings hearings) {
+        log.info("inside  updateNextHearingDateInCcd .... ");
+        NextHearingDetails nextHearingDetails = getNextHearingDate(hearings);
+        Boolean isNextHearingDateUpdated = false;
+        if (null != nextHearingDetails) {
+            log.info(
+                    "Next Hearing Date Details - ID {} and Date {} ",
+                    nextHearingDetails.getHearingId(),
+                    nextHearingDetails.getNextHearingDate());
+            NextHearingDetailsDTO nextHearingDateDetailsDTO =
+                    NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                            .nextHearingDetails(nextHearingDetails)
+                            .caseRef(hearings.getCaseRef())
+                            .build();
+            isNextHearingDateUpdated =
+                    prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDateDetailsDTO);
         }
-        return haringDetails.getNextHearingDate() != null ? haringDetails : null;
+        return isNextHearingDateUpdated;
     }
 
     @Override
@@ -99,5 +91,37 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             }
         }
         return false;
+    }
+
+    public NextHearingDetails getNextHearingDate(Hearings hearings) {
+
+        List<CaseHearing> listedHearings =
+                hearings.getCaseHearings().stream()
+                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED))
+                        .collect(Collectors.toList());
+
+        LocalDateTime tempNextDateListed = null;
+        NextHearingDetails haringDetails = new NextHearingDetails();
+
+        for (CaseHearing listHearing : listedHearings) {
+            Optional<LocalDateTime> minDateOfHearingDaySche =
+                    listHearing.getHearingDaySchedule().stream()
+                            .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
+                            .map(u -> u.getHearingStartDateTime())
+                            .min(LocalDateTime::compareTo);
+
+            if (minDateOfHearingDaySche.isPresent()) {
+                if (tempNextDateListed == null) {
+                    tempNextDateListed = minDateOfHearingDaySche.get();
+                    haringDetails.setHearingId(listHearing.getHearingID());
+                    haringDetails.setNextHearingDate(tempNextDateListed);
+                } else if (tempNextDateListed.isAfter(minDateOfHearingDaySche.get())) {
+                    tempNextDateListed = minDateOfHearingDaySche.get();
+                    haringDetails.setHearingId(listHearing.getHearingID());
+                    haringDetails.setNextHearingDate(tempNextDateListed);
+                }
+            }
+        }
+        return haringDetails.getNextHearingDate() != null ? haringDetails : null;
     }
 }

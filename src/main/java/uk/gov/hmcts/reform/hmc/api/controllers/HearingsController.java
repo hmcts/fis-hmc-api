@@ -169,7 +169,7 @@ public class HearingsController {
      * @return nextHearingsDetailsResponse, near future hearingDate and hearingId for a particular
      *     caseRefNumber.
      */
-    @GetMapping(path = "/nextHearingDate")
+    @GetMapping(path = "/updateNextHearingDate")
     @ApiOperation("get next hearing details for a case reference number")
     @ApiResponses(
             value = {
@@ -178,15 +178,14 @@ public class HearingsController {
                         message = "get next hearing details by caseRefNo successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<Object> getNextHearingDate(
-            @RequestHeader(AUTHORIZATION) String authorization,
+    public ResponseEntity<Object> updateNextHearingDate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 Hearings hearings = hearingsService.getHearingsByCaseRefNo(caseReference);
-                return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
+                return ResponseEntity.ok(nextHearingDetailsService.updateNextHearingDate(hearings));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

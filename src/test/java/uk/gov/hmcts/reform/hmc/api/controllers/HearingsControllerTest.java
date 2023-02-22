@@ -27,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -209,18 +208,11 @@ class HearingsControllerTest {
     @Test
     void hearingsControllerNextHearingDateTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
-        NextHearingDetails nextHearingDetails =
-                NextHearingDetails.builder()
-                        .nextHearingDate(LocalDateTime.now())
-                        .hearingId(34434L)
-                        .build();
 
-        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
-                .thenReturn(nextHearingDetails);
+        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings)).thenReturn(true);
         ResponseEntity<Object> nextHearingDetailsResponse =
-                hearingsController.getNextHearingDate("Auth", "sauth", "caseRef");
-        Assertions.assertEquals(
-                34434L, ((NextHearingDetails) nextHearingDetailsResponse.getBody()).getHearingId());
+                hearingsController.updateNextHearingDate("sauth", "caseRef");
+        Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 
     @Test
@@ -228,7 +220,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDate("", "", "caseRef");
+                hearingsController.updateNextHearingDate("", "caseRef");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
@@ -239,13 +231,13 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
+        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
-        ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDate("", "", "");
+        ResponseEntity<Object> nextHearingUpdateResp =
+                hearingsController.updateNextHearingDate("", "");
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingDetails.getStatusCode());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingUpdateResp.getStatusCode());
     }
 
     @Test
@@ -253,13 +245,13 @@ class HearingsControllerTest {
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
+        Mockito.when(nextHearingDetailsService.updateNextHearingDate(hearings))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
-        ResponseEntity<Object> nextHearingDetails =
-                hearingsController.getNextHearingDate("", "", "caseRef");
+        ResponseEntity<Object> nextHearingUpdateResp =
+                hearingsController.updateNextHearingDate("", "caseRef");
 
         Assertions.assertEquals(
-                HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetails.getStatusCode());
+                HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
     }
 }
