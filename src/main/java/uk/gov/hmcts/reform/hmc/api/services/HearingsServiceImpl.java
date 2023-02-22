@@ -3,7 +3,10 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +25,13 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
+import uk.gov.hmcts.reform.hmc.api.model.response.Category;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+import uk.gov.hmcts.reform.hmc.api.restclient.HmcHearingApi;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +41,9 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
+    @Value("${hearing.cateogry-id}")
+    private String categoryId;
+
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -43,6 +52,8 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Autowired RefDataJudicialService refDataJudicialService;
 
+    @Autowired HmcHearingApi hearingApi;
+
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
@@ -50,10 +61,13 @@ public class HearingsServiceImpl implements HearingsService {
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
      * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
+     * @param authorization authorization header.
+     * @param serviceAuthorization serviceAuthorization header
      * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      */
     @Override
-    public Hearings getHearingsByCaseRefNo(String caseReference) {
+    public Hearings getHearingsByCaseRefNo(
+            String caseReference, String authorization, String serviceAuthorization) {
 
         UriComponentsBuilder builder =
                 UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
@@ -75,7 +89,11 @@ public class HearingsServiceImpl implements HearingsService {
                             .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
-            integrateVenueDetails(caseHearingsResponse);
+            final Map<String, String> refDataCategoryValueMap =
+                    getRefDataCategoryValueMap(
+                            authorization, serviceAuthorization, caseHearingsResponse);
+
+            integrateVenueDetails(caseHearingsResponse, refDataCategoryValueMap);
 
             return caseHearingsResponse;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
@@ -88,6 +106,24 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Exception exception during getHearingsByCaseRefNo ", exception);
         }
         return caseHearingsResponse;
+    }
+
+    private Map<String, String> getRefDataCategoryValueMap(
+            String authorization, String serviceAuthorization, Hearings caseHearingsResponse) {
+
+        // Call hearing api to get hmc status value
+        if (caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null) {
+            final Categories categoriesByCategoryId =
+                    hearingApi.retrieveListOfValuesByCategoryId(
+                            authorization,
+                            serviceAuthorization,
+                            categoryId,
+                            caseHearingsResponse.getHmctsServiceCode());
+
+            return categoriesByCategoryId.getListOfCategory().stream()
+                    .collect(Collectors.toMap(Category::getKey, Category::getValueEn));
+        }
+        return Collections.emptyMap();
     }
 
     /**
@@ -104,10 +140,17 @@ public class HearingsServiceImpl implements HearingsService {
         return inputHeaders;
     }
 
-    private void integrateVenueDetails(Hearings caseHearingsResponse) {
+    private void integrateVenueDetails(
+            Hearings caseHearingsResponse, Map<String, String> refDataCategoryValueMap) {
+
         if (caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null) {
             List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
             for (CaseHearing caseHearing : caseHearings) {
+
+                // set hearing type value
+                caseHearing.setHearingTypeValue(
+                        refDataCategoryValueMap.get(caseHearing.getHearingType()));
+
                 if (caseHearing.getHmcStatus().equals(LISTED)
                         && caseHearing.getHearingDaySchedule() != null) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
