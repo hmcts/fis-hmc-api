@@ -77,7 +77,7 @@ idam:
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
-  baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
+  baseUrl: ${PRL_URL:https://prl-cos-pr-1038.service.core-compute-preview.internal/}
 
 core_case_data:
   api:
