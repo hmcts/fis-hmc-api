@@ -75,7 +75,8 @@ idam:
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   system-update:
     username: prl_hearing_manager@justice.gov.uk
-    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummyy}
+
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
