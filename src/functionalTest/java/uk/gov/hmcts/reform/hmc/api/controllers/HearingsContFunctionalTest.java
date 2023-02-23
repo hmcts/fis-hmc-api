@@ -30,6 +30,8 @@ import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
 public class HearingsContFunctionalTest {
 
     public static final String SERV_AUTH_HEADER = "ServiceAuthorization";
+
+    public static final String AUTHORIZATION = "Authorization";
     public static final String JSON_CONTENT_TYPE = "application/json";
     public static final String TEST_LOCAL_HOST = "http://localhost:4550";
     public static final String FIS_TEST_URL = "CASE_API_TEST_URL";
@@ -58,7 +60,7 @@ public class HearingsContFunctionalTest {
     public void givenHearingValuesWhenGetHearingsDataThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
-                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
+                request.header(AUTHORIZATION, idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
@@ -73,7 +75,7 @@ public class HearingsContFunctionalTest {
     public void givenHearingValuesWhenGetHearingsLinkCasesThen200Response() throws Exception {
         String hearingValuesRequest = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         Response response =
-                request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
+                request.header(AUTHORIZATION, idamTokenGenerator.generateIdamTokenForRefData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .when()
                         .contentType(JSON_CONTENT_TYPE)
@@ -88,7 +90,7 @@ public class HearingsContFunctionalTest {
     public void givenCaseRefNoWhenGetHearingsThen200Response() throws Exception {
         Response response =
                 request.header(
-                                "Authorization",
+                                AUTHORIZATION,
                                 idamTokenGenerator.generateIdamTokenForHearingCftData())
                         .header(SERV_AUTH_HEADER, serviceAuthenticationGenerator.generate())
                         .header("caseReference", "1667867755895004")
