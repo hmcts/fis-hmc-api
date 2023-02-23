@@ -75,7 +75,7 @@ idam:
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   system-update:
     username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
-    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:Nagoya0102}
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
   baseUrl: ${PRL_URL:https://prl-cos-pr-1038.service.core-compute-preview.internal/}
