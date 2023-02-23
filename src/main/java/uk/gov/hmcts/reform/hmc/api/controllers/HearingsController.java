@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 
@@ -59,8 +60,8 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsData(
-            @RequestHeader("Authorization") String authorisation,
-            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(AUTHORIZATION) String authorisation,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
@@ -96,7 +97,7 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader(AUTHORIZATION) String authorisation,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
@@ -133,8 +134,8 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsLinkData(
-            @RequestHeader("Authorization") String authorisation,
-            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(AUTHORIZATION) String authorisation,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
