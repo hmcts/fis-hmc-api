@@ -152,7 +152,6 @@ public class ServiceBusConfiguration {
                                 hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
                         State caseState = null;
                         if (hearings != null) {
-                            nextHearingDetailsService.updateNextHearingDetails(hearings);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
