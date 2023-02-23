@@ -16,11 +16,11 @@ public class IdamTokenGenerator {
     @Value("${idam.refDataUserAuth.password}")
     private String refDataPassword;
 
-    @Value("${idam.hearingCftUserAuth.username}")
-    private String hearingCftUserName;
+    @Value("${idam.system-update.username}")
+    private String sysUsername;
 
-    @Value("${idam.hearingCftUserAuth.password}")
-    private String hearingCftPassword;
+    @Value("${idam.system-update.password}")
+    private String sysPassword;
 
     @Autowired IdamClient idamClient;
 
@@ -28,7 +28,7 @@ public class IdamTokenGenerator {
         return idamClient.getAccessToken(refDataUserName, refDataPassword);
     }
 
-    public String generateIdamTokenForHearingCftData() {
-        return idamClient.getAccessToken(hearingCftUserName, hearingCftPassword);
+    public String getSysUserToken() {
+        return idamClient.getAccessToken(sysUsername, sysPassword);
     }
 }

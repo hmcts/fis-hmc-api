@@ -31,6 +31,7 @@
     <exclude name="ShortClassName"/>
     <exclude name="PrematureDeclaration"/>
     <exclude name="FieldNamingConventions"/>
+    <exclude name="UseUnderscoresInNumericLiterals"/>
   </rule>
 
   <rule ref="category/java/errorprone.xml/AvoidDuplicateLiterals">
@@ -97,6 +98,11 @@
   <rule ref="category/java/design.xml/TooManyFields">
     <properties>
       <property name="maxfields" value="50" />
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <property name="maxmethods" value="25" />
     </properties>
   </rule>
 

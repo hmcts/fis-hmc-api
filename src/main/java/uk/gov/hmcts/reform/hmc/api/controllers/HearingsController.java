@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
+import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -42,6 +44,8 @@ public class HearingsController {
     @Autowired private HearingsDataService hearingsDataService;
 
     @Autowired private HearingsService hearingsService;
+
+    @Autowired private NextHearingDetailsService nextHearingDetailsService;
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
@@ -96,12 +100,12 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("Authorization") String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
-                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorisation))) {
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
@@ -149,6 +153,50 @@ public class HearingsController {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
         } catch (ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
+    /**
+     * End point to fetch the immediate or next future hearingDate for a particular caseRefNumber.
+     *
+     * @header authorization, User authorization token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
+     * @return nextHearingsDetailsResponse, near future hearingDate and hearingId for a particular
+     *     caseRefNumber.
+     */
+    @GetMapping(path = "/updateNextHearingDetails")
+    @ApiOperation("get next hearing details for a case reference number")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        code = 200,
+                        message = "get next hearing details by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> updateNextHearingDetails(
+            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
+        try {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))
+                    && Boolean.TRUE.equals(
+                            idamAuthService.authoriseService(serviceAuthorization))) {
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                Hearings hearings =
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, serviceAuthorization);
+                return ResponseEntity.ok(
+                        nextHearingDetailsService.updateNextHearingDetails(hearings));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
             return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
         } catch (FeignException feignException) {
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
