@@ -4,12 +4,15 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MANAGEMENT_LOCATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_SUB_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE_OF_APPLICATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CATEGORY_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CCD_DEMO_LINK;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.DEMO;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FALSE;
@@ -30,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -111,8 +115,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         String publicCaseNameMapper = EMPTY;
         Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            Map applicantMap = (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
-            Map respondentTableMap =
+            Map<String, String> applicantMap =
+                    (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
+            Map<String, String> respondentTableMap =
                     (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
@@ -134,10 +139,18 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         Resource resource = resourceLoader.getResource("classpath:ScreenFlow.json");
 
         try (InputStream inputStream = resource.getInputStream()) {
-            screenFlowJson = (JSONObject) parser.parse(new InputStreamReader(inputStream, "UTF-8"));
+            screenFlowJson =
+                    (JSONObject)
+                            parser.parse(
+                                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+
+        if (null != ccdBaseUrl && ccdBaseUrl.contains(DEMO)) {
+            ccdBaseUrl = CCD_DEMO_LINK;
+        }
+
         ServiceHearingValues serviceHearingValues =
                 ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID(ABA5)
@@ -145,7 +158,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(FALSE)
                         .caseCategories(getCaseCategories())
-                        .caseDeepLink(ccdBaseUrl + hearingValues.getCaseReference())
+                        .caseDeepLink(
+                                ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
                         .caseRestrictedFlag(FALSE)
                         .externalCaseReference(EMPTY)
                         .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
@@ -207,7 +221,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return caseCategoriesList;
     }
 
-    public CaseDetailResponse getCcdCaseData(CaseDetails caseDetails) throws IOException {
+    public CaseDetailResponse getCcdCaseData(CaseDetails caseDetails) {
         ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
         return objectMapper.convertValue(caseDetails, CaseDetailResponse.class);
     }
@@ -224,7 +238,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         List<CaseLinkElement<CaseLinkData>> caseLinkDataList =
                 ccdResponse.getCaseData().getCaseLinks();
 
-        List serviceLinkedCases = new ArrayList();
+        List<HearingLinkData> serviceLinkedCases = new ArrayList<>();
         if (caseLinkDataList != null) {
 
             List<String> caseReferences =
@@ -237,8 +251,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
             for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
                 CaseLinkData caseLinkData = caseLinkDataObj.getValue();
-                if (caseLinkData != null && caseLinkData.getReasonForLink() != null) {
-                    List reasonList =
+                if (caseLinkData.getReasonForLink() != null) {
+                    List<String> reasonList =
                             caseLinkData.getReasonForLink().stream()
                                     .map(e -> e.getValue().getReason())
                                     .collect(Collectors.toList());

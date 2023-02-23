@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 
 @FeignClient(
@@ -24,5 +25,6 @@ public interface HmcHearingApi {
     Categories retrieveListOfValuesByCategoryId(
             @RequestHeader(AUTHORIZATION) String authorisation,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @PathVariable("categoryId") String categoryId);
+            @PathVariable("categoryId") String categoryId,
+            @RequestParam(name = "serviceId") String serviceId);
 }

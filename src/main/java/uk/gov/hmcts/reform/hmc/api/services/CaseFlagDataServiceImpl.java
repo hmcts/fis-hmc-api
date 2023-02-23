@@ -281,7 +281,7 @@ public class CaseFlagDataServiceImpl {
 
         Boolean isListingCommentNeeded =
                 flagsList.stream()
-                                .map(urEntity -> urEntity.getFlagId())
+                                .map(PartyFlagsModel::getFlagId)
                                 .filter(
                                         eachFlag ->
                                                 eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
@@ -386,15 +386,13 @@ public class CaseFlagDataServiceImpl {
                 OrganisationDetailsModel.organisationDetailsWith()
                         .name(partyDetails.getSolicitorOrg().getOrganisationName())
                         .cftOrganisationID(partyDetails.getSolicitorOrg().getOrganisationID())
+                        .organisationType(PartyType.ORG.toString())
                         .build();
 
         partyDetailsModelForOrg =
                 PartyDetailsModel.partyDetailsWith()
                         .partyID(partyId)
-                        .partyName(
-                                partyDetails.getFirstName()
-                                        + EMPTY_STRING
-                                        + partyDetails.getLastName())
+                        .partyName(partyDetails.getSolicitorOrg().getOrganisationName())
                         .partyType(PartyType.ORG)
                         .partyRole(ORGANISATION)
                         .organisationDetails(organisationDetailsModel)

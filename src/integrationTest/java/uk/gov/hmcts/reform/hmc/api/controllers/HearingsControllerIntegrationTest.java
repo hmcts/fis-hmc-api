@@ -156,7 +156,10 @@ public class HearingsControllerIntegrationTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
-        Mockito.when(hearingsService.getHearingsByCaseRefNo(anyString())).thenReturn(caseHearings);
+        Mockito.when(
+                        hearingsService.getHearingsByCaseRefNo(
+                                anyString(), TEST_SERVICE_AUTH_TOKEN, TEST_SERVICE_AUTH_TOKEN))
+                .thenReturn(caseHearings);
 
         MvcResult res =
                 mockMvc.perform(
