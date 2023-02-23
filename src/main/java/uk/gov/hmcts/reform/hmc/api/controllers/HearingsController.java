@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
@@ -85,7 +84,6 @@ public class HearingsController {
     /**
      * End point to fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
      * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
@@ -98,11 +96,12 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader("Authorization") String authorisation,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
-            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorisation))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
