@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
@@ -64,6 +65,10 @@ public class ServiceBusConfiguration {
     @Autowired NextHearingDetailsService nextHearingDetailsService;
 
     @Autowired HearingsService hearingsService;
+
+    @Autowired IdamTokenGenerator idamTokenGenerator;
+
+    @Autowired AuthTokenGenerator authTokenGenerator;
 
     private static Logger log = LoggerFactory.getLogger(ServiceBusConfiguration.class);
 
@@ -148,8 +153,12 @@ public class ServiceBusConfiguration {
                                     "Hearing with Full CourtDetails  "
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
+                        String userToken = idamTokenGenerator.getSysUserToken();
+                        String serviceToken = authTokenGenerator.generate();
+
                         Hearings hearings =
-                                hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
+                                hearingsService.getHearingsByCaseRefNo(
+                                        hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
                             caseState =

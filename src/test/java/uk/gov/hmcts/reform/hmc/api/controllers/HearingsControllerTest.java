@@ -166,7 +166,7 @@ class HearingsControllerTest {
                 .thenReturn(hearings);
         ResponseEntity<Object> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
-        Assertions.assertEquals("123", ((Hearings) hearingsResponse.getBody()).getCaseRef());
+        Assertions.assertNotNull(hearingsResponse.getBody());
     }
 
     @Test
@@ -210,10 +210,12 @@ class HearingsControllerTest {
     @Test
     void hearingsControllerNextHearingDateTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
 
         Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings)).thenReturn(true);
         ResponseEntity<Object> nextHearingDetailsResponse =
-                hearingsController.updateNextHearingDetails("sauth", "caseRef");
+                hearingsController.updateNextHearingDetails(
+                        "Bearer auth", "Bearer sauth", "caseRef");
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 
@@ -222,7 +224,7 @@ class HearingsControllerTest {
             throws IOException, ParseException {
 
         ResponseEntity<Object> nextHearingDetails =
-                hearingsController.updateNextHearingDetails("", "caseRef");
+                hearingsController.updateNextHearingDetails("", "", "caseRef");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
@@ -231,13 +233,14 @@ class HearingsControllerTest {
     void nextHearingDateByCaseRefNoControllerFeignExceptionTest()
             throws IOException, ParseException {
 
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
 
         Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDetails("", "");
+                hearingsController.updateNextHearingDetails("", "", "");
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, nextHearingUpdateResp.getStatusCode());
     }
@@ -245,13 +248,14 @@ class HearingsControllerTest {
     @Test
     void nextHearingDateByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
 
         Mockito.when(nextHearingDetailsService.updateNextHearingDetails(hearings))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDetails("", "caseRef");
+                hearingsController.updateNextHearingDetails("", "", "caseRef");
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());

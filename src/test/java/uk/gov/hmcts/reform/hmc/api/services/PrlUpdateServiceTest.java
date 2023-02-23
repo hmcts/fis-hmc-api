@@ -163,12 +163,10 @@ class PrlUpdateServiceTest {
                         .caseRef("test")
                         .build();
 
-        String caseRefNo = "test";
-
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), any()))
                 .thenReturn(ResponseEntity.ok("OK"));
-        when(hearingsService.getHearingsByCaseRefNo(caseRefNo)).thenReturn(caseHearings);
+        when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(caseHearings);
 
         Boolean isOK = prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDetailsDto);
         assertEquals(true, isOK);
@@ -213,13 +211,12 @@ class PrlUpdateServiceTest {
                         .caseHearings(caseHearingList)
                         .build();
 
-        String caseRefNo = "test";
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
 
         when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), any()))
                 .thenReturn(ResponseEntity.ok("OK"));
-        when(hearingsService.getHearingsByCaseRefNo(caseRefNo)).thenReturn(caseHearings);
+        when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(caseHearings);
 
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()

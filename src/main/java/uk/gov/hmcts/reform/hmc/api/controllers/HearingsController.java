@@ -100,12 +100,12 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorisation,
+            @RequestHeader("Authorization") String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
-                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorisation))) {
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByCaseRefNo(
@@ -180,12 +180,17 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> updateNextHearingDetails(
+            @RequestHeader("Authorization") String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
-            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))
+                    && Boolean.TRUE.equals(
+                            idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                Hearings hearings = hearingsService.getHearingsByCaseRefNo(caseReference);
+                Hearings hearings =
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, serviceAuthorization);
                 return ResponseEntity.ok(
                         nextHearingDetailsService.updateNextHearingDetails(hearings));
             } else {
