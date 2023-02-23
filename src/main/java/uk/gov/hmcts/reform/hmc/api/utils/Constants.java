@@ -7,6 +7,12 @@ public final class Constants {
     public static final Boolean FALSE = false;
 
     public static final String LISTED = "LISTED";
+
+    public static final String COMPLETED = "COMPLETED";
+
+    public static final String ADJOURNED = "ADJOURNED";
+
+    public static final String CANCELLED = "CANCELLED";
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
