@@ -20,7 +20,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -79,13 +78,15 @@ public class HearingsServiceImpl implements HearingsService {
 
             return caseHearingsResponse;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.info(
-                    "HttpClientErrorException exception during getHearingsByCaseRefNo ",
-                    exception.getStatusCode());
-            throw new AuthorizationException(
-                    "Hearing Client Error exception {}", exception.getStatusCode(), exception);
+            log.error(
+                    "HttpClientErrorException {} during getHearingsByCaseRefNo for case {}",
+                    exception,
+                    caseReference);
         } catch (Exception exception) {
-            log.info("Exception exception during getHearingsByCaseRefNo ", exception);
+            log.error(
+                    "Exception {} during getHearingsByCaseRefNo for case {}",
+                    exception,
+                    caseReference);
         }
         return caseHearingsResponse;
     }

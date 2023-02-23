@@ -148,25 +148,22 @@ public class ServiceBusConfiguration {
                                     "Hearing with Full CourtDetails  "
                                             + hearingDto.getHearingUpdate().getHearingVenueName());
                         }
-
                         Hearings hearings =
                                 hearingsService.getHearingsByCaseRefNo(hearingDto.getCaseRef());
-
                         State caseState = null;
                         if (hearings != null) {
                             nextHearingDetailsService.updateNextHearingDetails(hearings);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
+                            Boolean isPrlSuccess =
+                                    prlUpdateService.updatePrlServiceWithHearing(
+                                            hearingDto, caseState);
+                            if (isPrlSuccess) {
+                                return receiveClient.completeAsync(message.getLockToken());
+                            }
                         }
-
-                        Boolean isPrlSuccess =
-                                prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
-                        if (isPrlSuccess) {
-                            return receiveClient.completeAsync(message.getLockToken());
-                        } else {
-                            return receiveClient.abandonAsync(message.getLockToken());
-                        }
+                        return receiveClient.abandonAsync(message.getLockToken());
                     }
 
                     @Override

@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -23,7 +22,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -106,9 +104,7 @@ class HearingCftServiceTest {
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_GATEWAY));
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-
-        assertThrows(
-                AuthorizationException.class, () -> hearingsService.getHearingsByCaseRefNo("123"));
+        Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123"));
     }
 
     @Test
