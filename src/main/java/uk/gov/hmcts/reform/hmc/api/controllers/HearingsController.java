@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 
@@ -50,7 +51,7 @@ public class HearingsController {
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
      *
-     * @header authorisation, User authorisation token.
+     * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch hearingsData.
      * @return hearingsData, response data for the input hearingValues.
@@ -63,8 +64,8 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsData(
-            @RequestHeader("Authorization") String authorisation,
-            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
@@ -72,7 +73,7 @@ public class HearingsController {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsDataService.getCaseData(
-                                hearingValues, authorisation, serviceAuthorization));
+                                hearingValues, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -100,7 +101,7 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {
@@ -125,7 +126,7 @@ public class HearingsController {
     /**
      * End point to fetch the Hearings Link Data info based on the hearing request Values passed.
      *
-     * @header authorisation, User authorisation token.
+     * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch
      *     hearingsLinkData.
@@ -139,8 +140,8 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getHearingsLinkData(
-            @RequestHeader("Authorization") String authorisation,
-            @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
@@ -148,7 +149,7 @@ public class HearingsController {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
                         hearingsDataService.getHearingLinkData(
-                                hearingValues, authorisation, serviceAuthorization));
+                                hearingValues, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -180,7 +181,7 @@ public class HearingsController {
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> updateNextHearingDetails(
-            @RequestHeader("Authorization") String authorization,
+            @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
         try {

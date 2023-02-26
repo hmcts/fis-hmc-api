@@ -109,6 +109,8 @@ public final class Constants {
 
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
+    public static final String AUTHORIZATION = "Authorization";
+
     public static final String CCD_DEMO_LINK =
             "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/";
     public static final String DEMO = "demo";
