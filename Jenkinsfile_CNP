@@ -27,6 +27,7 @@ def secrets = [
     secret('fis-hmc-api-s2s-secret', 'OIDC_S2S_SECRET'),
     secret('idam-hmc-fis-hearing-service-client-secret', 'HMC_FIS_HEARING_SERVICE_CLIENT_SECRET'),
     secret('fis-hmc-idam-user-name', 'FIS_HMC_IDAM__USER_NAME'),
+    secret('prl-hearing-manager', 'PRL_IDAM_USER_NAME'),
     secret('idam-hmc-component-user-password', 'IDAM_HMC_COMPONENT_USER_PASSWORD'),
     secret('fis-hmc-idam-client-secret', 'FIS_HMC_IDAM_CLIENT_SECRET')
   ]
