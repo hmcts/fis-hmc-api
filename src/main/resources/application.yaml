@@ -74,10 +74,10 @@ idam:
     username: ${FIS_HMC_IDAM__USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   system-update:
-    username: prl_hearing_manager@justice.gov.uk
+    username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   hearingCftUserAuth:
-    username: prl_hearing_manager@justice.gov.uk
+    username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
