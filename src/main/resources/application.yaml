@@ -77,7 +77,7 @@ idam:
     username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   hearingCftUserAuth:
-    username: ${PRL_IDAM_USER_NAME:dummy}
+    username: prl_hearing_manager@justice.gov.uk
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
