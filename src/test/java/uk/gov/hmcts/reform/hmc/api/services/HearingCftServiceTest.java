@@ -109,13 +109,13 @@ class HearingCftServiceTest {
 
         final Categories categories = Categories.builder().listOfCategory(listOfCategory).build();
 
-        when(hearingApi.retrieveListOfValuesByCategoryId("Auth", "sauth", "HearingTyoe", "ABA5"))
+        when(hearingApi.retrieveListOfValuesByCategoryId("Auth", "MOCK_S2S_TOKEN", "HearingTyoe", "ABA5"))
                 .thenReturn(categories);
 
         ReflectionTestUtils.setField(hearingsService, "categoryId", "HearingTyoe");
 
         Hearings hearings =
-                hearingsService.getHearingsByCaseRefNo("1671620456009274", "Auth", "sauth");
+                hearingsService.getHearingsByCaseRefNo("1671620456009274", "Auth", "MOCK_S2S_TOKEN");
         Assertions.assertEquals("ABA5", hearings.getHmctsServiceCode());
     }
 
