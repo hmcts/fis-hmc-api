@@ -91,7 +91,7 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenReturn(response);
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.getSysUserToken()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
         when(refDataJudicialService.getJudgeDetails("4925644")).thenReturn(judgeDetail);
@@ -128,7 +128,7 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_GATEWAY));
 
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.getSysUserToken()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
         Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123", "", ""));
@@ -143,7 +143,7 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new NullPointerException("Null Point Exception"));
 
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(idamTokenGenerator.getSysUserToken()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
         Assertions.assertEquals(
