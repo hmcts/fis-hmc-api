@@ -16,6 +16,8 @@ java:
           alias: FIS_HMC_IDAM_CLIENT_SECRET
         - name: fis-hmc-idam-user-name
           alias: FIS_HMC_IDAM__USER_NAME
+        - name: prl-hearing-manager
+          alias: PRL_IDAM_USER_NAME
         - name: idam-hmc-component-user-password
           alias: IDAM_HMC_COMPONENT_USER_PASSWORD
         - name: AppInsightsInstrumentationKey
