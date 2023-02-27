@@ -73,10 +73,10 @@ public class HearingsServiceImpl implements HearingsService {
         Hearings caseHearingsResponse = null;
 
         try {
+            final String s2sToken = authTokenGenerator.generate();
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(
-                            idamTokenGenerator.generateIdamTokenForHearingCftData(),
-                            authTokenGenerator.generate());
+                            idamTokenGenerator.generateIdamTokenForHearingCftData(), s2sToken);
             HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
             caseHearingsResponse =
                     restTemplate
@@ -89,8 +89,7 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
             final Map<String, String> refDataCategoryValueMap =
-                    getRefDataCategoryValueMap(
-                            authorization, serviceAuthorization, caseHearingsResponse);
+                    getRefDataCategoryValueMap(authorization, s2sToken, caseHearingsResponse);
 
             integrateVenueDetails(caseHearingsResponse, refDataCategoryValueMap);
 
