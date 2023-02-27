@@ -32,21 +32,21 @@ public class IdamTokenGenerator {
 
     public String generateIdamTokenForRefData() {
 
-        log.info("hmc 1111 {}",refDataUserName);
-        log.info("hmc 2222 {}",refDataPassword);
+        log.info("hmc 1111 {}", refDataUserName);
+        log.info("hmc 2222 {}", refDataPassword);
 
         return idamClient.getAccessToken(refDataUserName, refDataPassword);
     }
 
     public String getSysUserToken() {
-        log.info("hmc 3333 {}",sysUsername);
-        log.info("hmc 4444 {}",sysPassword);
+        log.info("hmc 3333 {}", sysUsername);
+        log.info("hmc 4444 {}", sysPassword);
         return idamClient.getAccessToken(sysUsername, sysPassword);
     }
 
     public String generateIdamTokenForHearingCftData() {
-        log.info("hmc 5555 {}",hearingCftUserName);
-        log.info("hmc 6666 {}",hearingCftPassword);
+        log.info("hmc 5555 {}", hearingCftUserName);
+        log.info("hmc 6666 {}", hearingCftPassword);
         return idamClient.getAccessToken(hearingCftUserName, hearingCftPassword);
     }
 }
