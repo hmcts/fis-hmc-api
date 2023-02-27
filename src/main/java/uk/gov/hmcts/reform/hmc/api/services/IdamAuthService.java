@@ -41,7 +41,6 @@ public class IdamAuthService {
     }
 
     public Boolean authoriseUser(String authorisation) {
-        log.info("111111{}", authorisation);
         try {
             userInfo = idamClient.getUserInfo(authorisation);
             if (null != userInfo) {
