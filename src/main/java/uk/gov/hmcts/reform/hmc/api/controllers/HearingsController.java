@@ -51,10 +51,10 @@ public class HearingsController {
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
      *
+     * @return hearingsData, response data for the input hearingValues.
      * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch hearingsData.
-     * @return hearingsData, response data for the input hearingValues.
      */
     @PostMapping(path = "/serviceHearingValues")
     @ApiOperation("get hearings Values")
@@ -89,9 +89,9 @@ public class HearingsController {
     /**
      * End point to fetch all the hearings which belongs to a particular caseRefNumber.
      *
+     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
-     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      */
     @GetMapping(path = "/hearings")
     @ApiOperation("get hearings by case reference number")
@@ -126,11 +126,11 @@ public class HearingsController {
     /**
      * End point to fetch the Hearings Link Data info based on the hearing request Values passed.
      *
+     * @return hearingsLinkData, response data for the hearing request Values.
      * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch
      *     hearingsLinkData.
-     * @return hearingsLinkData, response data for the hearing request Values.
      */
     @PostMapping(path = "/serviceLinkedCases")
     @ApiOperation("get service hearings Linked Cases")
@@ -165,11 +165,11 @@ public class HearingsController {
     /**
      * End point to fetch the immediate or next future hearingDate for a particular caseRefNumber.
      *
+     * @return nextHearingsDetailsResponse, near future hearingDate and hearingId for a particular
+     *     caseRefNumber.
      * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
-     * @return nextHearingsDetailsResponse, near future hearingDate and hearingId for a particular
-     *     caseRefNumber.
      */
     @GetMapping(path = "/updateNextHearingDetails")
     @ApiOperation("get next hearing details for a case reference number")
@@ -204,5 +204,24 @@ public class HearingsController {
         } catch (Exception e) {
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
+    }
+
+    @GetMapping(path = "/getNextHearingDate")
+    @ApiOperation("get next hearing details for a case reference number")
+    @ApiResponses(
+            value = {
+                @ApiResponse(
+                        code = 200,
+                        message = "get next hearing details by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> getNextHearingDate(
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
+        Hearings hearings =
+                hearingsService.getHearingsByCaseRefNo(
+                        caseReference, authorization, serviceAuthorization);
+        return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
     }
 }

@@ -120,6 +120,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      * @param hearings data is used to find the next hearing date.
      * @return nextHearingDetails, NextHearingDetails - to update prlNextHearingDetails.
      */
+    @Override
     public NextHearingDetails getNextHearingDate(Hearings hearings) {
 
         List<CaseHearing> listedHearings =
