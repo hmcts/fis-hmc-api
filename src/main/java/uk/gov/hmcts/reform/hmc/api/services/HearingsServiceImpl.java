@@ -74,7 +74,9 @@ public class HearingsServiceImpl implements HearingsService {
 
         try {
             MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(authorization, authTokenGenerator.generate());
+                    getHttpHeaders(
+                            idamTokenGenerator.generateIdamTokenForHearingCftData(),
+                            authTokenGenerator.generate());
             HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
             caseHearingsResponse =
                     restTemplate

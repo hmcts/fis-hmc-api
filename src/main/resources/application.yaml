@@ -71,10 +71,13 @@ idam:
     token:
       context-path: /oauth2/token
   refDataUserAuth:
-    username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
+    username: ${FIS_HMC_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   system-update:
-    username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
+    username: ${PRL_IDAM_USER_NAME:dummy}
+    password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+  hearingCftUserAuth:
+    username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
