@@ -21,6 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
 import uk.gov.hmcts.reform.hmc.api.model.response.Category;
@@ -43,6 +44,8 @@ class HearingCftServiceTest {
     @Mock private RefDataJudicialServiceImpl refDataJudicialService;
 
     @Mock HmcHearingApi hearingApi;
+
+    @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Test
     void shouldReturnCtfHearingsTest() {
@@ -85,6 +88,7 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenReturn(response);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
         when(refDataJudicialService.getJudgeDetails("4925644")).thenReturn(judgeDetail);
 
@@ -120,6 +124,8 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new HttpClientErrorException(HttpStatus.BAD_GATEWAY));
 
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
         Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123", "", ""));
     }
 
@@ -131,6 +137,9 @@ class HearingCftServiceTest {
                         ArgumentMatchers.<HttpEntity<?>>any(),
                         ArgumentMatchers.<Class<Hearings>>any()))
                 .thenThrow(new NullPointerException("Null Point Exception"));
+
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
         Assertions.assertEquals(
                 null, hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth"));
     }
