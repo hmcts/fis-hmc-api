@@ -70,7 +70,7 @@ idam:
     token:
       context-path: /oauth2/token
   refDataUserAuth:
-    username: ${FIS_HMC_IDAM_USER_NAME:dummy}
+    username: ${FIS_HMC_IDAM__USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   hearingCftUserAuth:
     username: ${PRL_IDAM_USER_NAME:dummy}
