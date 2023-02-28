@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
@@ -46,6 +47,8 @@ class HearingsControllerTest {
     @InjectMocks private HearingsController hearingsController;
 
     @Mock private IdamAuthService idamAuthService;
+
+    @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Mock private HearingsDataService hearingsDataService;
 
@@ -263,6 +266,8 @@ class HearingsControllerTest {
 
     @Test
     void getNextHearingDateTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()
@@ -271,7 +276,7 @@ class HearingsControllerTest {
                         .build();
         Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
                 .thenReturn(nextHearingDetails);
-
+        Mockito.when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         ResponseEntity<Object> nextHearingDetailsResponse =
                 hearingsController.getNextHearingDate("Bearer auth", "Bearer sauth", "caseRef");
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());

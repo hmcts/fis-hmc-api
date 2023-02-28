@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
@@ -47,6 +48,8 @@ public class HearingsController {
     @Autowired private HearingsService hearingsService;
 
     @Autowired private NextHearingDetailsService nextHearingDetailsService;
+
+    @Autowired private AuthTokenGenerator authTokenGenerator;
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
@@ -220,9 +223,24 @@ public class HearingsController {
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
-        Hearings hearings =
-                hearingsService.getHearingsByCaseRefNo(
-                        caseReference, authorization, serviceAuthorization);
-        return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
+        try {
+
+            if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))
+                    && Boolean.TRUE.equals(
+                            idamAuthService.authoriseService(serviceAuthorization))) {
+                Hearings hearings =
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, authTokenGenerator.generate());
+                return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
     }
 }
