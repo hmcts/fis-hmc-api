@@ -8,5 +8,6 @@ public interface PrlUpdateService {
 
     Boolean updatePrlServiceWithHearing(HearingDTO hearingDto, State caseState);
 
-    Boolean updatePrlServiceWithNextHearingDate(NextHearingDetailsDTO nextHearingDetailsDto);
+    Boolean updatePrlServiceWithNextHearingDate(
+            String authorization, NextHearingDetailsDTO nextHearingDetailsDto);
 }

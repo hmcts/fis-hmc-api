@@ -98,9 +98,9 @@ class NextHearingDetailsServiceTest {
                         .hmctsServiceCode("BBA3")
                         .build();
 
-        when(prlUpdateService.updatePrlServiceWithNextHearingDate(any())).thenReturn(true);
+        when(prlUpdateService.updatePrlServiceWithNextHearingDate(any(), any())).thenReturn(true);
 
-        Boolean isUpdated = nextHearingDetailsService.updateNextHearingDetails(hearings);
+        Boolean isUpdated = nextHearingDetailsService.updateNextHearingDetails("auth", hearings);
         Assertions.assertEquals(Boolean.TRUE, isUpdated);
     }
 

@@ -38,7 +38,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      * @return isNextHearingDetailsUpdated, Boolean - prlNextHearingDetails update.
      */
     @Override
-    public Boolean updateNextHearingDetails(Hearings hearings) {
+    public Boolean updateNextHearingDetails(String authorization, Hearings hearings) {
         log.info("inside  updateNextHearingDateInCcd .... ");
         NextHearingDetails nextHearingDetails = getNextHearingDate(hearings);
         Boolean isNextHearingDetailsUpdated = false;
@@ -53,7 +53,8 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                             .caseRef(hearings.getCaseRef())
                             .build();
             isNextHearingDetailsUpdated =
-                    prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDateDetailsDTO);
+                    prlUpdateService.updatePrlServiceWithNextHearingDate(
+                            authorization, nextHearingDateDetailsDTO);
         }
         return isNextHearingDetailsUpdated;
     }

@@ -193,7 +193,8 @@ public class HearingsController {
                         hearingsService.getHearingsByCaseRefNo(
                                 caseReference, authorization, serviceAuthorization);
                 return ResponseEntity.ok(
-                        nextHearingDetailsService.updateNextHearingDetails(hearings));
+                        nextHearingDetailsService.updateNextHearingDetails(
+                                authorization, hearings));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

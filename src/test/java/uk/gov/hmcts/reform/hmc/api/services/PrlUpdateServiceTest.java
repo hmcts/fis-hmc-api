@@ -164,11 +164,12 @@ class PrlUpdateServiceTest {
                         .build();
 
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), any()))
+        when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), anyString(), any()))
                 .thenReturn(ResponseEntity.ok("OK"));
         when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(caseHearings);
 
-        Boolean isOK = prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDetailsDto);
+        Boolean isOK =
+                prlUpdateService.updatePrlServiceWithNextHearingDate("", nextHearingDetailsDto);
         assertEquals(true, isOK);
     }
 
@@ -213,7 +214,7 @@ class PrlUpdateServiceTest {
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
 
-        when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), any()))
+        when(prlUpdateApi.prlNextHearingDateUpdate(anyString(), anyString(), any()))
                 .thenReturn(ResponseEntity.ok("OK"));
         when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(caseHearings);
 
@@ -231,6 +232,8 @@ class PrlUpdateServiceTest {
 
         assertThrows(
                 PrlUpdateException.class,
-                () -> prlUpdateService.updatePrlServiceWithNextHearingDate(nextHearingDetailsDto));
+                () ->
+                        prlUpdateService.updatePrlServiceWithNextHearingDate(
+                                "auth", nextHearingDetailsDto));
     }
 }

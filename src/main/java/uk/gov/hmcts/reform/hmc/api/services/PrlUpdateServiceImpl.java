@@ -60,7 +60,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
     @Override
     @SuppressWarnings("unused")
     public Boolean updatePrlServiceWithNextHearingDate(
-            NextHearingDetailsDTO nextHearingDetailsDto) {
+            String authorization, NextHearingDetailsDTO nextHearingDetailsDto) {
 
         Boolean isPrlRespSuccess = false;
         log.info(
@@ -68,7 +68,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
                         + nextHearingDetailsDto.getNextHearingDetails().getHearingId());
         try {
             prlUpdateApi.prlNextHearingDateUpdate(
-                    authTokenGenerator.generate(), nextHearingDetailsDto);
+                    authorization, authTokenGenerator.generate(), nextHearingDetailsDto);
             log.info("PRL next hearing date update call completed successfully");
             isPrlRespSuccess = true;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {

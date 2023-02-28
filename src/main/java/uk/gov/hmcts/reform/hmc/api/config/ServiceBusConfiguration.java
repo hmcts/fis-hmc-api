@@ -161,7 +161,7 @@ public class ServiceBusConfiguration {
                                         hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
-                            nextHearingDetailsService.updateNextHearingDetails(hearings);
+                            nextHearingDetailsService.updateNextHearingDetails(userToken, hearings);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
