@@ -238,6 +238,7 @@ class HearingsControllerTest {
         Mockito.when(nextHearingDetailsService.updateNextHearingDetails("auth", hearings))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
+
         ResponseEntity<Object> nextHearingUpdateResp =
                 hearingsController.updateNextHearingDetails("auth", "sauth", "testcase");
 
