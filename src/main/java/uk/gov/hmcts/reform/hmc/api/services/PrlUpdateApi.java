@@ -21,7 +21,8 @@ import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
         url = "${prl.baseUrl}",
         configuration = PrlUpdateConfiguration.class)
 public interface PrlUpdateApi {
-    String SERVICE_AUTHORIZATION = "ServiceAuthorization";
+    String SERVICE_AUTHORIZATION = "serviceAuthorization";
+    String AUTHORIZATION = "authorization";
 
     @RequestMapping(
             method = RequestMethod.PUT,
@@ -37,6 +38,7 @@ public interface PrlUpdateApi {
             value = "/hearing-management-next-hearing-date-update/",
             headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
     ResponseEntity prlNextHearingDateUpdate(
+            @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final NextHearingDetailsDTO nextHearingDateDetailsDTO);
 }
