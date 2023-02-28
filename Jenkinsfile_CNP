@@ -47,7 +47,7 @@ withPipeline(type, product, component) {
   overrideVaultEnvironments(vaultOverrides)
   loadVaultSecrets(secrets)
   syncBranchesWithMaster(['demo', 'ithc', 'perftest'])
-  enableSlackNotifications('#fis-integration-tech-notifications') //?
+  enableSlackNotifications('#family-integration-cicd-notice') //?
 
   afterAlways('test') {
     builder.gradle('integration')
