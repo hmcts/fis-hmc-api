@@ -12,9 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-
 import java.io.IOException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -37,29 +34,22 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 
-/**
- * Hearings controller to get data hearings data.
- */
+/** Hearings controller to get data hearings data. */
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
 @Api(value = "/", description = "get hearings Values")
 public class HearingsController {
 
-    @Autowired
-    private IdamAuthService idamAuthService;
+    @Autowired private IdamAuthService idamAuthService;
 
-    @Autowired
-    private HearingsDataService hearingsDataService;
+    @Autowired private HearingsDataService hearingsDataService;
 
-    @Autowired
-    private HearingsService hearingsService;
+    @Autowired private HearingsService hearingsService;
 
-    @Autowired
-    private NextHearingDetailsService nextHearingDetailsService;
+    @Autowired private NextHearingDetailsService nextHearingDetailsService;
 
-    @Autowired
-    private AuthTokenGenerator authTokenGenerator;
+    @Autowired private AuthTokenGenerator authTokenGenerator;
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
@@ -72,21 +62,21 @@ public class HearingsController {
     @PostMapping(path = "/serviceHearingValues")
     @ApiOperation("get hearings Values")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 200, message = "get hearings Values successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(code = 200, message = "get hearings Values successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<Object> getHearingsData(
-        @RequestHeader(AUTHORIZATION) String authorization,
-        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestBody final HearingValues hearingValues)
-        throws IOException, ParseException {
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestBody final HearingValues hearingValues)
+            throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
-                    hearingsDataService.getCaseData(
-                        hearingValues, authorization, serviceAuthorization));
+                        hearingsDataService.getCaseData(
+                                hearingValues, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -109,21 +99,21 @@ public class HearingsController {
     @GetMapping(path = "/hearings")
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<Object> getHearingsByCaseRefNo(
-        @RequestHeader(AUTHORIZATION) String authorization,
-        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestHeader("caseReference") String caseReference) {
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
-                && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
-                    hearingsService.getHearingsByCaseRefNo(
-                        caseReference, authorization, serviceAuthorization));
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -143,26 +133,26 @@ public class HearingsController {
      * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @responseBody hearingValues, combination of caseRefNo and hearingId to fetch
-     * hearingsLinkData.
+     *     hearingsLinkData.
      */
     @PostMapping(path = "/serviceLinkedCases")
     @ApiOperation("get service hearings Linked Cases")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 200, message = "get Hearings Linked case Data successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(code = 200, message = "get Hearings Linked case Data successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<Object> getHearingsLinkData(
-        @RequestHeader(AUTHORIZATION) String authorization,
-        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestBody final HearingValues hearingValues)
-        throws IOException, ParseException {
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestBody final HearingValues hearingValues)
+            throws IOException, ParseException {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
-                    hearingsDataService.getHearingLinkData(
-                        hearingValues, authorization, serviceAuthorization));
+                        hearingsDataService.getHearingLinkData(
+                                hearingValues, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -179,7 +169,7 @@ public class HearingsController {
      * End point to fetch the immediate or next future hearingDate for a particular caseRefNumber.
      *
      * @return nextHearingsDetailsResponse, near future hearingDate and hearingId for a particular
-     * caseRefNumber.
+     *     caseRefNumber.
      * @header authorization, User authorization token.
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
@@ -187,27 +177,27 @@ public class HearingsController {
     @GetMapping(path = "/updateNextHearingDetails")
     @ApiOperation("get next hearing details for a case reference number")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                code = 200,
-                message = "get next hearing details by caseRefNo successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(
+                        code = 200,
+                        message = "get next hearing details by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<Object> updateNextHearingDetails(
-        @RequestHeader(AUTHORIZATION) String authorization,
-        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestHeader("caseReference") String caseReference) {
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))
-                && Boolean.TRUE.equals(
-                idamAuthService.authoriseService(serviceAuthorization))) {
+                    && Boolean.TRUE.equals(
+                            idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 Hearings hearings =
-                    hearingsService.getHearingsByCaseRefNo(
-                        caseReference, authorization, serviceAuthorization);
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, serviceAuthorization);
                 return ResponseEntity.ok(
-                    nextHearingDetailsService.updateNextHearingDetails(
-                        authorization, hearings));
+                        nextHearingDetailsService.updateNextHearingDetails(
+                                authorization, hearings));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
@@ -223,25 +213,24 @@ public class HearingsController {
     @GetMapping(path = "/getNextHearingDate")
     @ApiOperation("get next hearing details for a case reference number")
     @ApiResponses(
-        value = {
-            @ApiResponse(
-                code = 200,
-                message = "get next hearing details by caseRefNo successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
+            value = {
+                @ApiResponse(
+                        code = 200,
+                        message = "get next hearing details by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
     public ResponseEntity<Object> getNextHearingDate(
-        @RequestHeader(AUTHORIZATION) String authorization,
-        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestHeader("caseReference") String caseReference) {
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
         try {
 
-
             if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))
-                && Boolean.TRUE.equals(
-                idamAuthService.authoriseService(serviceAuthorization))) {
+                    && Boolean.TRUE.equals(
+                            idamAuthService.authoriseService(serviceAuthorization))) {
                 Hearings hearings =
-                    hearingsService.getHearingsByCaseRefNo(
-                        caseReference, authorization, authTokenGenerator.generate());
+                        hearingsService.getHearingsByCaseRefNo(
+                                caseReference, authorization, authTokenGenerator.generate());
                 return ResponseEntity.ok(nextHearingDetailsService.getNextHearingDate(hearings));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
@@ -253,6 +242,5 @@ public class HearingsController {
         } catch (Exception e) {
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
-
     }
 }
