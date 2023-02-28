@@ -115,7 +115,7 @@ class PrlUpdateServiceTest {
     }
 
     @Test
-    public void shouldUpdateNextHearingDateInPrlcosTest() throws IOException, ParseException {
+    void shouldUpdateNextHearingDateInPrlcosTest() throws IOException, ParseException {
 
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
@@ -173,8 +173,7 @@ class PrlUpdateServiceTest {
     }
 
     @Test
-    public void shouldUpdateNextHearingDateInPrlcosS2sExceptionTest()
-            throws IOException, ParseException {
+    void shouldUpdateNextHearingDateInPrlcosS2sExceptionTest() throws IOException, ParseException {
 
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();

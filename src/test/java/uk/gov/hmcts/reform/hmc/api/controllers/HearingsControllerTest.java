@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -259,5 +260,21 @@ class HearingsControllerTest {
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
+    }
+
+    @Test
+    void getNextHearingDateTest() throws IOException, ParseException {
+        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
+        NextHearingDetails nextHearingDetails =
+                NextHearingDetails.builder()
+                        .hearingId(123L)
+                        .nextHearingDate(testNextHearingDate)
+                        .build();
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
+                .thenReturn(nextHearingDetails);
+
+        ResponseEntity<Object> nextHearingDetailsResponse =
+                hearingsController.getNextHearingDate("Bearer auth", "Bearer sauth", "caseRef");
+        Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 }
