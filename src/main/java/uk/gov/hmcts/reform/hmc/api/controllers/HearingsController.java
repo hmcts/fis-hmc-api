@@ -216,7 +216,7 @@ public class HearingsController {
             value = {
                 @ApiResponse(
                         code = 200,
-                        message = "get next hearing details by caseRefNo successfully"),
+                        message = "get next hearing details by caseRefNo  successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> getNextHearingDate(

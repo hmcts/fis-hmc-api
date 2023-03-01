@@ -281,4 +281,44 @@ class HearingsControllerTest {
                 hearingsController.getNextHearingDate("Bearer auth", "Bearer sauth", "caseRef");
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
+
+    @Test
+    void getNextHearingDateInternalServiceErrorTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
+                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+        Mockito.when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        ResponseEntity<Object> nextHearingDetailsResponse =
+                hearingsController.getNextHearingDate("", "", "caseRef");
+
+        Assertions.assertEquals(
+                HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetailsResponse.getStatusCode());
+    }
+
+    @Test
+    void getNextHearingDateFeignExceptionTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
+                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+
+        ResponseEntity<Object> nextHearingDetailsResponse =
+                hearingsController.getNextHearingDate("auth", "sauth", "testcase");
+
+        Assertions.assertEquals(
+                HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetailsResponse.getStatusCode());
+    }
+
+    @Test
+    void getNextHearingDateUnauthorisedExceptionTest() throws IOException, ParseException {
+
+        ResponseEntity<Object> nextHearingDetails =
+                hearingsController.getNextHearingDate("", "", "caseRef");
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
+    }
 }
