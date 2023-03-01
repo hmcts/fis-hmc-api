@@ -85,7 +85,9 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         if (isAllCompleted) {
             return DECISION_OUTCOME;
         } else {
-            if (currHearingHmcStatus.equals(COMPLETED) || currHearingHmcStatus.equals(ADJOURNED)) {
+            if (currHearingHmcStatus != null
+                    && (currHearingHmcStatus.equals(COMPLETED)
+                            || currHearingHmcStatus.equals(ADJOURNED))) {
                 return anyFutureHearings(hearings)
                         ? PREPARE_FOR_HEARING_CONDUCT_HEARING
                         : DECISION_OUTCOME;
@@ -103,13 +105,18 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      */
     private Boolean anyFutureHearings(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
-            List<HearingDaySchedule> futureHearingDaySches =
-                    hearing.getHearingDaySchedule().stream()
-                            .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
-                            .collect(Collectors.toList());
+            if (hearing.getHearingDaySchedule() != null) {
+                List<HearingDaySchedule> futureHearingDaySches =
+                        hearing.getHearingDaySchedule().stream()
+                                .filter(
+                                        u ->
+                                                u.getHearingStartDateTime()
+                                                        .isAfter(LocalDateTime.now()))
+                                .collect(Collectors.toList());
 
-            if (!futureHearingDaySches.isEmpty()) {
-                return true;
+                if (!futureHearingDaySches.isEmpty()) {
+                    return true;
+                }
             }
         }
         return false;
