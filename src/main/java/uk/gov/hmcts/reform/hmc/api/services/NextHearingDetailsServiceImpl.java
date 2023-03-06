@@ -8,7 +8,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -85,7 +84,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
         if (isAllCompleted || isAllFutureHearingsAreCancelled(hearings)) {
             return DECISION_OUTCOME;
-        }else {
+        } else {
             if (currHearingHmcStatus != null
                     && (currHearingHmcStatus.equals(COMPLETED)
                             || currHearingHmcStatus.equals(ADJOURNED))) {
@@ -102,14 +101,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      * This method will get all the future hearingDaySchedules for a particular case hearing.
      *
      * @param hearing data is used to get all the future hearingDaySchedules.
-     * @return HearingDaySchedule, List - return List value, list of all the hearingDayScehdule which are in future for a hearing .
+     * @return HearingDaySchedule, List - return List value, list of all the hearingDayScehdule
+     *     which are in future for a hearing .
      */
-    private List<HearingDaySchedule> getFutureHearingDaySchedule(CaseHearing hearing){
+    private List<HearingDaySchedule> getFutureHearingDaySchedule(CaseHearing hearing) {
         return hearing.getHearingDaySchedule().stream()
-                .filter(
-                    u ->
-                        u.getHearingStartDateTime()
-                            .isAfter(LocalDateTime.now()))
+                .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
                 .collect(Collectors.toList());
     }
 
@@ -122,7 +119,8 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     private Boolean anyFutureHearings(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
             if (hearing.getHearingDaySchedule() != null) {
-                List<HearingDaySchedule> futureHearingDaySches = getFutureHearingDaySchedule(hearing);
+                List<HearingDaySchedule> futureHearingDaySches =
+                        getFutureHearingDaySchedule(hearing);
                 if (!futureHearingDaySches.isEmpty()) {
                     return true;
                 }
@@ -167,19 +165,19 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     }
 
     /**
-     * This method will find out the whether all future hearings are cancelled or not for a particular caseRefNo.
+     * This method will find out the whether all future hearings are cancelled or not for a
+     * particular caseRefNo.
      *
-     * @param hearings data is used to check whether  all the future hearings are cancelled.
+     * @param hearings data is used to check whether all the future hearings are cancelled.
      * @return Boolean, Boolean - return boolean value, if all the future hearings are cancelled .
      */
     private Boolean isAllFutureHearingsAreCancelled(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
             if (hearing.getHearingDaySchedule() != null) {
-                List<HearingDaySchedule> futureHearingDaySches = getFutureHearingDaySchedule(hearing);
-                if (!futureHearingDaySches.isEmpty()) {
-                    if(!hearing.getHmcStatus().equals(CANCELLED)){
-                        return false;
-                    }
+                List<HearingDaySchedule> futureHearingDaySches =
+                        getFutureHearingDaySchedule(hearing);
+                if (!futureHearingDaySches.isEmpty() && !hearing.getHmcStatus().equals(CANCELLED)) {
+                    return false;
                 }
             }
         }

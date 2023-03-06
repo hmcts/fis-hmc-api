@@ -161,14 +161,12 @@ public class ServiceBusConfiguration {
                                         hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
-                            log.info("000000000000");
                             nextHearingDetailsService.updateNextHearingDetails(userToken, hearings);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
                             Boolean isPrlSuccess = false;
-//                                    prlUpdateService.updatePrlServiceWithHearing(
-//                                            hearingDto, caseState);
+                            prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
                             if (isPrlSuccess) {
                                 return receiveClient.completeAsync(message.getLockToken());
                             }
