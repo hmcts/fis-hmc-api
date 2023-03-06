@@ -335,7 +335,7 @@ class NextHearingDetailsServiceTest {
     }
 
     @Test
-    void shouldFetchStateToUpdateWhenCurrNotCompletedButNoHearingInFuture() {
+    void shouldFetchStateToUpdateWhenNoHearingInFuture() {
 
         LocalDateTime pastHearingDate1 = LocalDateTime.of(2023, 01, 18, 1, 0);
 
@@ -375,12 +375,12 @@ class NextHearingDetailsServiceTest {
                 Hearings.hearingsWith()
                         .caseRef("123")
                         .caseHearings(caseHearingList)
-                        .hmctsServiceCode("BBA3")
+                        .hmctsServiceCode("ABA5")
                         .build();
         String currHearingHmcStatus = Constants.LISTED;
 
         State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
+        Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
     }
 }

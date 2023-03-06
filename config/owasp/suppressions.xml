@@ -84,6 +84,10 @@
     <cve>CVE-2021-42306</cve>
   </suppress>
   <suppress>
+    <notes>commons-fileupload-1.4.jar</notes>
+    <cve>CVE-2023-24998</cve>
+  </suppress>
+  <suppress>
     <notes>guava-24.1.1-jre.jar</notes>
     <cve>CVE-2020-8908</cve>
   </suppress>
