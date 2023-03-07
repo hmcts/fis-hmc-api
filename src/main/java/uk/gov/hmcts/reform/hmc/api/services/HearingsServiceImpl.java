@@ -62,6 +62,7 @@ public class HearingsServiceImpl implements HearingsService {
         Hearings caseHearingsResponse = null;
 
         try {
+            log.info("Fetching hearings for casereference - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(
@@ -77,6 +78,13 @@ public class HearingsServiceImpl implements HearingsService {
                             .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
+            integrateVenueDetails(caseHearingsResponse);
+            log.info(
+                    "Number of hearings fetched for casereference - {} is {}",
+                    caseReference,
+                    caseHearingsResponse.getCaseHearings() != null
+                            ? caseHearingsResponse.getCaseHearings().size()
+                            : null);
             integrateVenueDetails(caseHearingsResponse);
 
             return caseHearingsResponse;
