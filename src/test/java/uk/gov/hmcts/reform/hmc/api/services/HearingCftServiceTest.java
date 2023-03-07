@@ -18,19 +18,15 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
-import uk.gov.hmcts.reform.hmc.api.model.response.Category;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
-import uk.gov.hmcts.reform.hmc.api.restclient.HmcHearingApi;
 
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
@@ -43,8 +39,6 @@ class HearingCftServiceTest {
     @Mock private RefDataServiceImpl refDataService;
 
     @Mock private RefDataJudicialServiceImpl refDataJudicialService;
-
-    @Mock HmcHearingApi hearingApi;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
@@ -95,24 +89,6 @@ class HearingCftServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
         when(refDataJudicialService.getJudgeDetails("4925644")).thenReturn(judgeDetail);
-
-        List<Category> listOfCategory = new ArrayList<>();
-
-        final Category category =
-                Category.builder()
-                        .categoryKey("HearingType")
-                        .key("ABA5-FHR")
-                        .valueEn("First Hearing")
-                        .build();
-
-        listOfCategory.add(category);
-
-        final Categories categories = Categories.builder().listOfCategory(listOfCategory).build();
-
-        when(hearingApi.retrieveListOfValuesByCategoryId("Auth", "sauth", "HearingTyoe", "ABA5"))
-                .thenReturn(categories);
-
-        ReflectionTestUtils.setField(hearingsService, "categoryId", "HearingTyoe");
 
         Hearings hearings =
                 hearingsService.getHearingsByCaseRefNo("1671620456009274", "Auth", "sauth");
