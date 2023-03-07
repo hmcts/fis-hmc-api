@@ -89,8 +89,12 @@ public class HearingsServiceImpl implements HearingsService {
                                     Hearings.class)
                             .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
-            log.info("Number of hearings fetched for casereference - {} is {}", caseReference,
-                caseHearingsResponse.getCaseHearings()!=null ? caseHearingsResponse.getCaseHearings().size() : null);    
+            log.info(
+                    "Number of hearings fetched for casereference - {} is {}",
+                    caseReference,
+                    caseHearingsResponse.getCaseHearings() != null
+                            ? caseHearingsResponse.getCaseHearings().size()
+                            : null);
             final Map<String, String> refDataCategoryValueMap =
                     getRefDataCategoryValueMap(authorization, s2sToken, caseHearingsResponse);
             log.info("Fetch Hearing Type Key value pair {}", LocalDateTime.now());
