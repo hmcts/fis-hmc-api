@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -73,6 +74,7 @@ public class HearingsServiceImpl implements HearingsService {
         Hearings caseHearingsResponse = null;
 
         try {
+            log.info("Fetching hearings for casereference - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
             MultiValueMap<String, String> inputHeaders =
                     getHttpHeaders(
@@ -87,10 +89,11 @@ public class HearingsServiceImpl implements HearingsService {
                                     Hearings.class)
                             .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
-
+            log.info("Number of hearings fetched for casereference - {} is {}", caseReference,
+                caseHearingsResponse.getCaseHearings()!=null ? caseHearingsResponse.getCaseHearings().size() : null);    
             final Map<String, String> refDataCategoryValueMap =
                     getRefDataCategoryValueMap(authorization, s2sToken, caseHearingsResponse);
-
+            log.info("Fetch Hearing Type Key value pair {}", LocalDateTime.now());
             integrateVenueDetails(caseHearingsResponse, refDataCategoryValueMap);
 
             return caseHearingsResponse;
