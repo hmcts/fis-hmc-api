@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
@@ -161,7 +162,11 @@ public class ServiceBusConfiguration {
                                         hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
-                            nextHearingDetailsService.updateNextHearingDetails(userToken, hearings);
+                            // nextHearingDetailsService.updateNextHearingDetails(userToken,
+                            // hearings);
+                            NextHearingDetails nextHearingDetails =
+                                    nextHearingDetailsService.getNextHearingDate(hearings);
+                            hearingDto.setNextHearingDetails(nextHearingDetails);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
