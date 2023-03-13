@@ -32,6 +32,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
@@ -166,7 +167,14 @@ public class ServiceBusConfiguration {
                             // hearings);
                             NextHearingDetails nextHearingDetails =
                                     nextHearingDetailsService.getNextHearingDate(hearings);
-                            hearingDto.setNextHearingDetails(nextHearingDetails);
+
+                            NextHearingDetailsDTO nextHearingDetailsDTO =
+                                    NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                                            .nextHearingDetails(nextHearingDetails)
+                                            .caseRef(hearings.getCaseRef())
+                                            .build();
+
+                            hearingDto.setNextHearingDetailsDTO(nextHearingDetailsDTO);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());

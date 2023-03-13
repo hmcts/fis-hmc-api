@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +27,5 @@ public class HearingDTO {
 
     private HearingUpdateDTO hearingUpdate;
 
-    private NextHearingDetails nextHearingDetails;
+    private NextHearingDetailsDTO nextHearingDetailsDTO;
 }
