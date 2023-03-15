@@ -163,8 +163,6 @@ public class ServiceBusConfiguration {
                                         hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
-                            // nextHearingDetailsService.updateNextHearingDetails(userToken,
-                            // hearings);
                             NextHearingDetails nextHearingDetails =
                                     nextHearingDetailsService.getNextHearingDate(hearings);
 
