@@ -22,5 +22,5 @@ public class NextHearingDetails {
 
     private Long hearingId;
 
-    private LocalDateTime nextHearingDate;
+    private LocalDateTime hearingDateTime;
 }

@@ -46,7 +46,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             log.info(
                     "Next Hearing Date Details - ID {} and Date {} ",
                     nextHearingDetails.getHearingId(),
-                    nextHearingDetails.getNextHearingDate());
+                    nextHearingDetails.getHearingDateTime());
             NextHearingDetailsDTO nextHearingDateDetailsDTO =
                     NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
                             .nextHearingDetails(nextHearingDetails)
@@ -158,10 +158,10 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                             || tempNextDateListed.isAfter(minDateOfHearingDaySche.get()))) {
                 tempNextDateListed = minDateOfHearingDaySche.get();
                 nextHearingDetails.setHearingId(listHearing.getHearingID());
-                nextHearingDetails.setNextHearingDate(tempNextDateListed);
+                nextHearingDetails.setHearingDateTime(tempNextDateListed);
             }
         }
-        return nextHearingDetails.getNextHearingDate() != null ? nextHearingDetails : null;
+        return nextHearingDetails.getHearingDateTime() != null ? nextHearingDetails : null;
     }
 
     /**

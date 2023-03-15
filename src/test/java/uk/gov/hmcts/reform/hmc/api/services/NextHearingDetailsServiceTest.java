@@ -167,7 +167,7 @@ class NextHearingDetailsServiceTest {
         NextHearingDetails nextHearingDetailsResponse =
                 nextHearingDetailsService.getNextHearingDate(hearings);
         Assertions.assertEquals(
-                testNextHearingDate3, nextHearingDetailsResponse.getNextHearingDate());
+                testNextHearingDate3, nextHearingDetailsResponse.getHearingDateTime());
     }
 
     @Test
