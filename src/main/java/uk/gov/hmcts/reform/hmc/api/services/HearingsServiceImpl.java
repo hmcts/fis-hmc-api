@@ -2,24 +2,17 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.model.request.Cases;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -31,9 +24,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
-    @Value("${hearing_component.api.url}")
-    private String basePath;
-
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -41,6 +31,10 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired RefDataService refDataService;
 
     @Autowired RefDataJudicialService refDataJudicialService;
+
+    @Autowired HearingApiClient hearingApiClient;
+
+    private Hearings hearingDetails;
 
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
@@ -57,62 +51,48 @@ public class HearingsServiceImpl implements HearingsService {
     public Hearings getHearingsByCaseRefNo(
             String caseReference, String authorization, String serviceAuthorization) {
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
-        Hearings caseHearingsResponse = null;
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
 
         try {
-            log.info("Fetching hearings for casereference - {}", caseReference);
-            final String s2sToken = authTokenGenerator.generate();
-            MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(
-                            idamTokenGenerator.generateIdamTokenForHearingCftData(), s2sToken);
-            HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
-            caseHearingsResponse =
-                    restTemplate
-                            .exchange(
-                                    builder.toUriString(),
-                                    HttpMethod.GET,
-                                    httpsHeader,
-                                    Hearings.class)
-                            .getBody();
-            log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
-
-            integrateVenueDetails(caseHearingsResponse);
-            log.info(
-                    "Number of hearings fetched for casereference - {} is {}",
-                    caseReference,
-                    caseHearingsResponse.getCaseHearings() != null
-                            ? caseHearingsResponse.getCaseHearings().size()
-                            : null);
-
-            return caseHearingsResponse;
-        } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.error(
-                    "HttpClientErrorException {} during getHearingsByCaseRefNo for case {}",
-                    exception,
-                    caseReference);
-        } catch (Exception exception) {
-            log.error(
-                    "Exception {} during getHearingsByCaseRefNo for case {}",
-                    exception,
-                    caseReference);
+            hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
+            integrateVenueDetails(hearingDetails);
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
-        return caseHearingsResponse;
+
+        return hearingDetails;
     }
 
     /**
-     * This method will create a map with header inputs.
+     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @return inputHeaders, which has all the header-inputs to make an API call.
+     * @param cases CaseRefNumber to take all the hearings belongs to this case.
+     * @param authorization authorization header.
+     * @param serviceAuthorization serviceAuthorization header
+     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
      */
-    private MultiValueMap<String, String> getHttpHeaders(
-            String authorization, String serviceAuthorization) {
-        MultiValueMap<String, String> inputHeaders = new LinkedMultiValueMap<>();
-        inputHeaders.put("Content-Type", Arrays.asList("application/json"));
-        inputHeaders.put("Authorization", Arrays.asList(authorization));
-        inputHeaders.put("ServiceAuthorization", Arrays.asList(serviceAuthorization));
-        return inputHeaders;
+    @Override
+    public List<Hearings> getHearingsByListOfCaseRefNos(
+            Cases cases, String authorization, String serviceAuthorization) {
+
+        List<Hearings> casesWithHearings = new ArrayList<>();
+        if (cases != null && !cases.getCaseIds().isEmpty()) {
+            final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+            final String s2sToken = authTokenGenerator.generate();
+
+            for (String caseId : cases.getCaseIds()) {
+                try {
+                    hearingDetails =
+                            hearingApiClient.getHearingDetails(userToken, s2sToken, caseId);
+                    casesWithHearings.add(hearingDetails);
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                }
+            }
+        }
+
+        return casesWithHearings;
     }
 
     private void integrateVenueDetails(Hearings caseHearingsResponse) {
