@@ -65,7 +65,7 @@ public class PrlUpdateServiceImpl implements PrlUpdateService {
         Boolean isPrlRespSuccess = false;
         log.info(
                 "calling updatePrlServiceWithNextHearingDate service "
-                        + nextHearingDetailsDto.getNextHearingDetails().getHearingId());
+                        + nextHearingDetailsDto.getNextHearingDetails().getHearingID());
         try {
             prlUpdateApi.prlNextHearingDateUpdate(
                     authorization, authTokenGenerator.generate(), nextHearingDetailsDto);

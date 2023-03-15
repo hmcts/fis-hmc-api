@@ -271,7 +271,7 @@ class HearingsControllerTest {
         LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
         NextHearingDetails nextHearingDetails =
                 NextHearingDetails.builder()
-                        .hearingId(123L)
+                        .hearingID(123L)
                         .hearingDateTime(testNextHearingDate)
                         .build();
         Mockito.when(nextHearingDetailsService.getNextHearingDate(hearings))
