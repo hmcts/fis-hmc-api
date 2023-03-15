@@ -85,7 +85,6 @@ public class HearingsServiceImpl implements HearingsService {
                     caseHearingsResponse.getCaseHearings() != null
                             ? caseHearingsResponse.getCaseHearings().size()
                             : null);
-            integrateVenueDetails(caseHearingsResponse);
 
             return caseHearingsResponse;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
