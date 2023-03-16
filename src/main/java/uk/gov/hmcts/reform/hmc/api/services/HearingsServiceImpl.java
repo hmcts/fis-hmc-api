@@ -180,7 +180,7 @@ public class HearingsServiceImpl implements HearingsService {
 
         try {
             hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
-            integrateVenueDetails(hearingDetails);
+            integrateVenueDetailsForCaseId(hearingDetails);
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
         } catch (FeignException exception) {
@@ -214,6 +214,7 @@ public class HearingsServiceImpl implements HearingsService {
                 try {
                     hearingDetails =
                             hearingApiClient.getHearingDetails(userToken, s2sToken, caseId);
+                    integrateVenueDetailsForCaseId(hearingDetails);
                     casesWithHearings.add(hearingDetails);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
@@ -228,5 +229,37 @@ public class HearingsServiceImpl implements HearingsService {
         }
 
         return casesWithHearings;
+    }
+
+    private void integrateVenueDetailsForCaseId(Hearings hearingDetails) {
+        if (hearingDetails != null && hearingDetails.getCaseHearings() != null) {
+            List<CourtDetail> allVenues =
+                    refDataService.getCourtDetailsByServiceCode(
+                            hearingDetails.getHmctsServiceCode());
+
+            List<CaseHearing> caseHearings = hearingDetails.getCaseHearings();
+
+            for (CaseHearing caseHearing : caseHearings) {
+                if (caseHearing.getHmcStatus().equals(LISTED)
+                        && caseHearing.getHearingDaySchedule() != null) {
+                    for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
+                        String venueId = hearingSchedule.getHearingVenueId();
+                        CourtDetail matchedCourt =
+                                allVenues.stream()
+                                        .filter(e -> venueId.equals(e.getHearingVenueId()))
+                                        .findFirst()
+                                        .orElse(null);
+                        if (matchedCourt != null) {
+                            hearingSchedule.setHearingVenueName(matchedCourt.getHearingVenueName());
+                            hearingSchedule.setHearingVenueAddress(
+                                    matchedCourt.getHearingVenueAddress());
+                            hearingSchedule.setHearingVenueLocationCode(
+                                    matchedCourt.getHearingVenueLocationCode());
+                        }
+                    }
+                }
+            }
+            hearingDetails.setCaseHearings(caseHearings);
+        }
     }
 }

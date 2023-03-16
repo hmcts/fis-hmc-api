@@ -176,8 +176,8 @@ class HearingCftServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
-        when(refDataJudicialService.getJudgeDetails("4925644")).thenReturn(judgeDetail);
+        when(refDataService.getCourtDetailsByServiceCode("ABA5"))
+                .thenReturn(Arrays.asList(courtDetail));
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenReturn(caseHearings);
 
