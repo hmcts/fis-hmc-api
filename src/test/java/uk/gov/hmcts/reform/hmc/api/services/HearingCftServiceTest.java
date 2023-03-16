@@ -1,17 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.Mockito.when;
 
-import feign.FeignException;
-import feign.Request;
-import feign.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
@@ -103,34 +97,32 @@ class HearingCftServiceTest {
 
     @Test
     void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
+        when(restTemplate.exchange(
+                        ArgumentMatchers.anyString(),
+                        ArgumentMatchers.any(HttpMethod.class),
+                        ArgumentMatchers.<HttpEntity<?>>any(),
+                        ArgumentMatchers.<Class<Hearings>>any()))
+                .thenThrow(new HttpClientErrorException(HttpStatus.BAD_GATEWAY));
+
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(hearingsService.getHearingsByCaseRefNo("231596", "", ""))
-                .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123", "", ""));
     }
 
-    public static FeignException feignException(int status, String message) {
-        return FeignException.errorStatus(
-                message,
-                Response.builder()
-                        .status(status)
-                        .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
-                        .build());
-    }
+    @Test
+    void shouldReturnCtfHearingsExceptionTest() throws IOException, ParseException {
+        when(restTemplate.exchange(
+                        ArgumentMatchers.anyString(),
+                        ArgumentMatchers.any(HttpMethod.class),
+                        ArgumentMatchers.<HttpEntity<?>>any(),
+                        ArgumentMatchers.<Class<Hearings>>any()))
+                .thenThrow(new NullPointerException("Null Point Exception"));
 
-    //    @Test
-    //    void shouldReturnCtfHearingsExceptionTest() throws IOException, ParseException {
-    //
-    //
-    // when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-    //        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-    //        when(hearingsService.getHearingsByCaseRefNo("231596", "", ""))
-    //                .thenThrow(new Exception());
-    //
-    //        Assertions.assertEquals(
-    //                HttpStatus.INTERNAL_SERVER_ERROR,
-    //                hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth"));
-    //    }
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        Assertions.assertEquals(
+                null, hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth"));
+    }
 }

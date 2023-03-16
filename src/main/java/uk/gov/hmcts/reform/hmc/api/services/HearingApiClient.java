@@ -9,7 +9,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @FeignClient(
         name = "hearing-feign-api",
-        url = "${hearing_component.api.url}",
+        url = "${hearing_component.api.feign-url}",
         configuration = FeignClientProperties.FeignClientConfiguration.class)
 public interface HearingApiClient {
 

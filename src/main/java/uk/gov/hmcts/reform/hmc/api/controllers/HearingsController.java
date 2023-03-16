@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
-import uk.gov.hmcts.reform.hmc.api.model.request.Cases;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
@@ -134,7 +134,44 @@ public class HearingsController {
      * @header serviceAuthorization, S2S authorization token.
      * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
      */
-    @GetMapping(path = "/hearings-by-list-of-cases")
+    @GetMapping(path = "/hearings-by-case-id")
+    @ApiOperation("get hearings by case reference number")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> getHearingsByCaseId(
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestHeader("caseReference") String caseReference) {
+        try {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                return ResponseEntity.ok(
+                        hearingsService.getHearingsByCaseId(
+                                caseReference, authorization, serviceAuthorization));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
+    /**
+     * End point to fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     * @header serviceAuthorization, S2S authorization token.
+     * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
+     */
+    @GetMapping(path = "/hearings-by-list-of-case-ids")
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(
             value = {
@@ -144,15 +181,15 @@ public class HearingsController {
     public ResponseEntity<Object> getHearingsByListOfCaseRefNos(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestBody final Cases cases) {
+            @RequestBody List<String> caseIds) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
 
                 return ResponseEntity.ok(
-                        hearingsService.getHearingsByListOfCaseRefNos(
-                                cases, authorization, serviceAuthorization));
+                        hearingsService.getHearingsByListOfCaseIds(
+                                caseIds, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
