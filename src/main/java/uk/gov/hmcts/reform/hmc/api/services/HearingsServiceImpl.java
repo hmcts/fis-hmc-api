@@ -2,6 +2,8 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
+import feign.FeignException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,10 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired RefDataService refDataService;
 
     @Autowired RefDataJudicialService refDataJudicialService;
+
+    @Autowired HearingApiClient hearingApiClient;
+
+    private Hearings hearingDetails;
 
     RestTemplate restTemplate = new RestTemplate();
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
@@ -155,5 +161,72 @@ public class HearingsServiceImpl implements HearingsService {
             }
             caseHearingsResponse.setCaseHearings(caseHearings);
         }
+    }
+
+    /**
+     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
+     * @param authorization authorization header.
+     * @param serviceAuthorization serviceAuthorization header
+     * @return hearingDetails, all the hearings which belongs to a particular caseRefNumber.
+     */
+    @Override
+    public Hearings getHearingsByCaseId(
+            String caseReference, String authorization, String serviceAuthorization) {
+
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+
+        try {
+            hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
+            integrateVenueDetails(hearingDetails);
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
+        }
+
+        return hearingDetails;
+    }
+
+    /**
+     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @param caseIds caseId list to take all the hearings belongs to each case.
+     * @param authorization authorization header.
+     * @param serviceAuthorization serviceAuthorization header
+     * @return casesWithHearings, List of cases with all the hearings which belongs to all caseIds
+     *     passed.
+     */
+    @Override
+    public List<Hearings> getHearingsByListOfCaseIds(
+            List<String> caseIds, String authorization, String serviceAuthorization) {
+
+        List<Hearings> casesWithHearings = new ArrayList<>();
+        if (!caseIds.isEmpty()) {
+            final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+            final String s2sToken = authTokenGenerator.generate();
+
+            for (String caseId : caseIds) {
+                try {
+                    hearingDetails =
+                            hearingApiClient.getHearingDetails(userToken, s2sToken, caseId);
+                    casesWithHearings.add(hearingDetails);
+                } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                    log.info(
+                            "Hearing api call HttpClientError exception {}",
+                            exception.getMessage());
+                } catch (FeignException exception) {
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
+                } catch (Exception exception) {
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
+                }
+            }
+        }
+
+        return casesWithHearings;
     }
 }
