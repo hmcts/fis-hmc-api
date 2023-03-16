@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
+import feign.FeignException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -162,6 +163,14 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
+    /**
+     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     *
+     * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
+     * @param authorization authorization header.
+     * @param serviceAuthorization serviceAuthorization header
+     * @return hearingDetails, all the hearings which belongs to a particular caseRefNumber.
+     */
     @Override
     public Hearings getHearingsByCaseId(
             String caseReference, String authorization, String serviceAuthorization) {
@@ -172,8 +181,12 @@ public class HearingsServiceImpl implements HearingsService {
         try {
             hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
             integrateVenueDetails(hearingDetails);
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
         }
 
         return hearingDetails;
@@ -182,10 +195,11 @@ public class HearingsServiceImpl implements HearingsService {
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @param caseIds CaseRefNumber to take all the hearings belongs to this case.
+     * @param caseIds caseId list to take all the hearings belongs to each case.
      * @param authorization authorization header.
      * @param serviceAuthorization serviceAuthorization header
-     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     * @return casesWithHearings, List of cases with all the hearings which belongs to all caseIds
+     *     passed.
      */
     @Override
     public List<Hearings> getHearingsByListOfCaseIds(
@@ -201,8 +215,14 @@ public class HearingsServiceImpl implements HearingsService {
                     hearingDetails =
                             hearingApiClient.getHearingDetails(userToken, s2sToken, caseId);
                     casesWithHearings.add(hearingDetails);
-                } catch (Exception e) {
-                    log.error(e.getMessage());
+                } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                    log.info(
+                            "Hearing api call HttpClientError exception {}",
+                            exception.getMessage());
+                } catch (FeignException exception) {
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
+                } catch (Exception exception) {
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
                 }
             }
         }

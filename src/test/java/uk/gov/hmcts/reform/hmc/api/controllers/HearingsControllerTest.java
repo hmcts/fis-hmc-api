@@ -265,7 +265,7 @@ class HearingsControllerTest {
         Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIds, "Auth", "sauth"))
                 .thenReturn(hearingsForAllCases);
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseRefNos("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
         Assertions.assertNotNull(hearingsForAllCasesResponse.getBody());
     }
 
@@ -278,7 +278,7 @@ class HearingsControllerTest {
         hearingsForAllCases.add(hearings);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseRefNos("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
 
         Assertions.assertEquals(
                 HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
@@ -298,7 +298,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseRefNos("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
@@ -316,7 +316,7 @@ class HearingsControllerTest {
                 .thenThrow(new RuntimeException());
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseRefNos("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }

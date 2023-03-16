@@ -165,11 +165,13 @@ public class HearingsController {
     }
 
     /**
-     * End point to fetch all the hearings which belongs to a particular caseRefNumber.
+     * End point to fetch all the hearings which belongs to all the caseIds passed.
      *
-     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     * @return casesWithHearings, List of cases with all the hearings which belongs to all caseIds
+     *     passed.
+     * @header authorization, user authorization token.
      * @header serviceAuthorization, S2S authorization token.
-     * @header caseReference, CaseRefNumber to take all the hearings belongs to this case.
+     * @header caseIds, caseId list to take all the hearings belongs to each case.
      */
     @GetMapping(path = "/hearings-by-list-of-case-ids")
     @ApiOperation("get hearings by case reference number")
@@ -178,7 +180,7 @@ public class HearingsController {
                 @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<Object> getHearingsByListOfCaseRefNos(
+    public ResponseEntity<Object> getHearingsByListOfCaseIds(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody List<String> caseIds) {
