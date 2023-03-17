@@ -187,7 +187,7 @@ public class HearingsServiceImpl implements HearingsService {
             if(hearingDetails != null){
                 List<CourtDetail> allVenues = refDataService.getCourtDetailsByServiceCode(hearingDetails.getHmctsServiceCode());
                 List<CaseHearing> listedHearings = hearingDetails.getCaseHearings().stream()
-                    .filter(e-> e.getHmcStatus().equals(LISTED) && e.getHearingDaySchedule() != null)
+                    .filter(hearing-> hearing.getHmcStatus().equals(LISTED) && hearing.getHearingDaySchedule() != null)
                     .collect(Collectors.toList());
                 integrateVenueDetailsForCaseId(allVenues,listedHearings);
             }
@@ -240,7 +240,8 @@ public class HearingsServiceImpl implements HearingsService {
                 List<CourtDetail> allVenues = refDataService.getCourtDetailsByServiceCode(hearingDetails.getHmctsServiceCode());
                 List<CaseHearing> listedHearings =
                     casesWithHearings.stream()
-                        .flatMap(caseHearings -> caseHearings.getCaseHearings().stream()).filter(e-> e.getHmcStatus().equals(LISTED) && e.getHearingDaySchedule() != null)
+                        .flatMap(caseHearings -> caseHearings.getCaseHearings().stream())
+                        .filter(hearing-> hearing.getHmcStatus().equals(LISTED) && hearing.getHearingDaySchedule() != null)
                         .collect(Collectors.toList());
                 integrateVenueDetailsForCaseId(allVenues,listedHearings);
             }
