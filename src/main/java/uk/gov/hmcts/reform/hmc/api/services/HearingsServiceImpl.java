@@ -6,9 +6,7 @@ import feign.FeignException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,12 +182,18 @@ public class HearingsServiceImpl implements HearingsService {
         try {
             hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
 
-            if(hearingDetails != null){
-                List<CourtDetail> allVenues = refDataService.getCourtDetailsByServiceCode(hearingDetails.getHmctsServiceCode());
-                List<CaseHearing> listedHearings = hearingDetails.getCaseHearings().stream()
-                    .filter(hearing-> hearing.getHmcStatus().equals(LISTED) && hearing.getHearingDaySchedule() != null)
-                    .collect(Collectors.toList());
-                integrateVenueDetailsForCaseId(allVenues,listedHearings);
+            if (hearingDetails != null) {
+                List<CourtDetail> allVenues =
+                        refDataService.getCourtDetailsByServiceCode(
+                                hearingDetails.getHmctsServiceCode());
+                List<CaseHearing> listedHearings =
+                        hearingDetails.getCaseHearings().stream()
+                                .filter(
+                                        hearing ->
+                                                hearing.getHmcStatus().equals(LISTED)
+                                                        && hearing.getHearingDaySchedule() != null)
+                                .collect(Collectors.toList());
+                integrateVenueDetailsForCaseId(allVenues, listedHearings);
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
@@ -236,41 +240,45 @@ public class HearingsServiceImpl implements HearingsService {
                     log.info("Hearing api call Exception exception {}", exception.getMessage());
                 }
             }
-            if(!casesWithHearings.isEmpty()){
-                List<CourtDetail> allVenues = refDataService.getCourtDetailsByServiceCode(hearingDetails.getHmctsServiceCode());
+            if (!casesWithHearings.isEmpty()) {
+                List<CourtDetail> allVenues =
+                        refDataService.getCourtDetailsByServiceCode(
+                                hearingDetails.getHmctsServiceCode());
                 List<CaseHearing> listedHearings =
-                    casesWithHearings.stream()
-                        .flatMap(caseHearings -> caseHearings.getCaseHearings().stream())
-                        .filter(hearing-> hearing.getHmcStatus().equals(LISTED) && hearing.getHearingDaySchedule() != null)
-                        .collect(Collectors.toList());
-                integrateVenueDetailsForCaseId(allVenues,listedHearings);
+                        casesWithHearings.stream()
+                                .flatMap(caseHearings -> caseHearings.getCaseHearings().stream())
+                                .filter(
+                                        hearing ->
+                                                hearing.getHmcStatus().equals(LISTED)
+                                                        && hearing.getHearingDaySchedule() != null)
+                                .collect(Collectors.toList());
+                integrateVenueDetailsForCaseId(allVenues, listedHearings);
             }
         }
 
         return casesWithHearings;
     }
 
-    private void integrateVenueDetailsForCaseId(List<CourtDetail> allVenues,List<CaseHearing> listedHearings) {
+    private void integrateVenueDetailsForCaseId(
+            List<CourtDetail> allVenues, List<CaseHearing> listedHearings) {
         if (listedHearings != null && !listedHearings.isEmpty()) {
             for (CaseHearing caseHearing : listedHearings) {
-                    for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
-                        String venueId = hearingSchedule.getHearingVenueId();
-                        CourtDetail matchedCourt =
+                for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
+                    String venueId = hearingSchedule.getHearingVenueId();
+                    CourtDetail matchedCourt =
                             allVenues.stream()
-                                .filter(e -> venueId.equals(e.getHearingVenueId()))
-                                .findFirst()
-                                .orElse(null);
-                        if (matchedCourt != null) {
-                            hearingSchedule.setHearingVenueName(matchedCourt.getHearingVenueName());
-                            hearingSchedule.setHearingVenueAddress(
+                                    .filter(e -> venueId.equals(e.getHearingVenueId()))
+                                    .findFirst()
+                                    .orElse(null);
+                    if (matchedCourt != null) {
+                        hearingSchedule.setHearingVenueName(matchedCourt.getHearingVenueName());
+                        hearingSchedule.setHearingVenueAddress(
                                 matchedCourt.getHearingVenueAddress());
-                            hearingSchedule.setHearingVenueLocationCode(
+                        hearingSchedule.setHearingVenueLocationCode(
                                 matchedCourt.getHearingVenueLocationCode());
-                        }
                     }
+                }
             }
         }
     }
-
-
 }
