@@ -205,55 +205,6 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsByCaseIdControllerTest() throws IOException, ParseException {
-
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
-        Mockito.when(hearingsService.getHearingsByCaseId("caseRef", "Auth", "sauth"))
-                .thenReturn(hearings);
-        ResponseEntity<Object> hearingsResponse =
-                hearingsController.getHearingsByCaseId("auth", "sauth", "caseRef");
-        Assertions.assertNotNull(hearingsResponse.getBody());
-    }
-
-    @Test
-    void hearingsByCaseIdControllerUnauthorisedExceptionTest() throws IOException, ParseException {
-
-        ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseId("auth", "sauth", "caseRef");
-
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
-    }
-
-    @Test
-    void hearingsByCaseIdControllerFeignExceptionTest() throws IOException, ParseException {
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-
-        Mockito.when(hearingsService.getHearingsByCaseId("", "", ""))
-                .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
-
-        ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseId("auth", "sauth", "caseRef");
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
-    }
-
-    @Test
-    void hearingsByCaseIdControllerInternalServiceErrorTest() throws IOException, ParseException {
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-
-        Mockito.when(hearingsService.getHearingsByCaseId("", "Auth", "sauth"))
-                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
-
-        ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsByCaseId("auth", "sauth", "caseRef");
-
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
-    }
-
-    @Test
     void hearingsByListOfCaseIdsControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);

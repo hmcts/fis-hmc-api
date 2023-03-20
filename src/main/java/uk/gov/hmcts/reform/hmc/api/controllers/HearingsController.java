@@ -127,7 +127,6 @@ public class HearingsController {
         }
     }
 
-
     /**
      * End point to fetch all the hearings which belongs to all the caseIds passed.
      *
