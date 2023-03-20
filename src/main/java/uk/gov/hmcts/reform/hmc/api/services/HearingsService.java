@@ -9,9 +9,6 @@ public interface HearingsService {
     Hearings getHearingsByCaseRefNo(
             String caseReference, String authorization, String serviceAuthorization);
 
-    Hearings getHearingsByCaseId(
-            String caseReference, String authorization, String serviceAuthorization);
-
     List<Hearings> getHearingsByListOfCaseIds(
             List<String> caseIds, String authorization, String serviceAuthorization);
 }

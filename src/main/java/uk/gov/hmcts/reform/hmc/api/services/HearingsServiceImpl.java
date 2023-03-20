@@ -167,48 +167,6 @@ public class HearingsServiceImpl implements HearingsService {
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
-     * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
-     * @param authorization authorization header.
-     * @param serviceAuthorization serviceAuthorization header
-     * @return hearingDetails, all the hearings which belongs to a particular caseRefNumber.
-     */
-    @Override
-    public Hearings getHearingsByCaseId(
-            String caseReference, String authorization, String serviceAuthorization) {
-
-        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
-        final String s2sToken = authTokenGenerator.generate();
-
-        try {
-            hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
-
-            if (hearingDetails != null) {
-                List<CourtDetail> allVenues =
-                        refDataService.getCourtDetailsByServiceCode(
-                                hearingDetails.getHmctsServiceCode());
-                List<CaseHearing> listedHearings =
-                        hearingDetails.getCaseHearings().stream()
-                                .filter(
-                                        hearing ->
-                                                hearing.getHmcStatus().equals(LISTED)
-                                                        && hearing.getHearingDaySchedule() != null)
-                                .collect(Collectors.toList());
-                integrateVenueDetailsForCaseId(allVenues, listedHearings);
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
-        } catch (FeignException exception) {
-            log.info("Hearing api call Feign exception {}", exception.getMessage());
-        } catch (Exception exception) {
-            log.info("Hearing api call Exception exception {}", exception.getMessage());
-        }
-
-        return hearingDetails;
-    }
-
-    /**
-     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
-     *
      * @param caseIds caseId list to take all the hearings belongs to each case.
      * @param authorization authorization header.
      * @param serviceAuthorization serviceAuthorization header
