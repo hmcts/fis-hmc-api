@@ -8,6 +8,8 @@ public final class TestConstants {
 
     public static final String HEARINGS_ENDPOINT = "/hearings";
 
+    public static final String HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT = "/hearings-by-list-of-case-ids";
+
     public static final String TEST_CASE_REFERENCE = "caseReference";
 
     public static final String CASE_REFERENCE = "caseReference";
