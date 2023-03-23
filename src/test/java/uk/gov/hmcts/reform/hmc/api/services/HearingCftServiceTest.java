@@ -12,7 +12,7 @@ import feign.Request;
 import feign.Response;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
@@ -178,9 +178,12 @@ class HearingCftServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenReturn(caseHearings);
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         List<Hearings> hearingsResponse =
-                hearingsService.getHearingsByListOfCaseIds(caseIds, "Auth", "sauth");
+                hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
     }
 
@@ -191,9 +194,14 @@ class HearingCftServiceTest {
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Assertions.assertTrue(
-                hearingsService.getHearingsByListOfCaseIds(caseIds, "sauth", "testcase").isEmpty());
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
     }
 
     @Test
@@ -204,9 +212,13 @@ class HearingCftServiceTest {
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
 
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Assertions.assertTrue(
-                hearingsService.getHearingsByListOfCaseIds(caseIds, "sauth", "testcase").isEmpty());
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
     }
 
     @Test
@@ -216,9 +228,13 @@ class HearingCftServiceTest {
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenThrow(new RuntimeException());
 
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Assertions.assertTrue(
-                hearingsService.getHearingsByListOfCaseIds(caseIds, "sauth", "testcase").isEmpty());
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
     }
 
     public static FeignException feignException(int status, String message) {

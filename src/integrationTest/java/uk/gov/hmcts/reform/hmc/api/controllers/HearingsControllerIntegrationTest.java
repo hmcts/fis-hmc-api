@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -217,7 +217,7 @@ public class HearingsControllerIntegrationTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         Mockito.when(
                         hearingsService.getHearingsByListOfCaseIds(
-                                anyList(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
+                                anyMap(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
                 .thenReturn(listOfHearings);
 
         MvcResult res =

@@ -12,7 +12,7 @@ import feign.Response;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
@@ -210,26 +210,35 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearings);
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIds, "Auth", "sauth"))
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
+        Mockito.when(
+                        hearingsService.getHearingsByListOfCaseIds(
+                                caseIdWithRegionId, "Auth", "sauth"))
                 .thenReturn(hearingsForAllCases);
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
         Assertions.assertNotNull(hearingsForAllCasesResponse.getBody());
     }
 
     @Test
     void hearingsByListOfCaseIdsControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearings);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
 
         Assertions.assertEquals(
                 HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
@@ -240,16 +249,18 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearings);
 
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIds, "", ""))
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
@@ -259,15 +270,18 @@ class HearingsControllerTest {
     void hearingsByListOfCaseIdsControllerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        List<String> caseIds = Arrays.asList("caseref1", "caseref2");
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
         Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearings);
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIds, "", ""))
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
                 .thenThrow(new RuntimeException());
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIds);
+                hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
