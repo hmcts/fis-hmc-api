@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FAMILY_COURT_TYPE_ID;
+
 import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,7 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call completed successfully" + courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
-                            .filter(e -> "18".equals(e.getCourtTypeId()))
+                            .filter(e -> FAMILY_COURT_TYPE_ID.equals(e.getCourtTypeId()))
                             .collect(Collectors.toList());
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
@@ -109,7 +111,7 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call for allVenues completed successfully ");
             if (venueDetail != null
                     && !venueDetail.getCourtVenues().isEmpty()
-                    && venueDetail.getCourtTypeId().equals("18")) {
+                    && FAMILY_COURT_TYPE_ID.equals(venueDetail.getCourtTypeId())) {
                 return venueDetail.getCourtVenues();
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
