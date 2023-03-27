@@ -39,15 +39,20 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
-    @Autowired AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    AuthTokenGenerator authTokenGenerator;
 
-    @Autowired IdamTokenGenerator idamTokenGenerator;
+    @Autowired
+    IdamTokenGenerator idamTokenGenerator;
 
-    @Autowired RefDataService refDataService;
+    @Autowired
+    RefDataService refDataService;
 
-    @Autowired RefDataJudicialService refDataJudicialService;
+    @Autowired
+    RefDataJudicialService refDataJudicialService;
 
-    @Autowired HearingApiClient hearingApiClient;
+    @Autowired
+    HearingApiClient hearingApiClient;
 
     private Hearings hearingDetails;
 
@@ -55,36 +60,36 @@ public class HearingsServiceImpl implements HearingsService {
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     /**
-     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     * This method will fetch all the hearings which belongs to a particular
+     * caseRefNumber.
      *
-     * @param caseReference CaseRefNumber to take all the hearings belongs to this case.
-     * @param authorization authorization header.
+     * @param caseReference        CaseRefNumber to take all the hearings belongs to
+     *                             this case.
+     * @param authorization        authorization header.
      * @param serviceAuthorization serviceAuthorization header
-     * @return caseHearingsResponse, all the hearings which belongs to a particular caseRefNumber.
+     * @return caseHearingsResponse, all the hearings which belongs to a particular
+     *         caseRefNumber.
      */
     @Override
     public Hearings getHearingsByCaseRefNo(
             String caseReference, String authorization, String serviceAuthorization) {
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
+        UriComponentsBuilder builder = UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearingsResponse = null;
 
         try {
             log.info("Fetching hearings for casereference - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
-            MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(
-                            idamTokenGenerator.generateIdamTokenForHearingCftData(), s2sToken);
+            MultiValueMap<String, String> inputHeaders = getHttpHeaders(
+                    idamTokenGenerator.generateIdamTokenForHearingCftData(), s2sToken);
             HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
-            caseHearingsResponse =
-                    restTemplate
-                            .exchange(
-                                    builder.toUriString(),
-                                    HttpMethod.GET,
-                                    httpsHeader,
-                                    Hearings.class)
-                            .getBody();
+            caseHearingsResponse = restTemplate
+                    .exchange(
+                            builder.toUriString(),
+                            HttpMethod.GET,
+                            httpsHeader,
+                            Hearings.class)
+                    .getBody();
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
             integrateVenueDetails(caseHearingsResponse);
@@ -152,8 +157,7 @@ public class HearingsServiceImpl implements HearingsService {
 
                         if (null != judgeId) {
                             log.info("judgeId==> {}", judgeId);
-                            JudgeDetail judgeDetail =
-                                    refDataJudicialService.getJudgeDetails(judgeId);
+                            JudgeDetail judgeDetail = refDataJudicialService.getJudgeDetails(judgeId);
                             if (judgeDetail != null) {
                                 hearingSchedule.setHearingJudgeName(
                                         judgeDetail.getHearingJudgeName());
@@ -167,14 +171,17 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     /**
-     * This method will fetch all the hearings which belongs to a particular caseRefNumber.
+     * This method will fetch all the hearings which belongs to a particular
+     * caseRefNumber.
      *
-     * @param caseIdWithRegionIdMap caseIdWithRegionId map to take all the hearings belongs to each
-     *     case.
-     * @param authorization authorization header.
-     * @param serviceAuthorization serviceAuthorization header
-     * @return casesWithHearings, List of cases with all the hearings which belongs to all caseIds
-     *     passed.
+     * @param caseIdWithRegionIdMap caseIdWithRegionId map to take all the hearings
+     *                              belongs to each
+     *                              case.
+     * @param authorization         authorization header.
+     * @param serviceAuthorization  serviceAuthorization header
+     * @return casesWithHearings, List of cases with all the hearings which belongs
+     *         to all caseIds
+     *         passed.
      */
     @Override
     public List<Hearings> getHearingsByListOfCaseIds(
@@ -189,9 +196,8 @@ public class HearingsServiceImpl implements HearingsService {
 
             for (var caseIdRegionIdEntry : caseIdWithRegionIdMap.entrySet()) {
                 try {
-                    hearingDetails =
-                            hearingApiClient.getHearingDetails(
-                                    userToken, s2sToken, caseIdRegionIdEntry.getKey());
+                    hearingDetails = hearingApiClient.getHearingDetails(
+                            userToken, s2sToken, caseIdRegionIdEntry.getKey());
 
                     casesWithHearings.add(hearingDetails);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
@@ -205,9 +211,8 @@ public class HearingsServiceImpl implements HearingsService {
                 }
             }
             if (!casesWithHearings.isEmpty()) {
-                List<CourtDetail> allVenues =
-                        refDataService.getCourtDetailsByServiceCode(
-                                hearingDetails.getHmctsServiceCode());
+                List<CourtDetail> allVenues = refDataService.getCourtDetailsByServiceCode(
+                        hearingDetails.getHmctsServiceCode());
 
                 integrateVenueDetailsForCaseId(allVenues, casesWithHearings, caseIdWithRegionIdMap);
             }
@@ -222,37 +227,35 @@ public class HearingsServiceImpl implements HearingsService {
             Map<String, String> caseIdWithRegionIdMap) {
 
         for (Hearings hearings : casesWithHearings) {
-            List<CaseHearing> listedOrCancelledHearings =
-                    hearings.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            (hearing.getHmcStatus().equals(LISTED)
-                                                            || hearing.getHmcStatus()
-                                                                    .equals(CANCELLED))
-                                                    && hearing.getHearingDaySchedule() != null)
-                            .collect(Collectors.toList());
+            List<CaseHearing> listedOrCancelledHearings = hearings.getCaseHearings().stream()
+                    .filter(
+                            hearing -> (hearing.getHmcStatus().equals(LISTED)
+                                    || hearing.getHmcStatus()
+                                            .equals(CANCELLED))
+                                    && hearing.getHearingDaySchedule() != null)
+                    .collect(Collectors.toList());
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
                 for (CaseHearing caseHearing : listedOrCancelledHearings) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = null;
                         if (hearingSchedule.getHearingVenueId() != null) {
                             String venueId = hearingSchedule.getHearingVenueId();
-                            matchedCourt =
-                                    allVenues.stream()
-                                            .filter(e -> venueId.equals(e.getHearingVenueId()) && e.getCourtStatus().equals("Open"))
-                                            .findFirst()
-                                            .orElse(null);
+                            matchedCourt = allVenues.stream()
+                                    .filter(e -> venueId.equals(e.getHearingVenueId())
+                                            && e.getCourtStatus().equals("Open"))
+                                    .findFirst()
+                                    .orElse(null);
                         } else {
                             String regionId = null;
                             regionId = caseIdWithRegionIdMap.get(hearings.getCaseRef());
-                            
+
                             if (regionId != null) {
                                 String finalRegionId = regionId;
-                                matchedCourt =
-                                        allVenues.stream()
-                                                .filter(e -> finalRegionId.equals(e.getRegionId()) && e.getCourtStatus().equals("Open"))
-                                                .findFirst()
-                                                .orElse(null);
+                                matchedCourt = allVenues.stream()
+                                        .filter(e -> finalRegionId.equals(e.getRegionId())
+                                                && e.getCourtStatus().equals("Open"))
+                                        .findFirst()
+                                        .orElse(null);
                             }
                         }
                         if (matchedCourt != null) {
