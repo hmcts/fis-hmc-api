@@ -34,4 +34,7 @@ public class CourtDetail {
 
     @JsonProperty("region_id")
     private String regionId;
+
+    @JsonProperty("court_status")
+    private String courtStatus;
 }

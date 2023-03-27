@@ -239,21 +239,18 @@ public class HearingsServiceImpl implements HearingsService {
                             String venueId = hearingSchedule.getHearingVenueId();
                             matchedCourt =
                                     allVenues.stream()
-                                            .filter(e -> venueId.equals(e.getHearingVenueId()))
+                                            .filter(e -> venueId.equals(e.getHearingVenueId()) && e.getCourtStatus().equals("Open"))
                                             .findFirst()
                                             .orElse(null);
                         } else {
                             String regionId = null;
-                            for (var entry : caseIdWithRegionIdMap.entrySet()) {
-                                if (hearings.getCaseRef().equals(entry.getKey())) {
-                                    regionId = entry.getValue();
-                                }
-                            }
+                            regionId = caseIdWithRegionIdMap.get(hearings.getCaseRef());
+                            
                             if (regionId != null) {
                                 String finalRegionId = regionId;
                                 matchedCourt =
                                         allVenues.stream()
-                                                .filter(e -> finalRegionId.equals(e.getRegionId()))
+                                                .filter(e -> finalRegionId.equals(e.getRegionId()) && e.getCourtStatus().equals("Open"))
                                                 .findFirst()
                                                 .orElse(null);
                             }
