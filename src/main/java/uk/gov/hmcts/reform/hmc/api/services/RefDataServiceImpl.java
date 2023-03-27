@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FAMILY_COURT_TYPE_ID;
+
 import feign.FeignException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +17,7 @@ import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
 @Service
 @Slf4j
@@ -45,7 +49,7 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call completed successfully" + courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
-                            .filter(e -> "18".equals(e.getCourtTypeId()))
+                            .filter(e -> FAMILY_COURT_TYPE_ID.equals(e.getCourtTypeId()))
                             .collect(Collectors.toList());
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
@@ -85,5 +89,39 @@ public class RefDataServiceImpl implements RefDataService {
             hearingDto.hearingRequestDTOWith().hearingUpdate(hearingUpdateDto).build();
         }
         return hearingDto;
+    }
+
+    /**
+     * This method will get all the court details of a particular venueId(serviceCode).
+     *
+     * @param serviceCode data to get court details from refData.
+     * @return courtDetail, particular Court detail.
+     */
+    @Override
+    @SuppressWarnings("unused")
+    public List<CourtDetail> getCourtDetailsByServiceCode(String serviceCode) {
+        List<CourtDetail> courtVenues = new ArrayList<>();
+        log.info("calling getCourtDetails service with serviceCode {} " + serviceCode);
+        try {
+            VenuesDetail venueDetail =
+                    refDataApi.getCourtDetailsByServiceCode(
+                            idamTokenGenerator.generateIdamTokenForRefData(),
+                            authTokenGenerator.generate(),
+                            serviceCode);
+            log.info("RefData call for allVenues completed successfully ");
+            if (venueDetail != null
+                    && !venueDetail.getCourtVenues().isEmpty()
+                    && FAMILY_COURT_TYPE_ID.equals(venueDetail.getCourtTypeId())) {
+                return venueDetail.getCourtVenues();
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info(
+                    "RefData call for allVenues  HttpClientError exception {}",
+                    exception.getMessage());
+            throw new RefDataException("RefData", exception.getStatusCode(), exception);
+        } catch (FeignException exception) {
+            log.info("RefData call for allVenues  Feign exception {}", exception.getMessage());
+        }
+        return courtVenues;
     }
 }
