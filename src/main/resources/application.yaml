@@ -124,7 +124,7 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
+        web: INFO
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}
