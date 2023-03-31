@@ -28,9 +28,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
+import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
@@ -161,7 +163,16 @@ public class ServiceBusConfiguration {
                                         hearingDto.getCaseRef(), userToken, serviceToken);
                         State caseState = null;
                         if (hearings != null) {
-                            nextHearingDetailsService.updateNextHearingDetails(userToken, hearings);
+                            NextHearingDetails nextHearingDetails =
+                                    nextHearingDetailsService.getNextHearingDate(hearings);
+
+                            NextHearingDetailsDTO nextHearingDetailsDTO =
+                                    NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                                            .nextHearingDetails(nextHearingDetails)
+                                            .caseRef(hearings.getCaseRef())
+                                            .build();
+
+                            hearingDto.setNextHearingDetailsDTO(nextHearingDetailsDTO);
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());

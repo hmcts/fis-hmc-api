@@ -20,7 +20,7 @@ import lombok.Setter;
 @Builder(toBuilder = true)
 public class NextHearingDetails {
 
-    private Long hearingId;
+    private Long hearingID;
 
-    private LocalDateTime nextHearingDate;
+    private LocalDateTime hearingDateTime;
 }
