@@ -27,5 +27,5 @@ public class HearingDTO {
 
     private HearingUpdateDTO hearingUpdate;
 
-    private NextHearingDetailsDTO nextHearingDetailsDTO;
+    private NextHearingDetailsDTO nextHearingDateRequest;
 }

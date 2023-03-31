@@ -173,7 +173,7 @@ public class ServiceBusConfiguration {
                                                 .caseRef(hearings.getCaseRef())
                                                 .build();
 
-                                hearingDto.setNextHearingDetailsDTO(nextHearingDetailsDTO);
+                                hearingDto.setNextHearingDateRequest(nextHearingDetailsDTO);
                             }
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
