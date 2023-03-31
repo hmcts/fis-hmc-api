@@ -117,5 +117,9 @@ public final class Constants {
 
     public static final String CASE_FILE_VIEW = "#Case File View";
 
+    public static final String FAMILY_COURT_TYPE_ID = "18";
+
+    public static final String OPEN = "Open";
+
     private Constants() {}
 }

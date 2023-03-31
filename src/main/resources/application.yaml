@@ -96,6 +96,7 @@ ccd:
 hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
+    feign-url: http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
@@ -123,7 +124,7 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
+        web: INFO
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}

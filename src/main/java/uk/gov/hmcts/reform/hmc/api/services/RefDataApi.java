@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.hmc.api.config.RefDataConfiguration;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
 @FeignClient(
         name = "ref-data-venue-api",
@@ -30,4 +31,13 @@ public interface RefDataApi {
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestParam("epimms_id") final String epimmsId);
+
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/refdata/location/court-venues/services",
+            headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
+    VenuesDetail getCourtDetailsByServiceCode(
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestParam("service_code") final String serviceCode);
 }
