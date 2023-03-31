@@ -165,14 +165,16 @@ public class ServiceBusConfiguration {
                         if (hearings != null) {
                             NextHearingDetails nextHearingDetails =
                                     nextHearingDetailsService.getNextHearingDate(hearings);
+                            if(nextHearingDetails != null) {
+                                log.info("Next Hearing details " + nextHearingDetails);
+                                NextHearingDetailsDTO nextHearingDetailsDTO =
+                                NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                                        .nextHearingDetails(nextHearingDetails)
+                                        .caseRef(hearings.getCaseRef())
+                                        .build();
 
-                            NextHearingDetailsDTO nextHearingDetailsDTO =
-                                    NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
-                                            .nextHearingDetails(nextHearingDetails)
-                                            .caseRef(hearings.getCaseRef())
-                                            .build();
-
-                            hearingDto.setNextHearingDetailsDTO(nextHearingDetailsDTO);
+                                hearingDto.setNextHearingDetailsDTO(nextHearingDetailsDTO);
+                            }
                             caseState =
                                     nextHearingDetailsService.fetchStateForUpdate(
                                             hearings, hearingDto.getHearingUpdate().getHmcStatus());
