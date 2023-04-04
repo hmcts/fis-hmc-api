@@ -37,9 +37,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
-    @Value("${hearing_component.api.url}")
-    private String basePath;
-
+    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -49,11 +47,12 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired RefDataJudicialService refDataJudicialService;
 
     @Autowired HearingApiClient hearingApiClient;
+    RestTemplate restTemplate = new RestTemplate();
+
+    @Value("${hearing_component.api.url}")
+    private String basePath;
 
     private Hearings hearingDetails;
-
-    RestTemplate restTemplate = new RestTemplate();
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -194,17 +193,21 @@ public class HearingsServiceImpl implements HearingsService {
                             hearingApiClient.getHearingDetails(
                                     userToken, s2sToken, caseIdRegionIdEntry.getKey());
 
-                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings().stream()
-                        .filter(
-                            eachHearing -> eachHearing.getHmcStatus().equals(LISTED)
-                                || eachHearing.getHmcStatus()
-                                    .equals(CANCELLED))
+                    List<CaseHearing> filteredHearings =
+                            hearingDetails.getCaseHearings().stream()
+                                    .filter(
+                                            eachHearing ->
+                                                    eachHearing.getHmcStatus().equals(LISTED)
+                                                            || eachHearing
+                                                                    .getHmcStatus()
+                                                                    .equals(CANCELLED))
                                     .collect(Collectors.toList());
-                    Hearings filteredCaseHearingsWithCount = Hearings.hearingsWith()
-                        .caseHearings(filteredHearings)
-                        .caseRef(hearingDetails.getCaseRef())
-                        .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
-                        .build();
+                    Hearings filteredCaseHearingsWithCount =
+                            Hearings.hearingsWith()
+                                    .caseHearings(filteredHearings)
+                                    .caseRef(hearingDetails.getCaseRef())
+                                    .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                                    .build();
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
