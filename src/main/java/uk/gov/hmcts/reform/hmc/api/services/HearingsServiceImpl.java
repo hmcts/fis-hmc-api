@@ -194,7 +194,18 @@ public class HearingsServiceImpl implements HearingsService {
                             hearingApiClient.getHearingDetails(
                                     userToken, s2sToken, caseIdRegionIdEntry.getKey());
 
-                    casesWithHearings.add(hearingDetails);
+                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings().stream()
+                        .filter(
+                            eachHearing -> eachHearing.getHmcStatus().equals(LISTED)
+                                || eachHearing.getHmcStatus()
+                                    .equals(CANCELLED))
+                                    .collect(Collectors.toList());
+                    Hearings filteredCaseHearingsWithCount = Hearings.hearingsWith()
+                        .caseHearings(filteredHearings)
+                        .caseRef(hearingDetails.getCaseRef())
+                        .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                        .build();
+                    casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
                             "Hearing api call HttpClientError exception {}",
