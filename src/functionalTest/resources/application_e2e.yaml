@@ -78,7 +78,6 @@ idam:
   system-update:
     username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
-
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
 

@@ -7,6 +7,12 @@ public final class Constants {
     public static final Boolean FALSE = false;
 
     public static final String LISTED = "LISTED";
+
+    public static final String COMPLETED = "COMPLETED";
+
+    public static final String ADJOURNED = "ADJOURNED";
+
+    public static final String CANCELLED = "CANCELLED";
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
@@ -103,11 +109,17 @@ public final class Constants {
 
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
+    public static final String AUTHORIZATION = "Authorization";
+
     public static final String CCD_DEMO_LINK =
             "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/";
     public static final String DEMO = "demo";
 
     public static final String CASE_FILE_VIEW = "#Case File View";
+
+    public static final String FAMILY_COURT_TYPE_ID = "18";
+
+    public static final String OPEN = "Open";
 
     private Constants() {}
 }

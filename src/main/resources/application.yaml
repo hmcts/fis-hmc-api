@@ -70,7 +70,7 @@ idam:
     token:
       context-path: /oauth2/token
   refDataUserAuth:
-    username: ${FIS_HMC_IDAM__USER_NAME:fis_hmc_hearing_manager@hmcts.net}
+    username: ${FIS_HMC_IDAM__USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
   system-update:
     username: ${PRL_IDAM_USER_NAME:dummy}
@@ -80,7 +80,7 @@ idam:
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
 prl:
-  baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
+  baseUrl: ${PRL_URL:https://prl-cos-pr-1038.service.core-compute-preview.internal/}
 
 core_case_data:
   api:
@@ -96,6 +96,7 @@ ccd:
 hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
+    feign-url: http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
@@ -123,7 +124,7 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
+        web: INFO
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}

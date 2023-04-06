@@ -80,6 +80,7 @@ idam:
     username: ${PRL_IDAM_USER_NAME:DUMMY}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 
+
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
 
