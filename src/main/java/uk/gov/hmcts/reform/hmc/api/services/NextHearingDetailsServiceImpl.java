@@ -174,12 +174,15 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     private Boolean isAllFutureHearingsAreCancelled(Hearings hearings) {
         for (CaseHearing hearing : hearings.getCaseHearings()) {
             if (hearing.getHearingDaySchedule() != null) {
-                if (hearing.getHmcStatus().equals(LISTED)) {
-                    return false;
-                }
+
                 List<HearingDaySchedule> futureHearingDaySches =
                         getFutureHearingDaySchedule(hearing);
                 if (!futureHearingDaySches.isEmpty() && !hearing.getHmcStatus().equals(CANCELLED)) {
+                    return false;
+                } else if (futureHearingDaySches.isEmpty()
+                        && !(hearing.getHmcStatus().equals(CANCELLED)
+                                || hearing.getHmcStatus().equals(ADJOURNED)
+                                || hearing.getHmcStatus().equals(COMPLETED))) {
                     return false;
                 }
             }
