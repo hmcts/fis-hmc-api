@@ -381,6 +381,6 @@ class NextHearingDetailsServiceTest {
 
         State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
-        Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
+        Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
     }
 }
