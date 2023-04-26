@@ -18,4 +18,8 @@ public class Hearings {
     private String caseRef;
 
     private List<CaseHearing> caseHearings;
+
+    private String courtTypeId;
+
+    private String courtName;
 }

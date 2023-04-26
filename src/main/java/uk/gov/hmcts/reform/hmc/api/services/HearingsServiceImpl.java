@@ -247,6 +247,24 @@ public class HearingsServiceImpl implements HearingsService {
                                                     && hearing.getHearingDaySchedule() != null)
                             .collect(Collectors.toList());
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
+                CourtDetail caseCourt =
+                        allVenues.stream()
+                                .filter(
+                                        e ->
+                                                caseIdWithRegionIdMap
+                                                                .get(hearings.getCaseRef())
+                                                                .split("-")[0]
+                                                                .equals(e.getRegionId())
+                                                        && caseIdWithRegionIdMap
+                                                                .get(hearings.getCaseRef())
+                                                                .split("-")[1]
+                                                                .equals(e.getHearingVenueId())
+                                                        && OPEN.equals(e.getCourtStatus()))
+                                .findFirst()
+                                .orElse(null);
+                hearings.setCourtTypeId(caseCourt.getCourtTypeId());
+                hearings.setCourtName(caseCourt.getHearingVenueName());
+
                 for (CaseHearing caseHearing : listedOrCancelledHearings) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = null;
@@ -263,7 +281,8 @@ public class HearingsServiceImpl implements HearingsService {
                                             .orElse(null);
                         } else {
                             String regionId = null;
-                            regionId = caseIdWithRegionIdMap.get(hearings.getCaseRef());
+                            regionId =
+                                    caseIdWithRegionIdMap.get(hearings.getCaseRef()).split("-")[0];
 
                             if (regionId != null) {
                                 String finalRegionId = regionId;
@@ -285,6 +304,7 @@ public class HearingsServiceImpl implements HearingsService {
                                     matchedCourt.getHearingVenueAddress());
                             hearingSchedule.setHearingVenueLocationCode(
                                     matchedCourt.getHearingVenueLocationCode());
+                            caseHearing.setHearingCourtTypeId(matchedCourt.getCourtTypeId());
                         }
                     }
                 }
