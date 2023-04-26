@@ -38,13 +38,13 @@ class NextHearingDetailsServiceTest {
 
     @Test
     void shouldUpdateNextHearingDetailsTest() {
-        LocalDateTime testNextHearingDate1 = LocalDateTime.of(2023, 04, 24, 1, 0);
+        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate2 = LocalDateTime.of(2023, 04, 25, 1, 0);
+        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate3 = LocalDateTime.of(2023, 04, 22, 1, 0);
+        LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate4 = LocalDateTime.of(2023, 04, 26, 1, 0);
+        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
 
         HearingDaySchedule hearingDaySchedule1 =
                 HearingDaySchedule.hearingDayScheduleWith()
@@ -106,13 +106,13 @@ class NextHearingDetailsServiceTest {
 
     @Test
     void shouldReturnNextHearingDetailsTest() {
-        LocalDateTime testNextHearingDate1 = LocalDateTime.of(2023, 04, 24, 1, 0);
+        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate2 = LocalDateTime.of(2023, 04, 25, 1, 0);
+        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate3 = LocalDateTime.of(2023, 04, 22, 1, 0);
+        LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate4 = LocalDateTime.of(2023, 04, 26, 1, 0);
+        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
 
         HearingDaySchedule hearingDaySchedule1 =
                 HearingDaySchedule.hearingDayScheduleWith()
@@ -172,13 +172,13 @@ class NextHearingDetailsServiceTest {
 
     @Test
     void shouldFetchStateToUpdateWhenCurrHmcIsCompletedButSomeHearingInFuture() {
-        LocalDateTime testNextHearingDate1 = LocalDateTime.of(2023, 04, 24, 1, 0);
+        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate2 = LocalDateTime.of(2023, 04, 25, 1, 0);
+        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate3 = LocalDateTime.of(2023, 04, 22, 1, 0);
+        LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
 
-        LocalDateTime testNextHearingDate4 = LocalDateTime.of(2023, 04, 26, 1, 0);
+        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
 
         HearingDaySchedule hearingDaySchedule1 =
                 HearingDaySchedule.hearingDayScheduleWith()
@@ -229,7 +229,7 @@ class NextHearingDetailsServiceTest {
                         .caseHearings(caseHearingList)
                         .hmctsServiceCode("BBA3")
                         .build();
-        String currHearingHmcStatus = Constants.COMPLETED;
+        String currHearingHmcStatus = Constants.LISTED;
         State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
         Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);

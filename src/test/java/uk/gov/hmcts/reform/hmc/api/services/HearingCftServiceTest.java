@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 import feign.FeignException;
 import feign.Request;
@@ -143,7 +144,13 @@ class HearingCftServiceTest {
     void shouldReturnCtfHearingsByListOfCaseIdsTest() {
 
         CourtDetail courtDetail =
-                CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+                CourtDetail.courtDetailWith()
+                        .courtTypeId("18")
+                        .hearingVenueId("231596")
+                        .hearingVenueName("TEST")
+                        .regionId("RegionId")
+                        .courtStatus(OPEN)
+                        .build();
         List<CourtDetail> courtDetailsList = new ArrayList<>();
         courtDetailsList.add(courtDetail);
 
@@ -172,15 +179,18 @@ class HearingCftServiceTest {
                         .caseRef("123")
                         .hmctsServiceCode("ABA5")
                         .caseHearings(caseHearingList)
+                        .courtName("TEST")
+                        .courtTypeId("18")
                         .build();
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenReturn(caseHearings);
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
-        caseIdWithRegionId.put("caseref1", "RegionId");
+        caseIdWithRegionId.put("123", "RegionId-231596");
 
         List<Hearings> hearingsResponse =
                 hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
