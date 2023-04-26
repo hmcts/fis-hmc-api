@@ -41,6 +41,8 @@ public class CaseHearing {
 
     private Boolean hearingIsLinkedFlag;
 
+    private String hearingCourtTypeId;
+
     //    private List<String> hearingChannels;
 
 }
