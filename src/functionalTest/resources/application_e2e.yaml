@@ -42,20 +42,20 @@ spring:
 
 hearing:
   api:
-    url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.platform.hmcts.net}
+    url: ${HEARING_API_URL:http://rd-commondata-api-demo.demo.platform.hmcts.net}
 
 ref_data_venue:
   api:
-    url: ${REF_DATA_VENUE_URL:http://rd-location-ref-api-demo.service.core-compute-demo.platform.hmcts.net/}
+    url: ${REF_DATA_VENUE_URL:http://rd-location-ref-api-demo.demo.platform.hmcts.net/}
 
 ref_data_judicial:
   api:
-    url: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.service.core-compute-demo.platform.hmcts.net/}
+    url: ${REF_DATA_JUDICIAL_URL:http://rd-judicial-api-demo.demo.platform.hmcts.net/}
 
 idam:
   url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
   s2s-auth:
-    url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-aat.service.core-compute-aat.platform.hmcts.net}
+    url: ${AUTH_PROVIDER_SERVICE_CLIENT_BASEURL:http://rpe-service-auth-provider-aat.aat.platform.hmcts.net}
     totp_secret: ${OIDC_S2S_SECRET:dummy}
     microservice: ${OIDC_S2S_MICROSERVICE_NAME:fis_hmc_api}
   api:
@@ -79,11 +79,11 @@ idam:
     username: ${PRL_IDAM_USER_NAME:dummy}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
 prl:
-  baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.platform.hmcts.net/}
+  baseUrl: ${PRL_URL:http://prl-cos-demo.demo.platform.hmcts.net/}
 
 core_case_data:
   api:
-    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.platform.hmcts.net}
+    url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.aat.platform.hmcts.net}
 
 ccd:
   ui:
@@ -91,7 +91,7 @@ ccd:
 
 hearing_component:
   api:
-    url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.platform.hmcts.net/hearings/}
+    url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.demo.platform.hmcts.net/hearings/}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
