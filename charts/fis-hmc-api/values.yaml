@@ -1,7 +1,7 @@
 java:
   applicationPort: 4550
   image: 'hmctspublic.azurecr.io/fis/hmc-api:latest'
-  ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  ingressHost: fis-hmc-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net
   aadIdentityName: fis
   keyVaults:
     fis-kv:
@@ -25,19 +25,19 @@ java:
   environment:
     REFORM_TEAM: fis
     REFORM_SERVICE_NAME: fis-hmc-api
-    SERVICE_AUTH_PROVIDER_URL: 'http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    SERVICE_AUTH_PROVIDER_URL: 'http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net'
     IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-fis-subs-prl-{{ .Values.global.environment }}'
     HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
     APPLICATION_NAME: 'fis_hmc_api'
-    HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/hearings/'
-    CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    HMC_CFT_HEARING_BASEURL: 'http://hmc-cft-hearing-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net/hearings/'
+    CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net'
     CCD_UI_URL: 'https://manage-case.{{ .Values.global.environment }}.platform.hmcts.net/cases/case-details/'
-    AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal"
+    AUTH_PROVIDER_SERVICE_CLIENT_BASEURL: "http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net"
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
-    PRL_URL: 'http://prl-cos-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
+    PRL_URL: 'http://prl-cos-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net'
     PRL_HMC_S2S_AUTHORISED_SERVICES : xui_webapp,prl_cos_api,fis_hmc_api
-    REF_DATA_VENUE_URL: 'http://rd-location-ref-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/'
-    REF_DATA_JUDICIAL_URL: 'http://rd-judicial-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/'
+    REF_DATA_VENUE_URL: 'http://rd-location-ref-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net/'
+    REF_DATA_JUDICIAL_URL: 'http://rd-judicial-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.platform.hmcts.net/'

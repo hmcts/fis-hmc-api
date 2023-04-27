@@ -172,47 +172,47 @@ withPipeline(type, product, component) {
 
   onPR {
     env.ENVIRONMENT = "preview"
-    env.CASE_API_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-    env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.internal"
-    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
-    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal/hearings/'
+    env.CASE_API_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.platform.hmcts.net"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-pr-${CHANGE_ID}.service.core-compute-preview.platform.hmcts.net"
+    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-aat.service.core-compute-aat.platform.hmcts.net"
+    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-aat.service.core-compute-aat.platform.hmcts.net"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.platform.hmcts.net/hearings/'
     env.IDAM_API_URL= 'https://idam-api.aat.platform.hmcts.net'
    //setCommonEnvVariables()
   }
 
   onMaster {
     env.ENVIRONMENT = "aat"
-    env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.internal"
-    env.CASE_API_TEST_URL = "https://fis-hmc-api-staging.service.core-compute-aat.internal"
-    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
-    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
-    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.CASE_API_URL = "http://fis-hmc-api-aat.service.core-compute-aat.platform.hmcts.net"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-staging.service.core-compute-aat.platform.hmcts.net"
+    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.platform.hmcts.net"
+    env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.platform.hmcts.net"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.platform.hmcts.net/hearings/'
    // setCommonEnvVariables()
   }
 
   onDemo {
     env.ENVIRONMENT = "demo"
-    env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
-    env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
-    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
-    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.platform.hmcts.net"
+    env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.platform.hmcts.net"
+    env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.platform.hmcts.net/hearings/'
+    env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.platform.hmcts.net"
     env.IDAM_API_URL= 'https://idam-api.demo.platform.hmcts.net'
   }
 
   onPerftest {
     env.ENVIRONMENT = "perftest"
-    env.CASE_API_URL = "http://fis-hmc-api-perftest.service.core-compute-perftest.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-perftest.service.core-compute-perftest.platform.hmcts.net"
   }
 
   onIthc {
     env.ENVIRONMENT = "ithc"
-    env.CASE_API_URL = "http://fis-hmc-api-ithc.service.core-compute-ithc.internal"
+    env.CASE_API_URL = "http://fis-hmc-api-ithc.service.core-compute-ithc.platform.hmcts.net"
   }
 
 }
 
 def setCommonEnvVariables() {
   env.IDAM_API_URL_BASE = "https://idam-api.demo.platform.hmcts.net"
-  env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
+  env.S2S_URL_BASE = "http://rpe-service-auth-provider-demo.service.core-compute-demo.platform.hmcts.net"
 }
