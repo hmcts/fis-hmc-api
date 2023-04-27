@@ -304,7 +304,7 @@ public class HearingsServiceImpl implements HearingsService {
                                     matchedCourt.getHearingVenueAddress());
                             hearingSchedule.setHearingVenueLocationCode(
                                     matchedCourt.getHearingVenueLocationCode());
-                            caseHearing.setHearingCourtTypeId(matchedCourt.getCourtTypeId());
+                            hearingSchedule.setCourtTypeId(matchedCourt.getCourtTypeId());
                         }
                     }
                 }
