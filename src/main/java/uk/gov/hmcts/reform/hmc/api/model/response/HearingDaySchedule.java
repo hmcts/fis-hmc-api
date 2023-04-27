@@ -21,6 +21,8 @@ public class HearingDaySchedule {
 
     private String listAssistSessionId;
 
+    private String courtTypeId;
+
     private String hearingVenueId;
 
     private String hearingVenueName;
