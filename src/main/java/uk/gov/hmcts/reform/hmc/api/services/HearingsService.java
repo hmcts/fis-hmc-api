@@ -14,4 +14,6 @@ public interface HearingsService {
             Map<String, String> caseIdWithRegionId,
             String authorization,
             String serviceAuthorization);
+
+    Hearings getFutureHearings(String caseReference);
 }

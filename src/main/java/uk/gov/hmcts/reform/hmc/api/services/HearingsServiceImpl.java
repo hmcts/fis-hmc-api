@@ -52,6 +52,9 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
+    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
+    private List<String> hearingStatusList;
+
     private Hearings hearingDetails;
 
     /**
@@ -310,5 +313,46 @@ public class HearingsServiceImpl implements HearingsService {
                 }
             }
         }
+    }
+
+    @Override
+    public Hearings getFutureHearings(String caseReference) {
+
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        Hearings futureHearingsResponse = null;
+        try {
+            hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
+
+            final List<String> hearingStatuses =
+                    hearingStatusList.stream().map(String::trim).collect(Collectors.toList());
+
+            final List<CaseHearing> filteredCaseHearings =
+                    hearingDetails.getCaseHearings().stream()
+                            .filter(
+                                    hearing ->
+                                            hearingStatuses.stream()
+                                                    .anyMatch(
+                                                            hearingStatus ->
+                                                                    hearingStatus.equals(
+                                                                            hearing
+                                                                                    .getHmcStatus())))
+                            .collect(Collectors.toList());
+
+            futureHearingsResponse =
+                    Hearings.hearingsWith()
+                            .caseHearings(filteredCaseHearings)
+                            .caseRef(hearingDetails.getCaseRef())
+                            .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                            .build();
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
+        }
+
+        return futureHearingsResponse;
     }
 }
