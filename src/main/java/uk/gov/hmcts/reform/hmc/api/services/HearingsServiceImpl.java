@@ -5,6 +5,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 import feign.FeignException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -327,7 +328,7 @@ public class HearingsServiceImpl implements HearingsService {
             final List<String> hearingStatuses =
                     hearingStatusList.stream().map(String::trim).collect(Collectors.toList());
 
-            final List<CaseHearing> filteredCaseHearings =
+            final List<CaseHearing> filteredHearingsByStatus =
                     hearingDetails.getCaseHearings().stream()
                             .filter(
                                     hearing ->
@@ -339,9 +340,26 @@ public class HearingsServiceImpl implements HearingsService {
                                                                                     .getHmcStatus())))
                             .collect(Collectors.toList());
 
+            final List<CaseHearing> allFutureHearings =
+                    filteredHearingsByStatus.stream()
+                            .filter(
+                                    p ->
+                                            p.getHearingDaySchedule() != null
+                                                    && p.getHearingDaySchedule().stream()
+                                                                    .filter(
+                                                                            u ->
+                                                                                    u.getHearingStartDateTime()
+                                                                                            .isAfter(
+                                                                                                    LocalDateTime
+                                                                                                            .now()))
+                                                                    .collect(Collectors.toList())
+                                                                    .size()
+                                                            > 0)
+                            .collect(Collectors.toList());
+
             futureHearingsResponse =
                     Hearings.hearingsWith()
-                            .caseHearings(filteredCaseHearings)
+                            .caseHearings(allFutureHearings)
                             .caseRef(hearingDetails.getCaseRef())
                             .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                             .build();

@@ -396,6 +396,60 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
 
+    @Test
+    void allFutureHearingsByCaseRefNoControllerTest() throws IOException, ParseException {
+
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+
+        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearings);
+        ResponseEntity<Object> hearingsForCaseRefNoResponse =
+                hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
+        Assertions.assertNotNull(hearingsForCaseRefNoResponse.getBody());
+    }
+
+    @Test
+    void allFutureHearingsByCaseRefNoUnauthorisedExceptionTest() {
+
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
+        ResponseEntity<Object> hearingsForCaseRefNoResponse =
+                hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
+
+        Assertions.assertEquals(
+                HttpStatus.UNAUTHORIZED, hearingsForCaseRefNoResponse.getStatusCode());
+    }
+
+    @Test
+    void allFutureHearingsByCaseRefNoControllerFeignExceptionTest()
+            throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+
+        Mockito.when(hearingsService.getFutureHearings(anyString()))
+                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+
+        ResponseEntity<Object> hearingsForCaseRefNoResponse =
+                hearingsController.getFutureHearings("auth", "sauth", "testCaseRefNo");
+
+        Assertions.assertEquals(
+                HttpStatus.INTERNAL_SERVER_ERROR, hearingsForCaseRefNoResponse.getStatusCode());
+    }
+
+    @Test
+    void allFutureHearingsByCaseRefNoControllerExceptionTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+
+        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo"))
+                .thenThrow(new RuntimeException());
+
+        ResponseEntity<Object> hearingsForAllCasesResponse =
+                hearingsController.getFutureHearings("auth", "sauth", "testCaseRefNo");
+        Assertions.assertEquals(
+                HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
+    }
+
     public static FeignException feignException(int status, String message) {
         return FeignException.errorStatus(
                 message,

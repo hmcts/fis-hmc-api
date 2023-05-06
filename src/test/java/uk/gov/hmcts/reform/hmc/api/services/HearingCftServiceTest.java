@@ -6,13 +6,23 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_ACTUALS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_LISTING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLATION_REQUESTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLATION_SUBMITTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EXCEPTION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HEARING_REQUESTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UPDATE_REQUESTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UPDATE_SUBMITTED;
 
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -251,36 +261,51 @@ class HearingCftServiceTest {
 
     @Test
     void shouldReturnAllFutureHearingsByCaseRefNoTest() {
-
+        LocalDateTime hearingStartDate = LocalDateTime.now().plusDays(5).withNano(1);
         HearingDaySchedule hearingDaySchedule =
                 HearingDaySchedule.hearingDayScheduleWith()
                         .hearingVenueId("231596")
                         .hearingJudgeId("4925644")
+                        .hearingStartDateTime(hearingStartDate)
                         .build();
         List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
         hearingDayScheduleList.add(hearingDaySchedule);
 
-        CaseHearing caseHearing =
+        CaseHearing caseHearingWithListedStatus =
                 CaseHearing.caseHearingWith()
-                        .hmcStatus("LISTED")
+                        .hmcStatus(LISTED)
                         .hearingDaySchedule(hearingDayScheduleList)
                         .build();
+        CaseHearing caseHearingWithCancelled =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus(CANCELLED)
+                        .hearingDaySchedule(hearingDayScheduleList)
+                        .build();
+
+        CaseHearing caseHearingWithoutHearingDaySche =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus(HEARING_REQUESTED)
+                        .hearingDaySchedule(null)
+                        .build();
+
         List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing);
+        caseHearingList.add(caseHearingWithListedStatus);
+        caseHearingList.add(caseHearingWithCancelled);
+        caseHearingList.add(caseHearingWithoutHearingDaySche);
 
         ReflectionTestUtils.setField(
                 hearingsService,
                 "hearingStatusList",
                 List.of(
-                        "HEARING_REQUESTED",
-                        "AWAITING_LISTING",
-                        "LISTED",
-                        "UPDATE_REQUESTED",
-                        "UPDATE_SUBMITTED",
-                        "EXCEPTION",
-                        "CANCELLATION_REQUESTED",
-                        "CANCELLATION_SUBMITTED",
-                        "AWAITING_ACTUALS"));
+                        HEARING_REQUESTED,
+                        AWAITING_LISTING,
+                        LISTED,
+                        UPDATE_REQUESTED,
+                        UPDATE_SUBMITTED,
+                        EXCEPTION,
+                        CANCELLATION_REQUESTED,
+                        CANCELLATION_SUBMITTED,
+                        AWAITING_ACTUALS));
 
         Hearings caseHearings =
                 Hearings.hearingsWith()
