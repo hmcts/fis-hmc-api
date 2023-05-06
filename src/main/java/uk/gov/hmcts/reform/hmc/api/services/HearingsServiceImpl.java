@@ -343,12 +343,13 @@ public class HearingsServiceImpl implements HearingsService {
             final List<CaseHearing> allFutureHearings =
                     filteredHearingsByStatus.stream()
                             .filter(
-                                    p ->
-                                            p.getHearingDaySchedule() != null
-                                                    && p.getHearingDaySchedule().stream()
+                                    hearing ->
+                                            hearing.getHearingDaySchedule() != null
+                                                    && hearing.getHearingDaySchedule().stream()
                                                                     .filter(
-                                                                            u ->
-                                                                                    u.getHearingStartDateTime()
+                                                                            hearDaySche ->
+                                                                                    hearDaySche
+                                                                                            .getHearingStartDateTime()
                                                                                             .isAfter(
                                                                                                     LocalDateTime
                                                                                                             .now()))
