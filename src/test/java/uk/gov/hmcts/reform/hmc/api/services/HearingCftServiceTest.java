@@ -53,8 +53,8 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @PropertySource("classpath:application.yaml")
 class HearingCftServiceTest {
 
-    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
-    private List<String> hearingStatusList;
+    @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
+    private List<String> futureHearingStatusList;
 
     @InjectMocks HearingsServiceImpl hearingsService;
 
@@ -293,7 +293,8 @@ class HearingCftServiceTest {
         caseHearingList.add(caseHearingWithCancelled);
         caseHearingList.add(caseHearingWithoutHearingDaySche);
 
-        ReflectionTestUtils.setField(hearingsService, "hearingStatusList", hearingStatusList);
+        ReflectionTestUtils.setField(
+                hearingsService, "futureHearingStatusList", futureHearingStatusList);
 
         Hearings caseHearings =
                 Hearings.hearingsWith()

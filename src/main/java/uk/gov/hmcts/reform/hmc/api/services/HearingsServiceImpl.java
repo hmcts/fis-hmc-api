@@ -53,8 +53,8 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
-    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
-    private List<String> hearingStatusList;
+    @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
+    private List<String> futureHearingStatusList;
 
     private Hearings hearingDetails;
 
@@ -326,7 +326,7 @@ public class HearingsServiceImpl implements HearingsService {
             hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
 
             final List<String> hearingStatuses =
-                    hearingStatusList.stream().map(String::trim).collect(Collectors.toList());
+                    futureHearingStatusList.stream().map(String::trim).collect(Collectors.toList());
 
             final List<CaseHearing> filteredHearingsByStatus =
                     hearingDetails.getCaseHearings().stream()
