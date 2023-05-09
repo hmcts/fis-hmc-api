@@ -6,17 +6,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_ACTUALS;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_LISTING;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLATION_REQUESTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLATION_SUBMITTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EXCEPTION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HEARING_REQUESTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UPDATE_REQUESTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UPDATE_SUBMITTED;
 
 import feign.FeignException;
 import feign.Request;
@@ -35,6 +27,9 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -52,13 +47,18 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+@SpringBootTest
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
+@PropertySource("classpath:application.yaml")
 class HearingCftServiceTest {
 
     @InjectMocks HearingsServiceImpl hearingsService;
 
     @Mock RestTemplate restTemplate;
+
+    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
+    private List<String> hearingStatusList;
 
     @Mock private RefDataServiceImpl refDataService;
 
@@ -284,7 +284,7 @@ class HearingCftServiceTest {
 
         CaseHearing caseHearingWithoutHearingDaySche =
                 CaseHearing.caseHearingWith()
-                        .hmcStatus(HEARING_REQUESTED)
+                        .hmcStatus("HEARING_REQUESTED")
                         .hearingDaySchedule(null)
                         .build();
 
@@ -293,19 +293,7 @@ class HearingCftServiceTest {
         caseHearingList.add(caseHearingWithCancelled);
         caseHearingList.add(caseHearingWithoutHearingDaySche);
 
-        ReflectionTestUtils.setField(
-                hearingsService,
-                "hearingStatusList",
-                List.of(
-                        HEARING_REQUESTED,
-                        AWAITING_LISTING,
-                        LISTED,
-                        UPDATE_REQUESTED,
-                        UPDATE_SUBMITTED,
-                        EXCEPTION,
-                        CANCELLATION_REQUESTED,
-                        CANCELLATION_SUBMITTED,
-                        AWAITING_ACTUALS));
+        ReflectionTestUtils.setField(hearingsService, "hearingStatusList", hearingStatusList);
 
         Hearings caseHearings =
                 Hearings.hearingsWith()

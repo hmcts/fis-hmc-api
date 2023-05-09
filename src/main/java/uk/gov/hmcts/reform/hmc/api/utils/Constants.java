@@ -121,21 +121,5 @@ public final class Constants {
 
     public static final String OPEN = "Open";
 
-    public static final String HEARING_REQUESTED = "HEARING_REQUESTED";
-
-    public static final String AWAITING_LISTING = "AWAITING_LISTING";
-
-    public static final String UPDATE_REQUESTED = "UPDATE_REQUESTED";
-
-    public static final String UPDATE_SUBMITTED = "UPDATE_SUBMITTED";
-
-    public static final String EXCEPTION = "EXCEPTION";
-
-    public static final String CANCELLATION_REQUESTED = "CANCELLATION_REQUESTED";
-
-    public static final String CANCELLATION_SUBMITTED = "CANCELLATION_SUBMITTED";
-
-    public static final String AWAITING_ACTUALS = "AWAITING_ACTUALS";
-
     private Constants() {}
 }
