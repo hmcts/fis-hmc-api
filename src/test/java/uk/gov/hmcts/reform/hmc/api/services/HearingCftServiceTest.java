@@ -6,12 +6,15 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +27,15 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -40,9 +47,14 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+@SpringBootTest
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
+@PropertySource("classpath:application.yaml")
 class HearingCftServiceTest {
+
+    @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
+    private List<String> futureHearingStatusList;
 
     @InjectMocks HearingsServiceImpl hearingsService;
 
@@ -245,6 +257,92 @@ class HearingCftServiceTest {
                 hearingsService
                         .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
                         .isEmpty());
+    }
+
+    @Test
+    void shouldReturnAllFutureHearingsByCaseRefNoTest() {
+        LocalDateTime hearingStartDate = LocalDateTime.now().plusDays(5).withNano(1);
+        HearingDaySchedule hearingDaySchedule =
+                HearingDaySchedule.hearingDayScheduleWith()
+                        .hearingVenueId("231596")
+                        .hearingJudgeId("4925644")
+                        .hearingStartDateTime(hearingStartDate)
+                        .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearingWithListedStatus =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus(LISTED)
+                        .hearingDaySchedule(hearingDayScheduleList)
+                        .build();
+        CaseHearing caseHearingWithCancelled =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus(CANCELLED)
+                        .hearingDaySchedule(hearingDayScheduleList)
+                        .build();
+
+        CaseHearing caseHearingWithoutHearingDaySche =
+                CaseHearing.caseHearingWith()
+                        .hmcStatus("HEARING_REQUESTED")
+                        .hearingDaySchedule(null)
+                        .build();
+
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearingWithListedStatus);
+        caseHearingList.add(caseHearingWithCancelled);
+        caseHearingList.add(caseHearingWithoutHearingDaySche);
+
+        ReflectionTestUtils.setField(
+                hearingsService, "futureHearingStatusList", futureHearingStatusList);
+
+        Hearings caseHearings =
+                Hearings.hearingsWith()
+                        .caseRef("123")
+                        .hmctsServiceCode("ABA5")
+                        .caseHearings(caseHearingList)
+                        .courtName("TEST")
+                        .courtTypeId("18")
+                        .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenReturn(caseHearings);
+
+        Hearings hearingsResponse = hearingsService.getFutureHearings("testCaseRefNo");
+        Assertions.assertEquals(LISTED, hearingsResponse.getCaseHearings().get(0).getHmcStatus());
+    }
+
+    @Test
+    void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest()
+            throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+
+        Assertions.assertNull(hearingsService.getFutureHearings(""));
+    }
+
+    @Test
+    void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest()
+            throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+        Assertions.assertNull(hearingsService.getFutureHearings(""));
+    }
+
+    @Test
+    void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest()
+            throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(new RuntimeException());
+        Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
 
     public static FeignException feignException(int status, String message) {

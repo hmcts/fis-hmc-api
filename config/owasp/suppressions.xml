@@ -109,6 +109,10 @@
     <cve>CVE-2022-1471</cve>
   </suppress>
   <suppress>
+    <notes>spring-boot-starter-webflux-2.7.3.jar</notes>
+    <cve>CVE-2023-20873</cve>
+  </suppress>
+  <suppress>
     <notes>spring-cloud-function-context-3.0.9.RELEASE.jar</notes>
     <cve>CVE-2022-22963</cve>
     <cve>CVE-2022-22979</cve>
