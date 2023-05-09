@@ -2,6 +2,9 @@ package uk.gov.hmcts.reform.hmc.api.utils;
 
 public final class Constants {
 
+
+
+
     public static final String EMPTY_STRING = " ";
     public static final Boolean TRUE = true;
     public static final Boolean FALSE = false;
