@@ -53,12 +53,12 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @PropertySource("classpath:application.yaml")
 class HearingCftServiceTest {
 
+    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
+    private List<String> hearingStatusList;
+
     @InjectMocks HearingsServiceImpl hearingsService;
 
     @Mock RestTemplate restTemplate;
-
-    @Value("#{'${hearing_component.hearingStatus}'.split(',')}")
-    private List<String> hearingStatusList;
 
     @Mock private RefDataServiceImpl refDataService;
 
