@@ -1,13 +1,12 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FAMILY_COURT_TYPE_ID;
-
 import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -29,6 +28,9 @@ public class RefDataServiceImpl implements RefDataService {
     @Autowired IdamTokenGenerator idamTokenGenerator;
     @Autowired RefDataApi refDataApi;
 
+    @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
+    private List<String> familyCourtIds;
+
     /**
      * This method will get all the court details of a particular venueId(epimmsId).
      *
@@ -41,6 +43,9 @@ public class RefDataServiceImpl implements RefDataService {
         CourtDetail courtDetail = null;
         log.info("calling getCourtDetails service " + epimmsId);
         try {
+            final List<String> courtIds =
+                    familyCourtIds.stream().map(String::trim).collect(Collectors.toList());
+
             List<CourtDetail> courtDetailList =
                     refDataApi.getCourtDetails(
                             idamTokenGenerator.generateIdamTokenForRefData(),
@@ -49,7 +54,14 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call completed successfully" + courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
-                            .filter(e -> FAMILY_COURT_TYPE_ID.equals(e.getCourtTypeId()))
+                            .filter(
+                                    courtDetail1 ->
+                                            courtIds.stream()
+                                                    .anyMatch(
+                                                            courtId ->
+                                                                    courtId.equals(
+                                                                            courtDetail1
+                                                                                    .getCourtTypeId())))
                             .collect(Collectors.toList());
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
@@ -109,9 +121,11 @@ public class RefDataServiceImpl implements RefDataService {
                             authTokenGenerator.generate(),
                             serviceCode);
             log.info("RefData call for allVenues completed successfully ");
-            if (venueDetail != null
-                    && !venueDetail.getCourtVenues().isEmpty()
-                    && FAMILY_COURT_TYPE_ID.equals(venueDetail.getCourtTypeId())) {
+
+            final boolean match =
+                    familyCourtIds.stream().map(String::trim).collect(Collectors.toList()).stream()
+                            .anyMatch(courtId -> courtId.equals(venueDetail.getCourtTypeId()));
+            if (venueDetail != null && !venueDetail.getCourtVenues().isEmpty() && match) {
                 return venueDetail.getCourtVenues();
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {

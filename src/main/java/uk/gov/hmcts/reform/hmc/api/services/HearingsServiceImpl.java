@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
@@ -204,7 +205,10 @@ public class HearingsServiceImpl implements HearingsService {
                                                     eachHearing.getHmcStatus().equals(LISTED)
                                                             || eachHearing
                                                                     .getHmcStatus()
-                                                                    .equals(CANCELLED))
+                                                                    .equals(CANCELLED)
+                                                            || eachHearing
+                                                                    .getHmcStatus()
+                                                                    .equals(COMPLETED))
                                     .collect(Collectors.toList());
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
