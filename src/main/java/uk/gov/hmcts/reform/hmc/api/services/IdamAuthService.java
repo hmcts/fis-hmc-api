@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @Service
@@ -50,5 +51,9 @@ public class IdamAuthService {
             log.error("User token is invalid"); // do nothing
         }
         return false;
+    }
+
+    public UserDetails getUserDetails(String authorisation) {
+        return idamClient.getUserDetails(authorisation);
     }
 }
