@@ -2,11 +2,10 @@ package uk.gov.hmcts.reform.hmc.api.model.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.time.Instant;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
-
-import java.time.Instant;
 
 @Builder
 @Value
@@ -25,9 +24,11 @@ public class RoleRequest {
     boolean replaceExisting;
     String roleAssignmentId;
     String status; // this will be set by RAS default = created
+
     @JsonFormat(timezone = "UTC", shape = JsonFormat.Shape.STRING)
     Instant created; // this will be set by RAS
-    String log; // this will be set RAS based on drool validation rule name on individual assignments.
-    boolean byPassOrgDroolRule;
 
+    String log; // this will be set RAS based on drool validation rule name on individual
+    // assignments.
+    boolean byPassOrgDroolRule;
 }

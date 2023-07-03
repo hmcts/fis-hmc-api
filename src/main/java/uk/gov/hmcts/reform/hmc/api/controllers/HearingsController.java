@@ -325,16 +325,15 @@ public class HearingsController {
         }
     }
 
-    @PostMapping(value = "/roleAssignment")
+    @PostMapping("/roleAssignment")
     @ApiOperation("get role assignment")
     @ApiResponses(
-        value = {
-            @ApiResponse(code = 201, message = "Roles assigned successfully"),
-            @ApiResponse(code = 400, message = "Bad Request")
-        })
-    public ResponseEntity<Object> assignRole(
-        @RequestHeader(AUTHORIZATION) String authorization) {
-        if(Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))){
+            value = {
+                @ApiResponse(code = 201, message = "Roles assigned successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> assignRole(@RequestHeader(AUTHORIZATION) String authorization) {
+        if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
             return roleAssignmentService.assignRoleBasedOnAuthToken();
         } else {
             throw new ResponseStatusException(UNAUTHORIZED);
