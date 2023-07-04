@@ -11,11 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SecurityScheme(
-    name = "Bearer Authentication",
-    type = SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    scheme = "bearer"
-)
+        name = "Bearer Authentication",
+        type = SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer")
 public class OpenAPIConfiguration {
 
     @Bean
@@ -36,4 +35,3 @@ public class OpenAPIConfiguration {
                                 .url("https://github.com/hmcts/fis-hmc-api"));
     }
 }
-
