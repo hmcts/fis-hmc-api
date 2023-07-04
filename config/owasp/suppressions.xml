@@ -84,6 +84,7 @@
     <cve>CVE-2022-24823</cve>
     <cve>CVE-2022-41881</cve>
     <cve>CVE-2022-41915</cve>
+    <cve>CVE-2023-34462</cve>
   </suppress>
   <suppress>
     <notes>okhttp-3.14.9.jar</notes>
@@ -148,5 +149,9 @@
     <notes><![CDATA[
       spring-boot-2.6.7.jar ]]></notes>
     <cve>CVE-2023-20883</cve>
+  </suppress>
+  <suppress>
+    <notes>guava-31.1-jre.jar</notes>
+    <cve>CVE-2023-2976</cve>
   </suppress>
 </suppressions>

@@ -121,5 +121,30 @@ public final class Constants {
 
     public static final String OPEN = "Open";
 
+    public static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
+
+    public static final String ROLE_ASSIGNMENT_HEARING_VIEWER = "hearing-viewer";
+
+    public static final String ROLE_ASSIGNMENT_HEARING_MANAGER = "hearing-manager";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS = "private-law-system-users";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE =
+            "private-law-hearings-system-user";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_TYPE = "ORGANISATION";
+
+    public static final String ROLE_ASSIGNMENT_CLASSIFICATION = "PUBLIC";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_CATEGORY = "SYSTEM";
+
+    public static final String ROLE_ASSIGNMENT_GRANT_TYPE = "STANDARD";
+
+    public static final String ROLE_ASSIGNMENT_ATTRIBUTE_JURISDICTION = "PRIVATELAW";
+
+    public static final String ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE = "PRLAPPS";
+
+    public static final String ROLE_ASSIGNMENT_ACTOR_ID_TYPE = "IDAM";
+
     private Constants() {}
 }

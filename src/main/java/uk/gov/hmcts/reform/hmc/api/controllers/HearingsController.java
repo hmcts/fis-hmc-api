@@ -34,6 +34,7 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
+import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -51,6 +52,8 @@ public class HearingsController {
     @Autowired private NextHearingDetailsService nextHearingDetailsService;
 
     @Autowired private AuthTokenGenerator authTokenGenerator;
+
+    @Autowired private RoleAssignmentService roleAssignmentService;
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
@@ -319,6 +322,21 @@ public class HearingsController {
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/roleAssignment")
+    @ApiOperation("get role assignment")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 201, message = "Roles assigned successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> assignRole(@RequestHeader(AUTHORIZATION) String authorization) {
+        if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+            return roleAssignmentService.assignHearingRoleToSysUser();
+        } else {
+            throw new ResponseStatusException(UNAUTHORIZED);
         }
     }
 }
