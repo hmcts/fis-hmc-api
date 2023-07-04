@@ -128,5 +128,9 @@ logging:
       springframework:
         web: INFO
 
+role-assignment-service:
+  api:
+    url: ${ROLE_ASSIGNMENT_SERVICE_URL:http://am-role-assignment-service-aat.service.core-compute-aat.internal}
+
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}

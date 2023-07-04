@@ -15,6 +15,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_T
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,11 +53,12 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
     }
 
     @Override
-    public ResponseEntity<Object> assignRoleBasedOnAuthToken() {
+    public ResponseEntity<Object> assignHearingRoleToSysUser() {
         String systemUserIdamID =
                 idamAuthService
                         .getUserDetails(idamTokenGenerator.generateIdamTokenForRefData())
                         .getId();
+        log.info("System user IDAM ID generation successful");
 
         List<RoleAssignment> roleAssignmentList =
                 Arrays.asList(
@@ -74,6 +76,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
                         .requestedRoles(roleAssignmentList)
                         .build();
 
+        log.info("Calling role assignment AM API");
         return roleAssignmentServiceApi.createRoleAssignment(
                 roleAssignmentRequestResource,
                 getCorrelationId(),
@@ -101,11 +104,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
 
     private String getCorrelationId() {
         try {
-            /*var httpServletRequest = ((ServletRequestAttributes) RequestContextHolder
-            .currentRequestAttributes())
-            .getRequest();
-            //return httpServletRequest.getHeader(Constants.CORRELATION_ID_HEADER_NAME);*/
-            return "d1ec4525-87f6-458b-9131-ee24d71cdd14";
+            return UUID.randomUUID().toString();
         } catch (IllegalStateException e) {
             return null;
         }
