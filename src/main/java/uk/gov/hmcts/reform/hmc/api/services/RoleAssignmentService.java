@@ -6,5 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface RoleAssignmentService {
 
-    ResponseEntity<Object> assignRoleBasedOnAuthToken();
+    ResponseEntity<Object> assignHearingRoleToSysUser();
 }

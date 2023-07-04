@@ -52,7 +52,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
     }
 
     @Override
-    public ResponseEntity<Object> assignRoleBasedOnAuthToken() {
+    public ResponseEntity<Object> assignHearingRoleToSysUser() {
         String systemUserIdamID =
                 idamAuthService
                         .getUserDetails(idamTokenGenerator.generateIdamTokenForRefData())

@@ -334,7 +334,7 @@ public class HearingsController {
             })
     public ResponseEntity<Object> assignRole(@RequestHeader(AUTHORIZATION) String authorization) {
         if (Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-            return roleAssignmentService.assignRoleBasedOnAuthToken();
+            return roleAssignmentService.assignHearingRoleToSysUser();
         } else {
             throw new ResponseStatusException(UNAUTHORIZED);
         }
