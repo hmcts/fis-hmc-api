@@ -325,7 +325,7 @@ public class HearingsController {
         }
     }
 
-    @PostMapping("/roleAssignment")
+    @GetMapping("/roleAssignment")
     @ApiOperation("get role assignment")
     @ApiResponses(
             value = {
