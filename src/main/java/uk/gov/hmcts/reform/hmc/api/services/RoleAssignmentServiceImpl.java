@@ -18,17 +18,15 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignment;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentAttributesResource;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentRequestResource;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleRequest;
 import uk.gov.hmcts.reform.hmc.api.restclient.RoleAssignmentServiceApi;
-import uk.gov.hmcts.reform.hmc.api.restclient.ServiceAuthorisationTokenApi;
 
 @Service
 @Slf4j
@@ -38,18 +36,12 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
 
-    @Value("${idam.s2s-auth.microservice}")
-    private String microservice;
-
     private final RoleAssignmentServiceApi roleAssignmentServiceApi;
 
-    private final ServiceAuthorisationTokenApi serviceAuthorisationTokenApi;
+    @Autowired AuthTokenGenerator authTokenGenerator;
 
-    public RoleAssignmentServiceImpl(
-            RoleAssignmentServiceApi roleAssignmentServiceApi,
-            ServiceAuthorisationTokenApi serviceAuthorisationTokenApi) {
+    public RoleAssignmentServiceImpl(RoleAssignmentServiceApi roleAssignmentServiceApi) {
         this.roleAssignmentServiceApi = roleAssignmentServiceApi;
-        this.serviceAuthorisationTokenApi = serviceAuthorisationTokenApi;
     }
 
     @Override
@@ -80,8 +72,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
         return roleAssignmentServiceApi.createRoleAssignment(
                 roleAssignmentRequestResource,
                 getCorrelationId(),
-                serviceAuthorisationTokenApi.serviceToken(
-                        MicroserviceInfo.builder().microservice(microservice).build()),
+                authTokenGenerator.generate(),
                 idamTokenGenerator.getSysUserToken());
     }
 
