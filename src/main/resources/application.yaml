@@ -62,8 +62,8 @@ idam:
     url: ${IDAM_API_URL:https://idam-api.aat.platform.hmcts.net}
   client:
     id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
-    baseUrl: https://idam-api.demo.platform.hmcts.net
-    redirect_uri: https://manage-case.demo.platform.hmcts.net/oauth2/callback
+    baseUrl: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
+    redirect_uri: ${MANAGE_CASE_REDIRECT_URL:https://manage-case.demo.platform.hmcts.net/oauth2/callback}
     secret: ${FIS_HMC_IDAM_CLIENT_SECRET:dummy}
     authorize:
       context-path: /oauth2/authorize
@@ -96,7 +96,7 @@ ccd:
 hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
-    feign-url: http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/
+    feign-url: {HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
   futureHearingStatus: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, CANCELLATION_REQUESTED, CANCELLATION_SUBMITTED, AWAITING_ACTUALS
   familyCourtIds: 10, 18, 25
 
