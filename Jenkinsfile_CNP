@@ -177,7 +177,9 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal/hearings/'
+    env.HMC_CFT_HEARING_BASEURL_FOR_FEIGN = 'http://hmc-cft-hearing-service-aat.service.core-compute-aat.internal/'
     env.IDAM_API_URL= 'https://idam-api.aat.platform.hmcts.net'
+    env.MANAGE_CASE_REDIRECT_URL= 'https://manage-case.aat.platform.hmcts.net/oauth2/callback'
    //setCommonEnvVariables()
   }
 
@@ -188,6 +190,8 @@ withPipeline(type, product, component) {
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
     env.AUTH_PROVIDER_SERVICE_CLIENT_BASEURL= "http://rpe-service-auth-provider-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.HMC_CFT_HEARING_BASEURL_FOR_FEIGN = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/'
+    env.MANAGE_CASE_REDIRECT_URL= 'https://manage-case.demo.platform.hmcts.net/oauth2/callback'
    // setCommonEnvVariables()
   }
 
@@ -196,8 +200,10 @@ withPipeline(type, product, component) {
     env.CASE_API_URL = "http://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.CASE_API_TEST_URL = "https://fis-hmc-api-demo.service.core-compute-demo.internal"
     env.HMC_CFT_HEARING_BASEURL = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/'
+    env.HMC_CFT_HEARING_BASEURL_FOR_FEIGN = 'http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/'
     env.CASE_DATA_STORE_BASEURL="http://ccd-data-store-api-demo.service.core-compute-demo.internal"
     env.IDAM_API_URL= 'https://idam-api.demo.platform.hmcts.net'
+    env.MANAGE_CASE_REDIRECT_URL= 'https://manage-case.demo.platform.hmcts.net/oauth2/callback'
   }
 
   onPerftest {
