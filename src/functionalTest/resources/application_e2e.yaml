@@ -92,7 +92,7 @@ ccd:
 hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
-    feign-url: {HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
+    feign-url: ${HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers
