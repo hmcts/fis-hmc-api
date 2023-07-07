@@ -8,7 +8,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 import feign.FeignException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,15 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
@@ -71,25 +65,16 @@ public class HearingsServiceImpl implements HearingsService {
     public Hearings getHearingsByCaseRefNo(
             String caseReference, String authorization, String serviceAuthorization) {
 
-        UriComponentsBuilder builder =
-                UriComponentsBuilder.newInstance().fromUriString(basePath + caseReference);
         Hearings caseHearingsResponse = null;
 
         try {
             log.info("Fetching hearings for casereference - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
-            MultiValueMap<String, String> inputHeaders =
-                    getHttpHeaders(
-                            idamTokenGenerator.generateIdamTokenForHearingCftData(), s2sToken);
-            HttpEntity<String> httpsHeader = new HttpEntity<>(inputHeaders);
             caseHearingsResponse =
-                    restTemplate
-                            .exchange(
-                                    builder.toUriString(),
-                                    HttpMethod.GET,
-                                    httpsHeader,
-                                    Hearings.class)
-                            .getBody();
+                    hearingApiClient.getHearingDetails(
+                            idamTokenGenerator.generateIdamTokenForHearingCftData(),
+                            s2sToken,
+                            caseReference);
             log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
 
             integrateVenueDetails(caseHearingsResponse);
@@ -113,20 +98,6 @@ public class HearingsServiceImpl implements HearingsService {
                     caseReference);
         }
         return caseHearingsResponse;
-    }
-
-    /**
-     * This method will create a map with header inputs.
-     *
-     * @return inputHeaders, which has all the header-inputs to make an API call.
-     */
-    private MultiValueMap<String, String> getHttpHeaders(
-            String authorization, String serviceAuthorization) {
-        MultiValueMap<String, String> inputHeaders = new LinkedMultiValueMap<>();
-        inputHeaders.put("Content-Type", Arrays.asList("application/json"));
-        inputHeaders.put("Authorization", Arrays.asList(authorization));
-        inputHeaders.put("ServiceAuthorization", Arrays.asList(serviceAuthorization));
-        return inputHeaders;
     }
 
     private void integrateVenueDetails(Hearings caseHearingsResponse) {
