@@ -48,7 +48,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
     public ResponseEntity<Object> assignHearingRoleToSysUser() {
         String systemUserIdamID =
                 idamAuthService
-                        .getUserDetails(idamTokenGenerator.generateIdamTokenForRefData())
+                        .getUserDetails(idamTokenGenerator.generateIdamTokenForHearingCftData())
                         .getId();
         log.info("System user IDAM ID generation successful");
 
