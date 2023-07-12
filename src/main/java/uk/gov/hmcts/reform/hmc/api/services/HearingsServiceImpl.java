@@ -68,7 +68,9 @@ public class HearingsServiceImpl implements HearingsService {
         Hearings caseHearingsResponse = null;
 
         try {
-            log.info("Fetching hearings for casereference - {}", caseReference);
+            log.info(
+                    "Fetching hearings for casereference received from cos api - {}",
+                    caseReference);
             final String s2sToken = authTokenGenerator.generate();
             caseHearingsResponse =
                     hearingApiClient.getHearingDetails(
