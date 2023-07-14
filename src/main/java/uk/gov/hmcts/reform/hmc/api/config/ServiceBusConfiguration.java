@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.config;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -111,80 +112,89 @@ public class ServiceBusConfiguration {
 
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
 
-                        HearingUpdateDTO hearingUpdateDto =
-                                HearingUpdateDTO.hearingUpdateRequestDTOWith()
-                                        .hearingResponseReceivedDateTime(
-                                                hearing.getHearingUpdate()
-                                                        .getHearingResponseReceivedDateTime())
-                                        .hearingEventBroadcastDateTime(
-                                                hearing.getHearingUpdate()
-                                                        .getHearingEventBroadcastDateTime())
-                                        .hearingListingStatus(
-                                                hearing.getHearingUpdate()
-                                                        .getHearingListingStatus())
-                                        .nextHearingDate(
-                                                hearing.getHearingUpdate().getNextHearingDate())
-                                        .hearingVenueId(
-                                                hearing.getHearingUpdate().getHearingVenueId())
-                                        .hearingJudgeId(
-                                                hearing.getHearingUpdate().getHearingJudgeId())
-                                        .hearingRoomId(
-                                                hearing.getHearingUpdate().getHearingRoomId())
-                                        .hmcStatus(hearing.getHearingUpdate().getHmcStatus())
-                                        .listAssistCaseStatus(
-                                                hearing.getHearingUpdate()
-                                                        .getListAssistCaseStatus())
-                                        .build();
+                        if (HMCTS_SERVICE_ID.equals(hearing.getHmctsServiceCode())) {
+                            HearingUpdateDTO hearingUpdateDto =
+                                    HearingUpdateDTO.hearingUpdateRequestDTOWith()
+                                            .hearingResponseReceivedDateTime(
+                                                    hearing.getHearingUpdate()
+                                                            .getHearingResponseReceivedDateTime())
+                                            .hearingEventBroadcastDateTime(
+                                                    hearing.getHearingUpdate()
+                                                            .getHearingEventBroadcastDateTime())
+                                            .hearingListingStatus(
+                                                    hearing.getHearingUpdate()
+                                                            .getHearingListingStatus())
+                                            .nextHearingDate(
+                                                    hearing.getHearingUpdate().getNextHearingDate())
+                                            .hearingVenueId(
+                                                    hearing.getHearingUpdate().getHearingVenueId())
+                                            .hearingJudgeId(
+                                                    hearing.getHearingUpdate().getHearingJudgeId())
+                                            .hearingRoomId(
+                                                    hearing.getHearingUpdate().getHearingRoomId())
+                                            .hmcStatus(hearing.getHearingUpdate().getHmcStatus())
+                                            .listAssistCaseStatus(
+                                                    hearing.getHearingUpdate()
+                                                            .getListAssistCaseStatus())
+                                            .build();
 
-                        HearingDTO hearingDto =
-                                HearingDTO.hearingRequestDTOWith()
-                                        .hmctsServiceCode(hearing.getHmctsServiceCode())
-                                        .caseRef(hearing.getCaseRef())
-                                        .hearingId(hearing.getHearingID())
-                                        .hearingUpdate(hearingUpdateDto)
-                                        .build();
+                            HearingDTO hearingDto =
+                                    HearingDTO.hearingRequestDTOWith()
+                                            .hmctsServiceCode(hearing.getHmctsServiceCode())
+                                            .caseRef(hearing.getCaseRef())
+                                            .hearingId(hearing.getHearingID())
+                                            .hearingUpdate(hearingUpdateDto)
+                                            .build();
 
-                        log.info("Service Bus message for PRL Update " + hearingDto);
+                            log.info("Service Bus message for PRL Update " + hearingDto);
 
-                        if (hearingDto.getHearingUpdate().getHearingVenueId() != null
-                                && LISTED.equals(hearingDto.getHearingUpdate().getHmcStatus())) {
+                            if (hearingDto.getHearingUpdate().getHearingVenueId() != null
+                                    && LISTED.equals(
+                                            hearingDto.getHearingUpdate().getHmcStatus())) {
 
-                            log.info("VenueId " + hearing.getHearingUpdate().getHearingVenueId());
-                            hearingDto = refDataService.getHearingWithCourtDetails(hearingDto);
-                            log.info(
-                                    "Hearing with Full CourtDetails  "
-                                            + hearingDto.getHearingUpdate().getHearingVenueName());
-                        }
-                        String userToken = idamTokenGenerator.getSysUserToken();
-                        String serviceToken = authTokenGenerator.generate();
-
-                        Hearings hearings =
-                                hearingsService.getHearingsByCaseRefNo(
-                                        hearingDto.getCaseRef(), userToken, serviceToken);
-                        State caseState = null;
-                        if (hearings != null) {
-                            NextHearingDetails nextHearingDetails =
-                                    nextHearingDetailsService.getNextHearingDate(hearings);
-                            if (nextHearingDetails != null) {
-                                log.info("Next Hearing details " + nextHearingDetails);
-                                NextHearingDetailsDTO nextHearingDetailsDTO =
-                                        NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
-                                                .nextHearingDetails(nextHearingDetails)
-                                                .caseRef(hearings.getCaseRef())
-                                                .build();
-
-                                hearingDto.setNextHearingDateRequest(nextHearingDetailsDTO);
+                                log.info(
+                                        "VenueId "
+                                                + hearing.getHearingUpdate().getHearingVenueId());
+                                hearingDto = refDataService.getHearingWithCourtDetails(hearingDto);
+                                log.info(
+                                        "Hearing with Full CourtDetails  "
+                                                + hearingDto
+                                                        .getHearingUpdate()
+                                                        .getHearingVenueName());
                             }
-                            caseState =
-                                    nextHearingDetailsService.fetchStateForUpdate(
-                                            hearings, hearingDto.getHearingUpdate().getHmcStatus());
-                            Boolean isPrlSuccess = false;
-                            prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
-                            if (isPrlSuccess) {
-                                return receiveClient.completeAsync(message.getLockToken());
+                            String userToken = idamTokenGenerator.getSysUserToken();
+                            String serviceToken = authTokenGenerator.generate();
+
+                            Hearings hearings =
+                                    hearingsService.getHearingsByCaseRefNo(
+                                            hearingDto.getCaseRef(), userToken, serviceToken);
+                            State caseState = null;
+                            if (hearings != null) {
+                                NextHearingDetails nextHearingDetails =
+                                        nextHearingDetailsService.getNextHearingDate(hearings);
+                                if (nextHearingDetails != null) {
+                                    log.info("Next Hearing details " + nextHearingDetails);
+                                    NextHearingDetailsDTO nextHearingDetailsDTO =
+                                            NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
+                                                    .nextHearingDetails(nextHearingDetails)
+                                                    .caseRef(hearings.getCaseRef())
+                                                    .build();
+
+                                    hearingDto.setNextHearingDateRequest(nextHearingDetailsDTO);
+                                }
+                                caseState =
+                                        nextHearingDetailsService.fetchStateForUpdate(
+                                                hearings,
+                                                hearingDto.getHearingUpdate().getHmcStatus());
+                                Boolean isPrlSuccess = false;
+                                prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
+                                if (isPrlSuccess) {
+                                    return receiveClient.completeAsync(message.getLockToken());
+                                }
                             }
+                            return receiveClient.abandonAsync(message.getLockToken());
                         }
-                        return receiveClient.abandonAsync(message.getLockToken());
+                        return receiveClient.completeAsync(message.getLockToken());
                     }
 
                     @Override
