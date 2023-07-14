@@ -37,6 +37,8 @@ public final class Constants {
     public static final String SCREEN_FLOW = "screenFlow";
     public static final String CASE_MANAGEMENT_LOCATION = "20262";
 
+    public static final String HMCTS_SERVICE_ID = "ABA5";
+
     public static final String AND = " and ";
 
     public static final String COURT = "court";
