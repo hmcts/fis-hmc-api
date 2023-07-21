@@ -187,7 +187,9 @@ public class ServiceBusConfiguration {
                                                 hearings,
                                                 hearingDto.getHearingUpdate().getHmcStatus());
                                 Boolean isPrlSuccess = false;
-                                prlUpdateService.updatePrlServiceWithHearing(hearingDto, caseState);
+                                isPrlSuccess =
+                                        prlUpdateService.updatePrlServiceWithHearing(
+                                                hearingDto, caseState);
                                 if (isPrlSuccess) {
                                     return receiveClient.completeAsync(message.getLockToken());
                                 }
