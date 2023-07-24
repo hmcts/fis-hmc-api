@@ -98,7 +98,7 @@ hearing_component:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
     feign-url: ${HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
   futureHearingStatus: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, CANCELLATION_REQUESTED, CANCELLATION_SUBMITTED, AWAITING_ACTUALS
-  futureHearingStatusExcludesCancelSubmitAndRequested: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, AWAITING_ACTUALS
+  futureHearingStatusForNonCancel: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, AWAITING_ACTUALS
   familyCourtIds: 10, 18, 25
 
 springdoc:

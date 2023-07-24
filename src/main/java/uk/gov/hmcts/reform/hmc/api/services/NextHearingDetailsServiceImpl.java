@@ -32,12 +32,8 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
     @Autowired PrlUpdateService prlUpdateService;
 
-    @Value(
-            "#{'${hearing_component.futureHearingStatusExcludesCancelSubmitAndRequested}'.split(',')}")
-    private List<String> futureHearingStatusExcludesCancelSubmitAndRequestedList;
-
-    @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
-    private List<String> futureHearingStatusList;
+    @Value("#{'${hearing_component.futureHearingStatusForNonCancel}'.split(',')}")
+    private List<String> futureHearingStatusForNonCancel;
 
     /**
      * This method will update the Prl with next hearing details.
@@ -193,7 +189,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                                 || hearing.getHmcStatus().equals(COMPLETED))) {
                     return false;
                 }
-            } else if (!futureHearingStatusExcludesCancelSubmitAndRequestedList.stream()
+            } else if (!futureHearingStatusForNonCancel.stream()
                     .map(String::trim)
                     .filter(status -> status.equals(hearing.getHmcStatus()))
                     .collect(Collectors.toList())
