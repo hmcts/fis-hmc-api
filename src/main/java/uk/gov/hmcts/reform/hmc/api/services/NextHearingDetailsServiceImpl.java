@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
@@ -30,6 +31,9 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     @Autowired PrlUpdateService prlUpdateService;
+
+    @Value("#{'${hearing_component.futureHearingStatusForNonCancel}'.split(',')}")
+    private List<String> futureHearingStatusForNonCancel;
 
     /**
      * This method will update the Prl with next hearing details.
@@ -185,6 +189,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                                 || hearing.getHmcStatus().equals(COMPLETED))) {
                     return false;
                 }
+            } else if (!futureHearingStatusForNonCancel.stream()
+                    .map(String::trim)
+                    .filter(status -> status.equals(hearing.getHmcStatus()))
+                    .collect(Collectors.toList())
+                    .isEmpty()) {
+                return false;
             }
         }
         return true;
