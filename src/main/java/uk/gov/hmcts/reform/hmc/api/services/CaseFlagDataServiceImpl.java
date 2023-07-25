@@ -306,24 +306,26 @@ public class CaseFlagDataServiceImpl {
         }
         List<Element<FlagDetail>> detailsList = flag.getDetails();
 
-        for (Element<FlagDetail> flagDetailElement : detailsList) {
-            FlagDetail flagDetail = flagDetailElement.getValue();
-            if (null != flagDetail) {
-                log.info("flagDetail===> {}", flagDetail);
-                partyFlagsModel =
-                        PartyFlagsModel.partyFlagsModelWith()
-                                .partyId(partyId)
-                                .partyName(
-                                        partyDetails.getFirstName()
-                                                + EMPTY_STRING
-                                                + partyDetails.getLastName())
-                                .flagId(flagDetail.getFlagCode())
-                                .flagStatus(flagDetail.getStatus())
-                                .flagParentId(EMPTY)
-                                .languageCode(flagDetail.getSubTypeKey())
-                                .flagDescription(flagDetail.getName())
-                                .build();
-                partyFlagsModelList.add(partyFlagsModel);
+        if (detailsList != null) {
+            for (Element<FlagDetail> flagDetailElement : detailsList) {
+                FlagDetail flagDetail = flagDetailElement.getValue();
+                if (null != flagDetail) {
+                    log.info("flagDetail===> {}", flagDetail);
+                    partyFlagsModel =
+                            PartyFlagsModel.partyFlagsModelWith()
+                                    .partyId(partyId)
+                                    .partyName(
+                                            partyDetails.getFirstName()
+                                                    + EMPTY_STRING
+                                                    + partyDetails.getLastName())
+                                    .flagId(flagDetail.getFlagCode())
+                                    .flagStatus(flagDetail.getStatus())
+                                    .flagParentId(EMPTY)
+                                    .languageCode(flagDetail.getSubTypeKey())
+                                    .flagDescription(flagDetail.getName())
+                                    .build();
+                    partyFlagsModelList.add(partyFlagsModel);
+                }
             }
         }
 
