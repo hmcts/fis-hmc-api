@@ -153,7 +153,7 @@ public class ServiceBusConfiguration {
                                             hearingDto.getHearingUpdate().getHmcStatus())) {
 
                                 log.info(
-                                        "VenueId "
+                                        "VenueId --> "
                                                 + hearing.getHearingUpdate().getHearingVenueId());
                                 hearingDto = refDataService.getHearingWithCourtDetails(hearingDto);
                                 log.info(
