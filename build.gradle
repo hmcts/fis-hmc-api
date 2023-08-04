@@ -55,8 +55,12 @@ spotless {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
+}
+
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 sourceSets {
@@ -175,16 +179,16 @@ pmd {
 }
 
 jacocoTestReport {
-  executionData(test, integration)
+  executionData(test)
+
   reports {
-    xml.required = true
-    csv.required = false
+    xml.enabled = true
+    csv.enabled = false
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
-
 jacoco {
-  toolVersion = "0.8.5"
+  toolVersion = "0.8.8"
 }
 
 jacocoTestCoverageVerification {
