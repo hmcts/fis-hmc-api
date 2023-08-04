@@ -166,6 +166,10 @@ checkstyle {
   checkstyleContractTest.enabled = false
 }
 
+if (tasks.findByName("checkstyleTest")) {
+  checkstyleTest.mustRunAfter 'generateContractTests'
+}
+
 pmd {
   toolVersion = "6.41.0"
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
