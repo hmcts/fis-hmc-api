@@ -59,6 +59,11 @@ java {
   }
 }
 
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+}
+
+
 sourceSets {
   functionalTest {
     java {
@@ -184,7 +189,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = "0.8.5"
+  toolVersion = "0.8.8"
 }
 
 jacocoTestCoverageVerification {
