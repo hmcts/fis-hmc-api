@@ -55,7 +55,7 @@ spotless {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
 }
 
@@ -199,7 +199,10 @@ jacocoTestCoverageVerification {
   }
 }
 
-tasks.withType(Copy).all { duplicatesStrategy 'exclude' }
+
+tasks.withType(Copy) {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport
 project.tasks['check'].dependsOn integration
