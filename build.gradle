@@ -55,8 +55,12 @@ spotless {
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(17)
   }
+}
+
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 sourceSets {
@@ -163,10 +167,6 @@ checkstyle {
   maxWarnings = 0
   toolVersion = '9.2.1'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
-}
-
-if (tasks.findByName("checkstyleTest")) {
-  checkstyleTest.mustRunAfter 'generateContractTests'
 }
 
 
