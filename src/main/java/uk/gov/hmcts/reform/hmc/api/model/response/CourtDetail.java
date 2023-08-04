@@ -44,5 +44,6 @@ public class CourtDetail {
 
     public void setHearingVenueAddress(String hearingVenueAddress) {
         this.hearingVenueAddress = hearingVenueAddress.concat(this.getHearingVenuePostCode());
+
     }
 }
