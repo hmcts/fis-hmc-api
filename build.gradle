@@ -163,7 +163,7 @@ checkstyle {
   maxWarnings = 0
   toolVersion = '9.2.1'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
-  checkstyleContractTest.enabled = false
+  checkstyleContractTest.enabled = true
 }
 
 pmd {
