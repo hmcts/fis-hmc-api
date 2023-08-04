@@ -163,11 +163,6 @@ checkstyle {
   maxWarnings = 0
   toolVersion = '9.2.1'
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
-  checkstyleContractTest.enabled = false
-}
-
-if (tasks.findByName("checkstyleTest")) {
-  checkstyleTest.mustRunAfter 'generateContractTests'
 }
 
 pmd {
@@ -256,7 +251,6 @@ dependencyCheck {
     "pmd",
     "integrationTest",
     "functionalTest",
-    "contractTest",
     "smokeTest",
     "contractTestRuntimeClasspath",
     "contractTestCompileClasspath"
