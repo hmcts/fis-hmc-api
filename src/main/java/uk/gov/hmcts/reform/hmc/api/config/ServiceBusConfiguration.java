@@ -100,7 +100,7 @@ public class ServiceBusConfiguration {
     @Bean
     @Profile("!test")
     @RefreshScope
-    CompletableFuture<Void> registerMessageHandlerOnClient(
+    public CompletableFuture<Void> registerMessageHandlerOnClient(
             @Autowired SubscriptionClient receiveClient)
             throws ServiceBusException, InterruptedException {
 
