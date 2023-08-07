@@ -29,7 +29,8 @@ def secrets = [
     secret('fis-hmc-idam-user-name', 'FIS_HMC_IDAM__USER_NAME'),
     secret('prl-hearing-manager', 'PRL_IDAM_USER_NAME'),
     secret('idam-hmc-component-user-password', 'IDAM_HMC_COMPONENT_USER_PASSWORD'),
-    secret('fis-hmc-idam-client-secret', 'FIS_HMC_IDAM_CLIENT_SECRET')
+    secret('fis-hmc-idam-client-secret', 'FIS_HMC_IDAM_CLIENT_SECRET'),
+    secret('app-insights-connection-string', 'APP_INSIGHTS_CONNECTION_STRING')
   ]
 ]
 

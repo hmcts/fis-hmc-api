@@ -118,6 +118,7 @@ amqp:
 
 azure:
   app_insights_key: ${APP_INSIGHTS_KEY:true}
+  app_insights_connection_string: ${APP_INSIGHTS_CONNECTION_STRING:true}
   application-insights:
     instrumentation-key: ${APP_INSIGHTS_KEY:00000000-0000-0000-0000-000000000000}
 
