@@ -400,7 +400,6 @@ rootProject.tasks.named("processIntegrationTestResources") {
 }
 
 task fortifyScan(type: JavaExec)  {
-  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -428,4 +427,102 @@ compileJava {
 
 compileTestJava {
   options.compilerArgs << '-Xlint:deprecation'
+}
+
+allprojects {
+
+  def springBootVersion = versions.springBoot
+
+  apply plugin: 'checkstyle'
+  apply plugin: 'com.github.ben-manes.versions'
+  apply plugin: 'io.spring.dependency-management'
+  apply plugin: 'jacoco'
+  apply plugin: 'java'
+  apply plugin: 'org.owasp.dependencycheck'
+
+  group = 'uk.gov.hmcts.reform'
+  version = '0.0.1'
+
+  checkstyle.toolVersion = '9.2.1'
+  checkstyle.configFile = new File(rootDir, "config/checkstyle/checkstyle.xml")
+  checkstyle.maxWarnings(0)
+
+  // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
+  dependencyCheck {
+    // Specifies if the build should be failed if a CVSS score above a specified level is identified.
+    // range of 0-10 fails the build, anything greater and it doesn't fail the build
+    failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'false' ? 11 : 0
+    suppressionFile = 'config/checkstyle/checkstyle.xml'
+    analyzers {
+      // Disable scanning of .NET related binaries
+      assemblyEnabled = false
+    }
+  }
+
+  java {
+    toolchain {
+      languageVersion = JavaLanguageVersion.of(17)
+    }
+  }
+
+  tasks.withType(JavaExec).configureEach {
+    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+  }
+
+  repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.spring.io/libs-milestone' }
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
+    }
+    dependencies {
+      dependencySet(
+        group: 'com.fasterxml.jackson.core',
+        version: versions.jackson
+      ) {
+        entry 'jackson-core'
+        entry 'jackson-databind'
+      }
+      dependencySet(
+        group: 'com.fasterxml.jackson.datatype',
+        version: versions.jackson
+      ) {
+        entry 'jackson-datatype-jdk8'
+        entry 'jackson-datatype-jsr310'
+      }
+      dependencySet(
+        group: 'com.fasterxml.jackson.module',
+        version: versions.jackson
+      ) {
+        entry 'jackson-module-parameter-names'
+      }
+
+      // solves CVE-2014-3488, CVE-2015-2156, CVE-2019-16869, CVE-2021-21409
+      dependencySet(group: 'io.netty', version: '4.1.87.Final') {
+        entry 'netty-buffer'
+        entry 'netty-codec'
+        entry 'netty-codec-http'
+        entry 'netty-common'
+        entry 'netty-handler'
+        entry 'netty-resolver'
+        entry 'netty-transport'
+      }
+      // CVE-2019-10086
+      dependency group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+      // CVE-2020-9484
+      dependencySet(group: 'org.apache.tomcat.embed', version: versions.tomcat) {
+        entry 'tomcat-embed-core'
+        entry 'tomcat-embed-websocket'
+        entry 'tomcat-embed-el'
+      }
+      //CVE-2017-18640
+      dependency group: 'org.yaml',name: 'snakeyaml', version: '1.32'
+
+    }
+  }
 }
