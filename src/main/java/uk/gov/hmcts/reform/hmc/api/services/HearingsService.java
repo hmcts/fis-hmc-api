@@ -1,9 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import java.util.List;
-import java.util.Map;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 public interface HearingsService {

@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +11,9 @@ import uk.gov.hmcts.reform.hmc.api.config.PrlUpdateConfiguration;
 import uk.gov.hmcts.reform.hmc.api.enums.State;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
+
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @FeignClient(
         name = "prl-update-api",
@@ -40,5 +40,5 @@ public interface PrlUpdateApi {
     ResponseEntity prlNextHearingDateUpdate(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestBody final NextHearingDetailsDTO nextHearingDateDetailsDTO);
+            @RequestBody final NextHearingDetailsDTO nextHearingDateDetailsDto);
 }

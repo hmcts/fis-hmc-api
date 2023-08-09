@@ -38,8 +38,6 @@ spotless {
     trimTrailingWhitespace()
     indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
     endWithNewline()
-    googleJavaFormat('1.11.0').aosp().reflowLongStrings()
-
   }
 }
 
@@ -317,7 +315,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
   implementation group: 'com.puppycrawl.tools', name: 'checkstyle', version: versions.puppyCrawl
-  
+
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.0-rc1'
