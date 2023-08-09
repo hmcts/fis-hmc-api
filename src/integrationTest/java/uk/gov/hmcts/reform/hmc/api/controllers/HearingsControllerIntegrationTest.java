@@ -1,34 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.AUTHORISATION_HEADER;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.CASE_REFERENCE;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_ENDPOINT;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_AUTHORISATION_HEADER;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_HEARING_VALUES_ENDPOINT;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_LINKED_CASES_ENDPOINT;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_AUTH_TOKEN;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_CASE_REFERENCE;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_SERVICE_AUTH_TOKEN;
-import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
-
 import groovy.util.logging.Slf4j;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +24,35 @@ import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.AUTHORISATION_HEADER;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.CASE_REFERENCE;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_ENDPOINT;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_AUTHORISATION_HEADER;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_HEARING_VALUES_ENDPOINT;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.SERVICE_LINKED_CASES_ENDPOINT;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_AUTH_TOKEN;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_CASE_REFERENCE;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_SERVICE_AUTH_TOKEN;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
 
 @Slf4j
 @SpringBootTest

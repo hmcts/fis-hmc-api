@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.restassured.RestAssured;
@@ -21,6 +19,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)

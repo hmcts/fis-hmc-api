@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -8,7 +9,9 @@ import java.nio.file.Paths;
 
 public final class ResourceLoader {
 
-    private ResourceLoader() {}
+    private ResourceLoader() {
+
+    }
 
     public static String loadJson(final String filePath) throws Exception {
         return new String(loadResource(filePath), Charset.forName("utf-8"));

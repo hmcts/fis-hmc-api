@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.restclient;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientProperties;
 import org.springframework.http.MediaType;
@@ -10,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.hmc.api.model.response.Categories;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @FeignClient(
         name = "hmc-hearing",

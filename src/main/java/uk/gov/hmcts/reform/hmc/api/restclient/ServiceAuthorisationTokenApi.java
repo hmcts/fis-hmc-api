@@ -1,9 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.restclient;
 
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
-import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
-
 import feign.codec.Decoder;
 import feign.codec.StringDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -15,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.hmc.api.model.request.MicroserviceInfo;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
 @FeignClient(
         name = "idam-s2s-auth-token",

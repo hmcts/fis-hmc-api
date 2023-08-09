@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.hearingcft;
 
-import static io.pactfoundation.consumer.dsl.LambdaDsl.newJsonBody;
-
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.core.model.annotations.PactFolder;
@@ -12,6 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.hmc.api.clients.HearingCftApi;
 import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
+
+import static io.pactfoundation.consumer.dsl.LambdaDsl.newJsonBody;
 
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

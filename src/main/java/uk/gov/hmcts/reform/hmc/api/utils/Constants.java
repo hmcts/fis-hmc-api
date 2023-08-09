@@ -148,5 +148,7 @@ public final class Constants {
 
     public static final String ROLE_ASSIGNMENT_ACTOR_ID_TYPE = "IDAM";
 
-    private Constants() {}
+    private Constants() {
+
+    }
 }
