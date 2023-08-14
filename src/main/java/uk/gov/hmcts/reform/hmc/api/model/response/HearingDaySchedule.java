@@ -23,6 +23,8 @@ public class HearingDaySchedule {
 
     private String hearingVenueId;
 
+    private String courtTypeId;
+
     private String hearingVenueName;
 
     private String hearingVenueLocationCode;

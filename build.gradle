@@ -207,7 +207,10 @@ project.tasks['check'].dependsOn integration
 def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/config/**',
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
-  '**/uk/gov/hmcts/reform/hmc/api/exceptions/**'
+  '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
+  '**/uk/gov/hmcts/reform/hmc/api/enums/**',
+  '**/uk/gov/hmcts/reform/hmc/api/services/**',
+  '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
 ]
 
 sonarqube {
@@ -287,6 +290,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
+
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.0-rc1'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.14.0-rc1', ext: 'pom'

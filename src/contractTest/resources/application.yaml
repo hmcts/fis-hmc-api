@@ -63,8 +63,8 @@ idam:
     url: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
   client:
     id: ${FIS_HMC_IDAM_CLIENT_ID:fis-hmc-client-api}
-    baseUrl: https://idam-api.demo.platform.hmcts.net
-    redirect_uri: https://manage-case.demo.platform.hmcts.net/oauth2/callback
+    baseUrl: ${IDAM_API_URL:https://idam-api.demo.platform.hmcts.net}
+    redirect_uri: ${MANAGE_CASE_REDIRECT_URL:https://manage-case.demo.platform.hmcts.net/oauth2/callback}
     secret: ${FIS_HMC_IDAM_CLIENT_SECRET:dummy}
     authorize:
       context-path: /oauth2/authorize
@@ -79,6 +79,7 @@ idam:
   system-update:
     username: ${PRL_IDAM_USER_NAME:DUMMY}
     password: ${IDAM_HMC_COMPONENT_USER_PASSWORD:dummy}
+
 
 prl:
   baseUrl: ${PRL_URL:http://prl-cos-demo.service.core-compute-demo.internal/}
@@ -97,6 +98,7 @@ ccd:
 hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
+    feign-url: ${HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.hmc.api.controllers

@@ -36,7 +36,7 @@ import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 public class IdamApiConsumerTest {
 
     public static final String TOKEN_REGEXP = "[a-zA-Z0-9._-]+";
-    public static final String BEARER_TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJiL082T3ZWdeRre";
+    public static final String BEARER_TOKEN = "Bearer test";
 
     @Autowired private IdamClient idamClient;
 

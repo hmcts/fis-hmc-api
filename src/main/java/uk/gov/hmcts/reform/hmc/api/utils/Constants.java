@@ -7,6 +7,12 @@ public final class Constants {
     public static final Boolean FALSE = false;
 
     public static final String LISTED = "LISTED";
+
+    public static final String COMPLETED = "COMPLETED";
+
+    public static final String ADJOURNED = "ADJOURNED";
+
+    public static final String CANCELLED = "CANCELLED";
     public static final String CASE_TYPE_OF_APPLICATION = "caseTypeOfApplication";
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
@@ -30,6 +36,8 @@ public final class Constants {
     public static final String UNDERSCORE = "_";
     public static final String SCREEN_FLOW = "screenFlow";
     public static final String CASE_MANAGEMENT_LOCATION = "20262";
+
+    public static final String HMCTS_SERVICE_ID = "ABA5";
 
     public static final String AND = " and ";
 
@@ -103,11 +111,42 @@ public final class Constants {
 
     public static final String SERVICE_AUTHORIZATION = "ServiceAuthorization";
 
+    public static final String AUTHORIZATION = "Authorization";
+
     public static final String CCD_DEMO_LINK =
             "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/";
     public static final String DEMO = "demo";
 
     public static final String CASE_FILE_VIEW = "#Case File View";
+
+    public static final String FAMILY_COURT_TYPE_ID = "18";
+
+    public static final String OPEN = "Open";
+
+    public static final String CORRELATION_ID_HEADER_NAME = "X-Correlation-Id";
+
+    public static final String ROLE_ASSIGNMENT_HEARING_VIEWER = "hearing-viewer";
+
+    public static final String ROLE_ASSIGNMENT_HEARING_MANAGER = "hearing-manager";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS = "private-law-system-users";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE =
+            "private-law-hearings-system-user";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_TYPE = "ORGANISATION";
+
+    public static final String ROLE_ASSIGNMENT_CLASSIFICATION = "PUBLIC";
+
+    public static final String ROLE_ASSIGNMENT_ROLE_CATEGORY = "SYSTEM";
+
+    public static final String ROLE_ASSIGNMENT_GRANT_TYPE = "STANDARD";
+
+    public static final String ROLE_ASSIGNMENT_ATTRIBUTE_JURISDICTION = "PRIVATELAW";
+
+    public static final String ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE = "PRLAPPS";
+
+    public static final String ROLE_ASSIGNMENT_ACTOR_ID_TYPE = "IDAM";
 
     private Constants() {}
 }
