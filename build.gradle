@@ -20,7 +20,6 @@ plugins {
   id 'org.sonarqube' version '3.3'
   id 'idea'
   id 'au.com.dius.pact' version '4.1.7'
-  id 'com.diffplug.spotless' version '6.9.0'
 }
 
 apply plugin: 'com.github.ben-manes.versions'
@@ -28,18 +27,6 @@ apply plugin: 'net.serenity-bdd.aggregator'
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
-
-spotless {
-
-  java {
-    target 'src/**/*.java'
-    importOrder()
-    removeUnusedImports()
-    trimTrailingWhitespace()
-    indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
-    endWithNewline()
-  }
-}
 
 java {
   toolchain {
@@ -98,7 +85,9 @@ configurations {
 }
 
 tasks.withType(JavaExec).configureEach {
-  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+  //javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang=ALL-UNNAMED','--add-opens=java.base/java.util=ALL-UNNAMED']
 }
 
 tasks.withType(Test) {
@@ -316,8 +305,6 @@ dependencies {
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
   implementation group: 'com.puppycrawl.tools', name: 'checkstyle', version: versions.puppyCrawl
 
-
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
   implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.0-rc1'
   implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.14.0-rc1', ext: 'pom'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
@@ -326,7 +313,6 @@ dependencies {
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.9.1'
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '11.9.1'
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
-  implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: '6.0.1'
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-spring-webflux', version: '3.0.0'
@@ -463,7 +449,9 @@ allprojects {
   }
 
   tasks.withType(JavaExec).configureEach {
-    javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    //javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
+    classpath += sourceSets.test.runtimeClasspath
+    jvmArgs = ['--add-opens=java.base/java.lang=ALL-UNNAMED','--add-opens=java.base/java.util=ALL-UNNAMED']
   }
 
   repositories {
