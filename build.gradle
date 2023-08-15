@@ -159,9 +159,7 @@ jacocoTestCoverageVerification {
   violationRules {
     rule {
       limit {
-        counter = 'LINE'
-        value = 'COVEREDRATIO'
-        minimum = 0.0
+        minimum = 0.9
       }
     }
   }
@@ -170,7 +168,6 @@ jacocoTestCoverageVerification {
 tasks.withType(Copy).all { duplicatesStrategy 'exclude' }
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport
-project.tasks['check'].dependsOn integration
 
 def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/config/**',
