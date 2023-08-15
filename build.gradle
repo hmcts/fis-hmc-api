@@ -237,11 +237,6 @@ sonarqube {
   }
 }
 
-
-
-
-
-
 // before committing a change, make sure task still works
 dependencyUpdates {
   def isNonStable = { String version ->
@@ -253,6 +248,7 @@ dependencyUpdates {
     return isNonStable(selection.candidate.version) && !isNonStable(selection.currentVersion)
   }
 }
+
 
 // https://jeremylong.github.io/DependencyCheck/dependency-check-gradle/configuration.html
 dependencyCheck {
