@@ -25,6 +25,10 @@ public class CourtDetail {
     @JsonAlias("court_address")
     private String hearingVenueAddress;
 
+    @JsonProperty("postcode")
+    @JsonAlias("postcode")
+    private String hearingVenuePostCode;
+
     @JsonProperty("court_location_code")
     @JsonAlias("court_location_code")
     private String hearingVenueLocationCode;
@@ -37,4 +41,8 @@ public class CourtDetail {
 
     @JsonProperty("court_status")
     private String courtStatus;
+
+    public void setHearingVenueAddress(String hearingVenueAddress) {
+        this.hearingVenueAddress = hearingVenueAddress.concat(this.getHearingVenuePostCode());
+    }
 }
