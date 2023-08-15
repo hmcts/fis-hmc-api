@@ -7,6 +7,7 @@ buildscript {
   }
 }
 
+
 plugins {
   id 'java'
   id 'application'
@@ -143,14 +144,14 @@ pmd {
 }
 
 jacocoTestReport {
-  executionData(test, integration)
+  executionData(test)
+
   reports {
     xml.required = true
     csv.required = false
     xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
-
 jacoco {
   toolVersion = "0.8.8"
 }
@@ -230,10 +231,12 @@ sonarqube {
     property "sonar.projectName", "fis :: fis-hmc-api"
     property "sonar.projectKey", "uk.gov.hmcts.reform:fis-hmc-api"
     property "sonar.exclusions", sonarExclusions.join(', ')
-    property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.pitest.mode", "reuseReport"
+    property "sonar.pitest.reportsDirectory", "build/reports/pitest"
   }
 }
+
 
 // before committing a change, make sure task still works
 dependencyUpdates {
@@ -272,9 +275,7 @@ dependencyCheck {
 repositories {
   mavenLocal()
   mavenCentral()
-  //jcenter()
   maven { url 'https://jitpack.io' }
-  //maven { url 'https://repo.spring.io/libs-milestone' }
 }
 
 ext {
@@ -434,8 +435,9 @@ allprojects {
   dependencyCheck {
     // Specifies if the build should be failed if a CVSS score above a specified level is identified.
     // range of 0-10 fails the build, anything greater and it doesn't fail the build
-    failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'false' ? 11 : 0
-    suppressionFile = 'config/checkstyle/checkstyle.xml'
+    failBuildOnCVSS = System.getProperty('dependencyCheck.failBuild') == 'true' ? 0 : 11
+    suppressionFile = 'config/owasp/suppressions.xml'
+
     analyzers {
       // Disable scanning of .NET related binaries
       assemblyEnabled = false
@@ -457,8 +459,9 @@ allprojects {
   repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
     maven { url 'https://jitpack.io' }
-    //maven { url 'https://repo.spring.io/libs-milestone' }
+    maven { url 'https://repo.spring.io/libs-milestone' }
   }
 
   dependencyManagement {
@@ -511,3 +514,9 @@ allprojects {
     }
   }
 }
+
+
+
+
+
+ext['snakeyaml.version'] = '1.32'
