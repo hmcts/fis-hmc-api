@@ -184,7 +184,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = "0.8.5"
+  toolVersion = "0.8.8"
 }
 
 jacocoTestCoverageVerification {
@@ -313,31 +313,31 @@ dependencies {
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.11'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-  compileOnly 'org.projectlombok:lombok:1.18.24'
+  implementation 'org.projectlombok:lombok:1.18.24'
   annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
 
   testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
-  contractTestCompile("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  contractTestRuntime("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-  testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+  testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
   contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
 
-  contractTestCompile sourceSets.main.runtimeClasspath
-  contractTestCompile sourceSets.test.runtimeClasspath
+  contractTestImplementation sourceSets.main.runtimeClasspath
+  contractTestImplementation sourceSets.test.runtimeClasspath
 
   testImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: '2.3.10'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: '2.3.10'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.3.10'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.3.10'
 
-  testCompileOnly 'org.projectlombok:lombok:1.18.24'
+  testImplementation 'org.projectlombok:lombok:1.18.24'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
-    testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  testImplementation(platform('org.junit:junit-bom:5.8.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
