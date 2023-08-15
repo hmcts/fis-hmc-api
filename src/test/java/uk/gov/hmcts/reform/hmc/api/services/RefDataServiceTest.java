@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
@@ -36,6 +38,11 @@ class RefDataServiceTest {
     @Mock private AuthTokenGenerator authTokenGenerator;
 
     @Mock private IdamTokenGenerator idamTokenGenerator;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(refDataService, "familyCourtIds", List.of("10", "18", "25"));
+    }
 
     @Test
     public void shouldFetchVenueDetailsRefDataTest() throws IOException, ParseException {
