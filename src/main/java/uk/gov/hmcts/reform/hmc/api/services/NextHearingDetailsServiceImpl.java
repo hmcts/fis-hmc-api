@@ -1,16 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
-import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +12,18 @@ import uk.gov.hmcts.reform.hmc.api.model.request.NextHearingDetailsDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
 @Service
 @RequiredArgsConstructor
@@ -51,14 +52,14 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
                     "Next Hearing Date Details - ID {} and Date {} ",
                     nextHearingDetails.getHearingID(),
                     nextHearingDetails.getHearingDateTime());
-            NextHearingDetailsDTO nextHearingDateDetailsDTO =
+            NextHearingDetailsDTO nextHearingDateDetailsdto =
                     NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
                             .nextHearingDetails(nextHearingDetails)
                             .caseRef(hearings.getCaseRef())
                             .build();
             isNextHearingDetailsUpdated =
                     prlUpdateService.updatePrlServiceWithNextHearingDate(
-                            authorization, nextHearingDateDetailsDTO);
+                            authorization, nextHearingDateDetailsdto);
         }
         return isNextHearingDetailsUpdated;
     }

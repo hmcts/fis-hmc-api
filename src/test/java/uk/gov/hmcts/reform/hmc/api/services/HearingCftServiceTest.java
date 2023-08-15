@@ -1,24 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
@@ -41,6 +25,23 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static feign.Request.HttpMethod.GET;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class})

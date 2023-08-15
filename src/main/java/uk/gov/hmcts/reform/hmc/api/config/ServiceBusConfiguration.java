@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.config;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.ExceptionPhase;
 import com.microsoft.azure.servicebus.IMessage;
@@ -12,18 +9,12 @@ import com.microsoft.azure.servicebus.ReceiveMode;
 import com.microsoft.azure.servicebus.SubscriptionClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -40,7 +31,19 @@ import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+
 @Configuration
+@RefreshScope
 public class ServiceBusConfiguration {
 
     @Value("${amqp.host}")
@@ -97,7 +100,8 @@ public class ServiceBusConfiguration {
 
     @Bean
     @Profile("!test")
-    CompletableFuture<Void> registerMessageHandlerOnClient(
+    @RefreshScope
+    public CompletableFuture<Void> registerMessageHandlerOnClient(
             @Autowired SubscriptionClient receiveClient)
             throws ServiceBusException, InterruptedException {
 
@@ -174,13 +178,13 @@ public class ServiceBusConfiguration {
                                         nextHearingDetailsService.getNextHearingDate(hearings);
                                 if (nextHearingDetails != null) {
                                     log.info("Next Hearing details " + nextHearingDetails);
-                                    NextHearingDetailsDTO nextHearingDetailsDTO =
+                                    NextHearingDetailsDTO nextHearingDetailsdto =
                                             NextHearingDetailsDTO.nextHearingDetailsRequestDTOWith()
                                                     .nextHearingDetails(nextHearingDetails)
                                                     .caseRef(hearings.getCaseRef())
                                                     .build();
 
-                                    hearingDto.setNextHearingDateRequest(nextHearingDetailsDTO);
+                                    hearingDto.setNextHearingDateRequest(nextHearingDetailsdto);
                                 }
                                 caseState =
                                         nextHearingDetailsService.fetchStateForUpdate(

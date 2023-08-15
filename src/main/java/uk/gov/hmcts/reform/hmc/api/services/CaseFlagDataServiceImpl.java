@@ -1,32 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TWO;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,6 +22,33 @@ import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TWO;
 
 @Slf4j
 @Service
@@ -151,7 +152,7 @@ public class CaseFlagDataServiceImpl {
             partyDetails = party.getValue();
             List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModel(partyDetails, uuid);
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
-            preparePartyDetailsDTO(
+            preparePartyDetailsdto(
                     partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
         }
     }
@@ -165,7 +166,7 @@ public class CaseFlagDataServiceImpl {
             List<PartyFlagsModel> curPartyFlagsModelList =
                     getPartyFlagsModel(partyDetails, partyDetails.getPartyId());
             partiesFlagsModelList.addAll(curPartyFlagsModelList);
-            preparePartyDetailsDTO(
+            preparePartyDetailsdto(
                     partyDetailsModelList,
                     partyDetails,
                     partyDetails.getPartyId(),
@@ -174,7 +175,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private void preparePartyDetailsDTO(
+    private void preparePartyDetailsdto(
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
             UUID uuid,

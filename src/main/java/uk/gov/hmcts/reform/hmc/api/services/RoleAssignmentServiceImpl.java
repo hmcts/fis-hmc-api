@@ -1,21 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ACTOR_ID_TYPE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_JURISDICTION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_CLASSIFICATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_GRANT_TYPE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_MANAGER;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_VIEWER;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_CATEGORY;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_TYPE;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +11,23 @@ import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentAttributesResourc
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentRequestResource;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleRequest;
 import uk.gov.hmcts.reform.hmc.api.restclient.RoleAssignmentServiceApi;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ACTOR_ID_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_JURISDICTION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_CLASSIFICATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_GRANT_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_MANAGER;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_VIEWER;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_CATEGORY;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_TYPE;
 
 @Service
 @Slf4j

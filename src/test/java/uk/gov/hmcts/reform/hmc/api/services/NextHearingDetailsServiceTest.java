@@ -1,13 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
-import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -24,6 +16,15 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
+import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
+
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,7 +35,9 @@ class NextHearingDetailsServiceTest {
     @Mock private PrlUpdateServiceImpl prlUpdateService;
 
     @BeforeAll
-    public void setup() {}
+    public void setup() {
+
+    }
 
     @Test
     void shouldUpdateNextHearingDetailsTest() {

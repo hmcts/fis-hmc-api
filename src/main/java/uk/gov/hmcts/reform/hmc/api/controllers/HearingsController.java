@@ -1,19 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.ResponseEntity.status;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
-
 import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.io.IOException;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +26,16 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
+
+import java.io.IOException;
+import java.util.Map;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j

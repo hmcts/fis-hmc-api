@@ -1,16 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -31,6 +20,19 @@ import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")

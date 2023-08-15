@@ -3,12 +3,13 @@ package uk.gov.hmcts.reform.hmc.api.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CustomEnumSerializer;
+
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Getter

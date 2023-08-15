@@ -29,12 +29,11 @@
 
   <module name="SuppressWarningsFilter" />
   <module name="LineLength">
-    <property name="max" value="130"/>
+    <property name="max" value="150"/>
     <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
   </module>
   <module name="TreeWalker">
     <module name="UnusedImports"/>
-    <module name="HideUtilityClassConstructor"/>
     <module name="SuppressWarningsHolder" />
     <module name="OuterTypeFilename"/>
     <module name="IllegalTokenText">
@@ -65,7 +64,13 @@
                 value="LITERAL_TRY, LITERAL_CATCH, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE,
                     LITERAL_DO"/>
     </module>
-
+    <module name="RightCurly">
+      <property name="id" value="RightCurlyAlone"/>
+      <property name="option" value="alone"/>
+      <property name="tokens"
+                value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT,
+                    INSTANCE_INIT"/>
+    </module>
     <module name="WhitespaceAround">
       <property name="allowEmptyConstructors" value="true"/>
       <property name="allowEmptyMethods" value="true"/>
@@ -179,18 +184,15 @@
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
-      <property name="allowedAbbreviationLength" value="2"/>
-      <property name="allowedAbbreviations" value="API"/>
+      <property name="allowedAbbreviationLength" value="1"/>
     </module>
     <module name="OverloadMethodsDeclarationOrder"/>
     <module name="VariableDeclarationUsageDistance"/>
-
-    <!--  <module name="CustomImportOrder">
-        <property name="customImportOrderRules" value="SPECIAL_IMPORTS"/>
-        <property name="sortImportsInGroupAlphabetically" value="false"/>
-        <property name="standardPackageRegExp" value="^(java|javax)\."/>
-        <property name="separateLineBetweenGroups" value="false"/>
-      </module>-->
+    <module name="CustomImportOrder">
+      <property name="sortImportsInGroupAlphabetically" value="true"/>
+      <property name="separateLineBetweenGroups" value="true"/>
+      <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###STATIC"/>
+    </module>
     <module name="MethodParamPad"/>
     <module name="NoWhitespaceBefore">
       <property name="tokens"

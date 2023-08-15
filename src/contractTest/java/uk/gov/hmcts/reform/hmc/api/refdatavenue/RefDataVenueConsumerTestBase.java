@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.refdatavenue;
 
-import static io.pactfoundation.consumer.dsl.LambdaDsl.newJsonBody;
-
 import au.com.dius.pact.consumer.dsl.DslPart;
 import au.com.dius.pact.consumer.junit5.PactConsumerTestExt;
 import au.com.dius.pact.core.model.annotations.PactFolder;
@@ -13,6 +11,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.hmc.api.clients.RefDataVenueApi;
 import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
 
+import static io.pactfoundation.consumer.dsl.LambdaDsl.newJsonBody;
+
+
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @PactFolder("pacts")
@@ -22,7 +23,8 @@ import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
 @SuppressWarnings("unchecked")
 public class RefDataVenueConsumerTestBase {
 
-    @Autowired RefDataVenueApi refDataVenueApi;
+    @Autowired
+    RefDataVenueApi refDataVenueApi;
 
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String AUTHORIZATION_TOKEN = "Bearer some-access-token";

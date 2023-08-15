@@ -1,5 +1,29 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS_FL401;
@@ -21,29 +45,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS_FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TEST;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")

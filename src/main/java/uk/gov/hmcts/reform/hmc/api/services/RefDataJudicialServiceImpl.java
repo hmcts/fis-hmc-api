@@ -1,8 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +11,10 @@ import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.JudgeRequestDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Service
 @Slf4j

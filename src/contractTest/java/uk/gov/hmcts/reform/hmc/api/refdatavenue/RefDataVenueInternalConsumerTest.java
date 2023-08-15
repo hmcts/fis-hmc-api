@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.refdatavenue;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
 import au.com.dius.pact.consumer.junit5.PactTestFor;
@@ -12,6 +9,10 @@ import org.apache.http.HttpStatus;
 import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @PactTestFor(providerName = "referenceData_venueInternal", port = "8894")
 @TestPropertySource(

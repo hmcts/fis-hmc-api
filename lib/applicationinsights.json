@@ -1,0 +1,6 @@
+{
+  "connectionString": "${file:/mnt/secrets/fis-kv/app-insights-connection-string}",
+  "role": {
+    "name": "fis"
+  }
+}

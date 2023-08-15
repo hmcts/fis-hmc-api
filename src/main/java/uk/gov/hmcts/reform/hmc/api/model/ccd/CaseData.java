@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +11,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
+
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor

@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.idam;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import au.com.dius.pact.consumer.dsl.PactDslJsonBody;
 import au.com.dius.pact.consumer.dsl.PactDslJsonRootValue;
 import au.com.dius.pact.consumer.dsl.PactDslWithProvider;
@@ -10,8 +8,6 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import com.google.common.collect.Lists;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +21,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform.idam.client"})
 @TestPropertySource(properties = {"idam.api.url=localhost:5000"})

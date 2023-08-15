@@ -2,8 +2,13 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
 
-environment:
-  CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
-  ROLE_ASSIGNMENT_SERVICE_URL: 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
+  keyVaults:
+    fis-kv:
+      secrets:
+        - name: app-insights-connection-string
+          alias: APP_INSIGHTS_CONNECTION_STRING
+  environment:
+    CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
+    ROLE_ASSIGNMENT_SERVICE_URL: 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
 
 
