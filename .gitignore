@@ -22,5 +22,6 @@ bin/main/application.yaml
 
 .DS_Store
 
-applicationinsights-agent-*.jar
+lib/applicationinsights-agent-*.jar
+lib/applicationinsights.log
 *.log
