@@ -282,7 +282,9 @@ public class HearingsServiceImpl implements HearingsService {
                         if (matchedCourt != null) {
                             hearingSchedule.setHearingVenueName(matchedCourt.getHearingVenueName());
                             hearingSchedule.setHearingVenueAddress(
-                                    matchedCourt.getHearingVenueAddress());
+                                matchedCourt.getHearingVenueAddress() != null
+                                    ? matchedCourt.getHearingVenueAddress()
+                                    .concat(" " + matchedCourt.getHearingVenuePostCode()) : null);
                             hearingSchedule.setHearingVenueLocationCode(
                                     matchedCourt.getHearingVenueLocationCode());
                             hearingSchedule.setCourtTypeId(matchedCourt.getCourtTypeId());
