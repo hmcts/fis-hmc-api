@@ -343,6 +343,7 @@ dependencies {
   testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
   contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
 
+
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath
 
