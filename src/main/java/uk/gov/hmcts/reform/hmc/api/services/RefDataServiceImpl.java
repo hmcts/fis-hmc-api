@@ -65,7 +65,9 @@ public class RefDataServiceImpl implements RefDataService {
                             .collect(Collectors.toList());
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
-                courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
+                if (courtDetail.getHearingVenueAddress() != null) {
+                    courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
+                }
                 log.info("Court details filtered" + courtDetail);
             }
             return courtDetail;

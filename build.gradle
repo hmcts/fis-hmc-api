@@ -29,7 +29,6 @@ plugins {
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.25.16'
   id 'au.com.dius.pact' version '4.1.7'
-  id 'com.diffplug.spotless' version '6.9.0'
 }
 
 apply plugin: 'cz.habarta.typescript-generator'
@@ -38,20 +37,6 @@ apply plugin: 'net.serenity-bdd.aggregator'
 
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
-
-spotless {
-
-  java {
-    target 'src/**/*.java'
-    importOrder()
-    removeUnusedImports()
-    trimTrailingWhitespace()
-    indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
-    endWithNewline()
-    googleJavaFormat('1.11.0').aosp().reflowLongStrings()
-
-  }
-}
 
 java {
   toolchain {
