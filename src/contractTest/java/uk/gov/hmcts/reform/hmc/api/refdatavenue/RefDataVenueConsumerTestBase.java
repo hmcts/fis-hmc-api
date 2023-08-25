@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.reform.hmc.api.clients.RefDataVenueApi;
 import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
+import uk.gov.hmcts.reform.hmc.api.services.RefDataApi;
 
 @ExtendWith(PactConsumerTestExt.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -22,7 +22,8 @@ import uk.gov.hmcts.reform.hmc.api.idam.IdamApiConsumerApplication;
 @SuppressWarnings("unchecked")
 public class RefDataVenueConsumerTestBase {
 
-    @Autowired RefDataVenueApi refDataVenueApi;
+    @Autowired
+    RefDataApi refDataApi;
 
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String AUTHORIZATION_TOKEN = "Bearer some-access-token";
