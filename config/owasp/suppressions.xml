@@ -54,6 +54,10 @@
     <cve>CVE-2021-42306</cve>
   </suppress>
   <suppress>
+    <notes>reactor-netty-core-1.0.18.jar</notes>
+    <cve>CVE-2022-31684</cve>
+  </suppress>
+  <suppress>
     <notes>Temporary Suppression</notes>
     <cve>CVE-2021-4277</cve>
     <cve>CVE-2021-4235</cve>

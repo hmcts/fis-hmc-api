@@ -298,10 +298,6 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.8') {
-      entry 'reactor-netty'
-      entry 'reactor-netty-http'
-    }
     dependencySet(group: 'org.springframework', version: '5.3.29') {
       entry 'spring-aop'
       entry 'spring-beans'
