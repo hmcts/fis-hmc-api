@@ -298,6 +298,10 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.8') {
+      entry 'reactor-netty'
+      entry 'reactor-netty-http'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
