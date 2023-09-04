@@ -271,6 +271,9 @@ dependencyManagement {
       entry 'tomcat-embed-el'
       entry 'tomcat-embed-websocket'
     }
+    dependencySet(group: 'xerces', version: '2.12.2') {
+      entry 'xercesImpl'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
@@ -286,8 +289,8 @@ dependencies {
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: '6.0.1'
-  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2-rc1'
-  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.15.2-rc1', ext: 'pom'
+  implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
+  implementation group: 'com.fasterxml.jackson', name: 'jackson-bom', version: '2.15.2', ext: 'pom'
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.9.1'
