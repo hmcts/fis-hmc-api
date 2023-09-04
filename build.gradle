@@ -272,6 +272,8 @@ dependencyManagement {
       entry 'tomcat-embed-websocket'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '1.31'
+    //CVE-2023-34034
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
   }
 }
 dependencies {
