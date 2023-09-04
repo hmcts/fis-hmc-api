@@ -53,16 +53,6 @@
     <cve>CVE-2022-30973</cve>
     <cve>CVE-2022-33879</cve>
   </suppress>
-
-  <suppress>
-   <notes>tomcat-embed-*</notes>
-   <cve>CVE-2022-29885</cve>
-   <cve>CVE-2022-34305</cve>
-    <cve>CVE-2022-45143</cve>
-   <cve>CVE-2022-42252</cve>
-    <cve>CVE-2023-28708</cve>
-
-  </suppress>
   <suppress>
     <notes>org.latencyutils-*</notes>
     <cve>CVE-2021-4277</cve>
