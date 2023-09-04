@@ -274,6 +274,27 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
+    dependencySet(group: 'io.netty', version: '4.1.94.Final') {
+      entry 'netty-buffer'
+      entry 'netty-codec'
+      entry 'netty-codec-dns'
+      entry 'netty-codec-http'
+      entry 'netty-codec-http2'
+      entry 'netty-codec-socks'
+      entry 'netty-common'
+      entry 'netty-handler'
+      entry 'netty-handler-proxy'
+      entry 'netty-resolver'
+      entry 'netty-resolver-dns'
+      entry 'netty-resolver-dns-classes-macos'
+      entry 'netty-resolver-dns-native-macos'
+      entry 'netty-transport'
+      entry 'netty-transport-classes-epoll'
+      entry 'netty-transport-classes-kqueue'
+      entry 'netty-transport-native-epoll'
+      entry 'netty-transport-native-kqueue'
+      entry 'netty-transport-native-unix-common'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'

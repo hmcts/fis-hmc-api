@@ -46,13 +46,6 @@
     <cve>CVE-2021-4277</cve>
   </suppress>
   <suppress>
-    <notes>netty-*</notes>
-    <cve>CVE-2022-24823</cve>
-    <cve>CVE-2022-41881</cve>
-    <cve>CVE-2022-41915</cve>
-    <cve>CVE-2023-34462</cve>
-  </suppress>
-  <suppress>
     <notes>okhttp-3.14.9.jar</notes>
     <cve>CVE-2021-0341</cve>
   </suppress>
