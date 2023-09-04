@@ -45,11 +45,6 @@
     <notes>org.latencyutils-*</notes>
     <cve>CVE-2021-4277</cve>
   </suppress>
- <suppress>
-    <notes>log4j-*</notes>
-    <cve>CVE-2022-33915</cve>
-    <cve>CVE-2022-33915</cve>
- </suppress>
   <suppress>
     <notes>netty-*</notes>
     <cve>CVE-2022-24823</cve>
