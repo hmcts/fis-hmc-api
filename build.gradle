@@ -266,12 +266,18 @@ dependencyManagement {
     dependencySet(group: 'com.google.guava', version: '32.0.0-jre') {
       entry 'guava'
     }
+    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.80') {
+      entry 'tomcat-embed-core'
+      entry 'tomcat-embed-el'
+      entry 'tomcat-embed-websocket'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '1.31'
   }
 }
 dependencies {
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.12'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.12'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
