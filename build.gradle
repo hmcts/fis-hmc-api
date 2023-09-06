@@ -302,6 +302,9 @@ dependencyManagement {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
+    dependencySet(group: 'org.json', version: '20230227') {
+      entry 'json'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
