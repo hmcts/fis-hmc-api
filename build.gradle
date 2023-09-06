@@ -305,6 +305,15 @@ dependencyManagement {
     dependencySet(group: 'org.json', version: '20230227') {
       entry 'json'
     }
+    dependencySet(group: 'org.springframework', version: '5.3.27') {
+      entry 'spring-aop'
+      entry 'spring-beans'
+      entry 'spring-context'
+      entry 'spring-core'
+      entry 'spring-expression'
+      entry 'spring-jcl'
+      entry 'spring-webmvc'
+    }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
