@@ -7,7 +7,6 @@
  </suppress>
   <suppress>
     <notes>spring-*</notes>
-    <cve>CVE-2016-1000027</cve>
     <cve>CVE-2021-31684</cve>
   </suppress>
   <suppress>
