@@ -22,11 +22,6 @@
     <cve>CVE-2020-21913</cve>
   </suppress>
   <suppress>
-    <notes><![CDATA[
-      jackson-databind-2.14.0-rc1.jar ]]></notes>
-    <cve>CVE-2023-35116</cve>
-  </suppress>
-  <suppress>
     <notes>json-20160212.jar</notes>
     <cve>CVE-2022-45688</cve>
   </suppress>
