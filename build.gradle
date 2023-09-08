@@ -302,7 +302,7 @@ dependencyManagement {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
-    dependencySet(group: 'org.json', version: '20230618') {
+    dependencySet(group: 'org.json', version: '20230227') {
       entry 'json'
     }
     dependencySet(group: 'org.springframework', version: '5.3.27') {
