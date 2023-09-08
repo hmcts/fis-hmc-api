@@ -35,10 +35,6 @@
     <cve>CVE-2021-4277</cve>
   </suppress>
   <suppress>
-    <notes>okhttp-3.14.9.jar</notes>
-    <cve>CVE-2021-0341</cve>
-  </suppress>
-  <suppress>
     <notes>adal4j-1.6.4.jar</notes>
     <cve>CVE-2021-42306</cve>
   </suppress>
