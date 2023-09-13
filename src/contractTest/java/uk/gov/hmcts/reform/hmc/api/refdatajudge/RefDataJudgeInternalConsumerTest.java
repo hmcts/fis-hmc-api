@@ -13,19 +13,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 import uk.gov.hmcts.reform.hmc.api.model.request.JudgeRequestDTO;
+import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+import uk.gov.hmcts.reform.hmc.api.utils.ResourceLoader;
 
 @PactTestFor(providerName = "referenceData_judgeInternal", port = "8894")
 @TestPropertySource(
         properties = {"ref_data_judicial.api.url=localhost:8894", "idam.api.url=localhost:5000"})
 public class RefDataJudgeInternalConsumerTest extends RefDataJudgeConsumerTestBase {
 
+    private final String validResponseBody = "JudgeDetailsRespBody.json";
+
     @Pact(provider = "referenceData_judgeInternal", consumer = "fpl_judgeConfiguration")
     public RequestResponsePact generatePactFragmentForGetJudgeDetailsId(PactDslWithProvider builder)
-            throws JsonProcessingException {
+        throws Exception {
         // @formatter:off
         return builder.given("Judge exists for given personal_code or Id ")
                 .uponReceiving("A Request to get judge details by id")
@@ -40,7 +43,7 @@ public class RefDataJudgeInternalConsumerTest extends RefDataJudgeConsumerTestBa
                         new ObjectMapper().writeValueAsString(buildJudgeRequestContent()),
                         "application/json")
                 .willRespondWith()
-                .body(buildJudicialResponseDsl())
+                .body(ResourceLoader.loadJson(validResponseBody), "application/json")
                 .status(HttpStatus.SC_OK)
                 .toPact();
     }
@@ -54,7 +57,7 @@ public class RefDataJudgeInternalConsumerTest extends RefDataJudgeConsumerTestBa
     @Test
     @PactTestFor(pactMethod = "generatePactFragmentForGetJudgeDetailsId")
     public void verifyGetJudgeDetailsById() throws JsonProcessingException {
-        JSONObject judgeDetailList =
+        List<JudgeDetail> judgeDetailList =
                 refDataJudgeApi.getJudgeDetails(
                         AUTHORIZATION_TOKEN, SERVICE_AUTH_TOKEN, buildJudgeRequestContent());
         assertThat(judgeDetailList, is(notNullValue()));
