@@ -351,7 +351,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.21.0'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.4.2'
-  implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.5'
+  implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.1.11'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.42'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
