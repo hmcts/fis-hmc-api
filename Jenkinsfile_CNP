@@ -4,7 +4,6 @@
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
-import uk.gov.hmcts.contino.GithubAPI
 
 def type = "java"
 def product = "fis"
@@ -181,8 +180,6 @@ withPipeline(type, product, component) {
     env.IDAM_API_URL= 'https://idam-api.aat.platform.hmcts.net'
     env.MANAGE_CASE_REDIRECT_URL= 'https://manage-case.aat.platform.hmcts.net/oauth2/callback'
    //setCommonEnvVariables()
-    def githubApi = new GithubAPI(this)
-    disableCleanupOfHelmReleaseOnFailure()
   }
 
   onMaster {
