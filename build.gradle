@@ -298,7 +298,7 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.8') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.11') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
