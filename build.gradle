@@ -22,7 +22,7 @@ plugins {
   id 'pmd'
   id 'jacoco'
   id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-  id 'org.springframework.boot' version '2.7.12'
+  id 'org.springframework.boot' version '2.7.16'
   id 'org.owasp.dependencycheck' version '8.0.2'
   id 'com.github.ben-manes.versions' version '0.41.0'
   id 'org.sonarqube' version '3.3'
@@ -294,7 +294,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.94.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.99.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -325,7 +325,7 @@ dependencyManagement {
     dependencySet(group: 'org.json', version: '20230227') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.27') {
+    dependencySet(group: 'org.springframework', version: '5.3.30') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
@@ -346,8 +346,8 @@ dependencyManagement {
 }
 dependencies {
   implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.12'
-  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.12'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.16'
+  implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.16'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
