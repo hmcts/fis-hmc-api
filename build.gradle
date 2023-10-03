@@ -325,7 +325,7 @@ dependencyManagement {
     dependencySet(group: 'org.json', version: '20230227') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.27') {
+    dependencySet(group: 'org.springframework', version: '5.3.30') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
