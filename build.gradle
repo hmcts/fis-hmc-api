@@ -12,7 +12,7 @@ buildscript {
   }
   dependencies {
     classpath "net.serenity-bdd:serenity-gradle-plugin:2.4.34"
-    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.36.1070'
+    classpath group: 'cz.habarta.typescript-generator', name: 'typescript-generator-gradle-plugin', version: '2.37.1128'
   }
 }
 
