@@ -8,6 +8,6 @@ maintainers:
   - name: HMCTS family integration team
 dependencies:
   - name: java
-    version: v5.0.1-rc6
+    version: 5.0.1-rc6
     repository: 'https://hmctspublic.azurecr.io/helm/v1/repo/'
 
