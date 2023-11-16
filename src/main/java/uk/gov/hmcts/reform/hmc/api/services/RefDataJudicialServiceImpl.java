@@ -1,8 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,20 +8,30 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.JudgeRequestDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
 @SuppressWarnings("unchecked")
 public class RefDataJudicialServiceImpl implements RefDataJudicialService {
 
-    @Autowired AuthTokenGenerator authTokenGenerator;
+    @Autowired
+    AuthTokenGenerator authTokenGenerator;
 
-    @Autowired IdamTokenGenerator idamTokenGenerator;
+    @Autowired
+    IdamTokenGenerator idamTokenGenerator;
 
-    @Autowired RefDataJudicialApi refDataJudicialApi;
+    @Autowired
+    RefDataJudicialApi refDataJudicialApi;
+
+    @Autowired
+    LaunchDarklyClient launchDarklyClient;
 
     /**
      * This method will get all the judge details of a particular judge(judgeId).
@@ -41,11 +49,21 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
         JudgeRequestDTO judgeRequestDto =
                 JudgeRequestDTO.judgeRequestWith().personalCode(personalCodeList).build();
         try {
-            List<JudgeDetail> judgeDetailList =
-                    refDataJudicialApi.getJudgeDetails(
-                            idamTokenGenerator.generateIdamTokenForRefData(),
-                            authTokenGenerator.generate(),
-                            judgeRequestDto);
+            List<JudgeDetail> judgeDetailList = null;
+            if (launchDarklyClient.isFeatureEnabled("judicial-v2-change")) {
+                judgeDetailList = refDataJudicialApi.getJudgeDetailsV2(
+                    idamTokenGenerator.generateIdamTokenForRefData(),
+                    authTokenGenerator.generate(),
+                    judgeRequestDto
+                );
+            } else {
+                judgeDetailList = refDataJudicialApi.getJudgeDetails(
+                    idamTokenGenerator.generateIdamTokenForRefData(),
+                    authTokenGenerator.generate(),
+                    judgeRequestDto
+                );
+            }
+
             log.info("RefData Judicial call completed successfully" + judgeDetailList);
 
             if (!judgeDetailList.isEmpty()) {

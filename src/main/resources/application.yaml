@@ -135,3 +135,6 @@ role-assignment-service:
 
 private-law:
   hmc-authorised-services: ${PRL_HMC_S2S_AUTHORISED_SERVICES:xui_webapp,prl_cos_api,fis_hmc_api}
+
+launchdarkly:
+  sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
