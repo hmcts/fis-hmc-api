@@ -51,12 +51,14 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
         try {
             List<JudgeDetail> judgeDetailList = null;
             if (launchDarklyClient.isFeatureEnabled("judicial-v2-change")) {
+                log.info("Refdata Judicial API V2 called and LD flag is ON");
                 judgeDetailList = refDataJudicialApi.getJudgeDetailsV2(
                     idamTokenGenerator.generateIdamTokenForRefData(),
                     authTokenGenerator.generate(),
                     judgeRequestDto
                 );
             } else {
+                log.info("Refdata Judicial API V1 called and LD flag is OFF");
                 judgeDetailList = refDataJudicialApi.getJudgeDetails(
                     idamTokenGenerator.generateIdamTokenForRefData(),
                     authTokenGenerator.generate(),
