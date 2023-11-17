@@ -139,7 +139,7 @@ public class HearingsController {
      * @header serviceAuthorization, S2S authorization token.
      * @header caseIds, caseId list to take all the hearings belongs to each case.
      */
-    @GetMapping(path = "/hearings-by-list-of-case-ids")
+    @PostMapping(path = "/hearings-by-list-of-case-ids")
     @ApiOperation("get hearings by case reference number")
     @ApiResponses(
             value = {
