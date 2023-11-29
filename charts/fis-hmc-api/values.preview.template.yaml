@@ -5,5 +5,5 @@ java:
 environment:
   CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
   ROLE_ASSIGNMENT_SERVICE_URL: 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
-
+  MQ_SHARED_KEY: 'RootManageSharedAccessKey'
 

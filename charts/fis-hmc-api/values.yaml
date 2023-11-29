@@ -29,6 +29,7 @@ java:
     IDAM_WEB_URL: 'https://idam-web-public.{{ .Values.global.environment }}.platform.hmcts.net/login'
     IDAM_API_URL: 'https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net'
     HMC_FIS_TOPIC_NAME: 'hmc-to-cft-{{ .Values.global.environment }}'
+    MQ_SHARED_KEY: 'SendAndListenSharedAccessKey'
     HMC_FIS_SUBSCRIPTION_NAME: 'hmc-fis-subs-prl-{{ .Values.global.environment }}'
     HMC_HOST: 'hmc-servicebus-{{ .Values.global.environment }}.servicebus.windows.net'
     APPLICATION_NAME: 'fis_hmc_api'
