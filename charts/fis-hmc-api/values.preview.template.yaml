@@ -1,7 +1,21 @@
 java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
-
+  keyVaults:
+    fis-kv:
+      secrets:
+        - name: hmc-topic-shared-access-key
+          alias: HMC_TOPIC_SHARED_ACCESS_KEY
+        - name: fis-hmc-api-s2s-secret
+          alias: OIDC_S2S_SECRET
+        - name: fis-hmc-idam-client-id
+          alias: FIS_HMC_IDAM_CLIENT_ID
+        - name: fis-hmc-idam-client-secret
+          alias: FIS_HMC_IDAM_CLIENT_SECRET
+        - name: idam-hmc-component-user-password
+          alias: IDAM_HMC_COMPONENT_USER_PASSWORD
+        - name: AppInsightsInstrumentationKey
+          alias: APP_INSIGHTS_KEY
 environment:
   CASE_DATA_STORE_BASEURL: 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
   ROLE_ASSIGNMENT_SERVICE_URL: 'http://am-role-assignment-service-aat.service.core-compute-aat.internal'
