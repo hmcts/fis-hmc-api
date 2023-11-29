@@ -40,7 +40,7 @@ public class RefDataJudicialServiceTest {
     LaunchDarklyClient launchDarklyClient;
 
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialTestV1() throws IOException, ParseException {
+    void shouldFetchJudgeDetailsRefDataJudicialTestV1() throws IOException, ParseException {
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
         List<JudgeDetail> judgeDetailsList = new ArrayList<>();
         judgeDetailsList.add(judgeDetail);
@@ -57,7 +57,7 @@ public class RefDataJudicialServiceTest {
     }
 
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialTestV2() throws IOException, ParseException {
+    void shouldFetchJudgeDetailsRefDataJudicialTestV2() throws IOException, ParseException {
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
         List<JudgeDetail> judgeDetailsList = new ArrayList<>();
         judgeDetailsList.add(judgeDetail);
@@ -74,7 +74,7 @@ public class RefDataJudicialServiceTest {
     }
 
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV1()
+    void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV1()
             throws IOException, ParseException {
 
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
@@ -92,7 +92,7 @@ public class RefDataJudicialServiceTest {
     }
 
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV2()
+    void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV2()
         throws IOException, ParseException {
 
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
