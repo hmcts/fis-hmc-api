@@ -109,7 +109,7 @@ springdoc:
 
 amqp:
   host: ${HMC_HOST:hmc-servicebus-demo.servicebus.windows.net}
-  sharedAccessKeyName: "SendAndListenSharedAccessKey"
+  sharedAccessKeyName: ${MQ_SHARED_KEY:SendAndListenSharedAccessKey}
   jrd:
     topic: ${HMC_FIS_TOPIC_NAME:hmc-to-cft-demo}
     sharedAccessKeyValue: ${HMC_TOPIC_SHARED_ACCESS_KEY:dummy}
