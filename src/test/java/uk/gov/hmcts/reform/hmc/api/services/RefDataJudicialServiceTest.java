@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
@@ -35,8 +36,11 @@ public class RefDataJudicialServiceTest {
 
     @Mock private IdamTokenGenerator idamTokenGenerator;
 
+    @Mock
+    LaunchDarklyClient launchDarklyClient;
+
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialTest() throws IOException, ParseException {
+    void shouldFetchJudgeDetailsRefDataJudicialTestV1() throws IOException, ParseException {
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
         List<JudgeDetail> judgeDetailsList = new ArrayList<>();
         judgeDetailsList.add(judgeDetail);
@@ -44,6 +48,7 @@ public class RefDataJudicialServiceTest {
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(refDataJudicialApi.getJudgeDetails(anyString(), any(), any()))
                 .thenReturn(judgeDetailsList);
+        when(launchDarklyClient.isFeatureEnabled(anyString())).thenReturn(false);
 
         String judgeId = "4925644";
         JudgeDetail judgeDetailResp = refDataJudicialService.getJudgeDetails(judgeId);
@@ -52,7 +57,24 @@ public class RefDataJudicialServiceTest {
     }
 
     @Test
-    public void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTest()
+    void shouldFetchJudgeDetailsRefDataJudicialTestV2() throws IOException, ParseException {
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataJudicialApi.getJudgeDetailsV2(anyString(), any(), any()))
+            .thenReturn(judgeDetailsList);
+        when(launchDarklyClient.isFeatureEnabled(anyString())).thenReturn(true);
+
+        String judgeId = "4925644";
+        JudgeDetail judgeDetailResp = refDataJudicialService.getJudgeDetails(judgeId);
+
+        assertEquals("test", judgeDetailResp.getHearingJudgeName());
+    }
+
+    @Test
+    void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV1()
             throws IOException, ParseException {
 
         JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
@@ -60,9 +82,28 @@ public class RefDataJudicialServiceTest {
         judgeDetailsList.add(judgeDetail);
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+        when(launchDarklyClient.isFeatureEnabled(anyString())).thenReturn(false);
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(refDataJudicialApi.getJudgeDetails(anyString(), any(), any()))
                 .thenReturn(judgeDetailsList);
+
+        String judgeId = "4925644";
+        assertThrows(RefDataException.class, () -> refDataJudicialService.getJudgeDetails(judgeId));
+    }
+
+    @Test
+    void shouldFetchJudgeDetailsRefDataJudicialS2sExceptionTestV2()
+        throws IOException, ParseException {
+
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+        when(authTokenGenerator.generate())
+            .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataJudicialApi.getJudgeDetailsV2(anyString(), any(), any()))
+            .thenReturn(judgeDetailsList);
+        when(launchDarklyClient.isFeatureEnabled(anyString())).thenReturn(true);
 
         String judgeId = "4925644";
         assertThrows(RefDataException.class, () -> refDataJudicialService.getJudgeDetails(judgeId));
