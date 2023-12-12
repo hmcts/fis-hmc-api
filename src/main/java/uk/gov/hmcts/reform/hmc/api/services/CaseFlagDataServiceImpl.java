@@ -322,7 +322,7 @@ public class CaseFlagDataServiceImpl {
                                     .flagStatus(flagDetail.getStatus())
                                     .flagParentId(EMPTY)
                                     .languageCode(flagDetail.getSubTypeKey())
-                                    .flagDescription(flagDetail.getName())
+                                    .flagDescription(flagDetail.getFlagComment())
                                     .build();
                     partyFlagsModelList.add(partyFlagsModel);
                 }
