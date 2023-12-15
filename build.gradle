@@ -294,7 +294,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.99.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.104.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
