@@ -55,6 +55,9 @@ public final class Constants {
     public static final String RESPONDENT = "RESP";
 
     public static final String RESPONDENTS = "respondents";
+
+    public static final String OTHER = "OTHER";
+
     public static final String HEARING_TYPE = "";
 
     public static final String TEST = "test";

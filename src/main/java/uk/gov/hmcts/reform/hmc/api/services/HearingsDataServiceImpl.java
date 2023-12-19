@@ -54,6 +54,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
+import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
@@ -96,6 +97,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Autowired private final ElasticSearch elasticSearch;
 
     @Autowired private final AuthTokenGenerator authTokenGenerator;
+
+    private final LaunchDarklyClient launchDarklyClient;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
@@ -197,7 +200,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         : null)
                         .hearingChannels(Arrays.asList())
                         .build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        if (launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")) {
+            log.info("Case flags V2 flag is enabled");
+            caseFlagDataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
+        } else {
+            log.info("Case flags V2 flag is disabled");
+            caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        }
         return serviceHearingValues;
     }
 

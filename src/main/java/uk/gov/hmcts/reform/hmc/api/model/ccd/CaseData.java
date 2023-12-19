@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 
@@ -29,6 +30,8 @@ public class CaseData implements MappableObject {
     private List<Element<PartyDetails>> applicants;
 
     private List<Element<PartyDetails>> respondents;
+
+    private List<Element<PartyDetails>> otherPartyInTheCaseRevised;
 
     private String applicantSolicitorEmailAddress;
 
@@ -50,4 +53,5 @@ public class CaseData implements MappableObject {
 
     @JsonAlias({"applicantCaseName", "applicantOrRespondentCaseName"})
     private String applicantCaseName;
+    private AllPartyFlags allPartyFlags;
 }
