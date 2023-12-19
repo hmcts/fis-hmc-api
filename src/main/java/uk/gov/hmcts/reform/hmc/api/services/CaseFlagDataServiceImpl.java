@@ -60,6 +60,7 @@ public class CaseFlagDataServiceImpl {
     /**
      * deserialization ccd record for mapping the case flag data.
      *
+     *
      * @param caseDetails data which has caseDetails
      * @return CaseDetailResponse deserialization object
      * @throws IOException exception to type input/output
