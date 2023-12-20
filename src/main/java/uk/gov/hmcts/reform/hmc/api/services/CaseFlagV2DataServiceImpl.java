@@ -48,12 +48,15 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
      */
     public void setCaseFlagsV2Data(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
         throws IOException {
+        log.info("Service call happened to setCaseFlagsV2Data");
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
         setBaseLocation(serviceHearingValues, ccdResponse);
+        log.info("Base location is set");
         Map<String, Object> caseDataMap = caseDetails.getData();
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         if (C100.equalsIgnoreCase(ccdResponse.getCaseData().getCaseTypeOfApplication())) {
+            log.info("C100 case");
             findAndUpdateModelListsForC100(
                 PartyRole.Representing.CAAPPLICANT, ccdResponse, caseDataMap,
                 partiesFlagsModelList, partyDetailsModelList);
@@ -69,8 +72,10 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             findAndUpdateModelListsForC100(
                 PartyRole.Representing.CAOTHERPARTY, ccdResponse, caseDataMap,
                 partiesFlagsModelList, partyDetailsModelList);
+            log.info("done");
         }
         if (FL401.equalsIgnoreCase(ccdResponse.getCaseData().getCaseTypeOfApplication())) {
+            log.info("Fl401 case");
             findAndUpdateModelListsForFL401(
                 PartyRole.Representing.DAAPPLICANT, ccdResponse, caseDataMap,
                 partiesFlagsModelList, partyDetailsModelList);
@@ -83,6 +88,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             findAndUpdateModelListsForFL401(
                 PartyRole.Representing.DARESPONDENTSOLICITOR, ccdResponse, caseDataMap,
                 partiesFlagsModelList, partyDetailsModelList);
+            log.info("done");
         }
 
         if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
@@ -94,6 +100,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             String listingComments = getListingComment(caseFlags.getFlags());
             serviceHearingValues.setListingComments(listingComments);
         }
+        log.info("all done " + serviceHearingValues);
     }
 
     private void findAndUpdateModelListsForC100(PartyRole.Representing representing,
@@ -101,6 +108,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                 Map<String, Object> caseDataMap,
                                                 List<PartyFlagsModel> partiesFlagsModelList,
                                                 List<PartyDetailsModel> partyDetailsModelList) {
+        log.info("findAndUpdateModelListsForC100: representing is " + representing);
         List<Element<PartyDetails>> partyDetailsListElements = representing.getCaTarget().apply(
             ccdResponse.getCaseData());
 
@@ -112,7 +120,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                     ? Optional.of(partyDetailsListElements.get(i)) : Optional.empty();
                 if (partyDetails.isPresent()) {
                     List<Flags> partyFlagList = collateC100PartyFlags(representing, caseDataMap, i);
-
+                    log.info("partyFlagList size " + partyFlagList.size());
                     updateFlagContents(
                         partiesFlagsModelList,
                         partyDetailsModelList,
