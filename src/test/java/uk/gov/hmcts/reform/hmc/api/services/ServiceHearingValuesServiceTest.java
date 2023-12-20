@@ -42,7 +42,7 @@ class ServiceHearingValuesServiceTest {
 
     @Mock private CaseApiService caseApiService;
 
-    @Mock private CaseFlagDataServiceImpl caseFlagDataService;
+    @Mock private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
@@ -122,7 +122,7 @@ class ServiceHearingValuesServiceTest {
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
