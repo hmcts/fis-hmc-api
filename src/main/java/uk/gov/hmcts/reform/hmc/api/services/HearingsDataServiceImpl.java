@@ -46,7 +46,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -88,16 +87,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Value("${ccd.elastic-search-api.boost}")
     private String ccdElasticSearchApiBoost;
 
-    @Autowired private final CaseApiService caseApiService;
-
-    @Autowired private final ResourceLoader resourceLoader;
-
-    @Autowired private final CaseFlagDataServiceImpl caseFlagDataService;
-
-    @Autowired private final ElasticSearch elasticSearch;
-
-    @Autowired private final AuthTokenGenerator authTokenGenerator;
-
+    private final CaseApiService caseApiService;
+    private final ResourceLoader resourceLoader;
+    private final CaseFlagV2DataServiceImpl caseFlagV2DataService;
+    private final ElasticSearch elasticSearch;
+    private final AuthTokenGenerator authTokenGenerator;
     private final LaunchDarklyClient launchDarklyClient;
 
     /**
@@ -202,10 +196,10 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .build();
         if (launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")) {
             log.info("Case flags V2 flag is enabled");
-            caseFlagDataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
+            caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         } else {
             log.info("Case flags V2 flag is disabled");
-            caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+            caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
         }
         return serviceHearingValues;
     }

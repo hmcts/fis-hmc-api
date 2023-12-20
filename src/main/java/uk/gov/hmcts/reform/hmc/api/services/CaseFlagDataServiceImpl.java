@@ -6,7 +6,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OTHER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
@@ -33,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
@@ -54,12 +52,10 @@ import uk.gov.hmcts.reform.hmc.api.utils.Constants;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("PMD")
 public class CaseFlagDataServiceImpl {
 
     /**
      * deserialization ccd record for mapping the case flag data.
-     *
      *
      * @param caseDetails data which has caseDetails
      * @return CaseDetailResponse deserialization object
@@ -123,7 +119,7 @@ public class CaseFlagDataServiceImpl {
      * @param serviceHearingValues data about Hearing RequestValues
      * @param ccdResponse data about the ccd record
      */
-    private void setBaseLocation(
+    protected void setBaseLocation(
             ServiceHearingValues serviceHearingValues, CaseDetailResponse ccdResponse) {
         CaseManagementLocation caseManagementLocation =
                 ccdResponse.getCaseData().getCaseManagementLocation();
@@ -132,11 +128,11 @@ public class CaseFlagDataServiceImpl {
             serviceHearingValues.setCaseManagementLocationCode(
                     caseManagementLocation.getBaseLocation());
             List<HearingLocation> locationList =
-                Arrays.asList(
-                    HearingLocation.hearingLocationWith()
-                        .locationType(Constants.COURT)
-                        .locationId(caseManagementLocation.getBaseLocation())
-                        .build());
+                    Arrays.asList(
+                            HearingLocation.hearingLocationWith()
+                                    .locationType(Constants.COURT)
+                                    .locationId(caseManagementLocation.getBaseLocation())
+                                    .build());
             serviceHearingValues.setHearingLocations(locationList);
         }
     }
@@ -270,7 +266,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private List<PartyFlagsModel> getInterpreterLangCodes(
+    protected List<PartyFlagsModel> getInterpreterLangCodes(
             List<PartyFlagsModel> curPartyFlagsModelList) {
         return curPartyFlagsModelList.stream()
                 .filter(
@@ -281,7 +277,7 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private String getListingComment(List<PartyFlagsModel> flagsList) {
+    protected String getListingComment(List<PartyFlagsModel> flagsList) {
 
         Boolean isListingCommentNeeded =
                 flagsList.stream()
@@ -336,7 +332,7 @@ public class CaseFlagDataServiceImpl {
         return partyFlagsModelList;
     }
 
-    private List<String> getReasonableAdjustmentsByParty(
+    protected List<String> getReasonableAdjustmentsByParty(
             List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
@@ -349,13 +345,13 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
+    protected Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
 
         return partiesFlagsModelList.stream()
                 .anyMatch(partyFlag -> partyFlag.getFlagId().equals(PF0007));
     }
 
-    private Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .anyMatch(
@@ -366,7 +362,7 @@ public class CaseFlagDataServiceImpl {
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()));
     }
 
-    private String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .filter(
@@ -380,7 +376,7 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.joining(PLUS_SIGN));
     }
 
-    private void addPartyDetailsModelForOrg(
+    protected void addPartyDetailsModelForOrg(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
         String partyId = null;
         if (uuid != null) {
@@ -406,7 +402,7 @@ public class CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModelForOrg);
     }
 
-    private void addPartyDetailsModelForSolicitor(
+    protected void addPartyDetailsModelForSolicitor(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
 
         String partyId = null;
@@ -441,279 +437,5 @@ public class CaseFlagDataServiceImpl {
                         .individualDetails(individualDetailsModel)
                         .build();
         partyDetailsModelList.add(partyDetailsModelForSol);
-    }
-
-    /**
-     * mapping the all parties flag data to ServiceHearingValues .
-     *
-     * @param serviceHearingValues data about hearings
-     * @param caseDetails          data about caseDetails
-     * @throws IOException exception to input/output
-     */
-    public void setCaseFlagsV2Data(ServiceHearingValues serviceHearingValues, CaseDetails caseDetails)
-        throws IOException {
-
-        List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
-        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
-        CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
-        setBaseLocation(serviceHearingValues, ccdResponse);
-        List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
-        if (null != applicantLst) {
-            addPartyFlagDataCaseFlagsV2(
-                partiesFlagsModelList,
-                partyDetailsModelList,
-                applicantLst,
-                APPLICANT,
-                ccdResponse.getCaseData().getAllPartyFlags()
-            );
-        }
-
-        List<Element<PartyDetails>> respondedLst = ccdResponse.getCaseData().getRespondents();
-        if (null != respondedLst) {
-            addPartyFlagDataCaseFlagsV2(
-                partiesFlagsModelList,
-                partyDetailsModelList,
-                respondedLst,
-                RESPONDENT,
-                ccdResponse.getCaseData().getAllPartyFlags()
-            );
-        }
-
-        List<Element<PartyDetails>> otherParties = ccdResponse.getCaseData().getOtherPartyInTheCaseRevised();
-        if (null != otherParties) {
-            addPartyFlagDataCaseFlagsV2(
-                partiesFlagsModelList,
-                partyDetailsModelList,
-                otherParties,
-                OTHER,
-                ccdResponse.getCaseData().getAllPartyFlags()
-            );
-        }
-
-        if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
-            CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagsModelList).build();
-            serviceHearingValues.setCaseFlags(caseFlags);
-            serviceHearingValues.setParties(partyDetailsModelList);
-            serviceHearingValues.setCaseAdditionalSecurityFlag(
-                isCaseAdditionalSecurityFlag(partiesFlagsModelList));
-            String listingComments = getListingComment(caseFlags.getFlags());
-            serviceHearingValues.setListingComments(listingComments);
-        }
-    }
-
-    private void addPartyFlagDataCaseFlagsV2(
-        List<PartyFlagsModel> partiesFlagsModelList,
-        List<PartyDetailsModel> partyDetailsModelList,
-        List<Element<PartyDetails>> partyLst,
-        String role,
-        AllPartyFlags allPartyFlags) {
-
-        UUID uuid;
-        PartyDetails partyDetails;
-
-        for (Element<PartyDetails> party : partyLst) {
-            uuid = party.getId();
-            partyDetails = party.getValue();
-            List<PartyFlagsModel> curPartyFlagsModelList = getPartyFlagsModelV2(
-                uuid,
-                partyLst.indexOf(party),
-                role,
-                allPartyFlags
-            );
-            partiesFlagsModelList.addAll(curPartyFlagsModelList);
-            preparePartyDetailsDTO(
-                partyDetailsModelList, partyDetails, uuid, role, curPartyFlagsModelList);
-        }
-    }
-
-    private List<PartyFlagsModel> getPartyFlagsModelV2(UUID uuid, int partyIndex, String role, AllPartyFlags allPartyFlags) {
-        String partyId = null;
-        if (null != uuid) {
-            partyId = uuid.toString();
-        }
-        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
-        switch (partyIndex) {
-            case 1:
-                find1stPartyFlags(role, allPartyFlags, partyFlagsModelList, partyId);
-                break;
-            case 2:
-                find2ndPartyFlags(role, allPartyFlags, partyFlagsModelList, partyId);
-                break;
-            case 3:
-                find3rdPartyFlags(role, allPartyFlags, partyFlagsModelList, partyId);
-                break;
-            case 4:
-                find4thPartyFlags(role, allPartyFlags, partyFlagsModelList, partyId);
-                break;
-            case 5:
-                find5thPartyFlags(role, allPartyFlags, partyFlagsModelList, partyId);
-                break;
-            default: {
-                break;
-            }
-        }
-        return partyFlagsModelList;
-    }
-
-    private void find5thPartyFlags(String role, AllPartyFlags allPartyFlags,
-                                   List<PartyFlagsModel> partyFlagsModelList, String partyId) {
-        if (APPLICANT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaApplicant5ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaApplicant5InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (RESPONDENT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaRespondent5ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaRespondent5InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (OTHER.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaOtherParty5ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaOtherParty5InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        }
-    }
-
-    private void find4thPartyFlags(String role, AllPartyFlags allPartyFlags,
-                                   List<PartyFlagsModel> partyFlagsModelList, String partyId) {
-        if (APPLICANT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaApplicant4ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaApplicant4InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (RESPONDENT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaRespondent4ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaRespondent4InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (OTHER.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaOtherParty4ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaOtherParty4InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        }
-    }
-
-    private void find3rdPartyFlags(String role, AllPartyFlags allPartyFlags,
-                                   List<PartyFlagsModel> partyFlagsModelList, String partyId) {
-        if (APPLICANT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaApplicant3ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaApplicant3InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (RESPONDENT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaRespondent3ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaRespondent3InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (OTHER.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaOtherParty3ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaOtherParty3InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        }
-    }
-
-    private void find2ndPartyFlags(String role, AllPartyFlags allPartyFlags,
-                                   List<PartyFlagsModel> partyFlagsModelList, String partyId) {
-        if (APPLICANT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaApplicant2ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaApplicant2InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (RESPONDENT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaRespondent2ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaRespondent2InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (OTHER.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaOtherParty2ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaOtherParty2InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        }
-    }
-
-    private void find1stPartyFlags(String role, AllPartyFlags allPartyFlags,
-                                   List<PartyFlagsModel> partyFlagsModelList, String partyId) {
-        if (APPLICANT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaApplicant1ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaApplicant1InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (RESPONDENT.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaRespondent1ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaRespondent1InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        } else if (OTHER.equalsIgnoreCase(role)) {
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags externalFlag
-                = allPartyFlags.getCaOtherParty1ExternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(externalFlag, partyId));
-            uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags internalFlag
-                = allPartyFlags.getCaOtherParty1InternalFlags();
-            partyFlagsModelList.addAll(getPartyFlagsModelsV2(internalFlag, partyId));
-        }
-    }
-
-    private List<PartyFlagsModel> getPartyFlagsModelsV2(
-        uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags flag,
-        String partyId) {
-        List<PartyFlagsModel> partyFlagsModelList = new ArrayList<>();
-        if (flag == null) {
-            return partyFlagsModelList;
-        }
-        List<Element<uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.FlagDetail>> detailsList = flag.getDetails();
-
-        if (detailsList != null) {
-            for (Element<uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.FlagDetail> flagDetailElement : detailsList) {
-                uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.FlagDetail flagDetail = flagDetailElement.getValue();
-                if (null != flagDetail) {
-                    log.info("flagDetail===> {}", flagDetail);
-                    PartyFlagsModel partyFlagsModel =
-                        PartyFlagsModel.partyFlagsModelWith()
-                            .partyId(partyId)
-                            .partyName(flag.getPartyName())
-                            .flagId(flagDetail.getFlagCode())
-                            .flagStatus(flagDetail.getStatus())
-                            .flagParentId(EMPTY)
-                            .languageCode(flagDetail.getSubTypeKey())
-                            .flagDescription(flagDetail.getFlagComment())
-                            .build();
-                    partyFlagsModelList.add(partyFlagsModel);
-
-                }
-            }
-        }
-        return partyFlagsModelList;
     }
 }
