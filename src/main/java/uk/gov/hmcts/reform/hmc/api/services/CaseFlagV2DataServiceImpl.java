@@ -116,7 +116,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         log.info("all done " + serviceHearingValues);
     }
 
-    private void findAndUpdateModelListsForC100(PartyRole.Representing representing, CaseDetailResponse ccdResponse, Map<String, Object> caseDataMap, List<PartyFlagsModel> partiesFlagsModelList, List<PartyDetailsModel> partyDetailsModelList) {
+    private void findAndUpdateModelListsForC100(PartyRole.Representing representing,
+                                                CaseDetailResponse ccdResponse,
+                                                Map<String, Object> caseDataMap,
+                                                List<PartyFlagsModel> partiesFlagsModelList,
+                                                List<PartyDetailsModel> partyDetailsModelList) {
         log.info("findAndUpdateModelListsForC100: representing is " + representing);
         List<Element<PartyDetails>> partyDetailsListElements = representing.getCaTarget().apply(ccdResponse.getCaseData());
 
@@ -168,7 +172,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         return partyFlagList;
     }
 
-    private void findAndUpdateModelListsForFL401(PartyRole.Representing representing, CaseDetailResponse ccdResponse, Map<String, Object> caseDataMap, List<PartyFlagsModel> partiesFlagsModelList, List<PartyDetailsModel> partyDetailsModelList) {
+    private void findAndUpdateModelListsForFL401(PartyRole.Representing representing,
+                                                 CaseDetailResponse ccdResponse,
+                                                 Map<String, Object> caseDataMap,
+                                                 List<PartyFlagsModel> partiesFlagsModelList,
+                                                 List<PartyDetailsModel> partyDetailsModelList) {
         PartyDetails partyDetails = representing.getDaTarget().apply(ccdResponse.getCaseData());
         List<PartyRole> partyRoles = PartyRole.matchingRoles(representing);
         if (null != partyDetails) {
@@ -205,7 +213,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         return Optional.empty();
     }
 
-    private void updateFlagContents(List<PartyFlagsModel> partiesFlagsModelList, List<PartyDetailsModel> partyDetailsModelList, Element<PartyDetails> partyDetailsElement, List<Flags> partyFlagList, String role) {
+    private void updateFlagContents(List<PartyFlagsModel> partiesFlagsModelList,
+                                    List<PartyDetailsModel> partyDetailsModelList,
+                                    Element<PartyDetails> partyDetailsElement,
+                                    List<Flags> partyFlagList,
+                                    String role) {
         List<PartyFlagsModel> curPartyFlagsModelList = new ArrayList<>();
         if (!partyFlagList.isEmpty()) {
             curPartyFlagsModelList = getPartyFlagsModel(partyDetailsElement, partyFlagList);
@@ -237,7 +249,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         return partyFlagsModelList;
     }
 
-    private void preparePartyDetailsDTO(List<PartyDetailsModel> partyDetailsModelList, List<PartyFlagsModel> partyFlagsModelList, Element<PartyDetails> partyDetailsElement, List<Flags> partyFlagList, String role) {
+    private void preparePartyDetailsDTO(List<PartyDetailsModel> partyDetailsModelList,
+                                        List<PartyFlagsModel> partyFlagsModelList,
+                                        Element<PartyDetails> partyDetailsElement,
+                                        List<Flags> partyFlagList,
+                                        String role) {
         List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
 
         String interpreterLanguageCode = EMPTY;
@@ -261,21 +277,31 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         }
 
         PartyDetails partyDetails = partyDetailsElement.getValue();
-        List<String> hearingChannelEmail = !isBlank(partyDetails.getEmail()) ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
+        List<String> hearingChannelEmail = !isBlank(partyDetails.getEmail())
+            ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
 
-        List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber()) ? Arrays.asList(partyDetails.getPhoneNumber()) : Arrays.asList();
+        List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
+            ? Arrays.asList(partyDetails.getPhoneNumber()) : Arrays.asList();
 
-        IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith().firstName(
-            partyDetails.getFirstName()).lastName(partyDetails.getLastName()).reasonableAdjustments(
-            reasonableAdjustments).vulnerableFlag(isVulnerableFlag).vulnerabilityDetails(vulnerabilityDetails).hearingChannelEmail(
-            hearingChannelEmail).hearingChannelPhone(hearingChannelPhone).interpreterLanguage(interpreterLanguageCode).relatedParties(
-            Arrays.asList()).build();
+        IndividualDetailsModel individualDetailsModel =
+            IndividualDetailsModel.individualDetailsWith()
+                .firstName(partyDetails.getFirstName())
+                .lastName(partyDetails.getLastName())
+                .reasonableAdjustments(reasonableAdjustments)
+                .vulnerableFlag(isVulnerableFlag)
+                .vulnerabilityDetails(vulnerabilityDetails)
+                .hearingChannelEmail(hearingChannelEmail)
+                .hearingChannelPhone(hearingChannelPhone)
+                .interpreterLanguage(interpreterLanguageCode)
+                .relatedParties(Arrays.asList())
+                .build();
 
         String partyId = partyDetailsElement.getId() != null ? partyDetailsElement.getId().toString() : null;
 
         PartyDetailsModel partyDetailsModel = PartyDetailsModel.partyDetailsWith().partyID(partyId).partyName(
-            partyDetails.getFirstName() + EMPTY_STRING + partyDetails.getLastName()).partyType(PartyType.IND).partyRole(
-            role).individualDetails(individualDetailsModel).build();
+            partyDetails.getFirstName() + EMPTY_STRING + partyDetails.getLastName())
+            .partyType(PartyType.IND).partyRole(role)
+            .individualDetails(individualDetailsModel).build();
 
         partyDetailsModelList.add(partyDetailsModel);
 
