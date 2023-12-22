@@ -29,11 +29,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 
 @Slf4j
 @Service
@@ -61,21 +63,16 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 ccdResponse,
                 caseDataMap,
                 partiesFlagsModelList,
-                partyDetailsModelList
+                partyDetailsModelList,
+                APPLICANT
             );
             findAndUpdateModelListsForC100(
                 PartyRole.Representing.CARESPONDENT,
                 ccdResponse,
                 caseDataMap,
                 partiesFlagsModelList,
-                partyDetailsModelList
-            );
-            findAndUpdateModelListsForC100(
-                PartyRole.Representing.CAOTHERPARTY,
-                ccdResponse,
-                caseDataMap,
-                partiesFlagsModelList,
-                partyDetailsModelList
+                partyDetailsModelList,
+                RESPONDENT
             );
             log.info("done");
         } else if (FL401.equalsIgnoreCase(ccdResponse.getCaseData().getCaseTypeOfApplication())) {
@@ -112,7 +109,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                 CaseDetailResponse ccdResponse,
                                                 Map<String, Object> caseDataMap,
                                                 List<PartyFlagsModel> partiesFlagsModelList,
-                                                List<PartyDetailsModel> partyDetailsModelList) {
+                                                List<PartyDetailsModel> partyDetailsModelList,
+                                                String partyRole) {
         log.info("findAndUpdateModelListsForC100: representing is " + representing);
         List<Element<PartyDetails>> partyDetailsListElements = representing.getCaTarget().apply(ccdResponse.getCaseData());
 
@@ -130,8 +128,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                         partyDetailsModelList,
                         partyDetails.get(),
                         partyFlagList,
-                        partyRoles.get(i).getCaseRoleLabel(),
-                        representing
+                        partyRole
                     );
                 }
             }
@@ -205,8 +202,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 partyDetailsModelList,
                 element(partyDetails.getPartyId(), partyDetails),
                 partyFlagList,
-                partyRoles.get(0).getCaseRoleLabel(),
-                representing
+                partyRoles.get(0).getCaseRoleLabel()
             );
         }
     }
@@ -223,8 +219,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                     List<PartyDetailsModel> partyDetailsModelList,
                                     Element<PartyDetails> partyDetailsElement,
                                     List<Flags> partyFlagList,
-                                    String role,
-                                    PartyRole.Representing representing) {
+                                    String role) {
         List<PartyFlagsModel> curPartyFlagsModelList = new ArrayList<>();
         if (!partyFlagList.isEmpty()) {
             curPartyFlagsModelList = getPartyFlagsModel(partyDetailsElement, partyFlagList);
@@ -236,8 +231,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             curPartyFlagsModelList,
             partyDetailsElement,
             partyFlagList,
-            role,
-            representing
+            role
         );
     }
 
@@ -267,8 +261,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                         List<PartyFlagsModel> partyFlagsModelList,
                                         Element<PartyDetails> partyDetailsElement,
                                         List<Flags> partyFlagList,
-                                        String role,
-                                        PartyRole.Representing representing) {
+                                        String role) {
         List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
 
         String interpreterLanguageCode = EMPTY;
@@ -321,22 +314,20 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModel);
         log.info("1.partyDetailsModelList size is ::" + partyDetailsModelList.size());
 
-        if (!PartyRole.Representing.CAOTHERPARTY.equals(representing)) {
-            Organisation org = partyDetails.getSolicitorOrg();
+        Organisation org = partyDetails.getSolicitorOrg();
 
-            if (org != null && org.getOrganisationID() != null) {
-                addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
-            }
-            log.info("2.partyDetailsModelList size is ::" + partyDetailsModelList.size());
-            if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
-                addPartyDetailsModelForSolicitor(
-                    partyDetailsModelList,
-                    partyDetails,
-                    partyDetails.getSolicitorPartyId()
-                );
-            }
-            log.info("3.partyDetailsModelList size is ::" + partyDetailsModelList.size());
+        if (org != null && org.getOrganisationID() != null) {
+            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
         }
+        log.info("2.partyDetailsModelList size is ::" + partyDetailsModelList.size());
+        if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
+            addPartyDetailsModelForSolicitor(
+                partyDetailsModelList,
+                partyDetails,
+                partyDetails.getSolicitorPartyId()
+            );
+        }
+        log.info("3.partyDetailsModelList size is ::" + partyDetailsModelList.size());
     }
 
     public static <T> Element<T> element(UUID id, T element) {
