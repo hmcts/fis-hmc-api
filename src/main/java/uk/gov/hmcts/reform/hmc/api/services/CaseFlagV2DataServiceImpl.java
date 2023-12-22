@@ -177,7 +177,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                  List<PartyDetailsModel> partyDetailsModelList) {
         log.info("Inside findAndUpdateModelListsForFL401 for representing:: " + representing);
         PartyDetails partyDetails = representing.getDaTarget().apply(ccdResponse.getCaseData());
-        List<PartyRole> partyRoles = PartyRole.matchingRoles(representing);
         if (null != partyDetails) {
             List<Flags> partyFlagList = new ArrayList<>();
             String caseDataExternalField = representing.getCaseDataExternalField();
