@@ -190,20 +190,27 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
                 String solicitorInternalField = PartyRole.Representing.DAAPPLICANTSOLICITOR.getCaseDataInternalField();
                 findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
+                updateFlagContents(
+                    partiesFlagsModelList,
+                    partyDetailsModelList,
+                    element(partyDetails.getPartyId(), partyDetails),
+                    partyFlagList,
+                    APPLICANT
+                );
             } else if (PartyRole.Representing.DARESPONDENT.equals(representing)) {
                 log.info("Representing matched for respondent ");
                 String solicitorExternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataExternalField();
                 findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
                 String solicitorInternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataInternalField();
                 findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
+                updateFlagContents(
+                    partiesFlagsModelList,
+                    partyDetailsModelList,
+                    element(partyDetails.getPartyId(), partyDetails),
+                    partyFlagList,
+                    RESPONDENT
+                );
             }
-            updateFlagContents(
-                partiesFlagsModelList,
-                partyDetailsModelList,
-                element(partyDetails.getPartyId(), partyDetails),
-                partyFlagList,
-                partyRoles.get(0).getCaseRoleLabel()
-            );
         }
     }
 
