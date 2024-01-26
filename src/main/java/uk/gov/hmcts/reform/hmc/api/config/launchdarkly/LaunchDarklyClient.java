@@ -24,7 +24,6 @@ public class LaunchDarklyClient {
         @Value("${launchdarkly.sdk-key}") String sdkKey,
         @Value("${launchdarkly.offline-mode:false}") Boolean offlineMode
     ) {
-        log.info("sdkKey -->{}", sdkKey);
         this.internalClient = ldClientFactory.create(sdkKey, offlineMode);
         Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
