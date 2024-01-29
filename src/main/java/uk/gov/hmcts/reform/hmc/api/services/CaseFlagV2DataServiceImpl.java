@@ -57,7 +57,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         if (C100.equalsIgnoreCase(ccdResponse.getCaseData().getCaseTypeOfApplication())) {
-            log.info("C100 case");
             findAndUpdateModelListsForC100(
                 PartyRole.Representing.CAAPPLICANT,
                 ccdResponse,
@@ -74,9 +73,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 partyDetailsModelList,
                 RESPONDENT
             );
-            log.info("done");
         } else if (FL401.equalsIgnoreCase(ccdResponse.getCaseData().getCaseTypeOfApplication())) {
-            log.info("Fl401 case");
             findAndUpdateModelListsForFL401(
                 PartyRole.Representing.DAAPPLICANT,
                 ccdResponse,
@@ -91,7 +88,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 partiesFlagsModelList,
                 partyDetailsModelList
             );
-            log.info("done");
         }
 
         if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
@@ -102,7 +98,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             String listingComments = getListingComment(caseFlags.getFlags());
             serviceHearingValues.setListingComments(listingComments);
         }
-        log.info("all done " + serviceHearingValues);
     }
 
     private void findAndUpdateModelListsForC100(PartyRole.Representing representing,
@@ -111,7 +106,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                 List<PartyFlagsModel> partiesFlagsModelList,
                                                 List<PartyDetailsModel> partyDetailsModelList,
                                                 String partyRole) {
-        log.info("findAndUpdateModelListsForC100: representing is " + representing);
         List<Element<PartyDetails>> partyDetailsListElements = representing.getCaTarget().apply(ccdResponse.getCaseData());
 
         int numElements = null != partyDetailsListElements ? partyDetailsListElements.size() : 0;
@@ -122,7 +116,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                     i)) : Optional.empty();
                 if (partyDetails.isPresent()) {
                     List<Flags> partyFlagList = collateC100PartyFlags(representing, caseDataMap, i);
-                    log.info("partyFlagList size " + partyFlagList.size());
                     updateFlagContents(
                         partiesFlagsModelList,
                         partyDetailsModelList,
@@ -136,14 +129,12 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
     }
 
     private List<Flags> collateC100PartyFlags(PartyRole.Representing representing, Map<String, Object> caseDataMap, int index) {
-        log.info("Inside collateC100PartyFlags for representing:: " + representing);
         List<Flags> partyFlagList = new ArrayList<>();
         String caseDataExternalField = String.format(representing.getCaseDataExternalField(), index + 1);
         findFlags(caseDataMap, caseDataExternalField).ifPresent(partyFlagList::add);
         String caseDataInternalField = String.format(representing.getCaseDataInternalField(), index + 1);
         findFlags(caseDataMap, caseDataInternalField).ifPresent(partyFlagList::add);
         if (PartyRole.Representing.CAAPPLICANT.equals(representing)) {
-            log.info("Representing matched for applicant ");
             String solicitorExternalField = String.format(
                 PartyRole.Representing.CAAPPLICANTSOLICITOR.getCaseDataExternalField(),
                 index + 1
@@ -155,7 +146,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             );
             findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
         } else if (PartyRole.Representing.CARESPONDENT.equals(representing)) {
-            log.info("Representing matched for respondent ");
             String solicitorExternalField = String.format(
                 PartyRole.Representing.CARESPONDENTSOLICITOR.getCaseDataExternalField(),
                 index + 1
@@ -175,7 +165,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                  Map<String, Object> caseDataMap,
                                                  List<PartyFlagsModel> partiesFlagsModelList,
                                                  List<PartyDetailsModel> partyDetailsModelList) {
-        log.info("Inside findAndUpdateModelListsForFL401 for representing:: " + representing);
         PartyDetails partyDetails = representing.getDaTarget().apply(ccdResponse.getCaseData());
         if (null != partyDetails) {
             List<Flags> partyFlagList = new ArrayList<>();
@@ -184,7 +173,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             String caseDataInternalField = representing.getCaseDataInternalField();
             findFlags(caseDataMap, caseDataInternalField).ifPresent(partyFlagList::add);
             if (PartyRole.Representing.DAAPPLICANT.equals(representing)) {
-                log.info("Representing matched for applicant ");
                 String solicitorExternalField = PartyRole.Representing.DAAPPLICANTSOLICITOR.getCaseDataExternalField();
                 findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
                 String solicitorInternalField = PartyRole.Representing.DAAPPLICANTSOLICITOR.getCaseDataInternalField();
@@ -197,7 +185,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                     APPLICANT
                 );
             } else if (PartyRole.Representing.DARESPONDENT.equals(representing)) {
-                log.info("Representing matched for respondent ");
                 String solicitorExternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataExternalField();
                 findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
                 String solicitorInternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataInternalField();
@@ -318,14 +305,12 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             .individualDetails(individualDetailsModel).build();
 
         partyDetailsModelList.add(partyDetailsModel);
-        log.info("1.partyDetailsModelList size is ::" + partyDetailsModelList.size());
 
         Organisation org = partyDetails.getSolicitorOrg();
 
         if (org != null && org.getOrganisationID() != null) {
             addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
         }
-        log.info("2.partyDetailsModelList size is ::" + partyDetailsModelList.size());
         if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
             addPartyDetailsModelForSolicitor(
                 partyDetailsModelList,
@@ -333,7 +318,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 partyDetails.getSolicitorPartyId()
             );
         }
-        log.info("3.partyDetailsModelList size is ::" + partyDetailsModelList.size());
     }
 
     public static <T> Element<T> element(UUID id, T element) {
