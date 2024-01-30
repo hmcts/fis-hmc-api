@@ -28,6 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
+import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -41,7 +42,7 @@ class ServiceHearingValuesServiceTest {
 
     @Mock private CaseApiService caseApiService;
 
-    @Mock private CaseFlagDataServiceImpl caseFlagDataService;
+    @Mock private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
@@ -52,6 +53,9 @@ class ServiceHearingValuesServiceTest {
     @Mock private Resource mockResource;
 
     private InputStream inputStream;
+
+    @Mock
+    LaunchDarklyClient launchDarklyClient;
 
     @BeforeAll
     public void setup() {
@@ -118,7 +122,7 @@ class ServiceHearingValuesServiceTest {
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";

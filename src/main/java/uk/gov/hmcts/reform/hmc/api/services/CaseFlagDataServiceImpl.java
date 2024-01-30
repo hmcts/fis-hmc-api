@@ -119,7 +119,7 @@ public class CaseFlagDataServiceImpl {
      * @param serviceHearingValues data about Hearing RequestValues
      * @param ccdResponse data about the ccd record
      */
-    private void setBaseLocation(
+    protected void setBaseLocation(
             ServiceHearingValues serviceHearingValues, CaseDetailResponse ccdResponse) {
         CaseManagementLocation caseManagementLocation =
                 ccdResponse.getCaseData().getCaseManagementLocation();
@@ -266,7 +266,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private List<PartyFlagsModel> getInterpreterLangCodes(
+    protected List<PartyFlagsModel> getInterpreterLangCodes(
             List<PartyFlagsModel> curPartyFlagsModelList) {
         return curPartyFlagsModelList.stream()
                 .filter(
@@ -277,7 +277,7 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private String getListingComment(List<PartyFlagsModel> flagsList) {
+    protected String getListingComment(List<PartyFlagsModel> flagsList) {
 
         Boolean isListingCommentNeeded =
                 flagsList.stream()
@@ -332,7 +332,7 @@ public class CaseFlagDataServiceImpl {
         return partyFlagsModelList;
     }
 
-    private List<String> getReasonableAdjustmentsByParty(
+    protected List<String> getReasonableAdjustmentsByParty(
             List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
@@ -345,13 +345,13 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.toList());
     }
 
-    private Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
+    protected Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
 
         return partiesFlagsModelList.stream()
                 .anyMatch(partyFlag -> partyFlag.getFlagId().equals(PF0007));
     }
 
-    private Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .anyMatch(
@@ -362,7 +362,7 @@ public class CaseFlagDataServiceImpl {
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()));
     }
 
-    private String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .filter(
@@ -376,7 +376,7 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.joining(PLUS_SIGN));
     }
 
-    private void addPartyDetailsModelForOrg(
+    protected void addPartyDetailsModelForOrg(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
         String partyId = null;
         if (uuid != null) {
@@ -402,7 +402,7 @@ public class CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModelForOrg);
     }
 
-    private void addPartyDetailsModelForSolicitor(
+    protected void addPartyDetailsModelForSolicitor(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
 
         String partyId = null;
