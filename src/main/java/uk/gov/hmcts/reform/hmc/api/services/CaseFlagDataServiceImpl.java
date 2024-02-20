@@ -428,7 +428,6 @@ public class CaseFlagDataServiceImpl {
                         .lastName(partyDetails.getRepresentativeLastName())
                         .hearingChannelEmail(hearingChannelEmail)
                         .build();
-
         if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
             partyDetailsModelForSol =
                 PartyDetailsModel.partyDetailsWith()
