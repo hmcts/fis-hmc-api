@@ -421,14 +421,14 @@ public class CaseFlagDataServiceImpl {
         log.info("hearingChannelEmail {}",hearingChannelEmail);
         log.info("FIRSTT name {}",partyDetails.getRepresentativeFirstName());
         log.info("LAST name {}",partyDetails.getRepresentativeLastName());
-
-        individualDetailsModel =
-                IndividualDetailsModel.individualDetailsWith()
-                        .firstName(partyDetails.getRepresentativeFirstName())
-                        .lastName(partyDetails.getRepresentativeLastName())
-                        .hearingChannelEmail(hearingChannelEmail)
-                        .build();
         if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
+            individualDetailsModel =
+                IndividualDetailsModel.individualDetailsWith()
+                    .firstName(partyDetails.getRepresentativeFirstName())
+                    .lastName(partyDetails.getRepresentativeLastName())
+                    .hearingChannelEmail(hearingChannelEmail)
+                    .build();
+
             partyDetailsModelForSol =
                 PartyDetailsModel.partyDetailsWith()
                     .partyID(partyId)
