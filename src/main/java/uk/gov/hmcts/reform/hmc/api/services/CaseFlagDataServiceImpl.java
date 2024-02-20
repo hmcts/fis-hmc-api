@@ -418,6 +418,10 @@ public class CaseFlagDataServiceImpl {
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
 
+        log.info("hearingChannelEmail {}",hearingChannelEmail);
+        log.info("FIRSTT name {}",partyDetails.getRepresentativeFirstName());
+        log.info("LAST name {}",partyDetails.getRepresentativeLastName());
+
         individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                         .firstName(partyDetails.getRepresentativeFirstName())
@@ -425,17 +429,19 @@ public class CaseFlagDataServiceImpl {
                         .hearingChannelEmail(hearingChannelEmail)
                         .build();
 
-        partyDetailsModelForSol =
+        if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
+            partyDetailsModelForSol =
                 PartyDetailsModel.partyDetailsWith()
-                        .partyID(partyId)
-                        .partyName(
-                                partyDetails.getRepresentativeFirstName()
-                                        + EMPTY_STRING
-                                        + partyDetails.getRepresentativeLastName())
-                        .partyType(PartyType.IND)
-                        .partyRole(ORGANISATION)
-                        .individualDetails(individualDetailsModel)
-                        .build();
-        partyDetailsModelList.add(partyDetailsModelForSol);
+                    .partyID(partyId)
+                    .partyName(
+                        partyDetails.getRepresentativeFirstName()
+                            + EMPTY_STRING
+                            + partyDetails.getRepresentativeLastName())
+                    .partyType(PartyType.IND)
+                    .partyRole(ORGANISATION)
+                    .individualDetails(individualDetailsModel)
+                    .build();
+            partyDetailsModelList.add(partyDetailsModelForSol);
+        }
     }
 }
