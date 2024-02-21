@@ -417,10 +417,7 @@ public class CaseFlagDataServiceImpl {
                 !isBlank(partyDetails.getSolicitorEmail())
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
-
-        log.info("hearingChannelEmail {}",hearingChannelEmail);
-        log.info("FIRSTT name {}",partyDetails.getRepresentativeFirstName());
-        log.info("LAST name {}",partyDetails.getRepresentativeLastName());
+        
         if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
             individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
