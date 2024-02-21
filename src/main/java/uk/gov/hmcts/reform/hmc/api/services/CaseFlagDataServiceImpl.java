@@ -413,29 +413,31 @@ public class CaseFlagDataServiceImpl {
         IndividualDetailsModel individualDetailsModel;
         PartyDetailsModel partyDetailsModelForSol;
 
-        List<String> hearingChannelEmail =
+
+
+            List<String> hearingChannelEmail =
                 !isBlank(partyDetails.getSolicitorEmail())
-                        ? Arrays.asList(partyDetails.getSolicitorEmail())
-                        : Arrays.asList();
+                    ? Arrays.asList(partyDetails.getSolicitorEmail())
+                    : Arrays.asList();
 
-        individualDetailsModel =
+        if (!partyDetails.getRepresentativeFirstName().isBlank()
+            && !partyDetails.getRepresentativeLastName().isBlank()) {
+
+            individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
-                        .firstName(partyDetails.getRepresentativeFirstName())
-                        .lastName(partyDetails.getRepresentativeLastName())
-                        .hearingChannelEmail(hearingChannelEmail)
-                        .build();
+                .firstName(partyDetails.getRepresentativeFirstName())
+                .lastName(partyDetails.getRepresentativeLastName())
+                .hearingChannelEmail(hearingChannelEmail).build();
 
-        partyDetailsModelForSol =
-                PartyDetailsModel.partyDetailsWith()
-                        .partyID(partyId)
-                        .partyName(
-                                partyDetails.getRepresentativeFirstName()
-                                        + EMPTY_STRING
-                                        + partyDetails.getRepresentativeLastName())
-                        .partyType(PartyType.IND)
-                        .partyRole(ORGANISATION)
-                        .individualDetails(individualDetailsModel)
-                        .build();
-        partyDetailsModelList.add(partyDetailsModelForSol);
+            partyDetailsModelForSol = PartyDetailsModel.partyDetailsWith()
+                .partyID(partyId)
+                .partyName(partyDetails.getRepresentativeFirstName()
+                               + EMPTY_STRING
+                               + partyDetails.getRepresentativeLastName())
+                .partyType(PartyType.IND)
+                .partyRole(ORGANISATION)
+                .individualDetails(individualDetailsModel).build();
+            partyDetailsModelList.add(partyDetailsModelForSol);
+        }
     }
 }
