@@ -76,7 +76,6 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
-            log.info("SHV call ---->");
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
