@@ -30,7 +30,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.*;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 
 @Slf4j
 @Service
@@ -285,7 +292,10 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         }
     }
 
-    private void generateRepresentativeDetails(List<PartyDetailsModel> partyDetailsModelList, List<PartyFlagsModel> partyFlagsModelList, List<Flags> partyFlagList, PartyDetails partyDetails) {
+    private void generateRepresentativeDetails(List<PartyDetailsModel> partyDetailsModelList,
+                                               List<PartyFlagsModel> partyFlagsModelList,
+                                               List<Flags> partyFlagList,
+                                               PartyDetails partyDetails) {
         List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
 
         String interpreterLanguageCode = EMPTY;
@@ -343,7 +353,12 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModelForSol);
     }
 
-    private void generatePartyDetails(List<PartyDetailsModel> partyDetailsModelList, List<PartyFlagsModel> partyFlagsModelList, Element<PartyDetails> partyDetailsElement, List<Flags> partyFlagList, String role, PartyDetails partyDetails) {
+    private void generatePartyDetails(List<PartyDetailsModel> partyDetailsModelList,
+                                      List<PartyFlagsModel> partyFlagsModelList,
+                                      Element<PartyDetails> partyDetailsElement,
+                                      List<Flags> partyFlagList,
+                                      String role,
+                                      PartyDetails partyDetails) {
         List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
 
         String interpreterLanguageCode = EMPTY;
