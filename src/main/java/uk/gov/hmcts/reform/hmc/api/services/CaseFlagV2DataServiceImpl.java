@@ -276,8 +276,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             || representing.equals(PartyRole.Representing.CARESPONDENTSOLICITOR)
             || representing.equals(PartyRole.Representing.DAAPPLICANTSOLICITOR)
             || representing.equals(PartyRole.Representing.DARESPONDENTSOLICITOR))
-            && (StringUtils.isNotEmpty(partyDetails.getRepresentativeFirstName())
-            && StringUtils.isNotEmpty(partyDetails.getRepresentativeLastName()))) {
+            && StringUtils.isNotEmpty(partyDetails.getRepresentativeFirstName())
+            && StringUtils.isNotEmpty(partyDetails.getRepresentativeLastName())) {
             Organisation org = partyDetails.getSolicitorOrg();
 
             if (org != null && org.getOrganisationID() != null) {

@@ -8,6 +8,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0004;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0009;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
@@ -275,19 +276,19 @@ public class CaseFlagDataServiceImpl {
                                 eachPartyFlag.getFlagId().equals(RA0042)
                                         || eachPartyFlag.getFlagId().equals(PF0015))
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected String getListingComment(List<PartyFlagsModel> flagsList) {
 
-        Boolean isListingCommentNeeded =
+        boolean isListingCommentNeeded =
                 flagsList.stream()
                                 .map(PartyFlagsModel::getFlagId)
                                 .filter(
                                         eachFlag ->
                                                 eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
                                 .distinct()
-                                .collect(Collectors.toList())
+                                .toList()
                                 .size()
                         == TWO;
 
@@ -343,7 +344,7 @@ public class CaseFlagDataServiceImpl {
                                         || partyFlag.getValue().getFlagCode().startsWith(SM))
                 .distinct()
                 .map(partyFlag -> partyFlag.getValue().getFlagCode())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
@@ -358,6 +359,7 @@ public class CaseFlagDataServiceImpl {
                 .anyMatch(
                         partyFlag ->
                             PF0002.equals(partyFlag.getValue().getFlagCode())
+                                || PF0004.equals(partyFlag.getValue().getFlagCode())
                                     || PF0009.equals(partyFlag.getValue().getFlagCode())
                                         || PF0013.equals(partyFlag.getValue().getFlagCode())
                                         || PF0018.equals(partyFlag.getValue().getFlagCode())
@@ -370,6 +372,7 @@ public class CaseFlagDataServiceImpl {
                 .filter(
                         partyFlag ->
                             PF0002.equals(partyFlag.getValue().getFlagCode())
+                                || PF0004.equals(partyFlag.getValue().getFlagCode())
                                 || PF0009.equals(partyFlag.getValue().getFlagCode())
                                         || PF0018.equals(partyFlag.getValue().getFlagCode())
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()))

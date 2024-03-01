@@ -88,6 +88,7 @@ public final class Constants {
     public static final String LISTING_COMMENTS =
             "Applicant Name/Respondent Name: Multiple Interpreters. See case flags.";
     public static final String PF0002 = "PF0002";
+    public static final String PF0004 = "PF0004";
     public static final String PF0009 = "PF0009";
     public static final String PF0007 = "PF0007";
     public static final String PF0013 = "PF0013";
