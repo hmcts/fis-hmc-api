@@ -8,8 +8,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0004;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0009;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
@@ -358,9 +356,7 @@ public class CaseFlagDataServiceImpl {
         return flagsDetailOfCurrParty.stream()
                 .anyMatch(
                         partyFlag ->
-                            PF0002.equals(partyFlag.getValue().getFlagCode())
-                                || PF0004.equals(partyFlag.getValue().getFlagCode())
-                                    || PF0009.equals(partyFlag.getValue().getFlagCode())
+                                partyFlag.getValue().getFlagCode().equals(PF0002)
                                         || PF0013.equals(partyFlag.getValue().getFlagCode())
                                         || PF0018.equals(partyFlag.getValue().getFlagCode())
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()));
@@ -371,9 +367,8 @@ public class CaseFlagDataServiceImpl {
         return flagsDetailOfCurrParty.stream()
                 .filter(
                         partyFlag ->
-                            PF0002.equals(partyFlag.getValue().getFlagCode())
-                                || PF0004.equals(partyFlag.getValue().getFlagCode())
-                                || PF0009.equals(partyFlag.getValue().getFlagCode())
+                                PF0002.equals(partyFlag.getValue().getFlagCode())
+                                        || PF0013.equals(partyFlag.getValue().getFlagCode())
                                         || PF0018.equals(partyFlag.getValue().getFlagCode())
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()))
                 .distinct()
