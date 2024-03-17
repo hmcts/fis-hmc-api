@@ -128,6 +128,8 @@ class HearingCftServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
                 .thenReturn(caseHearings);
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+                .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("123", "RegionId-231596");
