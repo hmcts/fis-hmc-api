@@ -138,39 +138,6 @@ class HearingCftServiceTest {
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
     }
 
-    //@Test
-    void shouldReturnCtfHearingsByListOfCaseIdsAuthExceptionTest()
-            throws IOException, ParseException {
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
-                .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
-
-        Map<String, String> caseIdWithRegionId = new HashMap<>();
-        caseIdWithRegionId.put("caseref1", "RegionId");
-
-        Assertions.assertTrue(
-                hearingsService
-                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
-                        .isEmpty());
-    }
-
-    //@Test
-    void shouldReturnCtfHearingsByListOfCaseIdsExceptionTest() throws IOException, ParseException {
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
-                .thenThrow(new RuntimeException());
-
-        Map<String, String> caseIdWithRegionId = new HashMap<>();
-        caseIdWithRegionId.put("caseref1", "RegionId");
-
-        Assertions.assertTrue(
-                hearingsService
-                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
-                        .isEmpty());
-    }
-
     @Test
     void shouldReturnAllFutureHearingsByCaseRefNoTest() {
         LocalDateTime hearingStartDate = LocalDateTime.now().plusDays(5).withNano(1);
