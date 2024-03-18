@@ -164,12 +164,13 @@ public class HearingsServiceImpl implements HearingsService {
         if (!caseIdWithRegionIdMap.isEmpty()) {
             final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
             final String s2sToken = authTokenGenerator.generate();
-            List<Hearings>  hearingDetailsList =
-                    hearingApiClient.getListOfHearingDetails(
-                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
-            for (var hearing : hearingDetailsList) {
+
+            for (var caseIdRegionIdEntry : caseIdWithRegionIdMap.entrySet()) {
                 try {
-                    hearingDetails = hearing;
+                    hearingDetails =
+                            hearingApiClient.getHearingDetails(
+                                    userToken, s2sToken, caseIdRegionIdEntry.getKey());
+
                     List<CaseHearing> filteredHearings =
                             hearingDetails.getCaseHearings().stream()
                                     .filter(

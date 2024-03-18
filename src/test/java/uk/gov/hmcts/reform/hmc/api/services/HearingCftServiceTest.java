@@ -126,9 +126,8 @@ class HearingCftServiceTest {
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
-                .thenReturn(List.of(caseHearings));
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenReturn(caseHearings);
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("123", "RegionId-231596");
@@ -136,6 +135,56 @@ class HearingCftServiceTest {
         List<Hearings> hearingsResponse =
                 hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+    }
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsFeignExceptionTest()
+            throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
+        Assertions.assertTrue(
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
+    }
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsAuthExceptionTest()
+            throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
+        Assertions.assertTrue(
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
+    }
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsExceptionTest() throws IOException, ParseException {
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+                .thenThrow(new RuntimeException());
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("caseref1", "RegionId");
+
+        Assertions.assertTrue(
+                hearingsService
+                        .getHearingsByListOfCaseIds(caseIdWithRegionId, "sauth", "testcase")
+                        .isEmpty());
     }
 
     @Test
