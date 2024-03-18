@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
@@ -313,6 +314,46 @@ public class HearingsController {
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(hearingsService.getFutureHearings(caseReference));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
+    /**
+     * End point to create hearing details for a case.
+     *
+     * @return success response, and initiates async process to create hearings
+     *     passed.
+     * @header authorization, user authorization token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @RequestBody caseDetails to take all the hearings belongs to case.
+     */
+    @PostMapping(path = "/createHearings")
+    @ApiOperation("get hearings by case reference number")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                    @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> createHearings(
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestBody final CaseDetails caseDetails) {
+        try {
+
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                hearingsService.createHearings(caseDetails);
+
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                return ResponseEntity.ok(caseDetails);
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
