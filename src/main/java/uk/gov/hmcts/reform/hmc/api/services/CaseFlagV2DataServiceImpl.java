@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.enums.caseflags.PartyRole;
@@ -35,6 +36,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 
 @Slf4j
@@ -66,7 +68,23 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 APPLICANT
             );
             findAndUpdateModelListsForC100(
+                PartyRole.Representing.CAAPPLICANTSOLICITOR,
+                ccdResponse,
+                caseDataMap,
+                partiesFlagsModelList,
+                partyDetailsModelList,
+                APPLICANT
+            );
+            findAndUpdateModelListsForC100(
                 PartyRole.Representing.CARESPONDENT,
+                ccdResponse,
+                caseDataMap,
+                partiesFlagsModelList,
+                partyDetailsModelList,
+                RESPONDENT
+            );
+            findAndUpdateModelListsForC100(
+                PartyRole.Representing.CARESPONDENTSOLICITOR,
                 ccdResponse,
                 caseDataMap,
                 partiesFlagsModelList,
@@ -79,14 +97,32 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 ccdResponse,
                 caseDataMap,
                 partiesFlagsModelList,
-                partyDetailsModelList
+                partyDetailsModelList,
+                APPLICANT
+            );
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DAAPPLICANTSOLICITOR,
+                ccdResponse,
+                caseDataMap,
+                partiesFlagsModelList,
+                partyDetailsModelList,
+                APPLICANT
             );
             findAndUpdateModelListsForFL401(
                 PartyRole.Representing.DARESPONDENT,
                 ccdResponse,
                 caseDataMap,
                 partiesFlagsModelList,
-                partyDetailsModelList
+                partyDetailsModelList,
+                RESPONDENT
+            );
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DARESPONDENTSOLICITOR,
+                ccdResponse,
+                caseDataMap,
+                partiesFlagsModelList,
+                partyDetailsModelList,
+                RESPONDENT
             );
         }
 
@@ -121,7 +157,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                         partyDetailsModelList,
                         partyDetails.get(),
                         partyFlagList,
-                        partyRole
+                        partyRole,
+                        representing
                     );
                 }
             }
@@ -134,29 +171,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         findFlags(caseDataMap, caseDataExternalField).ifPresent(partyFlagList::add);
         String caseDataInternalField = String.format(representing.getCaseDataInternalField(), index + 1);
         findFlags(caseDataMap, caseDataInternalField).ifPresent(partyFlagList::add);
-        if (PartyRole.Representing.CAAPPLICANT.equals(representing)) {
-            String solicitorExternalField = String.format(
-                PartyRole.Representing.CAAPPLICANTSOLICITOR.getCaseDataExternalField(),
-                index + 1
-            );
-            findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
-            String solicitorInternalField = String.format(
-                PartyRole.Representing.CAAPPLICANTSOLICITOR.getCaseDataInternalField(),
-                index + 1
-            );
-            findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
-        } else if (PartyRole.Representing.CARESPONDENT.equals(representing)) {
-            String solicitorExternalField = String.format(
-                PartyRole.Representing.CARESPONDENTSOLICITOR.getCaseDataExternalField(),
-                index + 1
-            );
-            findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
-            String solicitorInternalField = String.format(
-                PartyRole.Representing.CARESPONDENTSOLICITOR.getCaseDataInternalField(),
-                index + 1
-            );
-            findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
-        }
         return partyFlagList;
     }
 
@@ -164,7 +178,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                                  CaseDetailResponse ccdResponse,
                                                  Map<String, Object> caseDataMap,
                                                  List<PartyFlagsModel> partiesFlagsModelList,
-                                                 List<PartyDetailsModel> partyDetailsModelList) {
+                                                 List<PartyDetailsModel> partyDetailsModelList,
+                                                 String partyRole) {
         PartyDetails partyDetails = representing.getDaTarget().apply(ccdResponse.getCaseData());
         if (null != partyDetails) {
             List<Flags> partyFlagList = new ArrayList<>();
@@ -172,31 +187,14 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             findFlags(caseDataMap, caseDataExternalField).ifPresent(partyFlagList::add);
             String caseDataInternalField = representing.getCaseDataInternalField();
             findFlags(caseDataMap, caseDataInternalField).ifPresent(partyFlagList::add);
-            if (PartyRole.Representing.DAAPPLICANT.equals(representing)) {
-                String solicitorExternalField = PartyRole.Representing.DAAPPLICANTSOLICITOR.getCaseDataExternalField();
-                findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
-                String solicitorInternalField = PartyRole.Representing.DAAPPLICANTSOLICITOR.getCaseDataInternalField();
-                findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
-                updateFlagContents(
-                    partiesFlagsModelList,
-                    partyDetailsModelList,
-                    element(partyDetails.getPartyId(), partyDetails),
-                    partyFlagList,
-                    APPLICANT
-                );
-            } else if (PartyRole.Representing.DARESPONDENT.equals(representing)) {
-                String solicitorExternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataExternalField();
-                findFlags(caseDataMap, solicitorExternalField).ifPresent(partyFlagList::add);
-                String solicitorInternalField = PartyRole.Representing.DARESPONDENTSOLICITOR.getCaseDataInternalField();
-                findFlags(caseDataMap, solicitorInternalField).ifPresent(partyFlagList::add);
-                updateFlagContents(
-                    partiesFlagsModelList,
-                    partyDetailsModelList,
-                    element(partyDetails.getPartyId(), partyDetails),
-                    partyFlagList,
-                    RESPONDENT
-                );
-            }
+            updateFlagContents(
+                partiesFlagsModelList,
+                partyDetailsModelList,
+                element(partyDetails.getPartyId(), partyDetails),
+                partyFlagList,
+                partyRole,
+                representing
+            );
         }
     }
 
@@ -212,7 +210,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                     List<PartyDetailsModel> partyDetailsModelList,
                                     Element<PartyDetails> partyDetailsElement,
                                     List<Flags> partyFlagList,
-                                    String role) {
+                                    String role,
+                                    PartyRole.Representing representing) {
         List<PartyFlagsModel> curPartyFlagsModelList = new ArrayList<>();
         if (!partyFlagList.isEmpty()) {
             curPartyFlagsModelList = getPartyFlagsModel(partyDetailsElement, partyFlagList);
@@ -224,7 +223,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             curPartyFlagsModelList,
             partyDetailsElement,
             partyFlagList,
-            role
+            role,
+            representing
         );
     }
 
@@ -254,7 +254,48 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                                         List<PartyFlagsModel> partyFlagsModelList,
                                         Element<PartyDetails> partyDetailsElement,
                                         List<Flags> partyFlagList,
-                                        String role) {
+                                        String role,
+                                        PartyRole.Representing representing) {
+
+        PartyDetails partyDetails = partyDetailsElement.getValue();
+        if (representing.equals(PartyRole.Representing.CAAPPLICANT)
+            || representing.equals(PartyRole.Representing.CARESPONDENT)
+            || representing.equals(PartyRole.Representing.DAAPPLICANT)
+            || representing.equals(PartyRole.Representing.DARESPONDENT)) {
+            generatePartyDetails(
+                partyDetailsModelList,
+                partyFlagsModelList,
+                partyDetailsElement,
+                partyFlagList,
+                role,
+                partyDetails
+            );
+        }
+
+        if ((representing.equals(PartyRole.Representing.CAAPPLICANTSOLICITOR)
+            || representing.equals(PartyRole.Representing.CARESPONDENTSOLICITOR)
+            || representing.equals(PartyRole.Representing.DAAPPLICANTSOLICITOR)
+            || representing.equals(PartyRole.Representing.DARESPONDENTSOLICITOR))
+            && StringUtils.isNotEmpty(partyDetails.getRepresentativeFirstName())
+            && StringUtils.isNotEmpty(partyDetails.getRepresentativeLastName())) {
+            Organisation org = partyDetails.getSolicitorOrg();
+
+            if (org != null && org.getOrganisationID() != null) {
+                addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
+            }
+            generateRepresentativeDetails(
+                partyDetailsModelList,
+                partyFlagsModelList,
+                partyFlagList,
+                partyDetails
+            );
+        }
+    }
+
+    private void generateRepresentativeDetails(List<PartyDetailsModel> partyDetailsModelList,
+                                               List<PartyFlagsModel> partyFlagsModelList,
+                                               List<Flags> partyFlagList,
+                                               PartyDetails partyDetails) {
         List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
 
         String interpreterLanguageCode = EMPTY;
@@ -276,14 +317,74 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             vulnerabilityDetails = getVulnerabilityDetails(flagsDetailsList);
             reasonableAdjustments = getReasonableAdjustmentsByParty(flagsDetailsList);
         }
+        String partyId = null;
+        if (partyDetails.getSolicitorPartyId() != null) {
+            partyId = partyDetails.getSolicitorPartyId().toString();
+        }
+        List<String> hearingChannelEmail = !isBlank(partyDetails.getSolicitorEmail())
+            ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
 
-        PartyDetails partyDetails = partyDetailsElement.getValue();
+        List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
+            ? Arrays.asList(partyDetails.getSolicitorTelephone()) : Arrays.asList();
+
+        IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
+            .firstName(partyDetails.getRepresentativeFirstName())
+            .lastName(partyDetails.getRepresentativeLastName())
+            .reasonableAdjustments(reasonableAdjustments)
+            .vulnerableFlag(isVulnerableFlag)
+            .vulnerabilityDetails(vulnerabilityDetails)
+            .hearingChannelEmail(hearingChannelEmail)
+            .hearingChannelPhone(hearingChannelPhone)
+            .interpreterLanguage(interpreterLanguageCode)
+            .relatedParties(Arrays.asList())
+            .build();
+
+        PartyDetailsModel partyDetailsModelForSol =
+            PartyDetailsModel.partyDetailsWith()
+                .partyID(partyId)
+                .partyName(
+                    partyDetails.getRepresentativeFirstName()
+                        + EMPTY_STRING
+                        + partyDetails.getRepresentativeLastName())
+                .partyType(PartyType.IND)
+                .partyRole(ORGANISATION)
+                .individualDetails(individualDetailsModel)
+                .build();
+        partyDetailsModelList.add(partyDetailsModelForSol);
+    }
+
+    private void generatePartyDetails(List<PartyDetailsModel> partyDetailsModelList,
+                                      List<PartyFlagsModel> partyFlagsModelList,
+                                      Element<PartyDetails> partyDetailsElement,
+                                      List<Flags> partyFlagList,
+                                      String role,
+                                      PartyDetails partyDetails) {
+        List<PartyFlagsModel> interpreterLangCodeList = getInterpreterLangCodes(partyFlagsModelList);
+
+        String interpreterLanguageCode = EMPTY;
+        if (interpreterLangCodeList.size() == ONE) {
+            interpreterLanguageCode = (interpreterLangCodeList.get(0).getLanguageCode() != null) ? interpreterLangCodeList.get(
+                0).getLanguageCode() : EMPTY;
+        }
+        Boolean isVulnerableFlag = false;
+        String vulnerabilityDetails = "";
+        List<String> reasonableAdjustments = null;
+
+        List<Element<FlagDetail>> flagsDetailsList = new ArrayList<>();
+        for (Flags flags : partyFlagList) {
+            flagsDetailsList.addAll(flags.getDetails());
+        }
+
+        if (!flagsDetailsList.isEmpty()) {
+            isVulnerableFlag = isVulnerableFlag(flagsDetailsList);
+            vulnerabilityDetails = getVulnerabilityDetails(flagsDetailsList);
+            reasonableAdjustments = getReasonableAdjustmentsByParty(flagsDetailsList);
+        }
         List<String> hearingChannelEmail = !isBlank(partyDetails.getEmail())
             ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
             ? Arrays.asList(partyDetails.getPhoneNumber()) : Arrays.asList();
-
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
                 .firstName(partyDetails.getFirstName())
@@ -306,18 +407,6 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
         partyDetailsModelList.add(partyDetailsModel);
 
-        Organisation org = partyDetails.getSolicitorOrg();
-
-        if (org != null && org.getOrganisationID() != null) {
-            addPartyDetailsModelForOrg(partyDetailsModelList, partyDetails, partyDetails.getSolicitorOrgUuid());
-        }
-        if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
-            addPartyDetailsModelForSolicitor(
-                partyDetailsModelList,
-                partyDetails,
-                partyDetails.getSolicitorPartyId()
-            );
-        }
     }
 
     public static <T> Element<T> element(UUID id, T element) {
