@@ -463,14 +463,13 @@ class HearingsControllerTest {
                 HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
         Assertions.assertEquals(
                 Long.valueOf(1232344523), (Long) hearingsForAllCasesResponse.getBody());
-
     }
 
     @Test
     void createHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(hearingsService.createHearings(any())).thenThrow(new RuntimeException());;
+        Mockito.when(hearingsService.createHearings(any())).thenThrow(new RuntimeException());
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createHearings("auth", "sauth", caseDetails);
@@ -478,21 +477,16 @@ class HearingsControllerTest {
                 HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
-
     }
 
 
     @Test
     void createHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
-
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createHearings("auth", "sauth", caseDetails);
-
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
-
-
     }
 
     @Test
@@ -504,10 +498,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createHearings("auth", "sauth", caseDetails);
-
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
-
-
     }
 
     public static FeignException feignException(int status, String message) {
