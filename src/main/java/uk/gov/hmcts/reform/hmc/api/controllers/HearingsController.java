@@ -336,7 +336,7 @@ public class HearingsController {
      * @RequestBody caseDetails to take all the hearings belongs to case.
      */
     @PostMapping(path = "/createHearings")
-    @ApiOperation("get hearings by case reference number")
+    @ApiOperation("create hearings")
     @ApiResponses(
             value = {
                     @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
@@ -353,7 +353,7 @@ public class HearingsController {
                 hearingsService.createHearings(caseDetails);
 
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(caseDetails);
+                return ResponseEntity.ok(caseDetails.getId());
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
