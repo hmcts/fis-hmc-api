@@ -274,19 +274,19 @@ public class CaseFlagDataServiceImpl {
                                 eachPartyFlag.getFlagId().equals(RA0042)
                                         || eachPartyFlag.getFlagId().equals(PF0015))
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected String getListingComment(List<PartyFlagsModel> flagsList) {
 
-        Boolean isListingCommentNeeded =
+        boolean isListingCommentNeeded =
                 flagsList.stream()
                                 .map(PartyFlagsModel::getFlagId)
                                 .filter(
                                         eachFlag ->
                                                 eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
                                 .distinct()
-                                .collect(Collectors.toList())
+                                .toList()
                                 .size()
                         == TWO;
 
@@ -342,7 +342,7 @@ public class CaseFlagDataServiceImpl {
                                         || partyFlag.getValue().getFlagCode().startsWith(SM))
                 .distinct()
                 .map(partyFlag -> partyFlag.getValue().getFlagCode())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     protected Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
@@ -417,7 +417,7 @@ public class CaseFlagDataServiceImpl {
                 !isBlank(partyDetails.getSolicitorEmail())
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
-        
+
         if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
             individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
