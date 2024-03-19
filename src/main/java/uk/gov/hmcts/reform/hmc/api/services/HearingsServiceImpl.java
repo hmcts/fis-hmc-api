@@ -26,6 +26,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
@@ -357,10 +358,33 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Override
     @Async
-    public Hearings createHearings(CaseDetails caseDetails) {
+    public Hearing createHearings(CaseDetails caseDetails) {
 
-        // Start writing Async code from here
+        Hearing futureHearingsResponse = null;
 
-        return null;
+        try {
+
+
+
+
+
+
+            futureHearingsResponse = Hearing.builder()
+                .status()
+                .versionNumber()
+                .hearingRequestID()
+                .dateTime()
+                .build();
+
+
+        }  catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
+        }
+
+        return futureHearingsResponse;
     }
 }
