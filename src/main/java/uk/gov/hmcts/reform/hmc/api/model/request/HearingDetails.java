@@ -10,14 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HearingRequest {
+public class HearingDetails {
 
-    @JsonProperty("caseDetails")
-    private CaseDetails caseDetails;
-
-    @JsonProperty("hearingDetails")
-    private HearingDetails hearingDetails;
-
-    @JsonProperty("partyDetails")
-    private PartyDetails partyDetails;
+    @JsonProperty("autolistFlag")
+    private Boolean autolistFlag;
 }

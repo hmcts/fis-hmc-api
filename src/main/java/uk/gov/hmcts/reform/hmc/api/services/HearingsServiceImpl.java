@@ -1,16 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
 import feign.FeignException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +14,24 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.model.request.HearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @Service
 @RequiredArgsConstructor
@@ -357,10 +360,40 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Override
     @Async
-    public Hearings createHearings(CaseDetails caseDetails) {
+    public HearingResponse createHearings(CaseDetails caseDetails) {
 
-        // Start writing Async code from here
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        HearingRequest hearingRequest = new HearingRequest();
+        HearingResponse createHearingsResponse = new HearingResponse();
+        /*
+        Object Mapper from CaseDetails to HearingRequest
+        ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        hearingRequest = mapper.readValue(caseDetails, HearingRequest.class);*/
+        try {
+            HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+                userToken,
+                s2sToken,
+                hearingRequest
+            );
+            createHearingsResponse = HearingResponse.builder()
+                .status(hearingResponse.getStatus())
+                .versionNumber(hearingResponse.getVersionNumber())
+                .hearingRequestID(hearingResponse.getHearingRequestID())
+                .timeStamp(hearingResponse.getTimeStamp())
+                .build();
 
-        return null;
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info(
+                "Hearing api call HttpClientError exception {}",
+                exception.getMessage()
+            );
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
+        }
+
+        return createHearingsResponse;
     }
 }

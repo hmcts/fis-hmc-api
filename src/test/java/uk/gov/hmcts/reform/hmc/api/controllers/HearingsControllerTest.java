@@ -474,15 +474,13 @@ class HearingsControllerTest {
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(
-                HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
-        Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
 
     @Test
     void createHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
+        //Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createHearings("auth", "sauth", caseDetails);
