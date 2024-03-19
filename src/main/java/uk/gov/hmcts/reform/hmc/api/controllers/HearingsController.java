@@ -335,11 +335,11 @@ public class HearingsController {
      * @header serviceAuthorization, S2S authorization token.
      * @RequestBody caseDetails to take all the hearings belongs to case.
      */
-    @PostMapping(path = "/createHearings")
+    @PostMapping(path = "/hearing")
     @ApiOperation("create hearings")
     @ApiResponses(
             value = {
-                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 200, message = "Initiated Async Create hearings successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> createHearings(
