@@ -339,8 +339,8 @@ public class HearingsController {
     @ApiOperation("create hearings")
     @ApiResponses(
             value = {
-                    @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
-                    @ApiResponse(code = 400, message = "Bad Request")
+                @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> createHearings(
             @RequestHeader(AUTHORIZATION) String authorization,
