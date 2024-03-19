@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingRequest;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 import java.util.List;
@@ -34,7 +35,7 @@ public interface HearingApiClient {
 
 
     @PostMapping(path = "/hearing")
-    List<Hearings> createHearingDetails(
+    Hearing createHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
             @RequestBody HearingRequest hearingRequest);

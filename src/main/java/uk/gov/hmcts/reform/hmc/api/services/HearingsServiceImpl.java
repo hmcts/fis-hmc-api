@@ -56,6 +56,8 @@ public class HearingsServiceImpl implements HearingsService {
 
     private Hearings hearingDetails;
 
+    private Hearing hearing;
+
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
      *
@@ -361,21 +363,21 @@ public class HearingsServiceImpl implements HearingsService {
     public Hearing createHearings(CaseDetails caseDetails) {
 
         Hearing futureHearingsResponse = null;
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
 
         try {
-
-
+           // hearing = hearingApiClient.createHearingDetails(userToken, s2sToken, caseReference);
 
 
 
 
             futureHearingsResponse = Hearing.builder()
-                .status()
-                .versionNumber()
-                .hearingRequestID()
-                .dateTime()
+                .status(hearing.getStatus())
+                .versionNumber(hearing.getVersionNumber())
+                .hearingRequestID(hearing.getHearingRequestID())
+                .dateTime(hearing.getDateTime())
                 .build();
-
 
         }  catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
@@ -384,7 +386,6 @@ public class HearingsServiceImpl implements HearingsService {
         } catch (Exception exception) {
             log.info("Hearing api call Exception exception {}", exception.getMessage());
         }
-
         return futureHearingsResponse;
     }
 }
