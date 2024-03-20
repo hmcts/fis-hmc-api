@@ -14,4 +14,20 @@ public class PartyDetails {
 
     @JsonProperty("partyID")
     private String partyID;
+
+    @JsonProperty("partyType")
+    private String partyType;
+
+    @JsonProperty("partyRole")
+    private String partyRole;
+
+    @JsonProperty("oneOf")
+    private OneOf oneOf;
+
+    @JsonProperty("unavailabilityDOW")
+    private UnavailabilityDOW unavailabilityDOW;
+
+    @JsonProperty("unavailabilityRange")
+    private UnavailabilityRange unavailabilityRange;
+
 }
