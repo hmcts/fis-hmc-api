@@ -483,7 +483,7 @@ class HearingsControllerTest {
         //Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createHearings("auth", "sauth", null);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
     }
 
