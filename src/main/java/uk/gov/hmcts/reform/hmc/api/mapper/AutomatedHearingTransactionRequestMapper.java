@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.CaseCategories;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingRequest;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 
 import java.time.LocalDateTime;
 
@@ -15,13 +15,13 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class HearingTransactionRequestMapper {
+public class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
-    public HearingRequest mappingHearingTransactionRequest(CaseDetails caseDetails) {
-        HearingRequest hearingRequest = new HearingRequest();
-        hearingRequest.setCaseDetails(uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails.hearingWith()
+    public AutomatedHearingRequest mappingHearingTransactionRequest(CaseDetails caseDetails) {
+        AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
+        hearingRequest.setCaseDetails(uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails.automatedCaseDetailsWith()
                                           .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
                                           .caseRef(caseDetails.getId().toString())
                                           .requestTimeStamp(LocalDateTime.now())

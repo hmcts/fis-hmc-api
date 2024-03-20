@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "hearingWith")
+@Builder(builderMethodName = "automatedCaseDetailsWith")
 public class CaseDetails {
 
     @JsonProperty("hmctsServiceCode")
