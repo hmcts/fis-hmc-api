@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Hearing {
+public class HearingResponse {
 
     @Size(max = 30)
     private String hearingRequestID;
@@ -22,7 +22,7 @@ public class Hearing {
     @Size(max = 100)
     private String status;
 
-    private DateTime dateTime;
+    private DateTime timeStamp;
 
     private Number versionNumber;
 

@@ -6,18 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HearingRequest {
+public class UnavailabilityRange {
 
-    @JsonProperty("caseDetails")
-    private CaseDetails caseDetails;
-
-    @JsonProperty("hearingDetails")
-    private HearingDetails hearingDetails;
-
-    @JsonProperty("partyDetails")
-    private PartyDetails partyDetails;
+    @JsonProperty("unavailableFromDate")
+    private Date unavailableFromDate;
 }
