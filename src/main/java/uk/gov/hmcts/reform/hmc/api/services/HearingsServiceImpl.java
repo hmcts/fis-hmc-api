@@ -14,8 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.mapper.HearingTransformer;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingRequest;
+import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
@@ -51,8 +51,6 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired HearingApiClient hearingApiClient;
     RestTemplate restTemplate = new RestTemplate();
 
-    HearingTransformer hearingTransformer;
-
     @Value("${hearing_component.api.url}")
     private String basePath;
 
@@ -60,6 +58,8 @@ public class HearingsServiceImpl implements HearingsService {
     private List<String> futureHearingStatusList;
 
     private Hearings hearingDetails;
+
+    private final AutomatedHearingTransformer hearingTransformer;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -368,7 +368,7 @@ public class HearingsServiceImpl implements HearingsService {
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
-        HearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
+        AutomatedHearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
         try {
             HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
                 userToken,
