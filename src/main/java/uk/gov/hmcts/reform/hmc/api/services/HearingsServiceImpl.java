@@ -51,6 +51,8 @@ public class HearingsServiceImpl implements HearingsService {
     @Autowired HearingApiClient hearingApiClient;
     RestTemplate restTemplate = new RestTemplate();
 
+    HearingTransformer hearingTransformer;
+
     @Value("${hearing_component.api.url}")
     private String basePath;
 
