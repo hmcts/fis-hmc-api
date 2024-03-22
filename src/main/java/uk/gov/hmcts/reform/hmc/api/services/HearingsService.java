@@ -20,5 +20,5 @@ public interface HearingsService {
     Hearings getFutureHearings(String caseReference);
 
 
-    HearingResponse createHearings(CaseDetails caseDetails);
+    HearingResponse createAutomatedHearings(CaseDetails caseDetails);
 }

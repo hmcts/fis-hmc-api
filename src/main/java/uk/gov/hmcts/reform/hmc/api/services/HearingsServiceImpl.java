@@ -59,7 +59,7 @@ public class HearingsServiceImpl implements HearingsService {
 
     private Hearings hearingDetails;
 
-    private final AutomatedHearingTransformer hearingTransformer;
+    private final AutomatedHearingTransformer automatedHearingTransformer;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -363,17 +363,18 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Override
     @Async
-    public HearingResponse createHearings(CaseDetails caseDetails) {
+    public HearingResponse createAutomatedHearings(CaseDetails caseDetails) {
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
-        AutomatedHearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
+        AutomatedHearingRequest automatedHearingRequest = automatedHearingTransformer.mappingAutomatedHearingTransactionRequest(
+            caseDetails);
         try {
             HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
                 userToken,
                 s2sToken,
-                hearingRequest
+                automatedHearingRequest
             );
             createHearingsResponse = HearingResponse.builder()
                 .status(hearingResponse.getStatus())

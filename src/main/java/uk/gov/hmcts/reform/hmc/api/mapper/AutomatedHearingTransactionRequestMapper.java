@@ -37,7 +37,7 @@ public class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
-    public AutomatedHearingRequest mappingHearingTransactionRequest(CaseDetails caseDetails) {
+    public AutomatedHearingRequest mappingAutomatedHearingTransactionRequest(CaseDetails caseDetails) {
         AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
 
         String publicCaseNameMapper = EMPTY;

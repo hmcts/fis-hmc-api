@@ -9,10 +9,10 @@ import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 @RequiredArgsConstructor
 public class AutomatedHearingTransformer {
 
-    private final AutomatedHearingTransactionRequestMapper hearingTransactionRequestMapper;
+    private final AutomatedHearingTransactionRequestMapper automatedHearingTransactionRequestMapper;
 
-    public AutomatedHearingRequest mappingHearingTransactionRequest(CaseDetails caseDetails) {
-        return hearingTransactionRequestMapper.mappingHearingTransactionRequest(caseDetails);
+    public AutomatedHearingRequest mappingAutomatedHearingTransactionRequest(CaseDetails caseDetails) {
+        return automatedHearingTransactionRequestMapper.mappingAutomatedHearingTransactionRequest(caseDetails);
     }
 
 }
