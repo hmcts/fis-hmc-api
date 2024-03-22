@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,13 +28,13 @@ public class HearingDetails {
     private String hearingType;
 
     @JsonProperty("hearingWindow")
-    private Object hearingWindow;
+    private HearingWindow hearingWindow;
 
     @JsonProperty("duration")
     private Integer duration;
 
     @JsonProperty("nonStandardHearingDurationReasons")
-    private String nonStandardHearingDurationReasons;
+    private List<String> nonStandardHearingDurationReasons;
 
     @JsonProperty("hearingPriorityType")
     private String hearingPriorityType;
@@ -42,13 +46,13 @@ public class HearingDetails {
     private Boolean hearingInWelshFlag;
 
     @JsonProperty("hearingLocations")
-    private Object hearingLocations;
+    private List<HearingLocation> hearingLocations;
 
     @JsonProperty("facilitiesRequired")
-    private Object facilitiesRequired;
+    private List<String> facilitiesRequired;
 
     @JsonProperty("listingComments")
-    private Object listingComments;
+    private String listingComments;
 
     @JsonProperty("hearingRequester")
     private String hearingRequester;
@@ -60,14 +64,14 @@ public class HearingDetails {
     private String leadJudgeContractType;
 
     @JsonProperty("panelRequirements")
-    private Object panelRequirements;
+    private PanelRequirements panelRequirements;
 
     @JsonProperty("hearingIsLinkedFlag")
     private Boolean hearingIsLinkedFlag;
 
     @JsonProperty("amendReasonCodes")
-    private String amendReasonCodes;
+    private List<String> amendReasonCodes;
 
     @JsonProperty("hearingChannels")
-    private String hearingChannels;
+    private List<String> hearingChannels;
 }

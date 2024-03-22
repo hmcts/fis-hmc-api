@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -23,13 +24,17 @@ public class PartyDetails {
     @JsonProperty("partyRole")
     private String partyRole;
 
-    @JsonProperty("oneOf")
-    private OneOf oneOf;
+
+    private IndividualDetails individualDetails;
+
+
+    private OrganisationDetails organisationDetails;
 
     @JsonProperty("unavailabilityDOW")
-    private UnavailabilityDOW unavailabilityDOW;
+    private List<UnavailabilityDOW> unavailabilityDOW;
 
     @JsonProperty("unavailabilityRange")
-    private UnavailabilityRange unavailabilityRange;
+    private List<UnavailabilityRange> unavailabilityRange;
+
 
 }
