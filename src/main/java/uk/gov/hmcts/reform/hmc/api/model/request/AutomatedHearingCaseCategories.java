@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "CaseCategoriesWith")
-public class CaseCategories {
+@Builder(builderMethodName = "AutomatedHearingCaseCategoriesWith")
+public class AutomatedHearingCaseCategories {
 
     @JsonProperty("categoryType")
     private String categoryType;

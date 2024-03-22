@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 public class AutomatedHearingRequest {
 
     @JsonProperty("caseDetails")
-    private CaseDetails caseDetails;
+    private AutomatedHearingCaseDetails caseDetails;
 
     @JsonProperty("hearingDetails")
-    private HearingDetails hearingDetails;
+    private AutomatedHearingDetails hearingDetails;
 
     @JsonProperty("partyDetails")
-    private PartyDetails partyDetails;
+    private AutomatedHearingPartyDetails partyDetails;
 }

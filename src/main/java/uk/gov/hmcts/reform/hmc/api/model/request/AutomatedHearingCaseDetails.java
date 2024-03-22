@@ -10,13 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "automatedCaseDetailsWith")
-public class CaseDetails {
+@Builder(builderMethodName = "automatedHearingCaseDetailsWith")
+public class AutomatedHearingCaseDetails {
 
     @JsonProperty("hmctsServiceCode")
     private String hmctsServiceCode;
@@ -47,7 +48,7 @@ public class CaseDetails {
     private Boolean caseInterpreterRequiredFlag;
 
     @JsonProperty("caseCategories")
-    private CaseCategories caseCategories;
+    private List<AutomatedHearingCaseCategories> caseCategories;
 
     @JsonProperty("caseManagementLocationCode")
     private String caseManagementLocationCode;

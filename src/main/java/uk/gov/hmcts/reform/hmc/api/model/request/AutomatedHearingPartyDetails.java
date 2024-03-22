@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Builder(builderMethodName = "automatedPartyDetailsWith")
-public class PartyDetails {
+@Builder(builderMethodName = "automatedHearingPartyDetailsWith")
+public class AutomatedHearingPartyDetails {
 
     @JsonProperty("partyID")
     private String partyID;
