@@ -1,20 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +28,19 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static feign.Request.HttpMethod.GET;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -452,13 +453,13 @@ class HearingsControllerTest {
     }
 
     @Test
-    void createHearingsTest() throws IOException, ParseException {
+    void createAutomatedHearingsTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(hearingsService.createHearings(any())).thenReturn(null);
+        Mockito.when(hearingsService.createAutomatedHearings(any())).thenReturn(null);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(
                 HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
         Assertions.assertEquals(
@@ -466,34 +467,36 @@ class HearingsControllerTest {
     }
 
     @Test
-    void createHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(hearingsService.createHearings(any())).thenThrow(new RuntimeException());
+        Mockito.when(hearingsService.createAutomatedHearings(any())).thenThrow(new RuntimeException());
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
 
     @Test
-    void createHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
+        //Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
+        CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", null);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
     }
 
     @Test
-    void createHearingsFeignExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
-        Mockito.when(hearingsService.createHearings(any()))
+        Mockito.when(hearingsService.createAutomatedHearings(any()))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 

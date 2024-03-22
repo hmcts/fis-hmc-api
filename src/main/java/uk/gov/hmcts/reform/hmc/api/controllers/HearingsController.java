@@ -335,14 +335,14 @@ public class HearingsController {
      * @header serviceAuthorization, S2S authorization token.
      * @RequestBody caseDetails to take all the hearings belongs to case.
      */
-    @PostMapping(path = "/hearing")
+    @PostMapping(path = "/automated-hearing")
     @ApiOperation("create hearings")
     @ApiResponses(
             value = {
                 @ApiResponse(code = 200, message = "Initiated Async Create hearings successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
-    public ResponseEntity<Object> createHearings(
+    public ResponseEntity<Object> createAutomatedHearings(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final CaseDetails caseDetails) {
@@ -350,7 +350,7 @@ public class HearingsController {
 
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-                hearingsService.createHearings(caseDetails);
+                hearingsService.createAutomatedHearings(caseDetails);
 
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(caseDetails.getId());
