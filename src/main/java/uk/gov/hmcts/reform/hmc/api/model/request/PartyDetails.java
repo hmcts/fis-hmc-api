@@ -24,9 +24,7 @@ public class PartyDetails {
     @JsonProperty("partyRole")
     private String partyRole;
 
-
     private IndividualDetails individualDetails;
-
 
     private OrganisationDetails organisationDetails;
 

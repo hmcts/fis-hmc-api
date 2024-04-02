@@ -368,8 +368,8 @@ public class HearingsServiceImpl implements HearingsService {
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
-        AutomatedHearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
         try {
+            AutomatedHearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
             HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
                 userToken,
                 s2sToken,

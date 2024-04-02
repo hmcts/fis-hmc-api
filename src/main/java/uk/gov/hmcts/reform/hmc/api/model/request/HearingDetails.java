@@ -19,7 +19,7 @@ import java.util.List;
 public class HearingDetails {
 
     @JsonProperty("autolistFlag")
-    private Boolean autolistFlag;
+    private Boolean autoListFlag;
 
     @JsonProperty("listingAutoChangeReasonCode")
     private String listingAutoChangeReasonCode;

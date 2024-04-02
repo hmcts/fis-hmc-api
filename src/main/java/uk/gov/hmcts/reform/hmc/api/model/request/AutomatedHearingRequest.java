@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,5 +23,5 @@ public class AutomatedHearingRequest {
     private HearingDetails hearingDetails;
 
     @JsonProperty("partyDetails")
-    private PartyDetails partyDetails;
+    private List<PartyDetails> partyDetails;
 }
