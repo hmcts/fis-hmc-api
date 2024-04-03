@@ -369,7 +369,8 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
         try {
-            AutomatedHearingRequest hearingRequest = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
+            List<AutomatedHearingRequest> hearingRequests = hearingTransformer.mappingHearingTransactionRequest(caseDetails);
+            for(AutomatedHearingRequest hearingRequest : hearingRequests) {
             HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
                 userToken,
                 s2sToken,
@@ -382,7 +383,7 @@ public class HearingsServiceImpl implements HearingsService {
                 .timeStamp(hearingResponse.getTimeStamp())
                 .build();
 
-        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+        } } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info(
                 "Hearing api call HttpClientError exception {}",
                 exception.getMessage()
