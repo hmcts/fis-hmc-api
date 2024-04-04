@@ -137,7 +137,7 @@ public class AutomatedHearingTransactionRequestMapper {
             HearingDetails details = HearingDetails.automatedHearingDetailsWith()
                 .autoListFlag(FALSE)
                 .listingAutoChangeReasonCode(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails())? "no-mapping-available" : "user-added-comments")
-                .hearingType(hearingType != null ? hearingType.getCode() : null) // what is hearing type value see the recording ...
+                .hearingType(hearingType != null ? hearingType.getCode() : null)
                 .hearingWindow(
                     HearingWindow.hearingWindowWith()
                         .dateRangeStart("")  // which value needs to be set here ... there is no value coming from case data to set over here ... checked manage orders also no use ...

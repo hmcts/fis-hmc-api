@@ -12,11 +12,11 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Builder
 public class ManageOrders {
 
     @JsonProperty("ordersHearingDetails")
     @JsonUnwrapped
-    @Builder.Default
     private List<Element<HearingData>> ordersHearingDetails;
 
 
