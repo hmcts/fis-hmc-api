@@ -32,6 +32,7 @@ import uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,10 +93,10 @@ public class AutomatedHearingTransactionRequestMapper {
                                           .publicCaseName("")
                                           .caseAdditionalSecurityFlag(Boolean.TRUE)
                                           .caseInterpreterRequiredFlag(Boolean.TRUE)
-                                          .caseCategories(CaseCategories.CaseCategoriesWith().build())
+                                          .caseCategories(CaseCategories.CaseCategoriesWith().build())//
                                           .caseManagementLocationCode("")
                                           .caseRestrictedFlag(Boolean.TRUE)
-                                          .caseSlaStartDate("")
+                                          .caseSlaStartDate("hearingdata.isissued")//needs to be done by vel
                                           .build();
       //  caseDetails.getData().get("ordershearingdetails").toString().
         CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
@@ -133,40 +134,65 @@ public class AutomatedHearingTransactionRequestMapper {
         for (Element<HearingData> hearingDataEle: headingDetailsList) {
             HearingData hearingData = hearingDataEle.getValue();
             DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 
             HearingDetails details = HearingDetails.automatedHearingDetailsWith()
-                .autoListFlag(FALSE)
-                .listingAutoChangeReasonCode(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails())? "no-mapping-available" : "user-added-comments")
+                .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
+                .listingAutoChangeReasonCode("")
                 .hearingType(hearingType != null ? hearingType.getCode() : null)
                 .hearingWindow(
                     HearingWindow.hearingWindowWith()
-                        .dateRangeStart("")  // which value needs to be set here ... there is no value coming from case data to set over here ... checked manage orders also no use ...
-                        .dateRangeEnd(EMPTY)
-                        .firstDateTimeMustBe(EMPTY)
+                        .dateRangeStart(hearingData.getEarliestHearingDate() != null ?hearingData.getEarliestHearingDate().format(formatter) : null)  // which value needs to be set here ... there is no value coming from case data to set over here ... checked manage orders also no use ...
+                        .dateRangeEnd(hearingData.getLatestHearingDate()!= null ?hearingData.getLatestHearingDate().format(formatter) : null)
+                        .firstDateTimeMustBe(hearingData.getFirstDateOfTheHearing()== null ? null :
+                                                 dateOfHearing(hearingData.getFirstDateOfTheHearing().format(formatter), hearingData.getHearingMustTakePlaceAtHour(),hearingData.getHearingMustTakePlaceAtMinute()))
                         .build())
-                .duration(0)
-                .hearingPriorityType(HEARING_PRIORITY)
-                .numberOfPhysicalAttendees(0)
-                .hearingInWelshFlag(FALSE)
+                .duration(hearingDuration(hearingData.getHearingEstimatedDays(),hearingData.getHearingEstimatedHours(),hearingData.getHearingEstimatedMinutes()))
+                .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
+                .numberOfPhysicalAttendees(2) // this is complex logic need to write
+                .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
                 .hearingLocations(
                     Arrays.asList(
                         HearingLocation.hearingLocationWith()
-                            .locationType(COURT)
-                            .locationId(CASE_MANAGEMENT_LOCATION)
+                            .locationType(caseData.getCourtName())
+                            .locationId("")//get it from ref data
                             .build()))
                 .facilitiesRequired(Arrays.asList())
-                .listingComments(EMPTY)
-                .hearingRequester(EMPTY)
-                .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
+                .listingComments(hearingData.getAdditionalHearingDetails())
+                .hearingRequester(hearingData.getHearingJudgeEmailAddress())// this is not email address get personal code from ref data
+                .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
                 .panelRequirements(null)
-                .leadJudgeContractType(EMPTY)
-                .hearingIsLinkedFlag(FALSE)
-                .hearingChannels(Arrays.asList())
+                .leadJudgeContractType("")
+                .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
+                .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
                 .build();
             hearingDetailsList.add(details);
         }
         return hearingDetailsList;
     }
+
+    private int hearingDuration(String days,String hours,String minutes) {
+
+        if(days != null) {
+           return Integer.parseInt(days) * 360;
+        } else if(hours != null) {
+            return Integer.parseInt(hours) * 60;
+        } else if(minutes != null) {
+            int remainder = Integer.parseInt(minutes) % 5;
+            if (remainder != 0) {
+                return (Integer.parseInt(minutes)/5)*5 + 5;
+            }
+        }
+        return 0;
+    }
+
+    private String dateOfHearing(String firstDate,String hours,String minutes) {
+
+            return String.format("T{0}:{1}:00Z", hours != null ? hours : "00", minutes != null? minutes : "00");
+
+    }
+
+
 
         @NotNull
     private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> getPartyDetails(CaseDetailResponse ccdResponse) {

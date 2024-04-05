@@ -57,4 +57,8 @@ public class CaseData implements MappableObject {
 
     @JsonUnwrapped
     private final ManageOrders manageOrders;
+
+
+    @JsonUnwrapped
+    private final AttendHearing attendHearing;
 }

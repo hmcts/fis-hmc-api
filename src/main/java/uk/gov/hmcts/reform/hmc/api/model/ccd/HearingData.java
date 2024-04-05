@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.model.ccd;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -77,10 +78,10 @@ public class HearingData {
 //    @JsonProperty("hearingAuthority")
 //    private DioBeforeAEnum hearingAuthority;
 //
-//    @JsonSerialize(using = CustomEnumSerializer.class)
-//    @JsonProperty("hearingChannelsEnum")
-//    private HearingChannelsEnum hearingChannelsEnum;
-//
+    @JsonSerialize(using = CustomEnumSerializer.class)
+    @JsonProperty("hearingChannelsEnum")
+    private HearingChannelsEnum hearingChannelsEnum;
+
 //    @JsonProperty("hearingJudgeNameAndEmail")
 //    private final JudicialUser hearingJudgeNameAndEmail;
 
@@ -120,8 +121,8 @@ public class HearingData {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate latestHearingDate;
 
-    //@JsonProperty("hearingPriorityTypeEnum")
-    //private HearingPriorityTypeEnum hearingPriorityTypeEnum;
+    @JsonProperty("hearingPriorityTypeEnum")
+    private HearingPriorityTypeEnum hearingPriorityTypeEnum;
 
     @JsonProperty("customDetails")
     private  String customDetails;
