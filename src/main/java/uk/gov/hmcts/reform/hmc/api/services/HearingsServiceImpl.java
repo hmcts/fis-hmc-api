@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +40,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -361,7 +363,7 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    public HearingResponse createHearings(CaseData caseData) {
+    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException{
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();

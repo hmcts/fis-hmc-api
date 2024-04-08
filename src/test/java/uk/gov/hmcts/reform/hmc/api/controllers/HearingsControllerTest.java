@@ -453,13 +453,13 @@ class HearingsControllerTest {
     }
 
     @Test
-    void createHearingsTest() throws IOException, ParseException {
+    void createAutomatedHearingsTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(hearingsService.createHearings(any())).thenReturn(null);
+        Mockito.when(hearingsService.createAutomatedHearings(any())).thenReturn(null);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(
                 HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
         Assertions.assertEquals(
@@ -467,36 +467,36 @@ class HearingsControllerTest {
     }
 
     @Test
-    void createHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(hearingsService.createHearings(any())).thenThrow(new RuntimeException());
+        Mockito.when(hearingsService.createAutomatedHearings(any())).thenThrow(new RuntimeException());
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
 
     @Test
-    void createHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
         //Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(false);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
     }
 
     @Test
-    void createHearingsFeignExceptionTest() throws IOException, ParseException {
+    void createAutomatedHearingsFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
         CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
-        Mockito.when(hearingsService.createHearings(any()))
+        Mockito.when(hearingsService.createAutomatedHearings(any()))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
         ResponseEntity<Object> hearingsForAllCasesResponse =
-                hearingsController.createHearings("auth", "sauth", caseDetails);
+                hearingsController.createAutomatedHearings("auth", "sauth", caseDetails);
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 

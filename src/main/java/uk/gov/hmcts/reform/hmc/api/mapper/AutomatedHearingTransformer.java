@@ -11,12 +11,16 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AutomatedHearingTransformer {
+public final class AutomatedHearingTransformer {
+
+    private AutomatedHearingTransformer() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private final AutomatedHearingTransactionRequestMapper hearingTransactionRequestMapper;
 
-    public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData)  throws IOException {
-        return hearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData);
+    public AutomatedHearingRequest mappingHearingTransactionRequest(CaseDetails caseDetails) {
+        return hearingTransactionRequestMapper.mappingHearingTransactionRequest(caseDetails);
     }
 
 }

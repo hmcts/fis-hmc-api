@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder(builderMethodName = "automatedHearingDetailsWith")
-public class HearingDetails {
+public class AutomatedHearingDetails {
 
     @JsonProperty("autolistFlag")
     private Boolean autoListFlag;

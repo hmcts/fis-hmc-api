@@ -70,17 +70,37 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UNDERSCORE;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AutomatedHearingTransactionRequestMapper {
+public final class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
-    private String ccdBaseUrl;
+    private static String ccdBaseUrl;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private AutomatedHearingTransactionRequestMapper() {
+        throw new IllegalStateException("Utility class");
+    }
 
     @Autowired
     private CaseFlagDataServiceImpl caseFlagDataServiceImpl;
 
     public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) throws IOException {
+
+        String publicCaseNameMapper = EMPTY;
+        if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
+            publicCaseNameMapper = RE_MINOR;
+        } else if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
+            @SuppressWarnings("unchecked")
+            Map<String, String> applicantMap = (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
+            @SuppressWarnings("unchecked")
+            Map<String, String> respondentTableMap = (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
+            if (applicantMap != null && respondentTableMap != null) {
+                publicCaseNameMapper = applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
+            } else {
+                publicCaseNameMapper = EMPTY;
+            }
+        }
+
         uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails caseDetail =
             uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails.automatedCaseDetailsWith()
                                           .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
@@ -89,10 +109,10 @@ public class AutomatedHearingTransactionRequestMapper {
                                           .externalCaseReference("") //Need to verify
                                           .caseDeepLink(ccdBaseUrl + "caseReference" + CASE_FILE_VIEW) //Need to verify
                                           .hmctsInternalCaseName("")
-                                          .publicCaseName("")
+                                          .publicCaseName(publicCaseNameMapper)
                                           .caseAdditionalSecurityFlag(Boolean.TRUE)
                                           .caseInterpreterRequiredFlag(Boolean.TRUE)
-                                          .caseCategories(CaseCategories.CaseCategoriesWith().build())//
+                                          .caseCategories(getCaseCategories())//
                                           .caseManagementLocationCode("")
                                           .caseRestrictedFlag(Boolean.TRUE)
                                           .caseSlaStartDate("hearingdata.isissued")//needs to be done by vel
@@ -111,6 +131,26 @@ public class AutomatedHearingTransactionRequestMapper {
         }
         return hearingRequests;
 
+    }
+
+    private static List<AutomatedHearingCaseCategories> getCaseCategories() {
+        List<AutomatedHearingCaseCategories> caseCategoriesList = new ArrayList<>();
+        AutomatedHearingCaseCategories caseCategories =
+            AutomatedHearingCaseCategories.AutomatedHearingCaseCategoriesWith()
+                .categoryType(CASE_TYPE)
+                .categoryValue(CATEGORY_VALUE)
+                .build();
+
+        AutomatedHearingCaseCategories caseSubCategories =
+            AutomatedHearingCaseCategories.AutomatedHearingCaseCategoriesWith()
+                .categoryType(CASE_SUB_TYPE)
+                .categoryValue(CATEGORY_VALUE)
+                .categoryParent(CATEGORY_VALUE)
+                .build();
+
+        caseCategoriesList.add(caseCategories);
+        caseCategoriesList.add(caseSubCategories);
+        return caseCategoriesList;
     }
 
     private List<HearingDetails> getHearingDetails(String id, CaseData caseData) {
