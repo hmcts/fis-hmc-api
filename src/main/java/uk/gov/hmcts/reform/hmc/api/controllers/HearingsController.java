@@ -28,6 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
@@ -345,15 +346,13 @@ public class HearingsController {
     public ResponseEntity<Object> createHearings(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestBody final CaseDetails caseDetails) {
+            @RequestBody final CaseData caseData) {
         try {
-
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-                caseDetails.getData().forEach((k,v) -> log.info(k+" --> " + v));
-                hearingsService.createHearings(caseDetails);
+                hearingsService.createHearings(caseData);
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(caseDetails.getId());
+                return ResponseEntity.ok(caseData.getId());
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

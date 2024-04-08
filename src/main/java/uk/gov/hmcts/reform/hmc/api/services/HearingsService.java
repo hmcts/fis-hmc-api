@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
@@ -20,5 +21,5 @@ public interface HearingsService {
     Hearings getFutureHearings(String caseReference);
 
 
-    HearingResponse createHearings(CaseDetails caseDetails);
+    HearingResponse createHearings(CaseData caseData);
 }
