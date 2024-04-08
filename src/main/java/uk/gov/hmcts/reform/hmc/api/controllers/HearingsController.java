@@ -336,7 +336,7 @@ public class HearingsController {
      * @RequestBody caseDetails to take all the hearings belongs to case.
      */
     @PostMapping(path = "/automated-hearing")
-    @ApiOperation("create hearings")
+    @ApiOperation("create automated hearing")
     @ApiResponses(
             value = {
                 @ApiResponse(code = 200, message = "Initiated Async Create hearings successfully"),
