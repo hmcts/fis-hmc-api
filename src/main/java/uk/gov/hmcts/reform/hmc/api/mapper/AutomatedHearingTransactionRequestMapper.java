@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.hmc.api.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -19,10 +18,10 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
-import uk.gov.hmcts.reform.hmc.api.model.request.CaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseCategories;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.IndividualDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.OrganisationDetails;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
@@ -46,6 +45,9 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_SUB_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_TYPE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CATEGORY_VALUE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
@@ -68,7 +70,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TRUE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UNDERSCORE;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public final class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
@@ -87,22 +88,17 @@ public final class AutomatedHearingTransactionRequestMapper {
     public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) throws IOException {
 
         String publicCaseNameMapper = EMPTY;
-        if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
+        if (C100.equals(caseData.getCaseTypeOfApplication())) {
             publicCaseNameMapper = RE_MINOR;
-        } else if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
-            @SuppressWarnings("unchecked")
-            Map<String, String> applicantMap = (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
-            @SuppressWarnings("unchecked")
-            Map<String, String> respondentTableMap = (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
-            if (applicantMap != null && respondentTableMap != null) {
-                publicCaseNameMapper = applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
-            } else {
-                publicCaseNameMapper = EMPTY;
-            }
+        } else if (FL401.equals(caseData.getCaseTypeOfApplication())) {
+            PartyDetails applicantMap = caseData.getApplicantsFL401();
+            PartyDetails respondentTableMap = caseData.getRespondentsFL401();
+            publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
+                ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
         }
 
-        uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails caseDetail =
-            uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails.automatedCaseDetailsWith()
+        uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseDetails caseDetail =
+            uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                                           .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
                                           .caseRef(String.valueOf(caseData.getId()))
                                           .requestTimeStamp(LocalDateTime.now())
@@ -119,10 +115,10 @@ public final class AutomatedHearingTransactionRequestMapper {
                                           .build();
       //  caseDetails.getData().get("ordershearingdetails").toString().
         //CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = getPartyDetails(caseData);
+        List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData);
         List<AutomatedHearingRequest> hearingRequests = new ArrayList<>();
-        List<HearingDetails> hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
-        for (HearingDetails details: hearingDetails) {
+        List<AutomatedHearingDetails> hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
+        for (AutomatedHearingDetails details: hearingDetails) {
             AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
             hearingRequest.setPartyDetails(partyDetailsList);
             hearingRequest.setCaseDetails(caseDetail);
@@ -153,7 +149,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         return caseCategoriesList;
     }
 
-    private List<HearingDetails> getHearingDetails(String id, CaseData caseData) {
+    private List<AutomatedHearingDetails> getHearingDetails(String id, CaseData caseData) {
         String publicCaseNameMapper = EMPTY;
         Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseData.getCaseTypeOfApplication())) {
@@ -167,7 +163,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
         String hmctsInternalCaseNameMapper = id + UNDERSCORE + caseData.getApplicantCaseName();
         String caseSlaStartDateMapper = (String) caseData.getDateSubmitted();
-        List<HearingDetails> hearingDetailsList = new ArrayList<>();
+        List<AutomatedHearingDetails> hearingDetailsList = new ArrayList<>();
         List<Element<HearingData>> headingDetailsList = caseData.getManageOrders().getOrdersHearingDetails();
 
         for (Element<HearingData> hearingDataEle: headingDetailsList) {
@@ -175,7 +171,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
 
-            HearingDetails details = HearingDetails.automatedHearingDetailsWith()
+            AutomatedHearingDetails details = AutomatedHearingDetails.automatedHearingDetailsWith()
                 .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
                 .listingAutoChangeReasonCode("")
                 .hearingType(hearingType != null ? hearingType.getCode() : null)
@@ -266,8 +262,8 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     @NotNull
-    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> getPartyDetails(CaseData caseData) {
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = new ArrayList<>();
+    private List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> getPartyDetails(CaseData caseData) {
+        List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
 
         List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
         if (null != applicantLst) {
@@ -291,10 +287,10 @@ public final class AutomatedHearingTransactionRequestMapper {
         return partyDetailsList;
     }
 
-    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> addPartyData(
+    private List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> addPartyData(
         List<Element<PartyDetails>> partyLst, String role) {
 
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = new ArrayList<>();
+        List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         partyLst.forEach(p -> partyDetailsList.addAll(preparePartyDetailsDTO(p.getValue(), p.getId(), role)));
 
         return partyDetailsList;
@@ -335,7 +331,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         return partyFlagsModelList;
     }
 
-    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> preparePartyDetailsDTO(PartyDetails partyDetails,
+    private List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> preparePartyDetailsDTO(PartyDetails partyDetails,
                                                                                                 UUID uuid,
                                                                                                 String role) {
         String partyId = null;
@@ -390,9 +386,9 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .relatedParties(List.of())
                 .build();
 
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = new ArrayList<>();
-        uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails partyDetailsModel =
-            uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails.automatedPartyDetailsWith()
+        List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
+        uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails partyDetailsModel =
+            uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails.automatedHearingPartyDetailsWith()
                 .partyID(partyId)
                 .partyType(PartyType.IND.name())
                 .partyRole(role)
@@ -409,7 +405,7 @@ public final class AutomatedHearingTransactionRequestMapper {
 
         /******Solicitor Party Details*********/
         if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
-            uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails details =
+            uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails details =
                 addPartyDetailsModelForSolicitor(partyDetails, partyDetails.getSolicitorPartyId());
             if (null != details){
                 partyDetailsList.add(details);
@@ -456,13 +452,13 @@ public final class AutomatedHearingTransactionRequestMapper {
             .toList();
     }
 
-    protected uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails addPartyDetailsModelForOrg(
+    protected uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails addPartyDetailsModelForOrg(
         PartyDetails partyDetails, UUID uuid) {
         String partyId = null;
         if (uuid != null) {
             partyId = uuid.toString();
         }
-        uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails partyDetailsModelForOrg;
+        uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails partyDetailsModelForOrg;
         OrganisationDetails organisationDetailsModel =
             OrganisationDetails.builder()
                 .name(partyDetails.getSolicitorOrg().getOrganisationName())
@@ -471,7 +467,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .build();
 
         partyDetailsModelForOrg =
-            uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails.automatedPartyDetailsWith()
+            uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails.automatedHearingPartyDetailsWith()
                 .partyID(partyId)
                 //.partyName(partyDetails.getSolicitorOrg().getOrganisationName())
                 .partyType(PartyType.ORG.name())
@@ -481,7 +477,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         return partyDetailsModelForOrg;
     }
 
-    protected uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails addPartyDetailsModelForSolicitor(
+    protected uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails addPartyDetailsModelForSolicitor(
         PartyDetails partyDetails, UUID uuid) {
 
         String partyId = null;
@@ -490,7 +486,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
 
         IndividualDetails individualDetails;
-        uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails partyDetailsModelForSol = null;
+        uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails partyDetailsModelForSol = null;
 
         List<String> hearingChannelEmail =
             !isBlank(partyDetails.getSolicitorEmail())
@@ -506,7 +502,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                     .build();
 
             partyDetailsModelForSol =
-                uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails.automatedPartyDetailsWith()
+                uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails.automatedHearingPartyDetailsWith()
                     .partyID(partyId)
                     .partyType(PartyType.IND.name())
                     .partyRole(ORGANISATION)
@@ -527,10 +523,10 @@ public final class AutomatedHearingTransactionRequestMapper {
                         || SM0002.equals(partyFlag.getValue().getFlagCode()));
     }
 
-    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> addFL401PartyData(
+    private List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> addFL401PartyData(
         PartyDetails partyDetails, String role) {
 
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = new ArrayList<>();
+        List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         if (null != partyDetails) {
             partyDetailsList.addAll(preparePartyDetailsDTO(partyDetails, partyDetails.getPartyId(), role));
         }

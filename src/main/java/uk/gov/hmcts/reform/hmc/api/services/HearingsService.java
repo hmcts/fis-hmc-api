@@ -24,5 +24,5 @@ public interface HearingsService {
     Hearings getFutureHearings(String caseReference);
 
 
-    HearingResponse createHearings(CaseData caseData) throws IOException, ParseException;
+    HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException;
 }
