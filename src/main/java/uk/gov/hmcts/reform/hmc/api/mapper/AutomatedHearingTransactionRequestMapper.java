@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,9 +14,11 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingChannelsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.request.CaseCategories;
@@ -81,11 +84,11 @@ public class AutomatedHearingTransactionRequestMapper {
     @Autowired
     private CaseFlagDataServiceImpl caseFlagDataServiceImpl;
 
-    public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseDetails caseDetails) throws IOException {
+    public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) throws IOException {
         uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails caseDetail =
             uk.gov.hmcts.reform.hmc.api.model.request.CaseDetails.automatedCaseDetailsWith()
                                           .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
-                                          .caseRef(caseDetails.getId().toString())
+                                          .caseRef(String.valueOf(caseData.getId()))
                                           .requestTimeStamp(LocalDateTime.now())
                                           .externalCaseReference("") //Need to verify
                                           .caseDeepLink(ccdBaseUrl + "caseReference" + CASE_FILE_VIEW) //Need to verify
@@ -99,10 +102,10 @@ public class AutomatedHearingTransactionRequestMapper {
                                           .caseSlaStartDate("hearingdata.isissued")//needs to be done by vel
                                           .build();
       //  caseDetails.getData().get("ordershearingdetails").toString().
-        CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
-        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = getPartyDetails(ccdResponse);
+        //CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
+        List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = getPartyDetails(caseData);
         List<AutomatedHearingRequest> hearingRequests = new ArrayList<>();
-        List<HearingDetails> hearingDetails = getHearingDetails(caseDetails.getId().toString(), ccdResponse.getCaseData());
+        List<HearingDetails> hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
         for (HearingDetails details: hearingDetails) {
             AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
             hearingRequest.setPartyDetails(partyDetailsList);
@@ -149,17 +152,17 @@ public class AutomatedHearingTransactionRequestMapper {
                         .build())
                 .duration(hearingDuration(hearingData.getHearingEstimatedDays(),hearingData.getHearingEstimatedHours(),hearingData.getHearingEstimatedMinutes()))
                 .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
-                .numberOfPhysicalAttendees(2) // this is complex logic need to write
+                .numberOfPhysicalAttendees(noOfPhysicalAttendees(hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),hearingData)) // this is complex logic need to write
                 .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
                 .hearingLocations(
                     Arrays.asList(
                         HearingLocation.hearingLocationWith()
-                            .locationType(caseData.getCourtName())
-                            .locationId("")//get it from ref data
+                            .locationType(COURT)
+                            .locationId(hearingData.getCourtList().getValueCode())
                             .build()))
                 .facilitiesRequired(Arrays.asList())
                 .listingComments(hearingData.getAdditionalHearingDetails())
-                .hearingRequester(hearingData.getHearingJudgeEmailAddress())// this is not email address get personal code from ref data
+                .hearingRequester(hearingData.getHearingJudgePersonalCode())
                 .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
                 .panelRequirements(null)
                 .leadJudgeContractType("")
@@ -192,28 +195,60 @@ public class AutomatedHearingTransactionRequestMapper {
 
     }
 
+    private int noOfPhysicalAttendees(YesOrNo attendSameWayYesOrNo, HearingData hearingData) {
 
+        if(YesOrNo.YES.equals(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
+            ArrayList<String> noOfParticipants =
+            Lists.newArrayList(hearingData.getApplicantName1(),hearingData.getApplicantName2(),hearingData.getApplicantName3(),hearingData
+                .getApplicantName4(),hearingData.getApplicantName5(),hearingData.getApplicantSolicitor1(),hearingData.getApplicantSolicitor2(),
+                               hearingData.getApplicantSolicitor3(),hearingData.getApplicantSolicitor4(),hearingData.getApplicantSolicitor5(),
+                               hearingData.getRespondentName1(),hearingData.getRespondentName2(),hearingData.getRespondentName3(),hearingData.getRespondentName4(),
+                               hearingData.getRespondentName5(),hearingData.getRespondentSolicitor1(),hearingData.getRespondentSolicitor2());
+            noOfParticipants.removeAll(Arrays.asList("", null));
+            return noOfParticipants.size();
+        } else if(YesOrNo.NO.equals(attendSameWayYesOrNo)){
+            ArrayList<Object> noOfParticipants =
+                Lists.newArrayList(hearingData.getApplicantHearingChannel1().getValueCode(),hearingData.getApplicantHearingChannel2().getValueCode(),
+                                   hearingData.getApplicantHearingChannel3().getValueCode(),hearingData.getApplicantHearingChannel4().getValueCode(),
+                                   hearingData.getApplicantHearingChannel5().getValueCode(),hearingData.getApplicantSolicitorHearingChannel1().getValueCode(),
+                                   hearingData.getApplicantSolicitorHearingChannel2().getValueCode(),hearingData.getApplicantSolicitorHearingChannel3().getValueCode(),
+                                   hearingData.getApplicantSolicitorHearingChannel4().getValueCode(),hearingData.getApplicantSolicitorHearingChannel5().getValueCode(),
+                                   hearingData.getLocalAuthorityHearingChannel().getValueCode(),hearingData.getCafcassCymruHearingChannel().getValueCode(),hearingData.getRespondentHearingChannel1().getValueCode(),
+                                   hearingData.getRespondentHearingChannel2().getValueCode(),hearingData.getRespondentHearingChannel3().getValueCode(),
+                                   hearingData.getRespondentHearingChannel4().getValueCode(),hearingData.getRespondentHearingChannel5().getValueCode(),
+                                   hearingData.getRespondentSolicitorHearingChannel1().getValueCode(),hearingData.getRespondentSolicitorHearingChannel2().getValueCode(),
+                                   hearingData.getRespondentSolicitorHearingChannel3().getValueCode(),hearingData.getRespondentSolicitorHearingChannel4().getValueCode(),
+                                   hearingData.getRespondentSolicitorHearingChannel5().getValueCode());
+            for (Object noOfParticipant: noOfParticipants) {
+                if(noOfParticipant != null && noOfParticipant.equals("In person"));
+                return 0;
 
-        @NotNull
-    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> getPartyDetails(CaseDetailResponse ccdResponse) {
+            }
+        }
+        return 0;
+
+    }
+
+    @NotNull
+    private List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> getPartyDetails(CaseData caseData) {
         List<uk.gov.hmcts.reform.hmc.api.model.request.PartyDetails> partyDetailsList = new ArrayList<>();
 
-        List<Element<PartyDetails>> applicantLst = ccdResponse.getCaseData().getApplicants();
+        List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
         if (null != applicantLst) {
             partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT));
         }
 
-        List<Element<PartyDetails>> respondedLst = ccdResponse.getCaseData().getRespondents();
+        List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
         if (null != respondedLst) {
             partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT));
         }
 
-        PartyDetails applicantsFL401 = ccdResponse.getCaseData().getApplicantsFL401();
+        PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
         if (null != applicantsFL401) {
             partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT));
         }
 
-        PartyDetails respondentsFL401 = ccdResponse.getCaseData().getRespondentsFL401();
+        PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
         if (null != respondentsFL401) {
             partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT));
         }
