@@ -34,7 +34,7 @@ public interface HearingApiClient {
             @RequestParam("ccdCaseRefs") List<String> ccdCaseRefs);
 
 
-    @PostMapping(path = "/hearing")
+    @PostMapping(path = "/automated-hearing")
     HearingResponse createHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,

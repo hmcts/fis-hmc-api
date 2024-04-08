@@ -1,9 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.mapper;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseDetails;
@@ -30,14 +27,16 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401_RESPONDENT_TABLE
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LAST_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
 
-@Service
-@RequiredArgsConstructor
-@Slf4j
-public class AutomatedHearingTransactionRequestMapper {
-    @Value("${ccd.ui.url}")
-    private String ccdBaseUrl;
+public final class AutomatedHearingTransactionRequestMapper {
 
-    public AutomatedHearingRequest mappingAutomatedHearingTransactionRequest(CaseDetails caseDetails) {
+    @Value("${ccd.ui.url}")
+    private static  String ccdBaseUrl;
+
+    private AutomatedHearingTransactionRequestMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static AutomatedHearingRequest mappingAutomatedHearingTransactionRequest(CaseDetails caseDetails) {
         AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
 
         String publicCaseNameMapper = EMPTY;
@@ -73,7 +72,7 @@ public class AutomatedHearingTransactionRequestMapper {
         return hearingRequest;
     }
 
-    private List<AutomatedHearingCaseCategories> getCaseCategories() {
+    private static List<AutomatedHearingCaseCategories> getCaseCategories() {
         List<AutomatedHearingCaseCategories> caseCategoriesList = new ArrayList<>();
         AutomatedHearingCaseCategories caseCategories =
             AutomatedHearingCaseCategories.AutomatedHearingCaseCategoriesWith()
