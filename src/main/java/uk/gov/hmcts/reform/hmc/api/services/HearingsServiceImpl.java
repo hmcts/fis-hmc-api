@@ -363,27 +363,28 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException{
+    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException {
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
         try {
             List<AutomatedHearingRequest> hearingRequests = hearingTransformer.mappingHearingTransactionRequest(caseData);
-            for(AutomatedHearingRequest hearingRequest : hearingRequests) {
-            HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
-                userToken,
-                s2sToken,
-                hearingRequest
-            );
-            createHearingsResponse = HearingResponse.builder()
-                .status(hearingResponse.getStatus())
-                .versionNumber(hearingResponse.getVersionNumber())
-                .hearingRequestID(hearingResponse.getHearingRequestID())
-                .timeStamp(hearingResponse.getTimeStamp())
-                .build();
+            for (AutomatedHearingRequest hearingRequest : hearingRequests) {
+                HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+                    userToken,
+                    s2sToken,
+                    hearingRequest
+                );
+                createHearingsResponse = HearingResponse.builder()
+                    .status(hearingResponse.getStatus())
+                    .versionNumber(hearingResponse.getVersionNumber())
+                    .hearingRequestID(hearingResponse.getHearingRequestID())
+                    .timeStamp(hearingResponse.getTimeStamp())
+                    .build();
 
-        } } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info(
                 "Hearing api call HttpClientError exception {}",
                 exception.getMessage()

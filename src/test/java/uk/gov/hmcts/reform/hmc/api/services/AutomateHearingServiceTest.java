@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import org.joda.time.DateTime;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 
 import java.io.IOException;
@@ -53,11 +53,7 @@ class AutomateHearingServiceTest {
             CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
 
         HearingResponse hearingResponse =
-            HearingResponse.builder()
-                .hearingRequestID("123")
-                .status("200")
-                .timeStamp(DateTime.now())
-                .build();
+            HearingResponse.builder().build();
 
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
@@ -65,9 +61,10 @@ class AutomateHearingServiceTest {
 
         when(hearingApiClient.createHearingDetails(anyString(), any(), any()))
                 .thenReturn(hearingResponse);
+        CaseData caseData = CaseData.caseDataBuilder().build();
 
         HearingResponse hearingsResponse =
-                hearingsService.createAutomatedHearings(caseDetails);
+                hearingsService.createAutomatedHearings(caseData);
         Assertions.assertEquals("123", hearingsResponse.getHearingRequestID());
         Assertions.assertEquals("200", hearingsResponse.getStatus());
     }
