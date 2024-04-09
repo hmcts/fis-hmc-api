@@ -25,11 +25,6 @@ public class DynamicListElement {
 
     static final int MAX_DYNAMIC_LIST_LABEL_LENGTH = 250;
 
-    private DynamicListElement(String code, String label) {
-        this.code = code;
-        this.label = abbreviate(label, MAX_DYNAMIC_LIST_LABEL_LENGTH);
-    }
-
     /**
      * Property that maps to the value attribute of the option tag.
      */
@@ -39,6 +34,11 @@ public class DynamicListElement {
      * Property that maps to the label attribute of the option tag.
      */
     private final String label;
+
+    private DynamicListElement(String code, String label) {
+        this.code = code;
+        this.label = abbreviate(label, MAX_DYNAMIC_LIST_LABEL_LENGTH);
+    }
 
     public boolean hasCode(String code) {
         return Objects.equals(this.code, code);
@@ -50,7 +50,7 @@ public class DynamicListElement {
 
     public static DynamicListElement defaultListItem(String label) {
         return DynamicListElement.builder()
-            .code(DEFAULT_CODE)
+            .codes(DEFAULT_CODE)
             .label(label)
             .build();
     }
@@ -58,12 +58,12 @@ public class DynamicListElement {
     public static class DynamicListElementBuilder {
         private String code;
 
-        public DynamicListElementBuilder code(String code) {
+        public DynamicListElementBuilder codes(String code) {
             this.code = code;
             return this;
         }
 
-        public DynamicListElementBuilder code(UUID code) {
+        public DynamicListElementBuilder codes(UUID code) {
             this.code = Optional.ofNullable(code).map(UUID::toString).orElse(null);
             return this;
         }

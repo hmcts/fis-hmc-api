@@ -1,15 +1,14 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public interface HearingsService {
