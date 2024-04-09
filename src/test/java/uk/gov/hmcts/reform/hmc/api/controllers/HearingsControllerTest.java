@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -458,7 +457,7 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
         Mockito.when(hearingsService.createAutomatedHearings(any())).thenReturn(null);
-        CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
+        //CaseDetails caseDetails = CaseDetails.builder().id(Long.valueOf(1232344523)).build();
         CaseData caseData = CaseData.caseDataBuilder().build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.createAutomatedHearings("auth", "sauth", caseData);

@@ -242,51 +242,53 @@ public final class AutomatedHearingTransactionRequestMapper {
 
         if (YesOrNo.YES.equals(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
             ArrayList<String> noOfParticipants =
-                Lists.newArrayList(hearingData.getApplicantName1(),
-                                   hearingData.getApplicantName2(),
-                                   hearingData.getApplicantName3(),
-                                   hearingData
-                                       .getApplicantName4(),
-                                   hearingData.getApplicantName5(),
-                                   hearingData.getApplicantSolicitor1(),
-                                   hearingData.getApplicantSolicitor2(),
-                                   hearingData.getApplicantSolicitor3(),
-                                   hearingData.getApplicantSolicitor4(),
-                                   hearingData.getApplicantSolicitor5(),
-                                   hearingData.getRespondentName1(),
-                                   hearingData.getRespondentName2(),
-                                   hearingData.getRespondentName3(),
-                                   hearingData.getRespondentName4(),
-                                   hearingData.getRespondentName5(),
-                                   hearingData.getRespondentSolicitor1(),
-                                   hearingData.getRespondentSolicitor2()
+                Lists.newArrayList(
+                    hearingData.getHearingDataApplicantDetails().getApplicantName1(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantName2(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantName3(),
+                    hearingData.getHearingDataApplicantDetails()
+                        .getApplicantName4(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantName5(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor1(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor2(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor3(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor4(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor5(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentName1(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentName2(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentName3(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentName4(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentName5(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor1(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor2()
                 );
             noOfParticipants.removeAll(Arrays.asList("", null));
             return noOfParticipants.size();
         } else if (YesOrNo.NO.equals(attendSameWayYesOrNo)) {
             ArrayList<Object> noOfParticipants =
-                Lists.newArrayList(hearingData.getApplicantHearingChannel1().getValueCode(),
-                                   hearingData.getApplicantHearingChannel2().getValueCode(),
-                                   hearingData.getApplicantHearingChannel3().getValueCode(),
-                                   hearingData.getApplicantHearingChannel4().getValueCode(),
-                                   hearingData.getApplicantHearingChannel5().getValueCode(),
-                                   hearingData.getApplicantSolicitorHearingChannel1().getValueCode(),
-                                   hearingData.getApplicantSolicitorHearingChannel2().getValueCode(),
-                                   hearingData.getApplicantSolicitorHearingChannel3().getValueCode(),
-                                   hearingData.getApplicantSolicitorHearingChannel4().getValueCode(),
-                                   hearingData.getApplicantSolicitorHearingChannel5().getValueCode(),
-                                   hearingData.getLocalAuthorityHearingChannel().getValueCode(),
-                                   hearingData.getCafcassCymruHearingChannel().getValueCode(),
-                                   hearingData.getRespondentHearingChannel1().getValueCode(),
-                                   hearingData.getRespondentHearingChannel2().getValueCode(),
-                                   hearingData.getRespondentHearingChannel3().getValueCode(),
-                                   hearingData.getRespondentHearingChannel4().getValueCode(),
-                                   hearingData.getRespondentHearingChannel5().getValueCode(),
-                                   hearingData.getRespondentSolicitorHearingChannel1().getValueCode(),
-                                   hearingData.getRespondentSolicitorHearingChannel2().getValueCode(),
-                                   hearingData.getRespondentSolicitorHearingChannel3().getValueCode(),
-                                   hearingData.getRespondentSolicitorHearingChannel4().getValueCode(),
-                                   hearingData.getRespondentSolicitorHearingChannel5().getValueCode()
+                Lists.newArrayList(
+                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4().getValueCode(),
+                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5().getValueCode(),
+                    hearingData.getLocalAuthorityHearingChannel().getValueCode(),
+                    hearingData.getCafcassCymruHearingChannel().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel1().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel2().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel3().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel4().getValueCode(),
+                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5().getValueCode()
                 );
             for (Object noOfParticipant : noOfParticipants) {
                 if (noOfParticipant != null && noOfParticipant.equals("In person")) {
