@@ -11,15 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -44,21 +40,11 @@ class AutomateHearingServiceTest {
 
     @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
-
-        Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
-        caseDataMap.put("caseTypeOfApplication", "C100");
-        caseDataMap.put("issueDate", "test date");
-        CaseDetails caseDetails =
-            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
-
         HearingResponse hearingResponse =
             HearingResponse.builder().build();
 
-
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-
         when(hearingApiClient.createHearingDetails(anyString(), any(), any()))
                 .thenReturn(hearingResponse);
         CaseData caseData = CaseData.caseDataBuilder().build();
