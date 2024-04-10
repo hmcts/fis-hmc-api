@@ -37,7 +37,7 @@ public interface HearingApiClient {
 
 
     @PostMapping(path = "/hearing")
-    @Retryable(value = {RuntimeException.class, TimeoutException.class })
+    @Retryable(retryFor = {RuntimeException.class, TimeoutException.class})
     HearingResponse createHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
