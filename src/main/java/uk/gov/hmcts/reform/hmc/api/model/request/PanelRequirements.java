@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.model.request;
 
-import javax.validation.Valid;
-import java.util.List;
 
 public class PanelRequirements {
 
