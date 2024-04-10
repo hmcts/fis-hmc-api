@@ -8,13 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.retry.annotation.Retryable;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 @FeignClient(
         name = "hearing-feign-api",
@@ -37,7 +35,7 @@ public interface HearingApiClient {
 
 
     @PostMapping(path = "/hearing")
-    @Retryable(value = {RuntimeException.class, TimeoutException.class })
+    //@Retryable(value = {RuntimeException.class, TimeoutException.class })
     HearingResponse createHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
