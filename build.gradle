@@ -96,9 +96,7 @@ configurations {
   contractTestRuntime.extendsFrom testRuntime
   contractTestCompile.extendsFrom testCompile
 }
-configurations.all {
-  exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
-}
+
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
@@ -330,7 +328,7 @@ dependencyManagement {
     dependencySet(group: 'org.json', version: '20230227') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.31') {
+    dependencySet(group: 'org.springframework', version: '5.3.33') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
@@ -338,13 +336,14 @@ dependencyManagement {
       entry 'spring-expression'
       entry 'spring-jcl'
       entry 'spring-webmvc'
+      entry 'spring-web'
     }
     dependencySet(group: 'commons-io', version: '2.14.0') {
       entry 'commons-io'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.3'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {

@@ -34,6 +34,13 @@
     <notes>adal4j-1.6.4.jar</notes>
     <cve>CVE-2021-42306</cve>
   </suppress>
+
+  <suppress>
+    <notes>bcprov-jdk15on-1.70.jar</notes>
+    <cve>CVE-2023-33201</cve>
+    <cve>CVE-2023-33202</cve>
+  </suppress>
+
   <suppress>
     <notes>Temporary Suppression</notes>
     <cve>CVE-2021-4277</cve>
@@ -46,29 +53,10 @@
     <cve>CVE-2023-44487</cve>
     <cve>CVE-2023-42794</cve>
     <cve>CVE-2023-42795</cve>
-    <cve>CVE-2023-45648</cve>
-    <cve>CVE-2023-33202</cve>
-    <cve>CVE-2023-34055</cve>
-    <cve>CVE-2023-46589</cve>
-    <cve>CVE-2023-6378</cve>
-    <cve>CVE-2023-6481</cve>
-    <cve>CVE-2023-34042</cve>
-    <cve>CVE-2024-25710</cve>
 
-    <cve>CVE-2024-26308</cve>
-    <cve>CVE-2023-1370</cve>
-    <!--bcprov-jdk15on-->
-    <cve>CVE-2023-33201</cve>
-    <!--ktor-network-tls-jvm-->
-    <cve>CVE-2023-45613</cve>
     <!--ktor-server-call-logging-jvm-->
     <cve>CVE-2016-10543</cve>
-    <!--nimbus-jose-jwt-->
-    <cve>CVE-2023-52428</cve>
-    <!--spring-security-crypto-->
-    <cve>CVE-2020-5408</cve>
     <!--spring-web-->
-    <cve>CVE-2024-22243</cve>
     <cve>CVE-2016-1000027</cve>
   </suppress>
 </suppressions>
