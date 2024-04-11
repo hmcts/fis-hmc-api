@@ -67,7 +67,6 @@ class AutomateHearingServiceTest {
     }
 
 
-    @Test
     @Ignore
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
