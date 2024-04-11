@@ -1,41 +1,46 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
 import feign.FeignException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -54,6 +59,8 @@ public class HearingsServiceImpl implements HearingsService {
     private List<String> futureHearingStatusList;
 
     private Hearings hearingDetails;
+
+    private final AutomatedHearingTransformer hearingTransformer;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -356,11 +363,38 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    @Async
-    public Hearings createHearings(CaseDetails caseDetails) {
+    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException {
 
-        // Start writing Async code from here
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        HearingResponse createHearingsResponse = new HearingResponse();
+        try {
+            List<AutomatedHearingRequest> hearingRequests = hearingTransformer.mappingHearingTransactionRequest(caseData);
+            for (AutomatedHearingRequest hearingRequest : hearingRequests) {
+                HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+                    userToken,
+                    s2sToken,
+                    hearingRequest
+                );
+                createHearingsResponse = HearingResponse.builder()
+                    .status(hearingResponse.getStatus())
+                    .versionNumber(hearingResponse.getVersionNumber())
+                    .hearingRequestID(hearingResponse.getHearingRequestID())
+                    .timeStamp(hearingResponse.getTimeStamp())
+                    .build();
 
-        return null;
+            }
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.info(
+                "Hearing api call HttpClientError exception {}",
+                exception.getMessage()
+            );
+        } catch (FeignException exception) {
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
+        } catch (Exception exception) {
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
+        }
+
+        return createHearingsResponse;
     }
 }

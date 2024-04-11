@@ -1,10 +1,14 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import org.json.simple.parser.ParseException;
+import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 
 @Service
 public interface HearingsService {
@@ -19,5 +23,5 @@ public interface HearingsService {
     Hearings getFutureHearings(String caseReference);
 
 
-    Hearings createHearings(CaseDetails caseDetails);
+    HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException;
 }
