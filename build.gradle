@@ -97,6 +97,8 @@ configurations {
   contractTestCompile.extendsFrom testCompile
 }
 
+/*configurations.all {exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'}*/
+
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
@@ -416,6 +418,11 @@ dependencies {
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
 
   implementation 'org.projectlombok:lombok:1.18.30'
+
+  configurations.all {
+    exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+  }
+
   annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
