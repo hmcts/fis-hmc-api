@@ -325,7 +325,7 @@ dependencyManagement {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
-    dependencySet(group: 'org.json', version: '20230227') {
+    dependencySet(group: 'org.json', version: '20240303') {
       entry 'json'
     }
     dependencySet(group: 'org.springframework', version: '5.3.33') {
@@ -362,6 +362,23 @@ dependencyManagement {
       entry 'logback-classic'
       entry 'logback-core'
     }
+    dependencySet(group: 'io.grpc', version: '1.62.2') {
+      entry 'grpc-api'
+      entry 'grpc-context'
+      entry 'grpc-core'
+      entry 'grpc-netty'
+      entry 'grpc-protobuf'
+      entry 'grpc-protobuf-lite'
+      entry 'grpc-stub'
+
+    }
+    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+      entry 'nimbus-jose-jwt'
+    }
+    //CVE-2023-3635
+    dependencySet(group: 'com.squareup.okio', version: '3.9.0') {
+      entry 'okio-jvm'
+    }
   }
 }
 dependencies {
@@ -375,9 +392,9 @@ dependencies {
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
 
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.16.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.0')
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.10'
