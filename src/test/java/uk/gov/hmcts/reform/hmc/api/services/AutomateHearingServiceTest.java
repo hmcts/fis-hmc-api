@@ -40,13 +40,11 @@ class AutomateHearingServiceTest {
 
     @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
-
         HearingResponse hearingResponse =
             HearingResponse.builder().build();
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-
         when(hearingApiClient.createHearingDetails(anyString(), any(), any()))
                 .thenReturn(hearingResponse);
         CaseData caseData = CaseData.caseDataBuilder().build();

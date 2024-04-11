@@ -15,6 +15,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
+import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseCategories;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingDetails;
@@ -26,13 +27,14 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -68,17 +70,11 @@ public final class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
     private static String ccdBaseUrl;
 
-    /*@Autowired
-    private ObjectMapper objectMapper;*/
-
-    /*@Autowired
-    private CaseFlagDataServiceImpl caseFlagDataServiceImpl;*/
-
     private AutomatedHearingTransactionRequestMapper() {
         throw new IllegalStateException("Utility class");
     }
 
-    public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) throws IOException {
+    public List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) {
 
         String publicCaseNameMapper = EMPTY;
         if (C100.equals(caseData.getCaseTypeOfApplication())) {
@@ -99,14 +95,13 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseDeepLink(ccdBaseUrl + "caseReference" + CASE_FILE_VIEW) //Need to verify
                 .hmctsInternalCaseName("")
                 .publicCaseName(publicCaseNameMapper)
-                .caseAdditionalSecurityFlag(Boolean.TRUE)
-                .caseInterpreterRequiredFlag(Boolean.TRUE)
-                .caseCategories(getCaseCategories())//
-                .caseManagementLocationCode("")
-                .caseRestrictedFlag(Boolean.TRUE)
+                .caseAdditionalSecurityFlag(Boolean.TRUE) //1
+                .caseInterpreterRequiredFlag(Boolean.TRUE) // 2
+                .caseCategories(getCaseCategories())
+                .caseManagementLocationCode("") // 3
+                .caseRestrictedFlag(Boolean.TRUE) // 4
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
-        //  caseDetails.getData().get("ordershearingdetails").toString().
         //CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
         List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
             caseData);
@@ -165,7 +160,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         for (Element<HearingData> hearingDataEle : headingDetailsList) {
             HearingData hearingData = hearingDataEle.getValue();
             DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-mm-dd");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
             AutomatedHearingDetails details = AutomatedHearingDetails.automatedHearingDetailsWith()
                 .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
@@ -175,8 +170,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                     HearingWindow.hearingWindowWith()
                         .dateRangeStart(hearingData.getEarliestHearingDate() != null
                                             ? hearingData.getEarliestHearingDate().format(
-                            formatter) : null)  // which value needs to be set here ...
-                        // there is no value coming from case data to set over here ... checked manage orders also no use ...
+                            formatter) : null)
                         .dateRangeEnd(hearingData.getLatestHearingDate() != null ? hearingData.getLatestHearingDate().format(
                             formatter) : null)
                         .firstDateTimeMustBe(hearingData.getFirstDateOfTheHearing() == null ? null :
@@ -198,12 +192,12 @@ public final class AutomatedHearingTransactionRequestMapper {
                 )) // this is complex logic need to write
                 .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
                 .hearingLocations(
-                    Arrays.asList(
+                    Collections.singletonList(
                         HearingLocation.hearingLocationWith()
                             .locationType(COURT)
                             .locationId(hearingData.getCourtList().getValueCode())
                             .build()))
-                .facilitiesRequired(Arrays.asList())
+                .facilitiesRequired(List.of())
                 .listingComments(hearingData.getAdditionalHearingDetails())
                 .hearingRequester(hearingData.getHearingJudgePersonalCode())
                 .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
@@ -232,73 +226,80 @@ public final class AutomatedHearingTransactionRequestMapper {
         return 0;
     }
 
-    private String dateOfHearing(String firstDate, String hours, String minutes) {
+    private String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
         log.info("firstDate: {}",firstDate);
-        return String.format("T{0}:{1}:00Z", hours != null ? hours : "00", minutes != null ? minutes : "00");
+        return String.format("{0}T{1}:{2}:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
 
     }
 
     private int noOfPhysicalAttendees(YesOrNo attendSameWayYesOrNo, HearingData hearingData) {
-
+        int totalParticipants = 0;
         if (YesOrNo.YES.equals(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
-            ArrayList<String> noOfParticipants =
-                Lists.newArrayList(
-                    hearingData.getHearingDataApplicantDetails().getApplicantName1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName3(),
-                    hearingData.getHearingDataApplicantDetails()
-                        .getApplicantName4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName5(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor3(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor5(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName2(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName3(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName4(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName5(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor2()
+            ArrayList<String> noOfParticipants = Lists.newArrayList(
+                                   hearingData.getHearingDataApplicantDetails().getApplicantName1(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantName2(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantName3(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantName4(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantName5(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitor1(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitor2(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitor3(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitor4(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitor5(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentName1(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentName2(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentName3(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentName4(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentName5(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitor1(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitor2(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitor3(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitor4(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitor5()
                 );
             noOfParticipants.removeAll(Arrays.asList("", null));
-            return noOfParticipants.size();
-        } else if (YesOrNo.NO.equals(attendSameWayYesOrNo)) {
-            ArrayList<Object> noOfParticipants =
-                Lists.newArrayList(
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4().getValueCode(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5().getValueCode(),
-                    hearingData.getLocalAuthorityHearingChannel().getValueCode(),
-                    hearingData.getCafcassCymruHearingChannel().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel1().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel2().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel3().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel4().getValueCode(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5().getValueCode()
-                );
-            for (Object noOfParticipant : noOfParticipants) {
-                if (noOfParticipant != null && noOfParticipant.equals("In person")) {
-                    return 0;
-                }
-
-            }
+            totalParticipants = noOfParticipants.size();
         }
-        return 0;
+        if (YesOrNo.NO.equals(attendSameWayYesOrNo)) {
+            ArrayList<DynamicList> noOfParticipants = Lists.newArrayList(
+                                   hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4(),
+                                   hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5(),
+                                   hearingData.getLocalAuthorityHearingChannel(),
+                                   hearingData.getCafcassCymruHearingChannel(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5(),
+                                   hearingData.getHearingDataRespondentDetails()
+                                       .getRespondentSolicitorHearingChannel1(),
+                                   hearingData.getHearingDataRespondentDetails()
+                                       .getRespondentSolicitorHearingChannel2(),
+                                   hearingData.getHearingDataRespondentDetails()
+                                       .getRespondentSolicitorHearingChannel3(),
+                                   hearingData.getHearingDataRespondentDetails()
+                                       .getRespondentSolicitorHearingChannel4(),
+                                   hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5()
+                );
 
+            Map<Boolean, List<String>> selectedCodes = noOfParticipants.stream().filter(Objects::nonNull)
+                .map(DynamicList::getValueCode)
+                .filter(StringUtils::isNotBlank).collect(Collectors.partitioningBy(p -> HearingChannelsEnum.INTER.name()
+                    .equals(p)));
+            int inPersonCount = selectedCodes.get(Boolean.TRUE).size();
+            int otherCount = selectedCodes.get(Boolean.FALSE).size();
+            return hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER ? totalParticipants - otherCount :
+                inPersonCount;
+        }
+        return totalParticipants;
     }
 
     @NotNull

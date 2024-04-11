@@ -135,9 +135,6 @@ public class HearingData {
     private HearingDataApplicantDetails hearingDataApplicantDetails;
 
     private HearingDataRespondentDetails hearingDataRespondentDetails;
-
-    //private List<Element<HearingDataFromTabToDocmosis>> hearingdataFromHearingTab;
-
     private final YesOrNo isCafcassCymru;
 
     @JsonProperty("additionalDetailsForHearingDateOptions")
