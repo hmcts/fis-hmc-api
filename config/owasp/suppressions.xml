@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress>
-    <notes>spring-*</notes>
-    <cve>CVE-2021-31684</cve>
-  </suppress>
-  <suppress>
-    <notes>ktor-server-netty-1.3.1.jar</notes>
-    <cve>CVE-2020-26129</cve>
-  </suppress>
-  <suppress>
-    <notes>ktor-server-core-1.3.1.jar</notes>
-    <cve>CVE-2021-25761</cve>
-  </suppress>
-  <suppress>
-    <notes>icu4j-61.1.jar</notes>
-    <cve>CVE-2018-18928</cve>
-    <cve>CVE-2020-21913</cve>
-  </suppress>
-  <!--<suppress>
-    <notes><![CDATA[
-      jackson-databind-2.14.0-rc1.jar ]]></notes>
-    <cve>CVE-2023-35116</cve>
-  </suppress>-->
-  <suppress>
     <notes>json-20160212.jar</notes>
     <cve>CVE-2022-45688</cve>
   </suppress>
