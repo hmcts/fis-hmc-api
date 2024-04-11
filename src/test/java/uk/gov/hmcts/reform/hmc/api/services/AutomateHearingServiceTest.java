@@ -66,8 +66,9 @@ class AutomateHearingServiceTest {
         Assertions.assertNull(hearingResponse.getStatus());
     }
 
-    @Ignore
+
     @Test
+    @Ignore
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
