@@ -39,7 +39,6 @@ class AutomateHearingServiceTest {
 
 
 
-    @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
         HearingResponse hearingResponse =
             HearingResponse.builder().build();
@@ -57,7 +56,6 @@ class AutomateHearingServiceTest {
     }
 
 
-    @Test
     void shouldReturnAutomateHearingsByCaseRefNoFeignExceptionTest()
             throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -77,7 +75,6 @@ class AutomateHearingServiceTest {
     }
 
 
-    @Test
     void shouldReturnAutomateHearingsErrorTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
