@@ -60,7 +60,6 @@ public class HearingsServiceImpl implements HearingsService {
 
     private Hearings hearingDetails;
 
-    private final AutomatedHearingTransformer hearingTransformer;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -369,7 +368,8 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         HearingResponse createHearingsResponse = new HearingResponse();
         try {
-            List<AutomatedHearingRequest> hearingRequests = hearingTransformer.mappingHearingTransactionRequest(caseData);
+            List<AutomatedHearingRequest> hearingRequests = AutomatedHearingTransformer
+                .mappingHearingTransactionRequest(caseData);
             for (AutomatedHearingRequest hearingRequest : hearingRequests) {
                 HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
                     userToken,
