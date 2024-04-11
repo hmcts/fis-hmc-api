@@ -57,5 +57,18 @@
 
     <cve>CVE-2024-26308</cve>
     <cve>CVE-2023-1370</cve>
+    <!--bcprov-jdk15on-->
+    <cve>CVE-2023-33201</cve>
+    <!--ktor-network-tls-jvm-->
+    <cve>CVE-2023-45613</cve>
+    <!--ktor-server-call-logging-jvm-->
+    <cve>CVE-2016-10543</cve>
+    <!--nimbus-jose-jwt-->
+    <cve>CVE-2023-52428</cve>
+    <!--spring-security-crypto-->
+    <cve>CVE-2020-5408</cve>
+    <!--spring-web-->
+    <cve>CVE-2024-22243</cve>
+    <cve>CVE-2016-1000027</cve>
   </suppress>
 </suppressions>
