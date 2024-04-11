@@ -100,7 +100,6 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseRestrictedFlag(Boolean.TRUE) // 4
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
-        //CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
         List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
             caseData);
         List<AutomatedHearingRequest> hearingRequests = new ArrayList<>();
@@ -138,20 +137,6 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static List<AutomatedHearingDetails> getHearingDetails(String id, CaseData caseData) {
         log.info("id: {}",id);
-        /* The below variables are not used
-        String publicCaseNameMapper = EMPTY;
-        Boolean privateHearingRequiredFlagMapper = FALSE;
-        if (FL401.equals(caseData.getCaseTypeOfApplication())) {
-            PartyDetails applicantMap = caseData.getApplicantsFL401();
-            PartyDetails respondentTableMap = caseData.getRespondentsFL401();
-            publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
-                ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
-        } else if (C100.equals(caseData.getCaseTypeOfApplication())) {
-            publicCaseNameMapper = RE_MINOR;
-            privateHearingRequiredFlagMapper = TRUE;
-        }*/
-        //String hmctsInternalCaseNameMapper = id + UNDERSCORE + caseData.getApplicantCaseName();
-        //String caseSlaStartDateMapper = (String) caseData.getDateSubmitted();
         List<AutomatedHearingDetails> hearingDetailsList = new ArrayList<>();
         List<Element<HearingData>> headingDetailsList = caseData.getManageOrders().getOrdersHearingDetails();
 
@@ -225,8 +210,8 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
-        log.info("firstDate: {}",firstDate);
-        return String.format("{0}T{1}:{2}:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
+        return
+            String.format("{0}T{1}:{2}:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
 
     }
 
