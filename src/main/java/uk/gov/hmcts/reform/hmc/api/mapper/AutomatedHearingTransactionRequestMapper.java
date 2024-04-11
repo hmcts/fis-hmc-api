@@ -210,9 +210,7 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
-        return
-            String.format("{0}T{1}:{2}:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
-
+        return null;
     }
 
     private static int noOfPhysicalAttendees(YesOrNo attendSameWayYesOrNo, HearingData hearingData) {
