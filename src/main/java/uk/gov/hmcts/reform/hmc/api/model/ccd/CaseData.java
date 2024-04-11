@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
@@ -23,6 +24,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -62,13 +64,13 @@ public class CaseData extends BaseCaseData implements MappableObject {
     private AllPartyFlags allPartyFlags;
 
     @JsonUnwrapped
-    private final ManageOrders manageOrders;
+    private ManageOrders manageOrders;
 
     @JsonUnwrapped
-    private final AttendHearing attendHearing;
+    private AttendHearing attendHearing;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDate issueDate;
+    private LocalDate issueDate;
 
     @JsonProperty("orderId")
     private UUID orderId;
