@@ -348,6 +348,19 @@ dependencyManagement {
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
+    dependencySet(group: 'io.ktor', version: '2.3.5') {
+      entry 'ktor-network-tls-jvm'
+    }
+
+    // CVE-2021-27568, CVE-2023-1370
+    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+      entry 'nimbus-jose-jwt'
+    }
+
+    dependencySet(group: 'ch.qos.logback', version: '1.2.13') {
+      entry 'logback-classic'
+      entry 'logback-core'
+    }
   }
 }
 dependencies {
