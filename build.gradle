@@ -96,7 +96,9 @@ configurations {
   contractTestRuntime.extendsFrom testRuntime
   contractTestCompile.extendsFrom testCompile
 }
-
+configurations.all {
+  exclude group: 'org.bouncycastle', module: 'bcprov-jdk15on'
+}
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
