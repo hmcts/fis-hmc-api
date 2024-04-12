@@ -262,21 +262,21 @@ dependencyManagement {
   dependencies {
     dependencySet(
       group: 'com.fasterxml.jackson.core',
-      version: '2.16.0'
+      version: '2.17.0'
     ) {
       entry 'jackson-core'
       entry 'jackson-databind'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.16.0'
+      version: '2.17.0'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.15.2'
+      version: '2.17.0'
     ) {
       entry 'jackson-module-parameter-names'
     }
@@ -341,8 +341,8 @@ dependencyManagement {
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
@@ -376,6 +376,9 @@ dependencyManagement {
     dependencySet(group: 'com.squareup.okio', version: '3.9.0') {
       entry 'okio-jvm'
     }
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
   }
 }
 dependencies {
@@ -387,7 +390,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0')
