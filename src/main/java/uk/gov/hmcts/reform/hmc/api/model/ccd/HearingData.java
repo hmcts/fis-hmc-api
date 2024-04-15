@@ -72,7 +72,7 @@ public class HearingData {
     private final String hearingEstimatedDays;
 
     @JsonProperty("allPartiesAttendHearingSameWayYesOrNo")
-    private final YesOrNo allPartiesAttendHearingSameWayYesOrNo;
+    private final String allPartiesAttendHearingSameWayYesOrNo;
 
     /*@JsonSerialize(using = CustomEnumSerializer.class)
     @JsonProperty("hearingAuthority")
@@ -127,7 +127,7 @@ public class HearingData {
     private String customDetails;
 
     @JsonProperty("isRenderingRequiredFlag")
-    private YesOrNo isRenderingRequiredFlag;
+    private String isRenderingRequiredFlag;
 
     @JsonProperty("fillingFormRenderingInfo")
     private String fillingFormRenderingInfo;
@@ -135,7 +135,8 @@ public class HearingData {
     private HearingDataApplicantDetails hearingDataApplicantDetails;
 
     private HearingDataRespondentDetails hearingDataRespondentDetails;
-    private final YesOrNo isCafcassCymru;
+
+    private final String isCafcassCymru;
 
     @JsonProperty("additionalDetailsForHearingDateOptions")
     private String additionalDetailsForHearingDateOptions;
