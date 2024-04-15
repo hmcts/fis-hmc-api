@@ -96,10 +96,10 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .hmctsInternalCaseName("")
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(Boolean.TRUE) //1
-                .caseInterpreterRequiredFlag(Boolean.TRUE) // 2
+                .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
                 .caseCategories(getCaseCategories())
-                .caseManagementLocationCode("") // 3
-                .caseRestrictedFlag(Boolean.TRUE) // 4
+                .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
+                .caseRestrictedFlag(Boolean.TRUE)
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
         //CaseDetailResponse ccdResponse = caseFlagDataServiceImpl.getCcdCaseData(caseDetails);
