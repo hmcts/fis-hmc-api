@@ -205,7 +205,8 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData) {
         int totalParticipants = 0;
-        if ("YES".equalsIgnoreCase(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
+        if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
+            && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
             ArrayList<String> noOfParticipants = Lists.newArrayList(
                                    hearingData.getHearingDataApplicantDetails().getApplicantName1(),
                                    hearingData.getHearingDataApplicantDetails().getApplicantName2(),
