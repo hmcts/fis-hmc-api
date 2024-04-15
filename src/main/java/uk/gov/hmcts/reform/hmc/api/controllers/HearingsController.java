@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -350,9 +351,9 @@ public class HearingsController {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-                hearingsService.createAutomatedHearings(caseData);
+                HearingResponse hearingsResponse = hearingsService.createAutomatedHearings(caseData);
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(caseData.getId());
+                return ResponseEntity.ok(hearingsResponse);
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

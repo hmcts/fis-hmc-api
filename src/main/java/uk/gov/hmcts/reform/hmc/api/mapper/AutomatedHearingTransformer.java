@@ -15,7 +15,7 @@ public final class AutomatedHearingTransformer {
     }
 
 
-    public static List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) throws IOException {
+    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData) {
         return AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData);
     }
 

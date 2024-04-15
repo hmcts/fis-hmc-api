@@ -72,7 +72,7 @@ public class CaseData extends BaseCaseData implements MappableObject {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate issueDate;
 
-    @JsonProperty("orderId")
-    private UUID orderId;
+    @JsonProperty("hearingData")
+    private HearingData hearingData;
 
 }

@@ -72,7 +72,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         throw new IllegalStateException("Utility class");
     }
 
-    public static List<AutomatedHearingRequest> mappingHearingTransactionRequest(CaseData caseData) {
+    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData) {
 
         String publicCaseNameMapper = EMPTY;
         if (C100.equals(caseData.getCaseTypeOfApplication())) {
@@ -102,16 +102,13 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .build();
         List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
             caseData);
-        List<AutomatedHearingRequest> hearingRequests = new ArrayList<>();
-        List<AutomatedHearingDetails> hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
-        for (AutomatedHearingDetails details : hearingDetails) {
-            AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
-            hearingRequest.setPartyDetails(partyDetailsList);
-            hearingRequest.setCaseDetails(caseDetail);
-            hearingRequest.setHearingDetails(details);
-            hearingRequests.add(hearingRequest);
-        }
-        return hearingRequests;
+        AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
+        AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
+        hearingRequest.setPartyDetails(partyDetailsList);
+        hearingRequest.setCaseDetails(caseDetail);
+        hearingRequest.setHearingDetails(hearingDetails);
+
+        return hearingRequest;
 
     }
 
@@ -135,63 +132,58 @@ public final class AutomatedHearingTransactionRequestMapper {
         return caseCategoriesList;
     }
 
-    private static List<AutomatedHearingDetails> getHearingDetails(String id, CaseData caseData) {
+    private static AutomatedHearingDetails getHearingDetails(String id, CaseData caseData) {
         log.info("id: {}",id);
-        List<AutomatedHearingDetails> hearingDetailsList = new ArrayList<>();
-        List<Element<HearingData>> headingDetailsList = caseData.getManageOrders().getOrdersHearingDetails();
+        HearingData hearingData = caseData.getHearingData();
+        DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        for (Element<HearingData> hearingDataEle : headingDetailsList) {
-            HearingData hearingData = hearingDataEle.getValue();
-            DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        AutomatedHearingDetails details = AutomatedHearingDetails.automatedHearingDetailsWith()
+            .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
+            .listingAutoChangeReasonCode("")
+            .hearingType(hearingType != null ? hearingType.getCode() : null)
+            .hearingWindow(
+                HearingWindow.hearingWindowWith()
+                    .dateRangeStart(hearingData.getEarliestHearingDate() != null
+                                        ? hearingData.getEarliestHearingDate().format(
+                        formatter) : null)
+                    .dateRangeEnd(hearingData.getLatestHearingDate() != null ? hearingData.getLatestHearingDate().format(
+                        formatter) : null)
+                    .firstDateTimeMustBe(hearingData.getFirstDateOfTheHearing() == null ? null :
+                                             dateOfHearing(
+                                                 hearingData.getFirstDateOfTheHearing().format(formatter),
+                                                 hearingData.getHearingMustTakePlaceAtHour(),
+                                                 hearingData.getHearingMustTakePlaceAtMinute()
+                                             ))
+                    .build())
+            .duration(hearingDuration(
+                hearingData.getHearingEstimatedDays(),
+                hearingData.getHearingEstimatedHours(),
+                hearingData.getHearingEstimatedMinutes()
+            ))
+            .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
+            .numberOfPhysicalAttendees(noOfPhysicalAttendees(
+                hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
+                hearingData
+            ))
+            .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
+            .hearingLocations(
+                Collections.singletonList(
+                    HearingLocation.hearingLocationWith()
+                        .locationType(COURT)
+                        .locationId(hearingData.getCourtList().getValueCode())
+                        .build()))
+            .facilitiesRequired(List.of())
+            .listingComments(hearingData.getAdditionalHearingDetails())
+            .hearingRequester(hearingData.getHearingJudgePersonalCode())
+            .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
+            .panelRequirements(null)
+            .leadJudgeContractType("")
+            .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
+            .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
+            .build();
 
-            AutomatedHearingDetails details = AutomatedHearingDetails.automatedHearingDetailsWith()
-                .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
-                .listingAutoChangeReasonCode("")
-                .hearingType(hearingType != null ? hearingType.getCode() : null)
-                .hearingWindow(
-                    HearingWindow.hearingWindowWith()
-                        .dateRangeStart(hearingData.getEarliestHearingDate() != null
-                                            ? hearingData.getEarliestHearingDate().format(
-                            formatter) : null)
-                        .dateRangeEnd(hearingData.getLatestHearingDate() != null ? hearingData.getLatestHearingDate().format(
-                            formatter) : null)
-                        .firstDateTimeMustBe(hearingData.getFirstDateOfTheHearing() == null ? null :
-                                                 dateOfHearing(
-                                                     hearingData.getFirstDateOfTheHearing().format(formatter),
-                                                     hearingData.getHearingMustTakePlaceAtHour(),
-                                                     hearingData.getHearingMustTakePlaceAtMinute()
-                                                 ))
-                        .build())
-                .duration(hearingDuration(
-                    hearingData.getHearingEstimatedDays(),
-                    hearingData.getHearingEstimatedHours(),
-                    hearingData.getHearingEstimatedMinutes()
-                ))
-                .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
-                .numberOfPhysicalAttendees(noOfPhysicalAttendees(
-                    hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
-                    hearingData
-                )) // this is complex logic need to write
-                .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
-                .hearingLocations(
-                    Collections.singletonList(
-                        HearingLocation.hearingLocationWith()
-                            .locationType(COURT)
-                            .locationId(hearingData.getCourtList().getValueCode())
-                            .build()))
-                .facilitiesRequired(List.of())
-                .listingComments(hearingData.getAdditionalHearingDetails())
-                .hearingRequester(hearingData.getHearingJudgePersonalCode())
-                .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
-                .panelRequirements(null)
-                .leadJudgeContractType("")
-                .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
-                .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
-                .build();
-            hearingDetailsList.add(details);
-        }
-        return hearingDetailsList;
+        return details;
     }
 
     private static int hearingDuration(String days, String hours, String minutes) {
