@@ -203,9 +203,9 @@ public final class AutomatedHearingTransactionRequestMapper {
         return String.format("%sT%s:%s:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
     }
 
-    private static int noOfPhysicalAttendees(YesOrNo attendSameWayYesOrNo, HearingData hearingData) {
+    private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData) {
         int totalParticipants = 0;
-        if (YesOrNo.YES.equals(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
+        if ("YES".equalsIgnoreCase(attendSameWayYesOrNo) && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
             ArrayList<String> noOfParticipants = Lists.newArrayList(
                                    hearingData.getHearingDataApplicantDetails().getApplicantName1(),
                                    hearingData.getHearingDataApplicantDetails().getApplicantName2(),
@@ -231,7 +231,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             noOfParticipants.removeAll(Arrays.asList("", null));
             totalParticipants = noOfParticipants.size();
         }
-        if (YesOrNo.NO.equals(attendSameWayYesOrNo)) {
+        if ("NO".equalsIgnoreCase(attendSameWayYesOrNo)) {
             ArrayList<DynamicList> noOfParticipants = Lists.newArrayList(
                                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1(),
                                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2(),
