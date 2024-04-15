@@ -138,7 +138,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        AutomatedHearingDetails details = AutomatedHearingDetails.automatedHearingDetailsWith()
+        return AutomatedHearingDetails.automatedHearingDetailsWith()
             .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
             .listingAutoChangeReasonCode("")
             .hearingType(hearingType != null ? hearingType.getCode() : null)
@@ -182,8 +182,6 @@ public final class AutomatedHearingTransactionRequestMapper {
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
             .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
             .build();
-
-        return details;
     }
 
     private static int hearingDuration(String days, String hours, String minutes) {
