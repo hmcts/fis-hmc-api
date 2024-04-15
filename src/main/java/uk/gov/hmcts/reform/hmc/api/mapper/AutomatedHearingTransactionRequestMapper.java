@@ -96,7 +96,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseAdditionalSecurityFlag(Boolean.TRUE) //1
                 .caseInterpreterRequiredFlag(Boolean.TRUE) // 2
                 .caseCategories(getCaseCategories())
-                .caseManagementLocationCode("") // 3
+                .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
                 .caseRestrictedFlag(Boolean.TRUE) // 4
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
