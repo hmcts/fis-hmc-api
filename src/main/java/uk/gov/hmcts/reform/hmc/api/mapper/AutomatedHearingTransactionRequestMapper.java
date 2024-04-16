@@ -91,13 +91,13 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .requestTimeStamp(LocalDateTime.now())
                 .externalCaseReference("") //Need to verify
                 .caseDeepLink(ccdBaseUrl + "caseReference" + CASE_FILE_VIEW) //Need to verify
-                .hmctsInternalCaseName("")
+                .hmctsInternalCaseName(caseData.getApplicantCaseName())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(Boolean.TRUE) //1
-                .caseInterpreterRequiredFlag(Boolean.TRUE) // 2
+                .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
-                .caseRestrictedFlag(Boolean.TRUE) // 4
+                .caseRestrictedFlag(Boolean.TRUE)
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")))
                 .build();
         List<uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
