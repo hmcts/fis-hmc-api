@@ -8,14 +8,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
@@ -23,10 +23,11 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Builder(builderMethodName = "caseDataBuilder")
+@SuperBuilder(builderMethodName = "caseDataBuilder")
 public class CaseData extends BaseCaseData implements MappableObject {
 
     private String familymanCaseNumber;
@@ -62,15 +63,15 @@ public class CaseData extends BaseCaseData implements MappableObject {
     private AllPartyFlags allPartyFlags;
 
     @JsonUnwrapped
-    private final ManageOrders manageOrders;
+    private ManageOrders manageOrders;
 
     @JsonUnwrapped
-    private final AttendHearing attendHearing;
+    private AttendHearing attendHearing;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private final LocalDate issueDate;
+    private LocalDate issueDate;
 
-    @JsonProperty("orderId")
-    private UUID orderId;
+    @JsonProperty("hearingData")
+    private HearingData hearingData;
 
 }

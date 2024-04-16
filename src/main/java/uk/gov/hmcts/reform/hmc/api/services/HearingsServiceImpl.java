@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +58,6 @@ public class HearingsServiceImpl implements HearingsService {
 
     private Hearings hearingDetails;
 
-    private final AutomatedHearingTransformer hearingTransformer;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -227,14 +224,13 @@ public class HearingsServiceImpl implements HearingsService {
 
         for (Hearings hearings : casesWithHearings) {
             List<CaseHearing> listedOrCancelledHearings =
-                    hearings.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            (hearing.getHmcStatus().equals(LISTED)
-                                                            || hearing.getHmcStatus()
-                                                                    .equals(CANCELLED))
-                                                    && hearing.getHearingDaySchedule() != null)
-                            .collect(Collectors.toList());
+                hearings.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            (hearing.getHmcStatus().equals(LISTED)
+                                || hearing.getHmcStatus()
+                                .equals(CANCELLED))
+                                && hearing.getHearingDaySchedule() != null).toList();
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
                 CourtDetail caseCourt =
                         allVenues.stream()
@@ -316,16 +312,15 @@ public class HearingsServiceImpl implements HearingsService {
                     futureHearingStatusList.stream().map(String::trim).collect(Collectors.toList());
 
             final List<CaseHearing> filteredHearingsByStatus =
-                    hearingDetails.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            hearingStatuses.stream()
-                                                    .anyMatch(
-                                                            hearingStatus ->
-                                                                    hearingStatus.equals(
-                                                                            hearing
-                                                                                    .getHmcStatus())))
-                            .collect(Collectors.toList());
+                hearingDetails.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            hearingStatuses.stream()
+                                .anyMatch(
+                                    hearingStatus ->
+                                        hearingStatus.equals(
+                                            hearing
+                                                .getHmcStatus()))).toList();
 
             final List<CaseHearing> allFutureHearings =
                     filteredHearingsByStatus.stream()
@@ -363,38 +358,25 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException, ParseException {
+    public HearingResponse createAutomatedHearings(CaseData caseData) {
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
-        HearingResponse createHearingsResponse = new HearingResponse();
+        HearingResponse hearingResponse = HearingResponse.builder().build();
         try {
-            List<AutomatedHearingRequest> hearingRequests = hearingTransformer.mappingHearingTransactionRequest(caseData);
-            for (AutomatedHearingRequest hearingRequest : hearingRequests) {
-                HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
-                    userToken,
-                    s2sToken,
-                    hearingRequest
-                );
-                createHearingsResponse = HearingResponse.builder()
-                    .status(hearingResponse.getStatus())
-                    .versionNumber(hearingResponse.getVersionNumber())
-                    .hearingRequestID(hearingResponse.getHearingRequestID())
-                    .timeStamp(hearingResponse.getTimeStamp())
-                    .build();
 
-            }
-        } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.info(
-                "Hearing api call HttpClientError exception {}",
-                exception.getMessage()
-            );
-        } catch (FeignException exception) {
-            log.info("Hearing api call Feign exception {}", exception.getMessage());
-        } catch (Exception exception) {
-            log.info("Hearing api call Exception exception {}", exception.getMessage());
+            AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(caseData);
+            hearingResponse = hearingApiClient.createHearingDetails(userToken, s2sToken, hearingRequest);
+            return HearingResponse.builder()
+                .status(hearingResponse.getStatus())
+                .versionNumber(hearingResponse.getVersionNumber())
+                .hearingRequestID(hearingResponse.getHearingRequestID())
+                .timeStamp(hearingResponse.getTimeStamp())
+                .build();
+
+        }  catch (Exception exception) {
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
         }
-
-        return createHearingsResponse;
+        return hearingResponse;
     }
 }
