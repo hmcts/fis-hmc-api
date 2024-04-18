@@ -103,7 +103,6 @@ public final class AutomatedHearingTransactionRequestMapper {
         List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
             caseData);
         AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
-        AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
         hearingRequest.setPartyDetails(partyDetailsList);
         hearingRequest.setCaseDetails(caseDetail);
         hearingRequest.setHearingDetails(hearingDetails);
