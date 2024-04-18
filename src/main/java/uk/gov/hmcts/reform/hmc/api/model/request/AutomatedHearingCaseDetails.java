@@ -52,7 +52,7 @@ public class AutomatedHearingCaseDetails {
     @JsonProperty("caseManagementLocationCode")
     private String caseManagementLocationCode;
 
-    @JsonProperty("caseRestrictedFlag")
+    @JsonProperty("caserestrictedFlag")
     private Boolean caseRestrictedFlag;
 
     @JsonProperty("caseSLAStartDate")

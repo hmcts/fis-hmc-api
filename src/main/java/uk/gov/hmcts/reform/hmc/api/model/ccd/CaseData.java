@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 @SuperBuilder(builderMethodName = "caseDataBuilder")
 public class CaseData extends BaseCaseData implements MappableObject {
 
+    private long id;
     private String familymanCaseNumber;
     private String dateSubmitted;
     private String caseTypeOfApplication;
