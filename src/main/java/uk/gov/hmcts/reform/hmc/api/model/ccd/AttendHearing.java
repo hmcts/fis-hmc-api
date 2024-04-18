@@ -13,4 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AttendHearing {
     private Boolean isWelshNeeded;
+    private Boolean isInterpreterNeeded;
 }

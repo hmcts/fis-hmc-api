@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -359,24 +361,33 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Override
     public HearingResponse createAutomatedHearings(CaseData caseData) {
-
-        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
-        final String s2sToken = authTokenGenerator.generate();
-        HearingResponse hearingResponse = HearingResponse.builder().build();
         try {
-
-            AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(caseData);
-            hearingResponse = hearingApiClient.createHearingDetails(userToken, s2sToken, hearingRequest);
+            ObjectMapper objectMappers = new ObjectMapper();
+            objectMappers.registerModule(new JavaTimeModule());
+            final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+            final String s2sToken = authTokenGenerator.generate();
+            AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
+                caseData);
+            String automatedHearingRequestJson = objectMappers.writerWithDefaultPrettyPrinter().writeValueAsString(
+                hearingRequest);
+            log.info(
+                "Automated Hearing Request: createAutomatedHearings: hearingRequest: {}",
+                automatedHearingRequestJson
+            );
+            HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+                userToken,
+                s2sToken,
+                hearingRequest
+            );
             return HearingResponse.builder()
                 .status(hearingResponse.getStatus())
                 .versionNumber(hearingResponse.getVersionNumber())
                 .hearingRequestID(hearingResponse.getHearingRequestID())
                 .timeStamp(hearingResponse.getTimeStamp())
                 .build();
-
-        }  catch (Exception exception) {
-            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return hearingResponse;
+
     }
 }

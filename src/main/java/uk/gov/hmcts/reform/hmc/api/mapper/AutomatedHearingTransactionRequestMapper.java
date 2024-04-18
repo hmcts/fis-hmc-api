@@ -13,6 +13,8 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
@@ -69,6 +71,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 public final class AutomatedHearingTransactionRequestMapper {
     @Value("${ccd.ui.url}")
     private static String ccdBaseUrl;
+    private static String caseReference = EMPTY;
 
     private AutomatedHearingTransactionRequestMapper() {
         throw new IllegalStateException("Utility class");
@@ -87,6 +90,12 @@ public final class AutomatedHearingTransactionRequestMapper {
                 publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
                     ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
             }
+
+        if (caseData.getCaseLinks() != null && !caseData.getCaseLinks().isEmpty()) {
+            List<CaseLinkElement<CaseLinkData>> caseLinkDataLists = caseData.getCaseLinks();
+            caseLinkDataLists.forEach(response -> caseReference = response.getValue().getCaseReference());
+        }
+
 
             AutomatedHearingCaseDetails caseDetail =
                 AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
