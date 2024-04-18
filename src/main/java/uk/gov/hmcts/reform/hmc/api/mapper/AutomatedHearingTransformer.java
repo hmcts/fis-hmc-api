@@ -12,8 +12,8 @@ public final class AutomatedHearingTransformer {
     }
 
 
-    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData) {
-        return AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData);
+    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,String ccdBaseUrl) {
+        return AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData,ccdBaseUrl);
     }
 
 }
