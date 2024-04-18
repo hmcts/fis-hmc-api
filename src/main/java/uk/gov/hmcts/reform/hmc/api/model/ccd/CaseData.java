@@ -28,7 +28,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @SuperBuilder(builderMethodName = "caseDataBuilder")
-public class CaseData extends BaseCaseData implements MappableObject {
+public class CaseData  {
 
     private long id;
     private String familymanCaseNumber;

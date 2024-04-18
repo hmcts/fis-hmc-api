@@ -85,7 +85,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                     ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
             }
 
-        AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
+            AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
                 .caseRef(String.valueOf(caseData.getId()))
                 // .requestTimeStamp(LocalDateTime.now())
@@ -100,15 +100,15 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseRestrictedFlag(Boolean.TRUE) // the default value is TRUE always
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
-        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
-            caseData);
-        AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
-        hearingRequest.setPartyDetails(partyDetailsList);
-        hearingRequest.setCaseDetails(caseDetail);
-        hearingRequest.setHearingDetails(hearingDetails);
+            List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
+                caseData);
+            AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
+            hearingRequest.setPartyDetails(partyDetailsList);
+            hearingRequest.setCaseDetails(caseDetail);
+            hearingRequest.setHearingDetails(hearingDetails);
 
         } catch (Exception e) {
-            log.info("Exception in AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest : {}",e);
+            log.info("Exception in AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest : {}", e);
         }
 
         return hearingRequest;
