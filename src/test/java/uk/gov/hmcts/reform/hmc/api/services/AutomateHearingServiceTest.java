@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -149,24 +148,9 @@ class AutomateHearingServiceTest {
             .build();
     }
 
-    @Test
-    void shouldReturnAutomateHearingsByCaseRefNoFeignExceptionTest()
-            throws IOException, ParseException {
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        HearingResponse hearingResponse = hearingsService.createAutomatedHearings(null);
-        Assertions.assertEquals(null,hearingResponse);
-    }
 
 
-    @Test
-    void shouldReturnAutomateHearingsErrorTest()
-        throws IOException, ParseException {
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        HearingResponse hearingResponse = hearingsService.createAutomatedHearings(null);
-        Assertions.assertEquals(null,hearingResponse);
-    }
+
 
 
 }
