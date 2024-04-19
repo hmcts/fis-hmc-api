@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,18 +57,11 @@ class AutomateHearingServiceTest {
     static final String AUTHORIZATION_TOKEN = "Bearer some-access-token";
     static final String SERVICE_AUTH_TOKEN = "someServiceAuthToken";
 
-    @Test
-    void shouldReturnAutomateHearingTest() throws IOException, ParseException {
+    CaseData caseData;
 
-        HearingResponse hearingResponse = HearingResponse.builder()
-            .hearingRequestID("123")
-            .status("200")
-            .build();
 
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
-        when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
-        when(hearingApiClient.createHearingDetails(any(), any(), any()))
-            .thenReturn(hearingResponse);
+    @BeforeEach
+    void setup() {
 
         DynamicListElement dynamicListElement = DynamicListElement.builder().code(TEST_UUID).label(" ").build();
         DynamicList dynamicList = DynamicList.builder()
@@ -115,7 +109,7 @@ class AutomateHearingServiceTest {
             .build();
 
 
-        CaseData caseData = CaseData
+        caseData = CaseData
             .caseDataBuilder()
             .caseTypeOfApplication("C100")
             .applicantCaseName("Test Case 45678")
@@ -127,6 +121,20 @@ class AutomateHearingServiceTest {
             .issueDate(LocalDate.now())
             .manageOrders(manageOrders)
             .build();
+    }
+
+    @Test
+    void shouldReturnAutomateHearingTest() throws IOException, ParseException {
+
+        HearingResponse hearingResponse = HearingResponse.builder()
+            .hearingRequestID("123")
+            .status("200")
+            .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
+        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+            .thenReturn(hearingResponse);
 
         HearingResponse hearingsResponse =
             hearingsService.createAutomatedHearings(caseData);
@@ -150,14 +158,6 @@ class AutomateHearingServiceTest {
         Assertions.assertEquals(null,hearingResponse);
     }
 
-
-    void shouldReturnAutomateHearingsExceptionTest()
-        throws IOException, ParseException {
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        HearingResponse hearingResponse = hearingsService.createAutomatedHearings(null);
-        Assertions.assertNull(hearingResponse);
-    }
 
     @Test
     void shouldReturnAutomateHearingsErrorTest()
