@@ -61,9 +61,6 @@ class AutomateHearingServiceTest {
 
     @Mock private HearingApiClient hearingApiClient;
 
-    @Mock private PartyFlagsModel partyFlagsModel;
-
-
     private static final String TEST_UUID = "00000000-0000-0000-0000-000000000000";
 
     static final String AUTHORIZATION_TOKEN = "Bearer some-access-token";
