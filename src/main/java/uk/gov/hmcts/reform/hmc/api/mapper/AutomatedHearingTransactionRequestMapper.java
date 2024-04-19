@@ -75,41 +75,37 @@ public final class AutomatedHearingTransactionRequestMapper {
 
         String publicCaseNameMapper = EMPTY;
         AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
-        try {
-            if (C100.equals(caseData.getCaseTypeOfApplication())) {
-                publicCaseNameMapper = RE_MINOR;
-            } else if (FL401.equals(caseData.getCaseTypeOfApplication())) {
-                PartyDetails applicantMap = caseData.getApplicantsFL401();
-                PartyDetails respondentTableMap = caseData.getRespondentsFL401();
-                publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
-                    ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
-            }
 
-            AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
-                .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
-                .caseRef(String.valueOf(caseData.getId()))
-                // .requestTimeStamp(LocalDateTime.now())
-                .externalCaseReference("") //Need to verify
-                .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW) //Need to verify
-                .hmctsInternalCaseName(caseData.getApplicantCaseName())
-                .publicCaseName(publicCaseNameMapper)
-                .caseAdditionalSecurityFlag(Boolean.TRUE) //1
-                .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
-                .caseCategories(getCaseCategories())
-                .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
-                .caseRestrictedFlag(Boolean.TRUE) // the default value is TRUE always
-                .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .build();
-            List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
-                caseData);
-            AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
-            hearingRequest.setPartyDetails(partyDetailsList);
-            hearingRequest.setCaseDetails(caseDetail);
-            hearingRequest.setHearingDetails(hearingDetails);
-
-        } catch (Exception e) {
-            log.info("Exception in AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest : {}", e);
+        if (C100.equals(caseData.getCaseTypeOfApplication())) {
+            publicCaseNameMapper = RE_MINOR;
+        } else if (FL401.equals(caseData.getCaseTypeOfApplication())) {
+            PartyDetails applicantMap = caseData.getApplicantsFL401();
+            PartyDetails respondentTableMap = caseData.getRespondentsFL401();
+            publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
+                ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
         }
+
+        AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
+            .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
+            .caseRef(String.valueOf(caseData.getId()))
+            // .requestTimeStamp(LocalDateTime.now())
+            .externalCaseReference("") //Need to verify
+            .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW) //Need to verify
+            .hmctsInternalCaseName(caseData.getApplicantCaseName())
+            .publicCaseName(publicCaseNameMapper)
+            .caseAdditionalSecurityFlag(Boolean.TRUE) //1
+            .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
+            .caseCategories(getCaseCategories())
+            .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
+            .caseRestrictedFlag(Boolean.TRUE) // the default value is TRUE always
+            .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+            .build();
+        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
+            caseData);
+        AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
+        hearingRequest.setPartyDetails(partyDetailsList);
+        hearingRequest.setCaseDetails(caseDetail);
+        hearingRequest.setHearingDetails(hearingDetails);
 
         return hearingRequest;
 

@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -108,6 +109,8 @@ class AutomateHearingServiceTest {
             .build();
 
 
+
+
         caseData = CaseData
             .caseDataBuilder()
             .caseTypeOfApplication("C100")
@@ -125,7 +128,7 @@ class AutomateHearingServiceTest {
     @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
 
-        HearingResponse hearingResponse = HearingResponse.builder()
+        HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
             .status("200")
             .build();
@@ -133,7 +136,7 @@ class AutomateHearingServiceTest {
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
         when(hearingApiClient.createHearingDetails(any(), any(), any()))
-            .thenReturn(hearingResponse);
+            .thenReturn(response);
 
         HearingResponse hearingsResponse =
             hearingsService.createAutomatedHearings(caseData);
@@ -147,6 +150,16 @@ class AutomateHearingServiceTest {
             .value(element)
             .build();
     }
+
+
+    @Test
+    void shouldReturnAutomateHearingsByExceptionTest() throws IOException, ParseException {
+
+        when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(AUTHORIZATION_TOKEN);
+        assertThrows(NullPointerException.class, () -> hearingsService.createAutomatedHearings(caseData));
+    }
+
 
 
 
