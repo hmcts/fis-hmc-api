@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import org.json.simple.parser.ParseException;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -56,7 +57,7 @@ class AutomateHearingServiceTest {
     static final String AUTHORIZATION_TOKEN = "Bearer some-access-token";
     static final String SERVICE_AUTH_TOKEN = "someServiceAuthToken";
 
-
+    @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
 
         HearingResponse hearingResponse = HearingResponse.builder()
@@ -133,6 +134,7 @@ class AutomateHearingServiceTest {
         assertThat(hearingsResponse.getStatus()).isEqualTo("200");
     }
 
+
     public static <T> Element<T> element(T element) {
         return Element.<T>builder()
             .id(UUID.randomUUID())
@@ -140,7 +142,7 @@ class AutomateHearingServiceTest {
             .build();
     }
 
-
+    @Test
     void shouldReturnAutomateHearingsByCaseRefNoFeignExceptionTest()
             throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -149,8 +151,7 @@ class AutomateHearingServiceTest {
         Assertions.assertEquals(null,hearingResponse);
     }
 
-
-    @Ignore
+    @Test
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -159,7 +160,7 @@ class AutomateHearingServiceTest {
         Assertions.assertNull(hearingResponse);
     }
 
-
+    @Test
     void shouldReturnAutomateHearingsErrorTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
