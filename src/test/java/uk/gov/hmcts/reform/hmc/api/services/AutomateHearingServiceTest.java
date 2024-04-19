@@ -33,7 +33,6 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
-import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 
 import java.io.IOException;
 import java.time.LocalDate;
