@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,14 +13,18 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Address;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.AttendHearing;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingChannelsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataApplicantDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataRespondentDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.ManageOrders;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
@@ -63,12 +68,18 @@ class AutomateHearingServiceTest {
     @BeforeEach
     void setup() {
 
-        DynamicListElement dynamicListElement = DynamicListElement.builder().code(TEST_UUID).label(" ").build();
+        DynamicListElement dynamicListElement = DynamicListElement.builder()
+            .code(TEST_UUID).codes(UUID.randomUUID()).label("test").build();
         DynamicList dynamicList = DynamicList.builder()
             .listItems(List.of(dynamicListElement))
             .value(dynamicListElement)
             .build();
 
+        HearingDataApplicantDetails hearingDataApplicantDetails =
+            HearingDataApplicantDetails.hearingDataApplicantDetails().build();
+
+        HearingDataRespondentDetails hearingDataRespondentDetails =
+            HearingDataRespondentDetails.hearingDataRespondentDetails().build();
 
         HearingData hearingData = HearingData.builder()
             .hearingTypes(dynamicList)
@@ -92,12 +103,27 @@ class AutomateHearingServiceTest {
             .hearingEstimatedMinutes("40")
             .hearingEstimatedDays("15")
             .allPartiesAttendHearingSameWayYesOrNo("Yes")
+            .hearingChannelsEnum(HearingChannelsEnum.DEFAULT)
             .hearingJudgePersonalCode("test")
             .hearingJudgeLastName("test")
             .hearingJudgeEmailAddress("Test")
             .applicantName("Test")
-            .hearingChannelsEnum(HearingChannelsEnum.DEFAULT)
+            .applicantSolicitor("test")
+            .respondentName("testrespondent")
+            .respondentSolicitor("testsolicitor")
+            .firstDateOfTheHearing(LocalDate.now())
+            .hearingMustTakePlaceAtHour("00")
+            .hearingMustTakePlaceAtMinute("00")
+            .earliestHearingDate(LocalDate.now())
+            .latestHearingDate(LocalDate.now())
             .hearingPriorityTypeEnum(HearingPriorityTypeEnum.StandardPriority)
+            .customDetails("test")
+            .isRenderingRequiredFlag("true")
+            .fillingFormRenderingInfo("test")
+            .hearingDataApplicantDetails(hearingDataApplicantDetails)
+            .hearingDataRespondentDetails(hearingDataRespondentDetails)
+            .isCafcassCymru("test")
+            .additionalDetailsForHearingDateOptions("test")
             .build();
 
         List<Element<HearingData>> hearingDataList = new ArrayList<>();
@@ -108,7 +134,12 @@ class AutomateHearingServiceTest {
             .ordersHearingDetails(hearingDataList)
             .build();
 
-
+        PartyDetails partyDetails = PartyDetails.builder()
+            .partyId(UUID.randomUUID())
+            .firstName("test")
+            .address(Address.builder().build())
+            .email("test@test.com")
+            .build();
 
 
         caseData = CaseData
@@ -116,6 +147,7 @@ class AutomateHearingServiceTest {
             .caseTypeOfApplication("C100")
             .applicantCaseName("Test Case 45678")
             .familymanCaseNumber("123")
+            .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
             .attendHearing(AttendHearing.builder().isWelshNeeded(Boolean.FALSE).build())
             .allPartyFlags(AllPartyFlags.builder().build())
@@ -154,15 +186,10 @@ class AutomateHearingServiceTest {
 
     @Test
     void shouldReturnAutomateHearingsByExceptionTest() throws IOException, ParseException {
-
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(AUTHORIZATION_TOKEN);
         assertThrows(NullPointerException.class, () -> hearingsService.createAutomatedHearings(caseData));
     }
-
-
-
-
 
 
 
