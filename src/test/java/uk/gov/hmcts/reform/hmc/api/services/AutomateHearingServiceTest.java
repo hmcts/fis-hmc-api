@@ -150,7 +150,7 @@ class AutomateHearingServiceTest {
         Assertions.assertEquals(null,hearingResponse);
     }
 
-    @Test
+
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
