@@ -68,7 +68,6 @@ public class AutomatedHearingFunctionalTest {
 
     @Test
     public void automatedHearing_creation_success() throws Exception {
-        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         HearingResponse response = new HearingResponse();
         response.setStatus("200");
         response.setHearingRequestID("1235");
@@ -76,6 +75,7 @@ public class AutomatedHearingFunctionalTest {
                 anyString(),
                 anyString(),
                 any(AutomatedHearingRequest.class))).thenReturn(response);
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         mockMvc.perform(post("/automated-hearing")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
@@ -90,21 +90,18 @@ public class AutomatedHearingFunctionalTest {
 
     @Test
     public void automatedHearing_creation_failure() throws Exception {
-        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
-        HearingResponse response = new HearingResponse();
-        response.setStatus("500");
         when(hearingApiClient.createHearingDetails(
                 anyString(),
                 anyString(),
-                any(AutomatedHearingRequest.class))).thenReturn(response);
+                any(AutomatedHearingRequest.class))).thenThrow(new RuntimeException("some error"));
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         mockMvc.perform(post("/automated-hearing")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
                         .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
                         .content(hearingValuesRequest)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("status").value("500"))
+                .andExpect(status().is5xxServerError())
                 .andReturn();
     }
 
