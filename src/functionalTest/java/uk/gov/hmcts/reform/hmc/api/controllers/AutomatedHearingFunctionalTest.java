@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static uk.gov.hmcts.reform.hmc.api.controllers.HearingsContFunctionalTest.JSON_CONTENT_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
 
 @Slf4j
@@ -52,13 +53,16 @@ public class AutomatedHearingFunctionalTest {
 
     private static final String AUTOMATED_HEARING_REQUEST_BODY_JSON =
             "classpath:requests/automated-hearing-request.json";
+
     private final String targetInstance =
             StringUtils.defaultIfBlank(
                     System.getenv("TEST_URL"),
                     "http://localhost:4550"
             );
 
-    private final RequestSpecification request = RestAssured.given().relaxedHTTPSValidation().baseUri(targetInstance);
+    private final RequestSpecification request =
+            RestAssured.given().relaxedHTTPSValidation().baseUri(targetInstance);
+
 
     @BeforeEach
     public void setUp() {
@@ -67,7 +71,7 @@ public class AutomatedHearingFunctionalTest {
 
 
     @Test
-    public void automatedHearing_creation_success() throws Exception {
+    public void automatedHearingCreationSuccess() throws Exception {
         HearingResponse response = new HearingResponse();
         response.setStatus("200");
         response.setHearingRequestID("1235");
@@ -89,7 +93,7 @@ public class AutomatedHearingFunctionalTest {
     }
 
     @Test
-    public void automatedHearing_creation_failure() throws Exception {
+    public void automatedHearingCreationFailure() throws Exception {
         when(hearingApiClient.createHearingDetails(
                 anyString(),
                 anyString(),
@@ -107,28 +111,26 @@ public class AutomatedHearingFunctionalTest {
 
 
     @Test
-    public void automatedHearing_creation_unauthorised() throws Exception {
+    public void automatedHearingCreationUnauthorised() throws Exception {
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
-        mockMvc.perform(post("/automated-hearing")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "failure")
+        request.header("Authorization","incorrectAuth")
                         .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
-                        .content(hearingValuesRequest)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
+                        .when()
+                        .contentType(JSON_CONTENT_TYPE)
+                        .body(hearingValuesRequest)
+                        .post("automated-hearing")
+                        .then().assertThat().statusCode(401);
     }
 
     @Test
-    public void automatedHearing_creation_unauthorised_when_s2sIsIncorrect() throws Exception {
+    public void automatedHearingCreationUnauthorisedWhenS2sIsIncorrect() throws Exception {
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
-        mockMvc.perform(post("/automated-hearing")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
-                        .header("ServiceAuthorization", "incorrects2s")
-                        .content(hearingValuesRequest)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
+        request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
+                .header("ServiceAuthorization", "inCorrectS2s")
+                .when()
+                .contentType(JSON_CONTENT_TYPE)
+                .body(hearingValuesRequest)
+                .post("automated-hearing")
+                .then().assertThat().statusCode(401);
     }
 }
