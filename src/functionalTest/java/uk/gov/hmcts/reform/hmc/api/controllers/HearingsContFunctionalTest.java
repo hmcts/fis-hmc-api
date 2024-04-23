@@ -169,7 +169,6 @@ public class HearingsContFunctionalTest {
 
     @Test
     public void automatedHearingCreationUnauthorised() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         request.header("Authorization","incorrectAuth")
                 .header("ServiceAuthorization", serviceAuthenticationGenerator.generate())
@@ -182,7 +181,6 @@ public class HearingsContFunctionalTest {
 
     @Test
     public void automatedHearingCreationUnauthorisedWhenS2sIsIncorrect() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         request.header("Authorization", idamTokenGenerator.generateIdamTokenForRefData())
                 .header("ServiceAuthorization", "inCorrectS2s")
