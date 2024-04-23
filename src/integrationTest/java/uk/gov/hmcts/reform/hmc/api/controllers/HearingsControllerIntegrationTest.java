@@ -283,6 +283,7 @@ public class HearingsControllerIntegrationTest {
         assertTrue(json.contains("testCaseRefNo"));
         assertTrue(json.contains("testCaseRefName"));
     }
+
     @Test
     public void automatedHearing_creation_success() throws Exception {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
