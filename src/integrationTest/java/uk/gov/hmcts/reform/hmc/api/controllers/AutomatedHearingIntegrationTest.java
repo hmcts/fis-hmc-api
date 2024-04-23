@@ -114,7 +114,6 @@ public class AutomatedHearingIntegrationTest {
     @Test
     public void automatedHearing_creation_unauthorised() throws Exception {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.FALSE);
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         mockMvc.perform(
                         post(AUTOMATED_HEARINGS_ENDPOINT)
@@ -131,7 +130,6 @@ public class AutomatedHearingIntegrationTest {
 
     @Test
     public void automatedHearing_creation_unauthorised_when_s2sFailure() throws Exception {
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
         mockMvc.perform(
