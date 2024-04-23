@@ -8,9 +8,11 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.AUTHORISATION_HEADER;
+import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.AUTOMATED_HEARINGS_ENDPOINT;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.CASE_REFERENCE;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.HEARINGS_ENDPOINT;
@@ -44,11 +46,14 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingApiClient;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
@@ -74,11 +79,17 @@ public class HearingsControllerIntegrationTest {
 
     @MockBean private HearingsService hearingsService;
 
+    @MockBean
+    HearingApiClient hearingApiClient;
+
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
 
     private static final String LIST_OF_CASE_IDS_REQUEST_BODY_JSON =
             "classpath:requests/list-of-case-ids.json";
+
+    private static final String AUTOMATED_HEARING_REQUEST_BODY_JSON =
+            "classpath:requests/automated-hearing-request.json";
 
     @Before
     public void setUp() {
@@ -271,5 +282,89 @@ public class HearingsControllerIntegrationTest {
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("testCaseRefNo"));
         assertTrue(json.contains("testCaseRefName"));
+    }
+    @Test
+    public void automatedHearing_creation_success() throws Exception {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        HearingResponse response = new HearingResponse();
+        response.setStatus("200");
+        response.setHearingRequestID("1235");
+        Mockito.when(hearingApiClient.createHearingDetails(
+                anyString(),
+                anyString(),
+                any(AutomatedHearingRequest.class))).thenReturn(response);
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
+        mockMvc.perform(
+                        post(AUTOMATED_HEARINGS_ENDPOINT)
+                                .contentType(APPLICATION_JSON)
+                                .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                                .header(
+                                        SERVICE_AUTHORISATION_HEADER,
+                                        TEST_SERVICE_AUTH_TOKEN)
+                                .content(hearingValuesRequest)
+                                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("hearingRequestID").value("1235"))
+                .andExpect(jsonPath("status").value("200"))
+                .andReturn();
+    }
+
+    @Test
+    public void automatedHearing_creation_failure() throws Exception {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        Mockito.when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
+        Mockito.when(hearingApiClient.createHearingDetails(
+                anyString(),
+                anyString(),
+                any(AutomatedHearingRequest.class))).thenThrow(new RuntimeException("some error"));
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
+        mockMvc.perform(
+                        post(AUTOMATED_HEARINGS_ENDPOINT)
+                                .contentType(APPLICATION_JSON)
+                                .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                                .header(
+                                        SERVICE_AUTHORISATION_HEADER,
+                                        TEST_SERVICE_AUTH_TOKEN)
+                                .content(hearingValuesRequest)
+                                .accept(APPLICATION_JSON))
+                .andExpect(status().is5xxServerError())
+                .andReturn();
+    }
+
+    @Test
+    public void automatedHearing_creation_unauthorised() throws Exception {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
+        mockMvc.perform(
+                        post(AUTOMATED_HEARINGS_ENDPOINT)
+                                .contentType(APPLICATION_JSON)
+                                .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                                .header(
+                                        SERVICE_AUTHORISATION_HEADER,
+                                        TEST_SERVICE_AUTH_TOKEN)
+                                .content(hearingValuesRequest)
+                                .accept(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+    }
+
+    @Test
+    public void automatedHearing_creation_unauthorised_when_s2sFailure() throws Exception {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
+        mockMvc.perform(
+                        post(AUTOMATED_HEARINGS_ENDPOINT)
+                                .contentType(APPLICATION_JSON)
+                                .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                                .header(
+                                        SERVICE_AUTHORISATION_HEADER,
+                                        TEST_SERVICE_AUTH_TOKEN)
+                                .content(hearingValuesRequest)
+                                .accept(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
+                .andReturn();
     }
 }
