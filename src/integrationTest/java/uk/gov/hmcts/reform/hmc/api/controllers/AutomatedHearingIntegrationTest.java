@@ -113,24 +113,6 @@ public class AutomatedHearingIntegrationTest {
     }
 
     @Test
-    @Disabled
-    public void automatedHearing_creation_unauthorised() throws Exception {
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
-        String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
-        mockMvc.perform(
-                        post(AUTOMATED_HEARINGS_ENDPOINT)
-                                .contentType(APPLICATION_JSON)
-                                .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
-                                .header(
-                                        SERVICE_AUTHORISATION_HEADER,
-                                        TEST_SERVICE_AUTH_TOKEN)
-                                .content(hearingValuesRequest)
-                                .accept(APPLICATION_JSON))
-                .andExpect(status().isUnauthorized())
-                .andReturn();
-    }
-
-    @Test
     public void automatedHearing_creation_unauthorised_when_s2sFailure() throws Exception {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         String hearingValuesRequest = readFileFrom(AUTOMATED_HEARING_REQUEST_BODY_JSON);
