@@ -123,7 +123,8 @@
       "solicitorOrgUuid" : "fea59592-91e0-45f3-b8f1-9e3e8ec5efc0",
       "solicitorPartyId" : "1df5c390-0c78-4dae-bd33-e0ed00e55991"
     }
-  }, {
+  }, 
+    {
     "id" : "7e9028ba-534c-42bb-bb04-e67b6551b4bd",
     "value" : {
       "firstName" : "Martina",
