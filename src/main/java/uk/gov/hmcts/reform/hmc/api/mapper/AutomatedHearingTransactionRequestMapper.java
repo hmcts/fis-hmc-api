@@ -283,6 +283,11 @@ public final class AutomatedHearingTransactionRequestMapper {
             if (hearingData.getCafcassCymruHearingChannel() != null) {
                 noOfParticipants.add(hearingData.getCafcassCymruHearingChannel());
             }
+
+            if (hearingData.getCafcassHearingChannel() != null) {
+                noOfParticipants.add(hearingData.getCafcassHearingChannel());
+            }
+
             Map<Boolean, List<String>> selectedCodes = noOfParticipants.stream().filter(Objects::nonNull)
                 .map(DynamicList::getValueCode)
                 .filter(StringUtils::isNotBlank).collect(Collectors.partitioningBy(p -> HearingChannelsEnum.INTER.name()
