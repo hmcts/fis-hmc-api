@@ -153,7 +153,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
             .numberOfPhysicalAttendees(noOfPhysicalAttendees(
                 hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
-                hearingData
+                hearingData,caseData
             ))
             .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
             .hearingLocations(
@@ -213,36 +213,46 @@ public final class AutomatedHearingTransactionRequestMapper {
         return String.format("%sT%s:%s:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
     }
 
-    private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData) {
+    private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData,CaseData caseData) {
         int totalParticipants = 0;
         if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
             && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
             List<String> noOfParticipants = new ArrayList<>();
-            if (hearingData.getHearingDataApplicantDetails() != null) {
-                noOfParticipants.addAll(Lists.newArrayList(
-                    hearingData.getHearingDataApplicantDetails().getApplicantName1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName3(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantName5(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor3(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitor5()));
-            }
-            if (hearingData.getHearingDataRespondentDetails() != null) {
-                noOfParticipants.addAll(Lists.newArrayList(
-                    hearingData.getHearingDataRespondentDetails().getRespondentName1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName2(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName3(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName4(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentName5(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor2(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor3(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor4(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitor5()));
+            if(C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+                if (hearingData.getHearingDataApplicantDetails() != null) {
+                    noOfParticipants.addAll(Lists.newArrayList(
+                        hearingData.getHearingDataApplicantDetails().getApplicantName1(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantName2(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantName3(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantName4(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantName5(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitor1(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitor2(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitor3(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitor4(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitor5()
+                    ));
+                }
+                if (hearingData.getHearingDataRespondentDetails() != null) {
+                    noOfParticipants.addAll(Lists.newArrayList(
+                        hearingData.getHearingDataRespondentDetails().getRespondentName1(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentName2(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentName3(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentName4(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentName5(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitor1(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitor2(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitor3(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitor4(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitor5()
+                    ));
+                }
+            } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+                noOfParticipants.addAll(Lists.newArrayList(hearingData.getApplicantName(),
+                                                           hearingData.getApplicantSolicitor(),
+                                                           hearingData.getRespondentName(),
+                                                           hearingData.getRespondentSolicitor()));
+
             }
 
             noOfParticipants.removeAll(Arrays.asList("", null));
@@ -251,41 +261,51 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
         if ("NO".equalsIgnoreCase(attendSameWayYesOrNo)) {
             List<DynamicList> noOfParticipants = new ArrayList<>();
-            if (hearingData.getHearingDataApplicantDetails() != null) {
-                noOfParticipants.addAll(Lists.newArrayList(
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4(),
-                    hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5()));
-            }
-            if (hearingData.getHearingDataRespondentDetails() != null) {
-                noOfParticipants.addAll(Lists.newArrayList(
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel1(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel2(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel3(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel4(),
-                    hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5()));
-            }
-            if (hearingData.getLocalAuthorityHearingChannel() != null) {
-                noOfParticipants.add(hearingData.getLocalAuthorityHearingChannel());
-            }
-            if (hearingData.getCafcassCymruHearingChannel() != null) {
-                noOfParticipants.add(hearingData.getCafcassCymruHearingChannel());
-            }
+            if(C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+                if (hearingData.getHearingDataApplicantDetails() != null) {
+                    noOfParticipants.addAll(Lists.newArrayList(
+                        hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4(),
+                        hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5()
+                    ));
+                }
+                if (hearingData.getHearingDataRespondentDetails() != null) {
+                    noOfParticipants.addAll(Lists.newArrayList(
+                        hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel1(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel2(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel3(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel4(),
+                        hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5()
+                    ));
+                }
+                if (hearingData.getLocalAuthorityHearingChannel() != null) {
+                    noOfParticipants.add(hearingData.getLocalAuthorityHearingChannel());
+                }
+                if (hearingData.getCafcassCymruHearingChannel() != null) {
+                    noOfParticipants.add(hearingData.getCafcassCymruHearingChannel());
+                }
 
-            if (hearingData.getCafcassHearingChannel() != null) {
-                noOfParticipants.add(hearingData.getCafcassHearingChannel());
+                if (hearingData.getCafcassHearingChannel() != null) {
+                    noOfParticipants.add(hearingData.getCafcassHearingChannel());
+                }
+            } else if(FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+                noOfParticipants.addAll(Lists.newArrayList(hearingData.getApplicantHearingChannel(),
+                                                           hearingData.getApplicantSolicitorHearingChannel(),
+                                                           hearingData.getRespondentHearingChannel(),
+                                                           hearingData.getRespondentSolicitorHearingChannel(),
+                                                           hearingData.getLocalAuthorityHearingChannel()));
             }
 
             Map<Boolean, List<String>> selectedCodes = noOfParticipants.stream().filter(Objects::nonNull)
