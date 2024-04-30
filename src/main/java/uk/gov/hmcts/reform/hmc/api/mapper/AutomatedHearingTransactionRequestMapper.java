@@ -29,6 +29,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl;
+import uk.gov.hmcts.reform.hmc.api.utils.CaseUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -79,9 +80,9 @@ public final class AutomatedHearingTransactionRequestMapper {
     public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,String ccdBaseUrl) {
 
         String publicCaseNameMapper = EMPTY;
-        if (C100.equals(caseData.getCaseTypeOfApplication())) {
+        if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             publicCaseNameMapper = RE_MINOR;
-        } else if (FL401.equals(caseData.getCaseTypeOfApplication())) {
+        } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             PartyDetails applicantMap = caseData.getApplicantsFL401();
             PartyDetails respondentTableMap = caseData.getRespondentsFL401();
             publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
@@ -164,7 +165,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             .facilitiesRequired(List.of())
             .listingComments(hearingData.getAdditionalHearingDetails())
             .hearingRequester(hearingData.getHearingJudgePersonalCode())
-            .privateHearingRequiredFlag(C100.equals(caseData.getCaseTypeOfApplication()))
+            .privateHearingRequiredFlag(C100.equals(CaseUtils.getCaseTypeOfApplication(caseData)))
             .panelRequirements(new PanelRequirements())
             .leadJudgeContractType("")
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
