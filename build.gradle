@@ -346,7 +346,7 @@ dependencyManagement {
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
-    dependencySet(group: 'io.ktor', version: '2.3.5') {
+    dependencySet(group: 'io.ktor', version: '2.3.10') {
       entry 'ktor-network-tls-jvm'
     }
 
