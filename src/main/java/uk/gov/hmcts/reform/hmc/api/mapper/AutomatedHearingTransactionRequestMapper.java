@@ -95,7 +95,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseRef(String.valueOf(caseData.getId()))
                 // .requestTimeStamp(LocalDateTime.now())
                 .externalCaseReference("") //Need to verify
-                .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW) //Need to verify
+                .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW)
                 .hmctsInternalCaseName(caseData.getApplicantCaseName())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
