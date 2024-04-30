@@ -52,6 +52,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
@@ -90,7 +91,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData);
 
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
-                .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
+                .hmctsServiceCode(HMCTS_SERVICE_ID) //Hardcoded in prl-cos-api
                 .caseRef(String.valueOf(caseData.getId()))
                 // .requestTimeStamp(LocalDateTime.now())
                 .externalCaseReference("") //Need to verify
