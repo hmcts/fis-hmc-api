@@ -25,8 +25,10 @@ import uk.gov.hmcts.reform.hmc.api.model.request.OrganisationDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
+import uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -67,6 +69,8 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 @Slf4j
 public final class AutomatedHearingTransactionRequestMapper {
 
+    private static boolean caseAdditionalSecurityFlag;
+
     private AutomatedHearingTransactionRequestMapper() {
         throw new IllegalStateException("Utility class");
     }
@@ -83,6 +87,8 @@ public final class AutomatedHearingTransactionRequestMapper {
                 ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
         }
 
+        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData);
+
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode("ABA5") //Hardcoded in prl-cos-api
                 .caseRef(String.valueOf(caseData.getId()))
@@ -91,15 +97,13 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW) //Need to verify
                 .hmctsInternalCaseName(caseData.getApplicantCaseName())
                 .publicCaseName(publicCaseNameMapper)
-                .caseAdditionalSecurityFlag(Boolean.TRUE) //1
+                .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
                 .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
                 .caseRestrictedFlag(Boolean.TRUE) // the default value is TRUE always
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
-        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(
-            caseData);
         AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
         AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
         hearingRequest.setPartyDetails(partyDetailsList);
@@ -292,25 +296,37 @@ public final class AutomatedHearingTransactionRequestMapper {
     @NotNull
     private static List<AutomatedHearingPartyDetails>
         getPartyDetails(CaseData caseData) {
+        List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
+        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
         if (null != applicantLst) {
             partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT));
+            CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
         }
 
         List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
         if (null != respondedLst) {
             partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT));
+            CaseFlagDataServiceImpl.addPartyFlagData(
+                partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
         }
 
         PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
         if (null != applicantsFL401) {
             partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT));
+            CaseFlagDataServiceImpl.addFL401PartyFlagData(
+                partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
         }
 
         PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
         if (null != respondentsFL401) {
             partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT));
+            CaseFlagDataServiceImpl.addFL401PartyFlagData(
+                partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
+        }
+        if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
+            caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partiesFlagsModelList);
         }
         return partyDetailsList;
     }
