@@ -331,7 +331,7 @@ public class HearingsController {
     /**
      * End point to create hearing details for a case.
      *
-     * @return success response, and initiates async process to create hearings
+     * @return success response, and initiates sync process to create hearings
      *     passed.
      * @header authorization, user authorization token.
      * @header serviceAuthorization, S2S authorization token.
@@ -341,7 +341,7 @@ public class HearingsController {
     @ApiOperation("create automated hearing")
     @ApiResponses(
             value = {
-                @ApiResponse(code = 200, message = "Initiated Async Create hearings successfully"),
+                @ApiResponse(code = 200, message = "Initiated sync Create hearings successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> createAutomatedHearings(
