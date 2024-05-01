@@ -169,7 +169,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = "0.8.11"
+  toolVersion = "0.8.12"
 }
 
 jacocoTestCoverageVerification {
@@ -408,8 +408,8 @@ dependencies {
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.9'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.42'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.84'
-  implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.1'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.88'
+  implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.2'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
 
   implementation 'org.projectlombok:lombok:1.18.30'
