@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.config;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.ExceptionPhase;
 import com.microsoft.azure.servicebus.IMessage;
@@ -12,13 +9,6 @@ import com.microsoft.azure.servicebus.ReceiveMode;
 import com.microsoft.azure.servicebus.SubscriptionClient;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +29,21 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.PrlUpdateService;
 import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.POSTPONED;
 
 @Configuration
 public class ServiceBusConfiguration {
@@ -112,17 +117,18 @@ public class ServiceBusConfiguration {
 
                         Hearing hearing = mapper.readValue(body.get(0), Hearing.class);
 
-                        if (HMCTS_SERVICE_ID.equals(hearing.getHmctsServiceCode())) {
+                        if (HMCTS_SERVICE_ID.equals(hearing.getHmctsServiceCode())
+                            && isHearingStateConsumptionRequired(hearing.getHearingUpdate().getHmcStatus())) {
                             HearingUpdateDTO hearingUpdateDto =
-                                    HearingUpdateDTO.hearingUpdateRequestDTOWith()
-                                            .hearingResponseReceivedDateTime(
-                                                    hearing.getHearingUpdate()
-                                                            .getHearingResponseReceivedDateTime())
-                                            .hearingEventBroadcastDateTime(
-                                                    hearing.getHearingUpdate()
-                                                            .getHearingEventBroadcastDateTime())
-                                            .hearingListingStatus(
-                                                    hearing.getHearingUpdate()
+                                HearingUpdateDTO.hearingUpdateRequestDTOWith()
+                                    .hearingResponseReceivedDateTime(
+                                        hearing.getHearingUpdate()
+                                            .getHearingResponseReceivedDateTime())
+                                    .hearingEventBroadcastDateTime(
+                                        hearing.getHearingUpdate()
+                                            .getHearingEventBroadcastDateTime())
+                                    .hearingListingStatus(
+                                        hearing.getHearingUpdate()
                                                             .getHearingListingStatus())
                                             .nextHearingDate(
                                                     hearing.getHearingUpdate().getNextHearingDate())
@@ -209,10 +215,25 @@ public class ServiceBusConfiguration {
 
         ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
         receiveClient.registerMessageHandler(
-                messageHandler,
-                new MessageHandlerOptions(
-                        threadCount, false, Duration.ofHours(1), Duration.ofMinutes(5)),
-                executorService);
+            messageHandler,
+            new MessageHandlerOptions(
+                threadCount, false, Duration.ofHours(1), Duration.ofMinutes(5)),
+            executorService
+        );
         return null;
+    }
+
+    private boolean isHearingStateConsumptionRequired(String hearingStatus) {
+        List<String> allowedHmcStatus = List.of(
+            LISTED,
+            COMPLETED,
+            POSTPONED,
+            ADJOURNED,
+            CANCELLED
+        );
+        if (allowedHmcStatus.contains(hearingStatus)) {
+            return true;
+        }
+        return false;
     }
 }
