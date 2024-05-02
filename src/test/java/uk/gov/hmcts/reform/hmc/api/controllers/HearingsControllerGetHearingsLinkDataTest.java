@@ -52,6 +52,7 @@ class HearingsControllerGetHearingsLinkDataTest {
                         .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
                         .build());
     }
+
     @Ignore("Ignore")
     @Test
     void hearingsLinkCaseDataControllerTest() throws IOException, ParseException {
