@@ -218,7 +218,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
             && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
             List<String> noOfParticipants = new ArrayList<>();
-            if(C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+            if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 if (hearingData.getHearingDataApplicantDetails() != null) {
                     noOfParticipants.addAll(Lists.newArrayList(
                         hearingData.getHearingDataApplicantDetails().getApplicantName1(),
@@ -261,7 +261,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
         if ("NO".equalsIgnoreCase(attendSameWayYesOrNo)) {
             List<DynamicList> noOfParticipants = new ArrayList<>();
-            if(C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+            if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 if (hearingData.getHearingDataApplicantDetails() != null) {
                     noOfParticipants.addAll(Lists.newArrayList(
                         hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1(),
@@ -300,7 +300,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 if (hearingData.getCafcassHearingChannel() != null) {
                     noOfParticipants.add(hearingData.getCafcassHearingChannel());
                 }
-            } else if(FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+            } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 noOfParticipants.addAll(Lists.newArrayList(hearingData.getApplicantHearingChannel(),
                                                            hearingData.getApplicantSolicitorHearingChannel(),
                                                            hearingData.getRespondentHearingChannel(),

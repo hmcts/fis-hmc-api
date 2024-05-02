@@ -7,6 +7,10 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 @Slf4j
 public class CaseUtils {
 
+    private CaseUtils() {
+
+    }
+
     public static String getCaseTypeOfApplication(CaseData caseData) {
         log.info("CaseTypeOfApplication ==> " + caseData.getCaseTypeOfApplication());
         return caseData.getCaseTypeOfApplication() != null
