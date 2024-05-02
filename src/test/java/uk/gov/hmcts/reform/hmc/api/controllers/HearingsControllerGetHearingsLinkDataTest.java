@@ -35,7 +35,7 @@ class HearingsControllerGetHearingsLinkDataTest {
     @InjectMocks private HearingsController hearingsController;
 
     @Spy
-    private IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
+    private final IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
 
     @Spy private HearingsDataService hearingsDataService;
 
