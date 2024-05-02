@@ -53,13 +53,13 @@ class HearingsControllerTest {
     @Spy
     private  final IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
 
-    @Spy private final AuthTokenGenerator authTokenGenerator = Mockito.mock(AuthTokenGenerator.class);
+    @Spy private  AuthTokenGenerator authTokenGenerator ;
 
-    @Spy private final HearingsDataService hearingsDataService = Mockito.mock(HearingsDataService.class);
+    @Spy private  HearingsDataService hearingsDataService;
 
-    @Spy private final HearingsService hearingsService = Mockito.mock(HearingsService.class);
+    @Spy private  HearingsService hearingsService ;
 
-    @Spy private final NextHearingDetailsService nextHearingDetailsService = Mockito.mock(NextHearingDetailsService.class);
+    @Spy private  NextHearingDetailsService nextHearingDetailsService ;
 
     private Hearings hearings;
 
@@ -139,7 +139,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsDataControllerInternalServiceErrorTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
@@ -157,7 +157,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
@@ -170,7 +170,7 @@ class HearingsControllerTest {
         Assertions.assertNotNull(hearingsResponse.getBody());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByCaseRefNoControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
@@ -180,7 +180,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByCaseRefNoControllerFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -193,7 +193,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
@@ -208,7 +208,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByListOfCaseIdsControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
@@ -230,7 +230,7 @@ class HearingsControllerTest {
         Assertions.assertNotNull(hearingsForAllCasesResponse.getBody());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByListOfCaseIdsControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
@@ -248,7 +248,7 @@ class HearingsControllerTest {
                 HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByListOfCaseIdsControllerFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -270,7 +270,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsByListOfCaseIdsControllerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -290,7 +290,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void hearingsControllerNextHearingDateTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -300,7 +300,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void nextHearingDateByCaseRefNoControllerUnauthorisedExceptionTest()
             throws IOException, ParseException {
 
@@ -310,7 +310,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void nextHearingDateByCaseRefNoControllerFeignExceptionTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
@@ -326,7 +326,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void nextHearingDateByCaseRefNoControllerInternalServiceErrorTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
@@ -342,7 +342,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void getNextHearingDateTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -360,7 +360,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.OK, nextHearingDetailsResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void getNextHearingDateInternalServiceErrorTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -376,7 +376,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetailsResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void getNextHearingDateFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -391,7 +391,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingDetailsResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void getNextHearingDateUnauthorisedExceptionTest() throws IOException, ParseException {
 
         ResponseEntity<Object> nextHearingDetails =
@@ -400,7 +400,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, nextHearingDetails.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void allFutureHearingsByCaseRefNoControllerTest() throws IOException, ParseException {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
@@ -424,7 +424,7 @@ class HearingsControllerTest {
                 HttpStatus.UNAUTHORIZED, hearingsForCaseRefNoResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void allFutureHearingsByCaseRefNoControllerFeignExceptionTest()
             throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
@@ -440,7 +440,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForCaseRefNoResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void allFutureHearingsByCaseRefNoControllerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -454,7 +454,7 @@ class HearingsControllerTest {
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void createAutomatedHearingsTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -467,7 +467,7 @@ class HearingsControllerTest {
                 HttpStatus.OK, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void createAutomatedHearingsTestInternalServerExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
@@ -480,7 +480,7 @@ class HearingsControllerTest {
     }
 
 
-    @Ignore("ignore")
+    @Test
     void createAutomatedHearingsNoUnauthorisedExceptionTest() throws IOException, ParseException {
         CaseData caseData = CaseData.caseDataBuilder().build();
         ResponseEntity<Object> hearingsForAllCasesResponse =
@@ -488,7 +488,7 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForAllCasesResponse.getStatusCode());
     }
 
-    @Ignore("ignore")
+    @Test
     void createAutomatedHearingsFeignExceptionTest() throws IOException, ParseException {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
