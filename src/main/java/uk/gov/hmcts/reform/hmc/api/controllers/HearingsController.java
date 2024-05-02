@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,31 +42,31 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/")
+@Api("/")
 public class HearingsController {
 
-     private final IdamAuthService idamAuthService;
+    private final IdamAuthService idamAuthService;
 
-     private final HearingsDataService hearingsDataService;
+    private final HearingsDataService hearingsDataService;
 
-     private final HearingsService hearingsService;
+    private final HearingsService hearingsService;
 
-     private final NextHearingDetailsService nextHearingDetailsService;
+    private final NextHearingDetailsService nextHearingDetailsService;
 
-     private final AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-     private final RoleAssignmentService roleAssignmentService;
+    private final RoleAssignmentService roleAssignmentService;
 
-     public HearingsController(IdamAuthService idamAuthService,HearingsDataService hearingsDataService,
-                               HearingsService hearingsService,NextHearingDetailsService nextHearingDetailsService,
-                               AuthTokenGenerator authTokenGenerator,RoleAssignmentService roleAssignmentService) {
-         this.idamAuthService = idamAuthService;
-         this.hearingsDataService = hearingsDataService;
-         this.hearingsService = hearingsService;
-         this.nextHearingDetailsService = nextHearingDetailsService;
-         this.authTokenGenerator = authTokenGenerator;
-         this.roleAssignmentService = roleAssignmentService;
-     }
+    public HearingsController(IdamAuthService idamAuthService, HearingsDataService hearingsDataService,
+                              HearingsService hearingsService, NextHearingDetailsService nextHearingDetailsService,
+                              AuthTokenGenerator authTokenGenerator, RoleAssignmentService roleAssignmentService) {
+        this.idamAuthService = idamAuthService;
+        this.hearingsDataService = hearingsDataService;
+        this.hearingsService = hearingsService;
+        this.nextHearingDetailsService = nextHearingDetailsService;
+        this.authTokenGenerator = authTokenGenerator;
+        this.roleAssignmentService = roleAssignmentService;
+    }
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
