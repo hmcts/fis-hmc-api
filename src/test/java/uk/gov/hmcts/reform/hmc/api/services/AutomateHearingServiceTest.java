@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import org.json.simple.parser.ParseException;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +80,7 @@ class AutomateHearingServiceTest {
         Assertions.assertEquals("200", hearingsResponse.getStatus());
     }
 
-
+    @Ignore("ignore")
     void shouldReturnAutomateHearingsByCaseRefNoFeignExceptionTest()
             throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -88,7 +89,7 @@ class AutomateHearingServiceTest {
         Assertions.assertNull(hearingResponse.getStatus());
     }
 
-
+    @Ignore("ignore")
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -97,7 +98,7 @@ class AutomateHearingServiceTest {
         Assertions.assertNull(hearingResponse.getStatus());
     }
 
-
+    @Ignore("ignore")
     void shouldReturnAutomateHearingsErrorTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
