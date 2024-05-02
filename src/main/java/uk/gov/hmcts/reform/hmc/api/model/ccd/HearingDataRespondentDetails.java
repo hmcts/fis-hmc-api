@@ -11,7 +11,7 @@ import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 @Data
 @Getter
 @Setter
-@Builder(builderMethodName = "hearingDataApplicantDetails")
+@Builder(builderMethodName = "hearingDataRespondentDetails")
 @AllArgsConstructor
 public class HearingDataRespondentDetails {
 
