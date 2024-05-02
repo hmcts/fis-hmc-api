@@ -53,13 +53,13 @@ class HearingsControllerTest {
     @Spy
     private  final IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
 
-    @Spy private  AuthTokenGenerator authTokenGenerator ;
+    @Spy private  AuthTokenGenerator authTokenGenerator;
 
     @Spy private  HearingsDataService hearingsDataService;
 
-    @Spy private  HearingsService hearingsService ;
+    @Spy private  HearingsService hearingsService;
 
-    @Spy private  NextHearingDetailsService nextHearingDetailsService ;
+    @Spy private  NextHearingDetailsService nextHearingDetailsService;
 
     private Hearings hearings;
 
