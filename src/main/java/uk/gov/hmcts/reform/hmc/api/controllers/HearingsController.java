@@ -43,20 +43,31 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/", description = "get hearings Values")
+@Api(value = "/")
 public class HearingsController {
 
-    @Autowired private IdamAuthService idamAuthService;
+     private final IdamAuthService idamAuthService;
 
-    @Autowired private HearingsDataService hearingsDataService;
+     private final HearingsDataService hearingsDataService;
 
-    @Autowired private HearingsService hearingsService;
+     private final HearingsService hearingsService;
 
-    @Autowired private NextHearingDetailsService nextHearingDetailsService;
+     private final NextHearingDetailsService nextHearingDetailsService;
 
-    @Autowired private AuthTokenGenerator authTokenGenerator;
+     private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired private RoleAssignmentService roleAssignmentService;
+     private final RoleAssignmentService roleAssignmentService;
+
+     public HearingsController(IdamAuthService idamAuthService,HearingsDataService hearingsDataService,
+                               HearingsService hearingsService,NextHearingDetailsService nextHearingDetailsService,
+                               AuthTokenGenerator authTokenGenerator,RoleAssignmentService roleAssignmentService) {
+         this.idamAuthService = idamAuthService;
+         this.hearingsDataService = hearingsDataService;
+         this.hearingsService = hearingsService;
+         this.nextHearingDetailsService = nextHearingDetailsService;
+         this.authTokenGenerator = authTokenGenerator;
+         this.roleAssignmentService = roleAssignmentService;
+     }
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.

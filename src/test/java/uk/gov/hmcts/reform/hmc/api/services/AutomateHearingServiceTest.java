@@ -1,8 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import org.json.simple.parser.ParseException;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -12,10 +12,17 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.AttendHearing;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingChannelsEnum;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
+import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,7 +44,7 @@ class AutomateHearingServiceTest {
     @Mock private HearingApiClient hearingApiClient;
 
 
-
+    @Test
     void shouldReturnAutomateHearingTest() throws IOException, ParseException {
         HearingResponse hearingResponse =
             HearingResponse.builder().build();
@@ -46,7 +53,25 @@ class AutomateHearingServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(hearingApiClient.createHearingDetails(anyString(), any(), any()))
                 .thenReturn(hearingResponse);
-        CaseData caseData = CaseData.caseDataBuilder().build();
+
+        AttendHearing attendHearing = AttendHearing.builder().isInterpreterNeeded(false).isWelshNeeded(false).build();
+
+        CaseManagementLocation caseManagementLocation = CaseManagementLocation.builder().build();
+
+        HearingData hearingData = HearingData.builder()
+            .hearingTypes(DynamicList.builder().build())
+            .hearingPriorityTypeEnum(HearingPriorityTypeEnum.valueOf("StandardPriority"))
+            .courtList(DynamicList.builder().build())
+            .hearingChannelsEnum(HearingChannelsEnum.valueOf("INTER"))
+            .build();
+
+
+        CaseData caseData = CaseData.caseDataBuilder()
+            .attendHearing(attendHearing)
+            .caseManagementLocation(caseManagementLocation)
+            .issueDate(LocalDate.parse("2024-02-05"))
+            .hearingData(hearingData)
+            .build();
 
         HearingResponse hearingsResponse =
                 hearingsService.createAutomatedHearings(caseData);
@@ -64,7 +89,6 @@ class AutomateHearingServiceTest {
     }
 
 
-    @Ignore
     void shouldReturnAutomateHearingsExceptionTest()
         throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");

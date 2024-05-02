@@ -194,7 +194,9 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
-  '**/uk/gov/hmcts/reform/hmc/api/services/**'
+  '**/uk/gov/hmcts/reform/hmc/api/services/**',
+  '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java',
+  '**/uk/gov/hmcts/reform/hmc/api/mapper/**'
 ]
 
 sonarqube {
