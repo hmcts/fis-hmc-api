@@ -261,21 +261,21 @@ dependencyManagement {
   dependencies {
     dependencySet(
       group: 'com.fasterxml.jackson.core',
-      version: '2.16.0'
+      version: '2.17.0'
     ) {
       entry 'jackson-core'
       entry 'jackson-databind'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.16.0'
+      version: '2.17.0'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.15.2'
+      version: '2.17.0'
     ) {
       entry 'jackson-module-parameter-names'
     }
@@ -340,8 +340,9 @@ dependencyManagement {
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
@@ -375,6 +376,9 @@ dependencyManagement {
     dependencySet(group: 'com.squareup.okio', version: '3.9.0') {
       entry 'okio-jvm'
     }
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.10'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
   }
 }
 dependencies {
@@ -386,8 +390,8 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
-  implementation('org.springframework.retry:spring-retry')
+
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0')
@@ -395,14 +399,14 @@ dependencies {
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.10'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.9'
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-spring-webflux', version: '3.0.0'
   implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
   implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
-  implementation group: 'com.azure', name: 'azure-core', version: '1.44.1'
+  implementation group: 'com.azure', name: 'azure-core', version: '1.48.0'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.14.7'
   implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.9'
