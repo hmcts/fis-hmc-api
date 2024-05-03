@@ -238,6 +238,89 @@ class AutomateHearingServiceTest {
     }
 
     @Test
+    void shouldReturnAutomateHearingTestC100ForParties() throws IOException, ParseException {
+
+        HearingResponse response = HearingResponse.builder()
+            .hearingRequestID("123")
+            .status("200")
+            .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
+        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+            .thenReturn(response);
+
+        hearingData = HearingData.builder()
+            .hearingTypes(dynamicList)
+            .confirmedHearingDates(dynamicList)
+            .hearingChannels(dynamicList)
+            .applicantHearingChannel(dynamicList)
+            .hearingVideoChannels(dynamicList)
+            .hearingTelephoneChannels(dynamicList)
+            .courtList(dynamicList)
+            .localAuthorityHearingChannel(dynamicList)
+            .hearingListedLinkedCases(dynamicList)
+            .applicantSolicitorHearingChannel(dynamicList)
+            .respondentHearingChannel(dynamicList)
+            .respondentSolicitorHearingChannel(dynamicList)
+            .cafcassHearingChannel(dynamicList)
+            .cafcassCymruHearingChannel(dynamicList)
+            .applicantHearingChannel(dynamicList)
+            .additionalHearingDetails("Test")
+            .instructionsForRemoteHearing("Test")
+            .hearingEstimatedHours("02")
+            .hearingEstimatedMinutes("40")
+            .hearingEstimatedDays("15")
+            .allPartiesAttendHearingSameWayYesOrNo("Yes")
+            .hearingChannelsEnum(HearingChannelsEnum.INTER)
+            .hearingJudgePersonalCode("test")
+            .hearingJudgeLastName("test")
+            .hearingJudgeEmailAddress("Test")
+            .applicantName("Test")
+            .applicantSolicitor("test")
+            .respondentName("testrespondent")
+            .respondentSolicitor("testsolicitor")
+            .firstDateOfTheHearing(LocalDate.now())
+            .hearingMustTakePlaceAtHour("02")
+            .hearingMustTakePlaceAtMinute("30")
+            .earliestHearingDate(LocalDate.now())
+            .latestHearingDate(LocalDate.now())
+            .hearingPriorityTypeEnum(HearingPriorityTypeEnum.StandardPriority)
+            .customDetails("test")
+            .isRenderingRequiredFlag("true")
+            .fillingFormRenderingInfo("test")
+            .hearingDataApplicantDetails(hearingDataApplicantDetails)
+            .hearingDataRespondentDetails(hearingDataRespondentDetails)
+            .isCafcassCymru("test")
+            .additionalDetailsForHearingDateOptions("test")
+            .build();
+
+        List<Element<PartyDetails>> partyDetailsList = new ArrayList<>();
+        partyDetailsList.add(element(partyDetails));
+
+
+        caseData = CaseData
+            .caseDataBuilder()
+            .caseTypeOfApplication("C100")
+            .applicantCaseName("Test Case 45678")
+            .familymanCaseNumber("123")
+            .applicantsFL401(partyDetails)
+            .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(Boolean.FALSE).build())
+            .allPartyFlags(AllPartyFlags.builder().build())
+            .hearingData(hearingData)
+            .applicants(partyDetailsList)
+            .respondents(partyDetailsList)
+            .issueDate(LocalDate.now())
+            .manageOrders(manageOrders)
+            .build();
+
+        HearingResponse hearingsResponse =
+            hearingsService.createAutomatedHearings(caseData);
+        assertThat(hearingsResponse.getStatus()).isEqualTo("200");
+    }
+
+    @Test
     void shouldReturnAutomateHearingTestF401() throws IOException, ParseException {
 
         HearingResponse response = HearingResponse.builder()
