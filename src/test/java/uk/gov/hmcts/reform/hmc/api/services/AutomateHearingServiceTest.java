@@ -212,6 +212,7 @@ class AutomateHearingServiceTest {
         HearingResponse hearingsResponse =
             hearingsService.createAutomatedHearings(caseData);
         assertThat(hearingsResponse.getStatus()).isEqualTo("200");
+        assertThat(hearingsResponse.getHearingRequestID()).isEqualTo("123");
     }
 
     private void getHearingData(HearingData.HearingDataBuilder dynamicList, String yesOrNo) {
@@ -299,6 +300,7 @@ class AutomateHearingServiceTest {
         HearingResponse hearingsResponse =
             hearingsService.createAutomatedHearings(caseData);
         assertThat(hearingsResponse.getStatus()).isEqualTo("200");
+        assertThat(hearingsResponse.getHearingRequestID()).isEqualTo("123");
     }
 
     @Test
@@ -356,6 +358,66 @@ class AutomateHearingServiceTest {
         HearingResponse hearingsResponse =
             hearingsService.createAutomatedHearings(caseData);
         assertThat(hearingsResponse.getStatus()).isEqualTo("200");
+        assertThat(hearingsResponse.getHearingRequestID()).isEqualTo("123");
+    }
+
+
+    @Test
+    void shouldReturnAutomateHearingTestF401ForParties() throws IOException, ParseException {
+
+        HearingResponse response = HearingResponse.builder()
+            .hearingRequestID("123")
+            .status("200")
+            .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
+        when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
+        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+            .thenReturn(response);
+
+        getHearingData(HearingData.builder()
+                           .hearingTypes(dynamicList)
+                           .confirmedHearingDates(dynamicList)
+                           .hearingChannels(dynamicList)
+                           .applicantHearingChannel(dynamicList)
+                           .hearingVideoChannels(dynamicList)
+                           .hearingTelephoneChannels(dynamicList)
+                           .courtList(dynamicList)
+                           .localAuthorityHearingChannel(dynamicList)
+                           .hearingListedLinkedCases(dynamicList)
+                           .applicantSolicitorHearingChannel(dynamicList)
+                           .respondentHearingChannel(dynamicList)
+                           .respondentSolicitorHearingChannel(dynamicList)
+                           .cafcassHearingChannel(dynamicList)
+                           .cafcassCymruHearingChannel(dynamicList)
+                           .applicantHearingChannel(dynamicList)
+                           .additionalHearingDetails("Test")
+                           .instructionsForRemoteHearing("Test")
+                           .hearingEstimatedMinutes("40"), "No");
+
+        List<Element<HearingData>> hearingDataList = new ArrayList<>();
+        hearingDataList.add(element(hearingData));
+
+        caseData = CaseData
+            .caseDataBuilder()
+            .caseTypeOfApplication("FL401")
+            .applicantCaseName("Test Case 45678")
+            .familymanCaseNumber("123")
+            .applicantsFL401(partyDetails)
+            .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(Boolean.FALSE).build())
+            .allPartyFlags(AllPartyFlags.builder().build())
+            .applicantsFL401(partyDetails)
+            .respondentsFL401(partyDetails)
+            .hearingData(hearingData)
+            .issueDate(LocalDate.now())
+            .manageOrders(manageOrders)
+            .build();
+
+        HearingResponse hearingsResponse =
+            hearingsService.createAutomatedHearings(caseData);
+        assertThat(hearingsResponse.getStatus()).isEqualTo("200");
+        assertThat(hearingsResponse.getHearingRequestID()).isEqualTo("123");
     }
 
 
