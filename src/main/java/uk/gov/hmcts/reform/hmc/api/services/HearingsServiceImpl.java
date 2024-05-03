@@ -398,8 +398,5 @@ public class HearingsServiceImpl implements HearingsService {
         } catch (JsonProcessingException e) {
             log.error(e.getMessage());
         }
-
-
-
     }
 }

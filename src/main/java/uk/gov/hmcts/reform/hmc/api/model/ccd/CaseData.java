@@ -75,4 +75,7 @@ public class CaseData  {
     @JsonProperty("hearingData")
     private HearingData hearingData;
 
+    private String selectedCaseTypeID;
+
+
 }

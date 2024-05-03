@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,20 +42,31 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/", description = "get hearings Values")
+@Api("/")
 public class HearingsController {
 
-    @Autowired private IdamAuthService idamAuthService;
+    private final IdamAuthService idamAuthService;
 
-    @Autowired private HearingsDataService hearingsDataService;
+    private final HearingsDataService hearingsDataService;
 
-    @Autowired private HearingsService hearingsService;
+    private final HearingsService hearingsService;
 
-    @Autowired private NextHearingDetailsService nextHearingDetailsService;
+    private final NextHearingDetailsService nextHearingDetailsService;
 
-    @Autowired private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired private RoleAssignmentService roleAssignmentService;
+    private final RoleAssignmentService roleAssignmentService;
+
+    public HearingsController(IdamAuthService idamAuthService, HearingsDataService hearingsDataService,
+                              HearingsService hearingsService, NextHearingDetailsService nextHearingDetailsService,
+                              AuthTokenGenerator authTokenGenerator, RoleAssignmentService roleAssignmentService) {
+        this.idamAuthService = idamAuthService;
+        this.hearingsDataService = hearingsDataService;
+        this.hearingsService = hearingsService;
+        this.nextHearingDetailsService = nextHearingDetailsService;
+        this.authTokenGenerator = authTokenGenerator;
+        this.roleAssignmentService = roleAssignmentService;
+    }
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
@@ -331,7 +341,7 @@ public class HearingsController {
     /**
      * End point to create hearing details for a case.
      *
-     * @return success response, and initiates async process to create hearings
+     * @return success response, and initiates sync process to create hearings
      *     passed.
      * @header authorization, user authorization token.
      * @header serviceAuthorization, S2S authorization token.
@@ -341,7 +351,7 @@ public class HearingsController {
     @ApiOperation("create automated hearing")
     @ApiResponses(
             value = {
-                @ApiResponse(code = 200, message = "Initiated Async Create hearings successfully"),
+                @ApiResponse(code = 200, message = "Initiated sync Create hearings successfully"),
                 @ApiResponse(code = 400, message = "Bad Request")
             })
     public ResponseEntity<Object> createAutomatedHearings(
