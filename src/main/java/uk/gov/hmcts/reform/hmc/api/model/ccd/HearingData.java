@@ -49,18 +49,11 @@ public class HearingData {
 
     private DynamicList applicantHearingChannel;
 
-    /*@JsonSerialize(using = CustomEnumSerializer.class)
-    @JsonProperty("hearingDateConfirmOptionEnum")
-    private HearingDateConfirmOptionEnum hearingDateConfirmOptionEnum;*/
-
     @JsonProperty("additionalHearingDetails")
     private String additionalHearingDetails;
 
     @JsonProperty("instructionsForRemoteHearing")
     private String instructionsForRemoteHearing;
-
-    /*@JsonProperty("hearingDateTimes")
-    private List<Element<HearingDateTimeOption>> hearingDateTimes;*/
 
     @JsonProperty("hearingEstimatedHours")
     private final String hearingEstimatedHours;
@@ -74,16 +67,9 @@ public class HearingData {
     @JsonProperty("allPartiesAttendHearingSameWayYesOrNo")
     private final String allPartiesAttendHearingSameWayYesOrNo;
 
-    /*@JsonSerialize(using = CustomEnumSerializer.class)
-    @JsonProperty("hearingAuthority")
-    private DioBeforeAEnum hearingAuthority;*/
-
     @JsonSerialize(using = CustomEnumSerializer.class)
     @JsonProperty("hearingChannelsEnum")
     private HearingChannelsEnum hearingChannelsEnum;
-
-    /*@JsonProperty("hearingJudgeNameAndEmail")
-    private final JudicialUser hearingJudgeNameAndEmail;*/
 
     @JsonProperty("hearingJudgePersonalCode")
     private String hearingJudgePersonalCode;
@@ -98,9 +84,6 @@ public class HearingData {
     private String applicantSolicitor;
     private String respondentName;
     private String respondentSolicitor;
-
-    /*@JsonProperty("hearingSpecificDatesOptionsEnum")
-    private HearingSpecificDatesOptionsEnum hearingSpecificDatesOptionsEnum;*/
 
     @JsonProperty("firstDateOfTheHearing")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

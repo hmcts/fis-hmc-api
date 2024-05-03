@@ -230,14 +230,13 @@ public class HearingsServiceImpl implements HearingsService {
 
         for (Hearings hearings : casesWithHearings) {
             List<CaseHearing> listedOrCancelledHearings =
-                    hearings.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            (hearing.getHmcStatus().equals(LISTED)
-                                                            || hearing.getHmcStatus()
-                                                                    .equals(CANCELLED))
-                                                    && hearing.getHearingDaySchedule() != null)
-                            .collect(Collectors.toList());
+                hearings.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            (hearing.getHmcStatus().equals(LISTED)
+                                || hearing.getHmcStatus()
+                                .equals(CANCELLED))
+                                && hearing.getHearingDaySchedule() != null).toList();
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
                 CourtDetail caseCourt =
                         allVenues.stream()
@@ -319,16 +318,15 @@ public class HearingsServiceImpl implements HearingsService {
                     futureHearingStatusList.stream().map(String::trim).collect(Collectors.toList());
 
             final List<CaseHearing> filteredHearingsByStatus =
-                    hearingDetails.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            hearingStatuses.stream()
-                                                    .anyMatch(
-                                                            hearingStatus ->
-                                                                    hearingStatus.equals(
-                                                                            hearing
-                                                                                    .getHmcStatus())))
-                            .collect(Collectors.toList());
+                hearingDetails.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            hearingStatuses.stream()
+                                .anyMatch(
+                                    hearingStatus ->
+                                        hearingStatus.equals(
+                                            hearing
+                                                .getHmcStatus()))).toList();
 
             final List<CaseHearing> allFutureHearings =
                     filteredHearingsByStatus.stream()
