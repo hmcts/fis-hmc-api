@@ -195,9 +195,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
   '**/uk/gov/hmcts/reform/hmc/api/services/**',
-  '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
-  '**/uk/gov/hmcts/reform/hmc/api/utils/CaseUtils.java',
-  '**/uk/gov/hmcts/reform/hmc/api/services/AutomateHearingServiceTest.java'
+Re  '**/uk/gov/hmcts/reform/hmc/api/utils/CaseUtils.java'
 ]
 
 sonarqube {
