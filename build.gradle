@@ -293,7 +293,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.108.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.109.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -317,7 +317,7 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.14') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.18') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
@@ -339,7 +339,7 @@ dependencyManagement {
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.3'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
