@@ -1,14 +1,59 @@
-lib#!groovy
+#!groovy
 
 properties([
-  // H allow predefined but random minute see https://en.wikipedia.org/wiki/Cron#Non-standard_characters
-  pipelineTriggers([cron('H 08 * * 1-5')])
+  pipelineTriggers([corn('H 7 * * 1-5')]),
+  parametes([
+    string(name: 'URL_TO_TEST', defaultValue: 'http://fis-hmc-api-aat.service.core-compute-aat.internal/', description: 'The URL you want to run these tests against')
+  ])
 ])
 
 @Library("Infrastructure")
 
 def type = "java"
-def product = "rpe"
-def component = "spring-boot-template"
+def product = "fis"
+def component = "hmc-api"
 
-withNightlyPipeline(type, product, component) {}
+def channel = "#fis-integration-tech-notifications"
+
+def secrets = [
+  'fis-kv-${env}': [
+    secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
+    secret('fis-hmc-api-s2s-secret', 'OIDC_S2S_SECRET'),
+    secret('idam-hmc-fis-hearing-service-client-secret', 'HMC_FIS_HEARING_SERVICE_CLIENT_SECRET'),
+    secret('fis-hmc-idam-user-name', 'FIS_HMC_IDAM__USER_NAME'),
+    secret('prl-hearing-manager', 'PRL_IDAM_USER_NAME'),
+    secret('idam-hmc-component-user-password', 'IDAM_HMC_COMPONENT_USER_PASSWORD'),
+    secret('fis-hmc-idam-client-secret', 'FIS_HMC_IDAM_CLIENT_SECRET'),
+    secret("launchDarkly-sdk-key", "LAUNCH_DARKLY_SDK_KEY")
+  ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar){
+  [$class : 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    version: '',
+    envVariable: envVar
+  ]
+}
+
+
+withNightlyPipeline(type, product, component) {
+  env.TEST_URL = params.URL_TO_TEST
+  env.test_environment = 'aat'
+
+  loadVaultSecrets(secrets)
+  enableSlackNotifications(channel)
+  enableFortifyScan()
+  enableMutationTest(150)
+  enableFullFunctionalTest(200)
+
+  afterAlways('fullFunctionalTest') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/site/serenity/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
+  }
+
+  afterAlways('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
+  }
+}
