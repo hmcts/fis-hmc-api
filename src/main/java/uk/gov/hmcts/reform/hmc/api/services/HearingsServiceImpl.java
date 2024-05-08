@@ -1,16 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
 import feign.FeignException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +17,17 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @Service
 @RequiredArgsConstructor
@@ -201,8 +202,8 @@ public class HearingsServiceImpl implements HearingsService {
             }
             if (!casesWithHearings.isEmpty()) {
                 List<CourtDetail> allVenues =
-                        refDataService.getCourtDetailsByServiceCode(
-                                hearingDetails.getHmctsServiceCode());
+                    refDataService.getCourtDetailsByServiceCode(
+                        hearingDetails.getHmctsServiceCode());
 
                 integrateVenueDetailsForCaseId(allVenues, casesWithHearings, caseIdWithRegionIdMap);
             }
@@ -211,21 +212,69 @@ public class HearingsServiceImpl implements HearingsService {
         return casesWithHearings;
     }
 
+    @Override
+    public List<Hearings> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization, String serviceAuthorization) {
+
+        List<Hearings> casesWithHearings = new ArrayList<>();
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        List<Hearings> hearingDetailsList =
+            hearingApiClient.getListOfHearingDetails(
+                userToken, s2sToken, listOfCaseIds);
+        for (var hearing : hearingDetailsList) {
+            try {
+                hearingDetails = hearing;
+                List<CaseHearing> filteredHearings =
+                    hearingDetails.getCaseHearings().stream()
+                        .filter(
+                            eachHearing ->
+                                eachHearing.getHmcStatus().equals(LISTED)
+                                    || eachHearing
+                                    .getHmcStatus()
+                                    .equals(CANCELLED)
+                                    || eachHearing
+                                    .getHmcStatus()
+                                    .equals(COMPLETED))
+                        .collect(Collectors.toList());
+                Hearings filteredCaseHearingsWithCount =
+                    Hearings.hearingsWith()
+                        .caseHearings(filteredHearings)
+                        .caseRef(hearingDetails.getCaseRef())
+                        .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                        .build();
+                casesWithHearings.add(filteredCaseHearingsWithCount);
+            } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                log.info(
+                    "Hearing api call HttpClientError exception {}",
+                    exception.getMessage()
+                );
+            } catch (FeignException exception) {
+                log.info("Hearing api call Feign exception {}", exception.getMessage());
+            } catch (Exception exception) {
+                log.info("Hearing api call Exception exception {}", exception.getMessage());
+            }
+        }
+
+        return casesWithHearings;
+    }
+
     private void integrateVenueDetailsForCaseId(
-            List<CourtDetail> allVenues,
-            List<Hearings> casesWithHearings,
-            Map<String, String> caseIdWithRegionIdMap) {
+        List<CourtDetail> allVenues,
+        List<Hearings> casesWithHearings,
+        Map<String, String> caseIdWithRegionIdMap) {
 
         for (Hearings hearings : casesWithHearings) {
             List<CaseHearing> listedOrCancelledHearings =
-                    hearings.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            (hearing.getHmcStatus().equals(LISTED)
-                                                            || hearing.getHmcStatus()
-                                                                    .equals(CANCELLED))
-                                                    && hearing.getHearingDaySchedule() != null)
-                            .collect(Collectors.toList());
+                hearings.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            (hearing.getHmcStatus().equals(LISTED)
+                                || hearing.getHmcStatus()
+                                .equals(CANCELLED))
+                                && hearing.getHearingDaySchedule() != null)
+                    .collect(Collectors.toList());
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
                 CourtDetail caseCourt =
                         allVenues.stream()

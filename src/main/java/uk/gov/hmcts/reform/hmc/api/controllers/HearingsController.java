@@ -169,6 +169,36 @@ public class HearingsController {
         }
     }
 
+    @PostMapping(path = "/hearings-by-list-of-caseids-without-venue")
+    @ApiOperation("get hearings by case reference numbers without court venue details")
+    @ApiResponses(
+        value = {
+            @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+            @ApiResponse(code = 400, message = "Bad Request")
+        })
+    public ResponseEntity<Object> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+        @RequestHeader(AUTHORIZATION) String authorization,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+        @RequestBody Map<String, String> listOfCaseIds) {
+        try {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                return ResponseEntity.ok(
+                    hearingsService.getHearingsByListOfCaseIds(
+                        listOfCaseIds, authorization, serviceAuthorization));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
     /**
      * End point to fetch the Hearings Link Data info based on the hearing request Values passed.
      *
