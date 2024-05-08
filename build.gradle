@@ -29,7 +29,15 @@ plugins {
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.25.16'
   id 'au.com.dius.pact' version '4.1.7'
+  id 'info.solidsoft.pitest' version '1.7.4'
 }
+
+def versions = [
+  gradlePitest                 : '1.4.5',
+  pitest                       : '1.7.3',
+  sonarPitest                  : '0.5',
+]
+
 
 apply plugin: 'cz.habarta.typescript-generator'
 apply plugin: 'com.github.ben-manes.versions'
@@ -159,6 +167,21 @@ pmd {
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
+pitest {
+  targetClasses = ['uk.gov.hmcts.reform.hmc.api.*']
+  excludedClasses = [
+    'uk.gov.hmcts.reform.hmc.api.config.*',
+    'uk.gov.hmcts.reform.hmc.api.models.*',
+    'uk.gov.hmcts.reform.hmc.api.enums.*',
+    'uk.gov.hmcts.reform.hmc.api.Application.*',
+    'uk.gov.hmcts.reform.hmc.api.utils.ElementUtils.*',
+  ]
+  threads = 10
+  outputFormats = ['XML', 'HTML']
+  timestampedReports = true
+  mutationThreshold = 80
+}
+
 jacocoTestReport {
   executionData(test, integration)
   reports {
@@ -205,6 +228,8 @@ sonarqube {
     property "sonar.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.pitest.mode", "reuseReport"
+    property "sonar.pitest.reportsDirectory", "build/reports/pitest"
   }
 }
 
@@ -445,6 +470,11 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+
+  implementation group: 'org.pitest', name: 'pitest', version: versions.pitest
+  implementation group:'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: versions.gradlePitest
+  implementation group:'org.codehaus.sonar-plugins', name:'sonar-pitest-plugin', version: versions.sonarPitest
+
 }
 
 mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'
