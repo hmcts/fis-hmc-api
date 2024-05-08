@@ -27,5 +27,7 @@
     <cve>CVE-2016-10543</cve>
     <!--spring-web-->
     <cve>CVE-2016-1000027</cve>
+
+    <cve>CVE-2023-34042</cve>
   </suppress>
 </suppressions>
