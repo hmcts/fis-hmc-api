@@ -13,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
@@ -179,13 +180,13 @@ public class HearingsController {
     public ResponseEntity<Object> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
         @RequestHeader(AUTHORIZATION) String authorization,
         @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-        @RequestBody Map<String, String> listOfCaseIds) {
+        @RequestBody List<String> listOfCaseIds) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                 && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
-                    hearingsService.getHearingsByListOfCaseIds(
+                    hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
                         listOfCaseIds, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
