@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -73,7 +75,6 @@ class RefDataServiceTest {
         when(authTokenGenerator.generate())
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
-
         String epimmsId = "231596";
         assertThrows(RefDataException.class, () -> refDataService.getCourtDetails(epimmsId));
     }
@@ -113,4 +114,30 @@ class RefDataServiceTest {
 
         assertEquals("test", hearingResp.getHearingUpdate().getHearingVenueName());
     }
+
+    @Test
+    public void getCourtDetailsByServiceCodeTest(){
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("test")
+                .build();
+
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        VenuesDetail venue = new VenuesDetail();
+        venue.setServiceCode("mock_service_code");
+        venue.setCourtTypeId("mock_court_type_id");
+        venue.setCourtVenues(courtDetailsList);
+
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
+        List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
+        Assertions.assertNotNull(courtList);
+    }
+
 }
+
