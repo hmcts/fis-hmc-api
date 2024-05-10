@@ -18,7 +18,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class})
@@ -44,7 +47,7 @@ public class RoleAssignmentServiceTest {
     }
 
     @Test
-    public void assignHearingRoleToSysUserTest(){
+    public void assignHearingRoleToSysUserTest() {
         UserDetails user = UserDetails.builder()
             .id("12345")
             .email("test@hmcts.net")
