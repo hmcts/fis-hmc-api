@@ -217,8 +217,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
-  '**/uk/gov/hmcts/reform/hmc/api/services/**',
-  '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
+  '**/uk/gov/hmcts/reform/hmc/api/services/**'
 ]
 
 sonarqube {
@@ -366,6 +365,7 @@ dependencyManagement {
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
+
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
@@ -415,6 +415,8 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
+  implementation('org.springframework.retry:spring-retry')
+
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')

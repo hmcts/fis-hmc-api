@@ -1,16 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import feign.FeignException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +15,36 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+    @Value("${ccd.ui.url}")
+    private String ccdBaseUrl;
+
+    private static final Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -52,6 +63,7 @@ public class HearingsServiceImpl implements HearingsService {
     private List<String> futureHearingStatusList;
 
     private Hearings hearingDetails;
+
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -218,14 +230,13 @@ public class HearingsServiceImpl implements HearingsService {
 
         for (Hearings hearings : casesWithHearings) {
             List<CaseHearing> listedOrCancelledHearings =
-                    hearings.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            (hearing.getHmcStatus().equals(LISTED)
-                                                            || hearing.getHmcStatus()
-                                                                    .equals(CANCELLED))
-                                                    && hearing.getHearingDaySchedule() != null)
-                            .collect(Collectors.toList());
+                hearings.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            (hearing.getHmcStatus().equals(LISTED)
+                                || hearing.getHmcStatus()
+                                .equals(CANCELLED))
+                                && hearing.getHearingDaySchedule() != null).toList();
             if (listedOrCancelledHearings != null && !listedOrCancelledHearings.isEmpty()) {
                 CourtDetail caseCourt =
                         allVenues.stream()
@@ -307,16 +318,15 @@ public class HearingsServiceImpl implements HearingsService {
                     futureHearingStatusList.stream().map(String::trim).collect(Collectors.toList());
 
             final List<CaseHearing> filteredHearingsByStatus =
-                    hearingDetails.getCaseHearings().stream()
-                            .filter(
-                                    hearing ->
-                                            hearingStatuses.stream()
-                                                    .anyMatch(
-                                                            hearingStatus ->
-                                                                    hearingStatus.equals(
-                                                                            hearing
-                                                                                    .getHmcStatus())))
-                            .collect(Collectors.toList());
+                hearingDetails.getCaseHearings().stream()
+                    .filter(
+                        hearing ->
+                            hearingStatuses.stream()
+                                .anyMatch(
+                                    hearingStatus ->
+                                        hearingStatus.equals(
+                                            hearing
+                                                .getHmcStatus()))).toList();
 
             final List<CaseHearing> allFutureHearings =
                     filteredHearingsByStatus.stream()
@@ -351,5 +361,42 @@ public class HearingsServiceImpl implements HearingsService {
         }
 
         return futureHearingsResponse;
+    }
+
+    @Override
+    public HearingResponse createAutomatedHearings(CaseData caseData) {
+
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
+            caseData, ccdBaseUrl);
+        printRequest(hearingRequest); // has to remove once all test completed
+        HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+            userToken,
+            s2sToken,
+            hearingRequest
+        );
+        return HearingResponse.builder()
+            .status(hearingResponse.getStatus())
+            .versionNumber(hearingResponse.getVersionNumber())
+            .hearingRequestID(hearingResponse.getHearingRequestID())
+            .timeStamp(hearingResponse.getTimeStamp())
+            .build();
+    }
+
+    private void printRequest(AutomatedHearingRequest hearingRequest) {
+
+        ObjectMapper objectMappers = new ObjectMapper();
+        objectMappers.registerModule(new JavaTimeModule());
+        try {
+            String automatedHearingRequestJson = objectMappers.writerWithDefaultPrettyPrinter().writeValueAsString(
+                hearingRequest);
+            log.info(
+                "Automated Hearing Request: createAutomatedHearings: hearingRequest: {}",
+                automatedHearingRequestJson
+            );
+        } catch (JsonProcessingException e) {
+            log.error(e.getMessage());
+        }
     }
 }
