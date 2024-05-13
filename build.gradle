@@ -360,7 +360,7 @@ dependencyManagement {
       entry 'spring-webmvc'
       entry 'spring-web'
     }
-    dependencySet(group: 'commons-io', version: '2.14.0') {
+    dependencySet(group: 'commons-io', version: '2.16.1') {
       entry 'commons-io'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
