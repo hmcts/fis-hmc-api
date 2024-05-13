@@ -47,7 +47,7 @@ public class RoleAssignmentServiceTest {
     }
 
     @Test
-    public void assignHearingRoleToSysUserTest() {
+    void assignHearingRoleToSysUserTest() {
         UserDetails user = UserDetails.builder()
             .id("12345")
             .email("test@hmcts.net")

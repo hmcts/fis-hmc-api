@@ -44,7 +44,7 @@ withNightlyPipeline(type, product, component) {
 
   loadVaultSecrets(secrets)
   enableSlackNotifications(channel)
-//  enableFortifyScan()
+  enableFortifyScan()
   enableMutationTest(150)
   enableFullFunctionalTest(200)
 
@@ -53,8 +53,8 @@ withNightlyPipeline(type, product, component) {
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
   }
 
-//  afterAlways('fortify-scan') {
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
-//  }
+  afterAlways('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
+  }
 }

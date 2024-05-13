@@ -5,6 +5,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import feign.FeignException;
 import feign.Request;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -35,10 +39,8 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
-import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+import uk.gov.hmcts.reform.hmc.api.services.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -56,6 +58,8 @@ class HearingsControllerTest {
     @Mock private HearingsService hearingsService;
 
     @Mock private NextHearingDetailsService nextHearingDetailsService;
+
+    @Mock private RoleAssignmentService roleAssignmentService;
 
     private Hearings hearings;
 
@@ -458,4 +462,71 @@ class HearingsControllerTest {
                         .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
                         .build());
     }
+
+    @Test
+    void getHearingsLinkDataTest() throws IOException, ParseException {
+
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+
+        HearingLinkData hearingLinkData = HearingLinkData.hearingLinkDataWith()
+            .caseReference("BBA3").caseName("123").reasonsForLink(List.of("reasonLink")).build();
+        List<HearingLinkData> hearingLinkDataList = new ArrayList<>();
+        hearingLinkDataList.add(hearingLinkData);
+        Mockito.when(hearingsDataService.getHearingLinkData(any(), anyString(), anyString()))
+            .thenReturn(hearingLinkDataList);
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("Auth", "sauth", hearingValues);
+        Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void hearingsLinkDataUnauthorisedExceptionTest() throws IOException, ParseException {
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void hearingsLinkDataUnauthorisedFeignExceptionTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+    }
+
+
+    @Test
+    void assignRoleTest() {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        ResponseEntity<Object> response =
+            hearingsController.assignRole("Auth");
+        verify(roleAssignmentService, times(1)).assignHearingRoleToSysUser();
+    }
+
+    @Test
+    void assignRoleThrowUnauthorizedExceptionTest() {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.FALSE);
+        Throwable exception = Assert.assertThrows(ResponseStatusException.class, () -> hearingsController.assignRole("Auth"));
+        Assertions.assertEquals("401 UNAUTHORIZED", exception.getMessage());
+
+    }
+
+
 }

@@ -116,7 +116,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void getCourtDetailsByServiceCodeTest() {
+    void getCourtDetailsByServiceCodeTest() {
         CourtDetail courtDetail =
             CourtDetail.courtDetailWith()
                 .courtTypeId("18")
