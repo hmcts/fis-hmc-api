@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -223,40 +224,41 @@ public class HearingsServiceImpl implements HearingsService {
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds);
-        for (var hearing : hearingDetailsList) {
-            try {
-                hearingDetails = hearing;
-                List<CaseHearing> filteredHearings =
-                    hearingDetails.getCaseHearings().stream()
-                        .filter(
-                            eachHearing ->
-                                eachHearing.getHmcStatus().equals(LISTED)
-                                    || eachHearing
-                                    .getHmcStatus()
-                                    .equals(CANCELLED)
-                                    || eachHearing
-                                    .getHmcStatus()
-                                    .equals(COMPLETED))
-                        .collect(Collectors.toList());
-                Hearings filteredCaseHearingsWithCount =
-                    Hearings.hearingsWith()
-                        .caseHearings(filteredHearings)
-                        .caseRef(hearingDetails.getCaseRef())
-                        .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
-                        .build();
-                casesWithHearings.add(filteredCaseHearingsWithCount);
-            } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                log.info(
-                    "Hearing api call HttpClientError exception {}",
-                    exception.getMessage()
-                );
-            } catch (FeignException exception) {
-                log.info("Hearing api call Feign exception {}", exception.getMessage());
-            } catch (Exception exception) {
-                log.info("Hearing api call Exception exception {}", exception.getMessage());
+        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            for (var hearing : hearingDetailsList) {
+                try {
+                    hearingDetails = hearing;
+                    List<CaseHearing> filteredHearings =
+                        hearingDetails.getCaseHearings().stream()
+                            .filter(
+                                eachHearing ->
+                                    eachHearing.getHmcStatus().equals(LISTED)
+                                        || eachHearing
+                                        .getHmcStatus()
+                                        .equals(CANCELLED)
+                                        || eachHearing
+                                        .getHmcStatus()
+                                        .equals(COMPLETED))
+                            .collect(Collectors.toList());
+                    Hearings filteredCaseHearingsWithCount =
+                        Hearings.hearingsWith()
+                            .caseHearings(filteredHearings)
+                            .caseRef(hearingDetails.getCaseRef())
+                            .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                            .build();
+                    casesWithHearings.add(filteredCaseHearingsWithCount);
+                } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                    log.info(
+                        "Hearing api call HttpClientError exception {}",
+                        exception.getMessage()
+                    );
+                } catch (FeignException exception) {
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
+                } catch (Exception exception) {
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
+                }
             }
         }
-
         return casesWithHearings;
     }
 
