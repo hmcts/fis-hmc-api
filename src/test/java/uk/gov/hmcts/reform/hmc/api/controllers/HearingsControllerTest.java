@@ -35,6 +35,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
@@ -457,5 +458,25 @@ class HearingsControllerTest {
                 .status(status)
                 .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
                 .build());
+    }
+
+    @Test
+    void getHearingsLinkDataTest() throws IOException, ParseException {
+
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+
+        HearingLinkData hearingLinkData = HearingLinkData.hearingLinkDataWith()
+            .caseReference("BBA3").caseName("123").reasonsForLink(List.of("reasonLink")).build();
+        List<HearingLinkData> hearingLinkDataList = new ArrayList<>();
+        hearingLinkDataList.add(hearingLinkData);
+        Mockito.when(hearingsDataService.getHearingLinkData(any(), anyString(), anyString()))
+            .thenReturn(hearingLinkDataList);
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("Auth", "sauth", hearingValues);
+        Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
 }
