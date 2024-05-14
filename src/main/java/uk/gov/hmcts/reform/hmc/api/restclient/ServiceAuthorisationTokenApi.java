@@ -4,11 +4,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 import static org.springframework.util.MimeTypeUtils.TEXT_PLAIN_VALUE;
 
-import feign.codec.Decoder;
-import feign.codec.StringDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.FeignClientProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,4 +34,5 @@ public interface ServiceAuthorisationTokenApi {
     @SuppressWarnings({"PMD.UseVarargs", "PMD.UnnecessaryAnnotationValueElement"})
     @GetMapping(value = "/details")
     String getServiceName(@RequestHeader(AUTHORIZATION) final String authHeader);
+
 }
