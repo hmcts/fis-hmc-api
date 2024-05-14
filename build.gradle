@@ -33,7 +33,7 @@ plugins {
 }
 
 def versions = [
-  gradlePitest                 : '1.4.5',
+  gradlePitest                 : '1.15.0',
   pitest                       : '1.7.3',
   sonarPitest                  : '0.5',
 ]
