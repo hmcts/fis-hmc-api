@@ -5,11 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public final class FisHmcObjectMapper {
-
-    private FisHmcObjectMapper() {
-        throw new IllegalStateException("Utility class");
-    }
+public interface FisHmcObjectMapper {
 
     public static ObjectMapper getObjectMapper() {
         ObjectMapper om = new ObjectMapper();

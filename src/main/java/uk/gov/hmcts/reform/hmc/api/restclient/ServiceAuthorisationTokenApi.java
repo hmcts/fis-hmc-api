@@ -37,11 +37,4 @@ public interface ServiceAuthorisationTokenApi {
     @SuppressWarnings({"PMD.UseVarargs", "PMD.UnnecessaryAnnotationValueElement"})
     @GetMapping(value = "/details")
     String getServiceName(@RequestHeader(AUTHORIZATION) final String authHeader);
-
-    class Config {
-        @Bean
-        Decoder stringDecoder() {
-            return new StringDecoder();
-        }
-    }
 }
