@@ -479,4 +479,16 @@ class HearingsControllerTest {
             hearingsController.getHearingsLinkData("Auth", "sauth", hearingValues);
         Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
     }
+
+    @Test
+    void hearingsLinkDataUnauthorisedExceptionTest() throws IOException, ParseException {
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
+    }
 }
