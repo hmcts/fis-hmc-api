@@ -491,4 +491,6 @@ class HearingsControllerTest {
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
     }
+
+
 }
