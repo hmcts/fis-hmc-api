@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
+
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -506,5 +509,13 @@ class HearingsControllerTest {
             hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void assignRoleThrowUnauthorizedExceptionTest() {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.FALSE);
+        Throwable exception = assertThrows(ResponseStatusException.class, () -> hearingsController.assignRole("Auth"));
+        Assertions.assertEquals("401 UNAUTHORIZED", exception.getMessage());
+
     }
 }
