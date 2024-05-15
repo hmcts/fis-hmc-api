@@ -218,10 +218,7 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
   '**/uk/gov/hmcts/reform/hmc/api/services/**',
-<<<<<<< HEAD
-=======
   '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
->>>>>>> b8ffda53b4458a734550f47faaecebcac96ca62c
   '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
 ]
 
