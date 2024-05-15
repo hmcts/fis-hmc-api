@@ -407,7 +407,7 @@ dependencyManagement {
   }
 }
 dependencies {
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.8.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
