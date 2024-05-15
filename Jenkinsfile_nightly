@@ -15,6 +15,14 @@ def component = "hmc-api"
 
 def channel = "#fis-integration-tech-notifications"
 
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   envVariable: envVariable
+  ]
+}
+
 def secrets = [
   'fis-kv-${env}': [
     secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
@@ -27,15 +35,6 @@ def secrets = [
     secret("launchDarkly-sdk-key", "LAUNCH_DARKLY_SDK_KEY")
   ]
 ]
-
-static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
-  [$class     : 'AzureKeyVaultSecret',
-   secretType : 'Secret',
-   name       : secretName,
-   version    : '',
-   envVariable: envVar
-  ]
-}
 
 
 withNightlyPipeline(type, product, component) {

@@ -161,9 +161,9 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "Auth", "sauth"))
-                .thenReturn(hearings);
+                .thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
         Assertions.assertNotNull(hearingsResponse.getBody());
@@ -212,10 +212,10 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
 
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
@@ -236,9 +236,9 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
@@ -255,9 +255,9 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
 
         Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
@@ -277,9 +277,9 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
         Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
                 .thenThrow(new RuntimeException());
 
@@ -404,9 +404,9 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
 
-        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearings);
+        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsForCaseRefNoResponse =
                 hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
         Assertions.assertNotNull(hearingsForCaseRefNoResponse.getBody());
