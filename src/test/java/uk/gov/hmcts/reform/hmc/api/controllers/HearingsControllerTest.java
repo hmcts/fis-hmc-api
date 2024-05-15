@@ -44,7 +44,6 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
-import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
