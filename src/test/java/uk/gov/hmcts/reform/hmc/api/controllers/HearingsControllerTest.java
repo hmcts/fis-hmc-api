@@ -492,5 +492,19 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
     }
 
+    @Test
+    void hearingsLinkDataUnauthorisedFeignExceptionTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+    }
 }
