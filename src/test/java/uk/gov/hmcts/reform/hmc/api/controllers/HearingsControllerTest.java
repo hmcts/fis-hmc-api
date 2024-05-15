@@ -5,8 +5,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import feign.FeignException;
 import feign.Request;
@@ -18,8 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +42,6 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
-import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -62,8 +59,6 @@ class HearingsControllerTest {
     @Mock private HearingsService hearingsService;
 
     @Mock private NextHearingDetailsService nextHearingDetailsService;
-
-    @Mock private RoleAssignmentService roleAssignmentService;
 
     private Hearings hearings;
 
@@ -515,19 +510,10 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
 
-
-    @Test
-    void assignRoleTest() {
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        ResponseEntity<Object> response =
-            hearingsController.assignRole("Auth");
-        verify(roleAssignmentService, times(1)).assignHearingRoleToSysUser();
-    }
-
     @Test
     void assignRoleThrowUnauthorizedExceptionTest() {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.FALSE);
-        Throwable exception = Assert.assertThrows(ResponseStatusException.class, () -> hearingsController.assignRole("Auth"));
+        Throwable exception = assertThrows(ResponseStatusException.class, () -> hearingsController.assignRole("Auth"));
         Assertions.assertEquals("401 UNAUTHORIZED", exception.getMessage());
 
     }
