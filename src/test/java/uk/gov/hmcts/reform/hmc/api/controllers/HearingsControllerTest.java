@@ -26,6 +26,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,10 +42,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
-import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
+import uk.gov.hmcts.reform.hmc.api.services.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -60,6 +60,8 @@ class HearingsControllerTest {
     @Mock private HearingsService hearingsService;
 
     @Mock private NextHearingDetailsService nextHearingDetailsService;
+
+    @Mock private RoleAssignmentService roleAssignmentService;
 
     private Hearings hearings;
 
@@ -509,6 +511,14 @@ class HearingsControllerTest {
             hearingsController.getHearingsLinkData("", "", hearingValues);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void assignRoleTest() {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
+        ResponseEntity<Object> response =
+            hearingsController.assignRole("Auth");
+        verify(roleAssignmentService, times(1)).assignHearingRoleToSysUser();
     }
 
     @Test
