@@ -177,10 +177,9 @@ pitest {
   targetClasses = ['uk.gov.hmcts.reform.hmc.api.*']
   excludedClasses = [
     'uk.gov.hmcts.reform.hmc.api.config.*',
-    'uk.gov.hmcts.reform.hmc.api.models.*',
+    'uk.gov.hmcts.reform.hmc.api.model.*',
     'uk.gov.hmcts.reform.hmc.api.enums.*',
     'uk.gov.hmcts.reform.hmc.api.Application.*',
-    'uk.gov.hmcts.reform.hmc.api.utils.ElementUtils.*',
   ]
   threads = 10
   outputFormats = ['XML', 'HTML']
