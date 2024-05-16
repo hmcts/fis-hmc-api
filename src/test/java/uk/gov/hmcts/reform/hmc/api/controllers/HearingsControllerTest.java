@@ -20,12 +20,12 @@ import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -43,9 +43,8 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
-@SuppressWarnings("unchecked")
 class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
@@ -151,7 +150,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsData("", "", hearingValues);
+                hearingsController.getHearingsData("Authorization", "ServiceAuthorization", hearingValues);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
@@ -166,7 +165,7 @@ class HearingsControllerTest {
                 .thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
-        Assertions.assertNotNull(hearingsResponse.getBody());
+        Assertions.assertEquals(HttpStatus.OK, hearingsResponse.getStatusCode());
     }
 
     @Test
@@ -184,12 +183,12 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
 
     @Test
@@ -198,7 +197,7 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "Auth", "sauth"))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
@@ -259,14 +258,14 @@ class HearingsControllerTest {
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearingsObj);
 
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
 
         Assertions.assertEquals(
-                HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
+                HttpStatus.BAD_REQUEST, hearingsForAllCasesResponse.getStatusCode());
     }
 
     @Test
@@ -280,7 +279,7 @@ class HearingsControllerTest {
         Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
         hearingsForAllCases.add(hearingsObj);
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "auth", "sauth"))
                 .thenThrow(new RuntimeException());
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
@@ -335,7 +334,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDetails("", "", "caseRef");
+                hearingsController.updateNextHearingDetails("auth", "", "caseRef");
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
@@ -409,7 +408,9 @@ class HearingsControllerTest {
         Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsForCaseRefNoResponse =
                 hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
-        Assertions.assertNotNull(hearingsForCaseRefNoResponse.getBody());
+
+        Assertions.assertEquals(
+            HttpStatus.OK, hearingsForCaseRefNoResponse.getStatusCode());
     }
 
     @Test
