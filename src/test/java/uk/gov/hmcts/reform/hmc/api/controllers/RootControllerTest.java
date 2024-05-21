@@ -1,17 +1,18 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-@ExtendWith(MockitoExtension.class)
+import static org.junit.jupiter.api.Assertions.*;
+
+@RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
 public class RootControllerTest {
 
@@ -24,8 +25,12 @@ public class RootControllerTest {
     }
 
     @Test
-    void welcomeTest() {
+    void welcomeTestShouldReturnWelcomeMessage() {
         ResponseEntity<String> response = rootController.welcome();
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Welcome to fis-hmc-api dated Nov 01 2022", response.getBody());
     }
+
 }
