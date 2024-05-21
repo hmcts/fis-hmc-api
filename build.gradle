@@ -33,8 +33,8 @@ plugins {
 }
 
 def versions = [
-  gradlePitest                 : '1.4.5',
-  pitest                       : '1.7.3',
+  gradlePitest                 : '1.15.0',
+  pitest                       : '1.16.1',
   sonarPitest                  : '0.5',
 ]
 
@@ -349,7 +349,7 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.18') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.19') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
@@ -366,7 +366,7 @@ dependencyManagement {
       entry 'spring-webmvc'
       entry 'spring-web'
     }
-    dependencySet(group: 'commons-io', version: '2.14.0') {
+    dependencySet(group: 'commons-io', version: '2.16.1') {
       entry 'commons-io'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
@@ -377,12 +377,12 @@ dependencyManagement {
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
-    dependencySet(group: 'io.ktor', version: '2.3.10') {
+    dependencySet(group: 'io.ktor', version: '2.3.11') {
       entry 'ktor-network-tls-jvm'
     }
 
     // CVE-2021-27568, CVE-2023-1370
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
 
@@ -400,7 +400,7 @@ dependencyManagement {
       entry 'grpc-stub'
 
     }
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
     //CVE-2023-3635
@@ -413,14 +413,14 @@ dependencyManagement {
   }
 }
 dependencies {
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.8.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
-  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
+  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
+  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
@@ -437,7 +437,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.48.0'
-  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.16.0'
+  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.0'
   implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.9'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.42'
@@ -455,7 +455,7 @@ dependencies {
   contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
   contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-  testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
+  testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
   contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
