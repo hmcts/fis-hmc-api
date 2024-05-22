@@ -104,6 +104,73 @@ class NextHearingDetailsServiceTest {
         Assertions.assertEquals(Boolean.TRUE, isUpdated);
     }
 
+
+    @Test
+    void testUpdateNextHearingDetailsForUnknownHMCStatus() {
+        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        HearingDaySchedule hearingDaySchedule1 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate1)
+                .build();
+
+        HearingDaySchedule hearingDaySchedule2 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate2)
+                .build();
+
+        List<HearingDaySchedule> hearingDayScheduleList1 = new ArrayList<>();
+        hearingDayScheduleList1.add(hearingDaySchedule1);
+        hearingDayScheduleList1.add(hearingDaySchedule2);
+
+        HearingDaySchedule hearingDaySchedule3 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate3)
+                .build();
+
+        HearingDaySchedule hearingDaySchedule4 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate4)
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList2 = new ArrayList<>();
+        hearingDayScheduleList2.add(hearingDaySchedule3);
+        hearingDayScheduleList2.add(hearingDaySchedule4);
+
+        CaseHearing caseHearing1 =
+            CaseHearing.caseHearingWith()
+                .hearingID(123L)
+                .hmcStatus("UNKNOWN")
+                .hearingDaySchedule(hearingDayScheduleList1)
+                .build();
+
+        CaseHearing caseHearing2 =
+            CaseHearing.caseHearingWith()
+                .hearingID(333L)
+                .hmcStatus("UNKNOWN")
+                .hearingDaySchedule(hearingDayScheduleList2)
+                .build();
+
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing1);
+        caseHearingList.add(caseHearing2);
+
+        Hearings hearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .caseHearings(caseHearingList)
+                .hmctsServiceCode("BBA3")
+                .build();
+
+        Boolean isUpdatedFalse = nextHearingDetailsService.updateNextHearingDetails("auth", hearings);
+        Assertions.assertEquals(Boolean.FALSE, isUpdatedFalse);
+    }
+
     @Test
     void shouldReturnNextHearingDetailsTest() {
         LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);

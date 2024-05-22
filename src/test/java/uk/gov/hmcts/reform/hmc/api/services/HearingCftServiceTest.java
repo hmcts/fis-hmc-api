@@ -60,6 +60,8 @@ class HearingCftServiceTest {
 
     @Mock private HearingApiClient hearingApiClient;
 
+    @Mock RefDataJudicialService refDataJudicialService;
+
     @Test
     void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
 
@@ -67,17 +69,61 @@ class HearingCftServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
         Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123", "", ""));
+
     }
 
     @Test
-    @Ignore
-    void shouldReturnCtfHearingsExceptionTest() throws IOException, ParseException {
+    void shouldReturnHearingsByCaseRefNoTest() throws IOException, ParseException {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("TEST")
+                .hearingVenueAddress("venueAddressTest")
+                .hearingVenueLocationCode("venueLocationCode")
+                .hearingVenuePostCode("postcodeTest")
+                .regionId("RegionId")
+                .courtStatus(OPEN)
+                .build();
 
-        Assertions.assertEquals(
-                null, hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth"));
+        HearingDaySchedule hearingDaySchedule =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId("231596")
+                .hearingJudgeId("4925644")
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+        CaseHearing caseHearing =
+            CaseHearing.caseHearingWith()
+                .hmcStatus("LISTED")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
+
+        when(refDataJudicialService.getJudgeDetails("4925644"))
+            .thenReturn(JudgeDetail.judgeDetailWith().hearingJudgeName("JudgeA").build());
+        when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
+        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN", "MOCK_S2S_TOKEN", "123"))
+            .thenReturn(caseHearings);
+        Hearings hearings = hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
+        Assertions.assertNotNull(hearings);
+        Assertions.assertNotNull(hearings.getCaseHearings());
+        Assertions.assertEquals("venueAddressTest", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueAddress());
+        Assertions.assertEquals("TEST", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueName());
+        Assertions.assertEquals("venueLocationCode", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueLocationCode());
+        Assertions.assertEquals("JudgeA", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingJudgeName());
     }
 
     @Test
@@ -88,6 +134,9 @@ class HearingCftServiceTest {
                         .courtTypeId("18")
                         .hearingVenueId("231596")
                         .hearingVenueName("TEST")
+                        .hearingVenueLocationCode("LocationCodeTest")
+                        .hearingVenueAddress("AddressTest")
+                        .hearingVenuePostCode("PostCodeTest")
                         .regionId("RegionId")
                         .courtStatus(OPEN)
                         .build();
@@ -136,7 +185,198 @@ class HearingCftServiceTest {
         List<Hearings> hearingsResponse =
                 hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+        Assertions.assertEquals("18", hearingsResponse.get(0).getCourtTypeId());
+        Assertions.assertEquals("TEST", hearingsResponse.get(0).getCourtName());
+        Assertions.assertNotNull(hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
+        Assertions.assertEquals("LISTED", hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
+        HearingDaySchedule hearingScheduleResponse = hearingsResponse.get(0).getCaseHearings().get(0).getHearingDaySchedule().get(0);
+
+        Assertions.assertNotNull(hearingScheduleResponse);
+        Assertions.assertEquals("TEST", hearingScheduleResponse.getHearingVenueName());
+        Assertions.assertEquals("AddressTest PostCodeTest", hearingScheduleResponse.getHearingVenueAddress());
+        Assertions.assertEquals("LocationCodeTest", hearingScheduleResponse.getHearingVenueLocationCode());
+        Assertions.assertEquals("18", hearingScheduleResponse.getCourtTypeId());
+        Assertions.assertNotNull(hearingScheduleResponse.getHearingVenueId());
+
     }
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsCompletedCaseHearingTest() {
+
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("TEST")
+                .regionId("RegionId")
+                .courtStatus(OPEN)
+                .build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+
+        HearingDaySchedule hearingDaySchedule =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId("231596")
+                .hearingJudgeId("4925644")
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearing =
+            CaseHearing.caseHearingWith()
+                .hmcStatus("COMPLETED")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+            .thenReturn(List.of(caseHearings));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> hearingsResponse =
+            hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
+        Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+        Assertions.assertEquals("COMPLETED", hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
+    }
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsCancelledCaseHearingTest() {
+
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("TEST")
+                .regionId("RegionId")
+                .courtStatus(OPEN)
+                .build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+
+        HearingDaySchedule hearingDaySchedule =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId(null)
+                .hearingJudgeId("4925644")
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearing =
+            CaseHearing.caseHearingWith()
+                .hmcStatus("CANCELLED")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+            .thenReturn(List.of(caseHearings));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> hearingsResponse =
+            hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
+        Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+        Assertions.assertEquals("CANCELLED", hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
+    }
+
+
+    @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsCancelledCaseHearingTest1() {
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("TEST")
+                .regionId("RegionId")
+                .courtStatus(OPEN)
+                .build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+
+        HearingDaySchedule hearingDaySchedule =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId("231596")
+                .hearingJudgeId("4925644")
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
+        hearingDayScheduleList.add(hearingDaySchedule);
+
+        CaseHearing caseHearing =
+            CaseHearing.caseHearingWith()
+                .hmcStatus("UNKNOWN")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+            .thenReturn(List.of(caseHearings));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> hearingsResponse =
+            hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
+        Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+        Assertions.assertTrue(hearingsResponse.get(0).getCaseHearings().isEmpty());    }
+
+
 
     @Test
     void shouldReturnAllFutureHearingsByCaseRefNoTest() {

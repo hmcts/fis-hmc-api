@@ -145,7 +145,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         List<CaseHearing> listedHearings =
                 hearings.getCaseHearings().stream()
                         .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED))
-                        .collect(Collectors.toList());
+                        .toList();
 
         LocalDateTime tempNextDateListed = null;
         NextHearingDetails nextHearingDetails = new NextHearingDetails();
@@ -154,7 +154,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             Optional<LocalDateTime> minDateOfHearingDaySche =
                     listHearing.getHearingDaySchedule().stream()
                             .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
-                            .map(u -> u.getHearingStartDateTime())
+                            .map(HearingDaySchedule::getHearingStartDateTime)
                             .min(LocalDateTime::compareTo);
 
             if (minDateOfHearingDaySche.isPresent()
