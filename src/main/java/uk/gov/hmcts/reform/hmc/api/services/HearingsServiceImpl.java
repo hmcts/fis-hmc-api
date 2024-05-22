@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
@@ -108,7 +109,7 @@ public class HearingsServiceImpl implements HearingsService {
             List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
             for (CaseHearing caseHearing : caseHearings) {
 
-                if (caseHearing.getHmcStatus().equals(LISTED)
+                if (List.of(LISTED, AWAITING_HEARING_DETAILS, COMPLETED).contains(caseHearing.getHmcStatus())
                         && caseHearing.getHearingDaySchedule() != null) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         String venueId = hearingSchedule.getHearingVenueId();
