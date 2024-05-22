@@ -1,6 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +50,7 @@ class IdamAuthServiceTest {
         when(idamAuthService.authoriseService(null)).thenThrow(NullPointerException.class);
         assertFalse(idamAuthService.authoriseService(null));
     }
+
     @Test
     void authoriseWhenTheServiceIsCalledFromPaymentAndS2sAuthorisedServices() {
         ReflectionTestUtils.setField(idamAuthService, "s2sAuthorisedServices", "test,payment_api");
@@ -75,7 +79,8 @@ class IdamAuthServiceTest {
     @Test
     void getUserDetailsTest() {
         when(idamClient.getUserDetails(any()))
-            .thenReturn(UserDetails.builder().id(UUID.randomUUID().toString()).forename("forenameTest").surname("surnameTest").build());
+            .thenReturn(UserDetails.builder().id(UUID.randomUUID().toString())
+                            .forename("forenameTest").surname("surnameTest").build());
         UserDetails userDetails = idamAuthService.getUserDetails("Bearer abcasda");
         assertNotNull(userDetails);
         assertEquals("forenameTest", userDetails.getForename());

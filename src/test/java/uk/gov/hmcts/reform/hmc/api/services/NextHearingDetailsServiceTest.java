@@ -106,7 +106,7 @@ class NextHearingDetailsServiceTest {
 
 
     @Test
-    void testUpdateNextHearingDetailsForUnknownHMCStatus() {
+    void testUpdateNextHearingDetailsForUnknownHmcStatus() {
         LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
 
         LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);

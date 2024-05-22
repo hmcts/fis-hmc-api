@@ -53,7 +53,8 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call completed successfully" + courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
-                            .filter(courtDetail1 -> courtIds.stream().anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
+                            .filter(courtDetail1 -> courtIds.stream()
+                                .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
                             .toList();
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);

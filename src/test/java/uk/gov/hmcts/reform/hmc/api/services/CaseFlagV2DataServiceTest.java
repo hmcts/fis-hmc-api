@@ -13,9 +13,34 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.*;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS_FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME_TEST_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_LINKS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MNGEMNT_LOC;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_ID;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_NAME;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0020;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PRIVATE_LAW;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_FOR_LINK;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_TEST_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_FIRST_NAME_TEST_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_LAST_NAME_TEST_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS_FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TEST;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")

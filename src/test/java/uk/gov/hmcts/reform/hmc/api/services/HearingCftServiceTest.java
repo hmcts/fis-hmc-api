@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,17 +76,16 @@ class HearingCftServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        CourtDetail courtDetail =
-            CourtDetail.courtDetailWith()
-                .courtTypeId("18")
-                .hearingVenueId("231596")
-                .hearingVenueName("TEST")
-                .hearingVenueAddress("venueAddressTest")
-                .hearingVenueLocationCode("venueLocationCode")
-                .hearingVenuePostCode("postcodeTest")
-                .regionId("RegionId")
-                .courtStatus(OPEN)
-                .build();
+        CourtDetail courtDetail = CourtDetail.courtDetailWith()
+            .courtTypeId("18")
+            .hearingVenueId("231596")
+            .hearingVenueName("TEST")
+            .hearingVenueAddress("venueAddressTest")
+            .hearingVenueLocationCode("venueLocationCode")
+            .hearingVenuePostCode("postcodeTest")
+            .regionId("RegionId")
+            .courtStatus(OPEN)
+            .build();
 
         HearingDaySchedule hearingDaySchedule =
             HearingDaySchedule.hearingDayScheduleWith()
@@ -120,10 +118,12 @@ class HearingCftServiceTest {
         Hearings hearings = hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
         Assertions.assertNotNull(hearings);
         Assertions.assertNotNull(hearings.getCaseHearings());
-        Assertions.assertEquals("venueAddressTest", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueAddress());
-        Assertions.assertEquals("TEST", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueName());
-        Assertions.assertEquals("venueLocationCode", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingVenueLocationCode());
-        Assertions.assertEquals("JudgeA", hearings.getCaseHearings().get(0).getHearingDaySchedule().get(0).getHearingJudgeName());
+        HearingDaySchedule hearingDayScheduleResponse = hearings.getCaseHearings().get(0)
+            .getHearingDaySchedule().get(0);
+        Assertions.assertEquals("venueAddressTest", hearingDayScheduleResponse.getHearingVenueAddress());
+        Assertions.assertEquals("TEST", hearingDayScheduleResponse.getHearingVenueName());
+        Assertions.assertEquals("venueLocationCode", hearingDayScheduleResponse.getHearingVenueLocationCode());
+        Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
     }
 
     @Test
@@ -184,12 +184,14 @@ class HearingCftServiceTest {
 
         List<Hearings> hearingsResponse =
                 hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
+        CaseHearing caseHearingResp = hearingsResponse.get(0).getCaseHearings().get(0);
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
         Assertions.assertEquals("18", hearingsResponse.get(0).getCourtTypeId());
         Assertions.assertEquals("TEST", hearingsResponse.get(0).getCourtName());
-        Assertions.assertNotNull(hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
-        Assertions.assertEquals("LISTED", hearingsResponse.get(0).getCaseHearings().get(0).getHmcStatus());
-        HearingDaySchedule hearingScheduleResponse = hearingsResponse.get(0).getCaseHearings().get(0).getHearingDaySchedule().get(0);
+        Assertions.assertNotNull(caseHearingResp.getHmcStatus());
+        Assertions.assertEquals("LISTED", caseHearingResp.getHmcStatus());
+
+        HearingDaySchedule hearingScheduleResponse = caseHearingResp.getHearingDaySchedule().get(0);
 
         Assertions.assertNotNull(hearingScheduleResponse);
         Assertions.assertEquals("TEST", hearingScheduleResponse.getHearingVenueName());

@@ -3,7 +3,12 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -176,7 +181,8 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+        when(refDataApi.getCourtDetails(anyString(), any(), any()))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
 
