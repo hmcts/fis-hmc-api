@@ -8,7 +8,11 @@ import org.mockito.InjectMocks;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.*;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 

@@ -76,16 +76,6 @@ class HearingCftServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        CourtDetail courtDetail = CourtDetail.courtDetailWith()
-            .courtTypeId("18")
-            .hearingVenueId("231596")
-            .hearingVenueName("TEST")
-            .hearingVenueAddress("venueAddressTest")
-            .hearingVenueLocationCode("venueLocationCode")
-            .hearingVenuePostCode("postcodeTest")
-            .regionId("RegionId")
-            .courtStatus(OPEN)
-            .build();
 
         HearingDaySchedule hearingDaySchedule =
             HearingDaySchedule.hearingDayScheduleWith()
@@ -109,6 +99,17 @@ class HearingCftServiceTest {
                 .courtName("TEST")
                 .courtTypeId("18")
                 .build();
+
+        CourtDetail courtDetail = CourtDetail.courtDetailWith()
+            .courtTypeId("18")
+            .hearingVenueId("231596")
+            .hearingVenueName("TEST")
+            .hearingVenueAddress("venueAddressTest")
+            .hearingVenueLocationCode("venueLocationCode")
+            .hearingVenuePostCode("postcodeTest")
+            .regionId("RegionId")
+            .courtStatus(OPEN)
+            .build();
 
         when(refDataJudicialService.getJudgeDetails("4925644"))
             .thenReturn(JudgeDetail.judgeDetailWith().hearingJudgeName("JudgeA").build());
