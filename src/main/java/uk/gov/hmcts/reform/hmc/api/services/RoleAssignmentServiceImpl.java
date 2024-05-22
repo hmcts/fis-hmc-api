@@ -36,7 +36,7 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
 
-    private final RoleAssignmentServiceApi roleAssignmentServiceApi;
+    @Autowired RoleAssignmentServiceApi roleAssignmentServiceApi;
 
     @Autowired AuthTokenGenerator authTokenGenerator;
 

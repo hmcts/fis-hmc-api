@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -53,6 +52,7 @@ public class RefDataJudicialServiceTest {
         String judgeId = "4925644";
         JudgeDetail judgeDetailResp = refDataJudicialService.getJudgeDetails(judgeId);
 
+        assertNotNull(judgeDetailResp);
         assertEquals("test", judgeDetailResp.getHearingJudgeName());
     }
 
@@ -69,7 +69,7 @@ public class RefDataJudicialServiceTest {
 
         String judgeId = "4925644";
         JudgeDetail judgeDetailResp = refDataJudicialService.getJudgeDetails(judgeId);
-
+        assertNotNull(judgeDetailResp);
         assertEquals("test", judgeDetailResp.getHearingJudgeName());
     }
 

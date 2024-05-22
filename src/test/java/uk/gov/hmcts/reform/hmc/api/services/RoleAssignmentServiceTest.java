@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
@@ -18,10 +20,10 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
 import java.util.List;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class})
@@ -57,7 +59,11 @@ public class RoleAssignmentServiceTest {
         when(idamAuthService.getUserDetails(any())).thenReturn(user);
         when(authTokenGenerator.generate()).thenReturn("authToken");
         when(idamTokenGenerator.getSysUserToken()).thenReturn("sysUserToken");
-        roleAssignmentService.assignHearingRoleToSysUser();
+
+        when(roleAssignmentServiceApi.createRoleAssignment(any(), anyString(), eq("authToken"), eq("sysUserToken")))
+            .thenReturn(ResponseEntity.ok("OK"));
+        ResponseEntity<Object> response = roleAssignmentService.assignHearingRoleToSysUser();
+        Assertions.assertNotNull(response);
         verify(idamAuthService, times(1)).getUserDetails(any());
     }
 

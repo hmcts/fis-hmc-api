@@ -101,6 +101,10 @@ class ServiceHearingValuesServiceTest {
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("lastName and lastName", hearingsResponse.getPublicCaseName());
+        Assertions.assertEquals("https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/123#Case File View", hearingsResponse.getCaseDeepLink());
+        Assertions.assertFalse(hearingsResponse.getCaseCategories().isEmpty());
+
     }
 
     @Test
@@ -155,6 +159,8 @@ class ServiceHearingValuesServiceTest {
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
+        Assertions.assertEquals("Re-Minor", hearingsResponse.getPublicCaseName());
+        Assertions.assertNotNull(hearingsResponse.getCaseDeepLink());
     }
 
     @Test

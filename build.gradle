@@ -29,12 +29,13 @@ plugins {
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.25.16'
   id 'au.com.dius.pact' version '4.1.7'
-  id 'info.solidsoft.pitest' version '1.7.4'
+  id 'java'
+  id 'info.solidsoft.pitest' version '1.15.0'
 }
 
 def versions = [
   gradlePitest                 : '1.15.0',
-  pitest                       : '1.16.1',
+  pitest                       : '1.15.2',
   sonarPitest                  : '0.5',
 ]
 
@@ -179,12 +180,16 @@ pitest {
     'uk.gov.hmcts.reform.hmc.api.config.*',
     'uk.gov.hmcts.reform.hmc.api.model.*',
     'uk.gov.hmcts.reform.hmc.api.enums.*',
+    'uk.gov.hmcts.reform.hmc.api.mapper.*',
+    'uk.gov.hmcts.reform.hmc.api.exceptions.*',
     'uk.gov.hmcts.reform.hmc.api.Application.*',
   ]
   threads = 10
   outputFormats = ['XML', 'HTML']
   timestampedReports = true
   mutationThreshold = 80
+  junit5PluginVersion = '1.2.1'
+  pitestVersion = '1.15.2'
 }
 
 jacocoTestReport {
@@ -445,18 +450,21 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.89'
   implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.2'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
+  implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.1'
 
   implementation 'org.projectlombok:lombok:1.18.32'
   annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
 
-  testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
-  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+  testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+
+  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
   testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
-  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
+  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath
