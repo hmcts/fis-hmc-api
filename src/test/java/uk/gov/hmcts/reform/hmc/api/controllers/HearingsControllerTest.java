@@ -17,17 +17,19 @@ import java.util.List;
 import java.util.Map;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
@@ -35,14 +37,14 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
-@SuppressWarnings("unchecked")
 class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
@@ -148,7 +150,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
-                hearingsController.getHearingsData("", "", hearingValues);
+                hearingsController.getHearingsData("Authorization", "ServiceAuthorization", hearingValues);
 
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
@@ -158,12 +160,12 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("BBA3").build();
         Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "Auth", "sauth"))
-                .thenReturn(hearings);
+                .thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsResponse =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
-        Assertions.assertNotNull(hearingsResponse.getBody());
+        Assertions.assertEquals(HttpStatus.OK, hearingsResponse.getStatusCode());
     }
 
     @Test
@@ -181,12 +183,12 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "", ""))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
                 hearingsController.getHearingsByCaseRefNo("auth", "sauth", "caseRef");
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
     }
 
     @Test
@@ -195,7 +197,7 @@ class HearingsControllerTest {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
-        Mockito.when(hearingsService.getHearingsByCaseRefNo("", "Auth", "sauth"))
+        Mockito.when(hearingsService.getHearingsByCaseRefNo("caseRef", "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> hearingsData1 =
@@ -209,10 +211,10 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
 
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
@@ -233,9 +235,9 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.FALSE);
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
@@ -252,18 +254,18 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
+        hearingsForAllCases.add(hearingsObj);
 
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "auth", "sauth"))
                 .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
                 hearingsController.getHearingsByListOfCaseIds("auth", "sauth", caseIdWithRegionId);
 
         Assertions.assertEquals(
-                HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
+                HttpStatus.BAD_REQUEST, hearingsForAllCasesResponse.getStatusCode());
     }
 
     @Test
@@ -274,10 +276,10 @@ class HearingsControllerTest {
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("caseref1", "RegionId");
 
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
         List<Hearings> hearingsForAllCases = new ArrayList<>();
-        hearingsForAllCases.add(hearings);
-        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "", ""))
+        hearingsForAllCases.add(hearingsObj);
+        Mockito.when(hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "auth", "sauth"))
                 .thenThrow(new RuntimeException());
 
         ResponseEntity<Object> hearingsForAllCasesResponse =
@@ -332,7 +334,7 @@ class HearingsControllerTest {
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         ResponseEntity<Object> nextHearingUpdateResp =
-                hearingsController.updateNextHearingDetails("", "", "caseRef");
+                hearingsController.updateNextHearingDetails("auth", "", "caseRef");
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, nextHearingUpdateResp.getStatusCode());
@@ -401,12 +403,14 @@ class HearingsControllerTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Hearings hearings = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
+        Hearings hearingsObj = Hearings.hearingsWith().caseRef("123").hmctsServiceCode("ABA5").build();
 
-        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearings);
+        Mockito.when(hearingsService.getFutureHearings("testCaseRefNo")).thenReturn(hearingsObj);
         ResponseEntity<Object> hearingsForCaseRefNoResponse =
                 hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
-        Assertions.assertNotNull(hearingsForCaseRefNoResponse.getBody());
+
+        Assertions.assertEquals(
+            HttpStatus.OK, hearingsForCaseRefNoResponse.getStatusCode());
     }
 
     @Test
@@ -458,4 +462,62 @@ class HearingsControllerTest {
                         .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
                         .build());
     }
+
+    @Test
+    void getHearingsLinkDataTest() throws IOException, ParseException {
+
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
+
+        HearingLinkData hearingLinkData = HearingLinkData.hearingLinkDataWith()
+            .caseReference("BBA3").caseName("123").reasonsForLink(List.of("reasonLink")).build();
+        List<HearingLinkData> hearingLinkDataList = new ArrayList<>();
+        hearingLinkDataList.add(hearingLinkData);
+        Mockito.when(hearingsDataService.getHearingLinkData(any(), anyString(), anyString()))
+            .thenReturn(hearingLinkDataList);
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("Auth", "sauth", hearingValues);
+        Assertions.assertEquals(HttpStatus.OK, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void hearingsLinkDataUnauthorisedExceptionTest() throws IOException, ParseException {
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void hearingsLinkDataUnauthorisedFeignExceptionTest() throws IOException, ParseException {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        Mockito.when(hearingsDataService.getHearingLinkData(hearingValues, "", ""))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+
+        ResponseEntity<Object> hearingsData1 =
+            hearingsController.getHearingsLinkData("", "", hearingValues);
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsData1.getStatusCode());
+    }
+
+    @Test
+    void assignRoleThrowUnauthorizedExceptionTest() {
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.FALSE);
+        Throwable exception = assertThrows(ResponseStatusException.class, () -> hearingsController.assignRole("Auth"));
+        Assertions.assertEquals("401 UNAUTHORIZED", exception.getMessage());
+
+    }
+
+
 }

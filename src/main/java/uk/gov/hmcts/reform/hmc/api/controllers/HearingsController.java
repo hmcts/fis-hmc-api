@@ -15,9 +15,10 @@ import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,19 +43,20 @@ import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 @RequestMapping(path = "/")
 @RestController
 @Api(value = "/", description = "get hearings Values")
+@RequiredArgsConstructor
 public class HearingsController {
 
-    @Autowired private IdamAuthService idamAuthService;
+    private final IdamAuthService idamAuthService;
 
-    @Autowired private HearingsDataService hearingsDataService;
+    private final HearingsDataService hearingsDataService;
 
-    @Autowired private HearingsService hearingsService;
+    private final HearingsService hearingsService;
 
-    @Autowired private NextHearingDetailsService nextHearingDetailsService;
+    private final NextHearingDetailsService nextHearingDetailsService;
 
-    @Autowired private AuthTokenGenerator authTokenGenerator;
+    private final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired private RoleAssignmentService roleAssignmentService;
+    private final RoleAssignmentService roleAssignmentService;
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.

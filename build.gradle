@@ -33,8 +33,8 @@ plugins {
 }
 
 def versions = [
-  gradlePitest                 : '1.4.5',
-  pitest                       : '1.7.3',
+  gradlePitest                 : '1.15.0',
+  pitest                       : '1.16.1',
   sonarPitest                  : '0.5',
 ]
 
@@ -152,6 +152,12 @@ task smoke(type: Test) {
   failFast = true
 }
 
+task fortifyScan(type: JavaExec)  {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 checkstyle {
   maxWarnings = 0
   toolVersion = '9.3'
@@ -218,7 +224,8 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
   '**/uk/gov/hmcts/reform/hmc/api/services/**',
-  '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
+  '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
+  '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
 
 sonarqube {
@@ -319,7 +326,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.109.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.110.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -343,14 +350,14 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.18') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.19') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
     dependencySet(group: 'org.json', version: '20240303') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.34') {
+    dependencySet(group: 'org.springframework', version: '5.3.35') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
@@ -360,7 +367,7 @@ dependencyManagement {
       entry 'spring-webmvc'
       entry 'spring-web'
     }
-    dependencySet(group: 'commons-io', version: '2.14.0') {
+    dependencySet(group: 'commons-io', version: '2.16.1') {
       entry 'commons-io'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
@@ -371,12 +378,12 @@ dependencyManagement {
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
-    dependencySet(group: 'io.ktor', version: '2.3.10') {
+    dependencySet(group: 'io.ktor', version: '2.3.11') {
       entry 'ktor-network-tls-jvm'
     }
 
     // CVE-2021-27568, CVE-2023-1370
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
 
@@ -394,7 +401,7 @@ dependencyManagement {
       entry 'grpc-stub'
 
     }
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
     //CVE-2023-3635
@@ -407,14 +414,14 @@ dependencyManagement {
   }
 }
 dependencies {
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.8.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
-  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
+  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
+  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
@@ -431,7 +438,7 @@ dependencies {
   implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.48.0'
-  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.16.0'
+  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.0'
   implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.9'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.42'
@@ -449,7 +456,7 @@ dependencies {
   contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
   contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-  testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
+  testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
   contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
@@ -460,6 +467,7 @@ dependencies {
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
 
+  testImplementation 'com.github.hmcts:fortify-client:1.2.2:all'
   testImplementation 'org.projectlombok:lombok:1.18.32'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
   implementation group: 'io.rest-assured', name: 'rest-assured'

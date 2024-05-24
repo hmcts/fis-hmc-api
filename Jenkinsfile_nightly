@@ -15,6 +15,14 @@ def component = "hmc-api"
 
 def channel = "#fis-integration-tech-notifications"
 
+static Map<String, Object> secret(String secretName, String envVariable) {
+  [$class     : 'AzureKeyVaultSecret',
+   secretType : 'Secret',
+   name       : secretName,
+   envVariable: envVariable
+  ]
+}
+
 def secrets = [
   'fis-kv-${env}': [
     secret('hmc-topic-shared-access-key', 'HMC_TOPIC_SHARED_ACCESS_KEY'),
@@ -28,15 +36,6 @@ def secrets = [
   ]
 ]
 
-static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
-  [$class     : 'AzureKeyVaultSecret',
-   secretType : 'Secret',
-   name       : secretName,
-   version    : '',
-   envVariable: envVar
-  ]
-}
-
 
 withNightlyPipeline(type, product, component) {
   env.TEST_URL = params.URL_TO_TEST
@@ -44,7 +43,7 @@ withNightlyPipeline(type, product, component) {
 
   loadVaultSecrets(secrets)
   enableSlackNotifications(channel)
-//  enableFortifyScan()
+  enableFortifyScan('fis-kv-aat')
   enableMutationTest(150)
   enableFullFunctionalTest(200)
 
@@ -53,8 +52,8 @@ withNightlyPipeline(type, product, component) {
     steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
   }
 
-//  afterAlways('fortify-scan') {
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-//    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
-//  }
+  afterAlways('fortify-scan') {
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
+    steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'build/reports/**/*'
+  }
 }
