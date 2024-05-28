@@ -283,7 +283,7 @@ repositories {
 }
 
 ext {
-  log4JVersion = '2.20.0'
+  log4JVersion = '2.23.1'
   set('springCloudAzureVersion', "4.18.0")
   set('springCloudVersion', "2021.0.4")
 }
