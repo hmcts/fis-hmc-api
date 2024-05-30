@@ -29,7 +29,7 @@ plugins {
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.27.3'
   id 'au.com.dius.pact' version '4.1.7'
-  id 'info.solidsoft.pitest' version '1.7.4'
+  id 'info.solidsoft.pitest' version '1.15.0'
 }
 
 def versions = [
