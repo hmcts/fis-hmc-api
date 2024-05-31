@@ -1,5 +1,29 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import org.json.simple.parser.ParseException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS_FL401;
@@ -22,34 +46,12 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS_FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TEST;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseManagementLocation;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-class CaseFlagDataServiceTest {
+public class CaseFlagV2DataServiceTest {
 
-    @InjectMocks private CaseFlagDataServiceImpl caseFlagDataService;
+    @InjectMocks
+    private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @Test
     @SuppressWarnings("unchecked")
@@ -75,7 +77,7 @@ class CaseFlagDataServiceTest {
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
-                Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
+            Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
         List<Element<FlagDetail>> flagDetails = new ArrayList<>();
         flagDetails.add(flagDetailElement);
@@ -83,16 +85,16 @@ class CaseFlagDataServiceTest {
         Flags flags = Flags.builder().partyName(TEST).roleOnCase(TEST).details(flagDetails).build();
 
         Organisation organisation =
-                Organisation.builder().organisationID(null).organisationName(null).build();
+            Organisation.builder().organisationID(null).organisationName(null).build();
 
         PartyDetails partyDetails =
-                PartyDetails.builder()
-                        .firstName(TEST)
-                        .solicitorOrg(organisation)
-                        .partyLevelFlag(flags)
-                        .build();
+            PartyDetails.builder()
+                .firstName(TEST)
+                .solicitorOrg(organisation)
+                .partyLevelFlag(flags)
+                .build();
         Element<PartyDetails> partyDetailsElement =
-                Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
+            Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
 
         List<Element<PartyDetails>> applicants = new ArrayList<>();
         applicants.add(partyDetailsElement);
@@ -101,7 +103,7 @@ class CaseFlagDataServiceTest {
         respondents.add(partyDetailsElement);
 
         CaseManagementLocation caseManagementLocation =
-                CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
+            CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
 
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
@@ -112,12 +114,11 @@ class CaseFlagDataServiceTest {
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
         caseDataMap.put(RESPONDENTS_FL401, partyDetails);
         ServiceHearingValues serviceHearingValues =
-                ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+            ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+            CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
+        caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         Assertions.assertEquals(ABA5, serviceHearingValues.getHmctsServiceID());
-        Assertions.assertEquals(TEST, serviceHearingValues.getHearingLocations().get(0).getLocationId());
     }
 
     @Test
@@ -144,7 +145,7 @@ class CaseFlagDataServiceTest {
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
-                Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
+            Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
         List<Element<FlagDetail>> flagDetails = new ArrayList<>();
         flagDetails.add(flagDetailElement);
@@ -152,19 +153,19 @@ class CaseFlagDataServiceTest {
         Flags flags = Flags.builder().partyName(TEST).roleOnCase(TEST).details(flagDetails).build();
 
         Organisation organisation =
-                Organisation.builder()
-                        .organisationID(ORGANISATION_TEST_ID)
-                        .organisationName(ORGANISATION_TEST_NAME)
-                        .build();
+            Organisation.builder()
+                .organisationID(ORGANISATION_TEST_ID)
+                .organisationName(ORGANISATION_TEST_NAME)
+                .build();
 
         PartyDetails partyDetails =
-                PartyDetails.builder()
-                        .firstName(TEST)
-                        .solicitorOrg(organisation)
-                        .partyLevelFlag(flags)
-                        .build();
+            PartyDetails.builder()
+                .firstName(TEST)
+                .solicitorOrg(organisation)
+                .partyLevelFlag(flags)
+                .build();
         Element<PartyDetails> partyDetailsElement =
-                Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
+            Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
 
         List<Element<PartyDetails>> applicants = new ArrayList<>();
         applicants.add(partyDetailsElement);
@@ -173,7 +174,7 @@ class CaseFlagDataServiceTest {
         respondents.add(partyDetailsElement);
 
         CaseManagementLocation caseManagementLocation =
-                CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
+            CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
 
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
@@ -184,10 +185,10 @@ class CaseFlagDataServiceTest {
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
         caseDataMap.put(RESPONDENTS_FL401, partyDetails);
         ServiceHearingValues serviceHearingValues =
-                ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+            ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+            CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
+        caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         Assertions.assertEquals(ABA5, serviceHearingValues.getHmctsServiceID());
     }
 
@@ -215,7 +216,7 @@ class CaseFlagDataServiceTest {
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
-                Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
+            Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
         List<Element<FlagDetail>> flagDetails = new ArrayList<>();
         flagDetails.add(flagDetailElement);
@@ -223,18 +224,18 @@ class CaseFlagDataServiceTest {
         Flags flags = Flags.builder().partyName(TEST).roleOnCase(TEST).details(flagDetails).build();
 
         Organisation organisation =
-                Organisation.builder().organisationID(null).organisationName(null).build();
+            Organisation.builder().organisationID(null).organisationName(null).build();
 
         PartyDetails partyDetails =
-                PartyDetails.builder()
-                        .firstName(TEST)
-                        .solicitorOrg(organisation)
-                        .partyLevelFlag(flags)
-                        .representativeFirstName(REP_FIRST_NAME_TEST_VALUE)
-                        .representativeLastName(REP_LAST_NAME_TEST_VALUE)
-                        .build();
+            PartyDetails.builder()
+                .firstName(TEST)
+                .solicitorOrg(organisation)
+                .partyLevelFlag(flags)
+                .representativeFirstName(REP_FIRST_NAME_TEST_VALUE)
+                .representativeLastName(REP_LAST_NAME_TEST_VALUE)
+                .build();
         Element<PartyDetails> partyDetailsElement =
-                Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
+            Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
 
         List<Element<PartyDetails>> applicants = new ArrayList<>();
         applicants.add(partyDetailsElement);
@@ -243,7 +244,7 @@ class CaseFlagDataServiceTest {
         respondents.add(partyDetailsElement);
 
         CaseManagementLocation caseManagementLocation =
-                CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
+            CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
 
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
@@ -254,10 +255,10 @@ class CaseFlagDataServiceTest {
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
         caseDataMap.put(RESPONDENTS_FL401, partyDetails);
         ServiceHearingValues serviceHearingValues =
-                ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+            ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+            CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
+        caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         Assertions.assertEquals(ABA5, serviceHearingValues.getHmctsServiceID());
     }
 
@@ -285,7 +286,7 @@ class CaseFlagDataServiceTest {
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0020).build();
         Element<FlagDetail> flagDetailElement =
-                Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
+            Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
         List<Element<FlagDetail>> flagDetails = new ArrayList<>();
         flagDetails.add(flagDetailElement);
@@ -293,19 +294,19 @@ class CaseFlagDataServiceTest {
         Flags flags = Flags.builder().partyName(TEST).roleOnCase(TEST).details(flagDetails).build();
 
         Organisation organisation =
-                Organisation.builder()
-                        .organisationID(ORGANISATION_TEST_ID)
-                        .organisationName(ORGANISATION_TEST_NAME)
-                        .build();
+            Organisation.builder()
+                .organisationID(ORGANISATION_TEST_ID)
+                .organisationName(ORGANISATION_TEST_NAME)
+                .build();
 
         PartyDetails partyDetails =
-                PartyDetails.builder()
-                        .firstName(TEST)
-                        .solicitorOrg(organisation)
-                        .partyLevelFlag(flags)
-                        .build();
+            PartyDetails.builder()
+                .firstName(TEST)
+                .solicitorOrg(organisation)
+                .partyLevelFlag(flags)
+                .build();
         Element<PartyDetails> partyDetailsElement =
-                Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
+            Element.<PartyDetails>builder().id(UUID.randomUUID()).value(partyDetails).build();
 
         List<Element<PartyDetails>> applicants = new ArrayList<>();
         applicants.add(partyDetailsElement);
@@ -314,7 +315,7 @@ class CaseFlagDataServiceTest {
         respondents.add(partyDetailsElement);
 
         CaseManagementLocation caseManagementLocation =
-                CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
+            CaseManagementLocation.builder().region(TEST).baseLocation(TEST).build();
 
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
@@ -325,10 +326,10 @@ class CaseFlagDataServiceTest {
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
         caseDataMap.put(RESPONDENTS_FL401, partyDetails);
         ServiceHearingValues serviceHearingValues =
-                ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+            ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
-        caseFlagDataService.setCaseFlagData(serviceHearingValues, caseDetails);
+            CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseDataMap).build();
+        caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         Assertions.assertEquals(ABA5, serviceHearingValues.getHmctsServiceID());
     }
 }

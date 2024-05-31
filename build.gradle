@@ -177,10 +177,13 @@ pitest {
   targetClasses = ['uk.gov.hmcts.reform.hmc.api.*']
   excludedClasses = [
     'uk.gov.hmcts.reform.hmc.api.config.*',
-    'uk.gov.hmcts.reform.hmc.api.models.*',
+    'uk.gov.hmcts.reform.hmc.api.model.*',
     'uk.gov.hmcts.reform.hmc.api.enums.*',
+    'uk.gov.hmcts.reform.hmc.api.mapper.*',
+    'uk.gov.hmcts.reform.hmc.api.exceptions.*',
     'uk.gov.hmcts.reform.hmc.api.Application.*',
-    'uk.gov.hmcts.reform.hmc.api.utils.ElementUtils.*',
+    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl',
+    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl'
   ]
   threads = 10
   outputFormats = ['XML', 'HTML']
@@ -223,10 +226,10 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
-  '**/uk/gov/hmcts/reform/hmc/api/services/**',
+  'uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl',
+  'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl',
   '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
-  '**/uk/gov/hmcts/reform/hmc/api/restclient/**',
-  '**uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
+  '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
 
 sonarqube {
@@ -283,7 +286,7 @@ repositories {
 }
 
 ext {
-  log4JVersion = '2.23.1'
+  log4JVersion = '2.20.0'
   set('springCloudAzureVersion', "4.18.0")
   set('springCloudVersion', "2021.0.4")
 }
@@ -327,7 +330,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.110.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.109.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -358,7 +361,7 @@ dependencyManagement {
     dependencySet(group: 'org.json', version: '20240303') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.36') {
+    dependencySet(group: 'org.springframework', version: '5.3.34') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
@@ -371,12 +374,12 @@ dependencyManagement {
     dependencySet(group: 'commons-io', version: '2.16.1') {
       entry 'commons-io'
     }
-    dependency group: 'org.yaml',name: 'snakeyaml', version: '2.2'
+    dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
-    dependencySet(group: 'org.apache.commons', version: '1.26.2') {
+    dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
     dependencySet(group: 'io.ktor', version: '2.3.11') {
@@ -384,7 +387,7 @@ dependencyManagement {
     }
 
     // CVE-2021-27568, CVE-2023-1370
-    dependencySet(group: 'com.nimbusds', version: '9.39.2') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
 
@@ -392,7 +395,7 @@ dependencyManagement {
       entry 'logback-classic'
       entry 'logback-core'
     }
-    dependencySet(group: 'io.grpc', version: '1.64.0') {
+    dependencySet(group: 'io.grpc', version: '1.62.2') {
       entry 'grpc-api'
       entry 'grpc-context'
       entry 'grpc-core'
@@ -402,7 +405,7 @@ dependencyManagement {
       entry 'grpc-stub'
 
     }
-    dependencySet(group: 'com.nimbusds', version: '9.39.2') {
+    dependencySet(group: 'com.nimbusds', version: '9.39.1') {
       entry 'nimbus-jose-jwt'
     }
     //CVE-2023-3635
@@ -447,18 +450,21 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.89'
   implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.2'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
+  implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.1'
 
   implementation 'org.projectlombok:lombok:1.18.32'
   annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
 
-  testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
-  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
+  testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+
+  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
   testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
-  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
+  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath

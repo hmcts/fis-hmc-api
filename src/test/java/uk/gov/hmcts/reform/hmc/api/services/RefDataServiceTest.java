@@ -1,7 +1,14 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static feign.Request.HttpMethod.GET;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -9,8 +16,12 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import feign.FeignException;
+import feign.Request;
+import feign.Response;
 import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,8 +70,24 @@ class RefDataServiceTest {
 
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
-
+        assertNotNull(courtDetailResp);
         assertEquals("231596", courtDetailResp.getHearingVenueId());
+    }
+
+    @Test
+    public void shouldFetchVenueDetailsRefDataWhenCourtTypeNotThereTest() throws IOException, ParseException {
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+        String epimmsId = "231596";
+        CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
+        assertNull(courtDetailResp);
+
     }
 
     @Test
@@ -87,7 +114,10 @@ class RefDataServiceTest {
                 CourtDetail.courtDetailWith()
                         .courtTypeId("18")
                         .hearingVenueId("231596")
-                        .hearingVenueName("test")
+                        .hearingVenueName("courtDetailVenueTest")
+                        .hearingVenueAddress("courtDetailAddressTest")
+                    .hearingVenueLocationCode("courtDetailLocationCodTest")
+                    .hearingVenuePostCode("courtPostCodeTest")
                         .build();
 
         List<CourtDetail> courtDetailsList = new ArrayList<>();
@@ -96,7 +126,9 @@ class RefDataServiceTest {
         HearingUpdateDTO hearingupdateDto =
                 HearingUpdateDTO.hearingUpdateRequestDTOWith()
                         .hearingVenueId("231596")
-                        .hearingVenueName("test")
+                        .hearingVenueName("hearingVenueTest")
+                    .hearingVenueAddress("hearingAddressTest")
+                    .hearingVenueLocationCode("hearingLocationCodeTest")
                         .build();
 
         HearingDTO hearingDto =
@@ -111,8 +143,38 @@ class RefDataServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
         HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
+        assertNotNull(hearingResp);
+        assertEquals("courtDetailVenueTest", hearingResp.getHearingUpdate().getHearingVenueName());
+        assertEquals("courtDetailAddressTest, courtPostCodeTest", hearingResp.getHearingUpdate().getHearingVenueAddress());
+        assertEquals("courtDetailLocationCodTest", hearingResp.getHearingUpdate().getHearingVenueLocationCode());
+        assertEquals("18", hearingResp.getHearingUpdate().getCourtTypeId());
+    }
 
-        assertEquals("test", hearingResp.getHearingUpdate().getHearingVenueName());
+    @Test
+    public void shouldUpdateHearingWithCourtDetailsRefDataTest1()
+        throws IOException, ParseException {
+        HearingUpdateDTO hearingupdateDto =
+            HearingUpdateDTO.hearingUpdateRequestDTOWith()
+                .hearingVenueId("231596")
+                .hearingVenueName("hearingVenuetest")
+                .build();
+
+        HearingDTO hearingDto =
+            HearingDTO.hearingRequestDTOWith()
+                .hearingId("testHearinID")
+                .caseRef("testCaseRef")
+                .hmctsServiceCode("BBA3")
+                .hearingUpdate(hearingupdateDto)
+                .build();
+
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataApi.getCourtDetails(anyString(), any(), any()))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+
+        HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
+
+        assertEquals("hearingVenuetest", hearingResp.getHearingUpdate().getHearingVenueName());
     }
 
     @Test
@@ -129,15 +191,48 @@ class RefDataServiceTest {
 
         VenuesDetail venue = new VenuesDetail();
         venue.setServiceCode("mock_service_code");
-        venue.setCourtTypeId("mock_court_type_id");
+        venue.setCourtTypeId("18");
         venue.setCourtVenues(courtDetailsList);
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
         List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
-        Assertions.assertNotNull(courtList);
+        assertNotNull(courtList);
+        assertFalse(courtList.isEmpty());
+        assertEquals("231596", courtList.get(0).getHearingVenueId());
     }
 
+    @Test
+    void getCourtDetailListByServiceCodeForEmptyTest() {
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("test")
+                .build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        VenuesDetail venue = new VenuesDetail();
+        venue.setServiceCode("mock_service_code");
+        venue.setCourtTypeId("mock_courttype_id");
+        venue.setCourtVenues(courtDetailsList);
+
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
+        List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
+        assertTrue(courtList.isEmpty());
+    }
+
+    public static FeignException feignException(int status, String message) {
+        return FeignException.errorStatus(
+            message,
+            Response.builder()
+                .status(status)
+                .request(Request.create(GET, EMPTY, Map.of(), new byte[] {}, UTF_8, null))
+                .build());
+    }
 }
 
