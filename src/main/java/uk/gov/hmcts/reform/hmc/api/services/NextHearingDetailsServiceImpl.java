@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,20 +72,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
      */
     @Override
     public State fetchStateForUpdate(Hearings hearings, String currHearingHmcStatus) {
-        Boolean isAllCompleted =
-                hearings.getCaseHearings().stream()
-                                .filter(
-                                        eachHearing ->
-                                                eachHearing.getHmcStatus().equals(COMPLETED)
-                                                        || eachHearing
-                                                                .getHmcStatus()
-                                                                .equals(CANCELLED)
-                                                        || eachHearing
-                                                                .getHmcStatus()
-                                                                .equals(ADJOURNED))
-                                .collect(Collectors.toList())
-                                .size()
-                        == hearings.getCaseHearings().size();
+        Boolean isAllCompleted = isAllCompletedHearingCheck(hearings);
 
         if (isAllCompleted || isAllFutureHearingsAreCancelled(hearings)) {
             return DECISION_OUTCOME;
@@ -92,13 +80,29 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             if (currHearingHmcStatus != null
                     && (currHearingHmcStatus.equals(COMPLETED)
                             || currHearingHmcStatus.equals(ADJOURNED))) {
-                return anyFutureHearings(hearings)
+                return Boolean.TRUE.equals(anyFutureHearings(hearings))
                         ? PREPARE_FOR_HEARING_CONDUCT_HEARING
                         : DECISION_OUTCOME;
             } else {
                 return PREPARE_FOR_HEARING_CONDUCT_HEARING;
             }
         }
+    }
+
+    @NotNull
+    private static Boolean isAllCompletedHearingCheck(Hearings hearings) {
+       int allHearingSize =  hearings.getCaseHearings().stream()
+            .filter(eachHearing ->
+                        eachHearing.getHmcStatus().equals(COMPLETED)
+                            || eachHearing
+                            .getHmcStatus()
+                            .equals(CANCELLED)
+                            || eachHearing
+                            .getHmcStatus()
+                            .equals(ADJOURNED))
+            .toList()
+            .size();
+        return allHearingSize == hearings.getCaseHearings().size();
     }
 
     /**
@@ -111,7 +115,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
     private List<HearingDaySchedule> getFutureHearingDaySchedule(CaseHearing hearing) {
         return hearing.getHearingDaySchedule().stream()
                 .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
