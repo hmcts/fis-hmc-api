@@ -15,7 +15,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_T
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +27,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentAttributesResourc
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentRequestResource;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleRequest;
 import uk.gov.hmcts.reform.hmc.api.restclient.RoleAssignmentServiceApi;
+import uk.gov.hmcts.reform.hmc.api.utils.IdGeneratorUtil;
 
 @Service
 @Slf4j
@@ -70,10 +71,10 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
 
         log.info("Calling role assignment AM API");
         return roleAssignmentServiceApi.createRoleAssignment(
-                roleAssignmentRequestResource,
-                getCorrelationId(),
-                authTokenGenerator.generate(),
-                idamTokenGenerator.getSysUserToken());
+            roleAssignmentRequestResource,
+            IdGeneratorUtil.getCorrelationId(),
+            authTokenGenerator.generate(),
+            idamTokenGenerator.getSysUserToken());
     }
 
     private RoleAssignment buildRoleAssignment(String id, String roleName) {
@@ -93,11 +94,5 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
                 .build();
     }
 
-    private String getCorrelationId() {
-        try {
-            return UUID.randomUUID().toString();
-        } catch (IllegalStateException e) {
-            return null;
-        }
-    }
+
 }

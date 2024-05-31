@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -36,7 +37,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ServiceHearingValuesServiceTest {
+class HearingsDataServiceTest {
 
     @InjectMocks private HearingsDataServiceImpl hearingservice;
 
@@ -115,6 +116,8 @@ class ServiceHearingValuesServiceTest {
                 "ccdBaseUrl",
                 "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
 
+
+
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "FL401");
@@ -127,6 +130,7 @@ class ServiceHearingValuesServiceTest {
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
         caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
+        when(launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")).thenReturn(true);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
@@ -135,6 +139,7 @@ class ServiceHearingValuesServiceTest {
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
+        verify(caseFlagV2DataService, times(1)).setCaseFlagsV2Data(any(), any());
     }
 
     @Test
@@ -152,15 +157,19 @@ class ServiceHearingValuesServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
+        when(launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")).thenReturn(false);
+
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         Assertions.assertEquals("Re-Minor", hearingsResponse.getPublicCaseName());
         Assertions.assertNotNull(hearingsResponse.getCaseDeepLink());
+        verify(caseFlagV2DataService, times(2)).setCaseFlagData(any(), any());
     }
 
     @Test
@@ -210,7 +219,7 @@ class ServiceHearingValuesServiceTest {
         LinkedHashMap caseLinkMap = new LinkedHashMap();
         caseLinkMap.put("value", valueMap);
 
-        List caseLinksList = new ArrayList();
+        List caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
         Map<String, Object> caseDataMap = new HashMap<>();
@@ -225,7 +234,7 @@ class ServiceHearingValuesServiceTest {
         List<CaseDetails> cases = new ArrayList<>();
         cases.add(caseDetails);
         SearchResult searchResult = SearchResult.builder().cases(cases).build();
-        when(elasticSearch.searchCases(anyString(), anyString(), any(), any()))
+        when(elasticSearch.searchCases(anyString(), eq("{\"query\":{\"terms\":{\"boost\":null,\"reference\":[\"123\"]}},\"size\":null}"), any(), any()))
                 .thenReturn(searchResult);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
@@ -235,10 +244,15 @@ class ServiceHearingValuesServiceTest {
                 hearingservice.getHearingLinkData(
                         hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertFalse(lst.isEmpty());
+        Assertions.assertEquals("Test Case 1 DA 31", lst.get(0).getCaseName());
+        Assertions.assertNotNull(lst.get(0).getReasonsForLink());
+        Assertions.assertNotNull(searchResult);
     }
 
     @AfterAll
     public void closeFile() throws IOException {
         inputStream.close();
     }
+
+
 }

@@ -45,7 +45,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
 @PropertySource("classpath:application.yaml")
-class HearingCftServiceTest {
+class HearingsServiceTest {
 
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
@@ -63,11 +63,21 @@ class HearingCftServiceTest {
 
     @Test
     void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
-
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(null)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-
-        Assertions.assertEquals(null, hearingsService.getHearingsByCaseRefNo("123", "", ""));
+        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN", "MOCK_S2S_TOKEN", "123"))
+            .thenReturn(caseHearings);
+        Hearings response = hearingsService.getHearingsByCaseRefNo("123", "", "");
+        Assertions.assertNotNull(response);
+        Assertions.assertNull(response.getCaseHearings());
 
     }
 
@@ -125,6 +135,8 @@ class HearingCftServiceTest {
         Assertions.assertEquals("TEST", hearingDayScheduleResponse.getHearingVenueName());
         Assertions.assertEquals("venueLocationCode", hearingDayScheduleResponse.getHearingVenueLocationCode());
         Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
+        Assertions.assertEquals("LISTED", hearings.getCaseHearings().get(0).getHmcStatus());
+        Assertions.assertEquals(1, hearings.getCaseHearings().size());
     }
 
     @Test

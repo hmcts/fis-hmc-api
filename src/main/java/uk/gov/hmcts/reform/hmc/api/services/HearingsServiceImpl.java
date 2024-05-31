@@ -77,9 +77,9 @@ public class HearingsServiceImpl implements HearingsService {
 
             integrateVenueDetails(caseHearingsResponse);
             log.info(
-                    "Number of hearings fetched for casereference - {} is {}",
-                    caseReference,
-                    caseHearingsResponse.getCaseHearings() != null
+                "Number of hearings fetched for casereference - {} is {}",
+                caseReference,
+                isCaseHearingNonNull(caseHearingsResponse)
                             ? caseHearingsResponse.getCaseHearings().size()
                             : null);
 
@@ -97,9 +97,13 @@ public class HearingsServiceImpl implements HearingsService {
         return caseHearingsResponse;
     }
 
+    private static boolean isCaseHearingNonNull(Hearings caseHearingsResponse) {
+        return caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null;
+    }
+
     private void integrateVenueDetails(Hearings caseHearingsResponse) {
 
-        if (caseHearingsResponse != null && caseHearingsResponse.getCaseHearings() != null) {
+        if (isCaseHearingNonNull(caseHearingsResponse)) {
             List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
             for (CaseHearing caseHearing : caseHearings) {
 
@@ -134,7 +138,6 @@ public class HearingsServiceImpl implements HearingsService {
                     }
                 }
             }
-            caseHearingsResponse.setCaseHearings(caseHearings);
         }
     }
 
