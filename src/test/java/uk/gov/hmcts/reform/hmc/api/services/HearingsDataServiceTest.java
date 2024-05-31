@@ -238,8 +238,7 @@ class HearingsDataServiceTest {
         cases.add(caseDetails);
         SearchResult searchResult = SearchResult.builder().cases(cases).build();
         when(elasticSearch.searchCases(anyString(),
-                                       eq("{\"query\":{\"terms\":{\"boost\":null," +
-                                              "\"reference\":[\"123\"]}},\"size\":null}"),
+                                       eq("{\"query\":{\"terms\":{\"boost\":null,\"reference\":[\"123\"]}},\"size\":null}"),
                                        any(), any()))
                 .thenReturn(searchResult);
         String authorisation = "xyz";
