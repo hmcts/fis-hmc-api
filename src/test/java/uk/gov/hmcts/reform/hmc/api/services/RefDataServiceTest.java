@@ -22,7 +22,6 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import org.json.simple.parser.ParseException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -154,17 +153,6 @@ class RefDataServiceTest {
     @Test
     public void shouldUpdateHearingWithCourtDetailsRefDataTest1()
         throws IOException, ParseException {
-
-        CourtDetail courtDetail =
-            CourtDetail.courtDetailWith()
-                .courtTypeId("30")
-                .hearingVenueId("2315967")
-                .hearingVenueName("courtDetailVenueTest")
-                .build();
-
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail);
-
         HearingUpdateDTO hearingupdateDto =
             HearingUpdateDTO.hearingUpdateRequestDTOWith()
                 .hearingVenueId("231596")
@@ -210,13 +198,13 @@ class RefDataServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
         List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
-        Assertions.assertNotNull(courtList);
+        assertNotNull(courtList);
         assertFalse(courtList.isEmpty());
-        Assertions.assertEquals("231596", courtList.get(0).getHearingVenueId());
+        assertEquals("231596", courtList.get(0).getHearingVenueId());
     }
 
     @Test
-    void getCourtDetailsByServiceCodeTest1() {
+    void getCourtDetailListByServiceCodeForEmptyTest() {
         CourtDetail courtDetail =
             CourtDetail.courtDetailWith()
                 .courtTypeId("18")

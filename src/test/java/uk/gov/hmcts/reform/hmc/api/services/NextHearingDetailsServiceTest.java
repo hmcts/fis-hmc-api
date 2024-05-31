@@ -479,9 +479,8 @@ class NextHearingDetailsServiceTest {
                         .caseHearings(caseHearingList)
                         .hmctsServiceCode("BBA3")
                         .build();
-        String currHearingHmcStatus = Constants.COMPLETED;
         State finalCaseState =
-                nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
+                nextHearingDetailsService.fetchStateForUpdate(hearings, COMPLETED);
         Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
     }
 
@@ -528,10 +527,9 @@ class NextHearingDetailsServiceTest {
                         .caseHearings(caseHearingList)
                         .hmctsServiceCode("BBA3")
                         .build();
-        String currHearingHmcStatus = Constants.COMPLETED;
 
         State finalCaseState =
-                nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
+                nextHearingDetailsService.fetchStateForUpdate(hearings, COMPLETED);
         Assertions.assertEquals(DECISION_OUTCOME, finalCaseState);
     }
 
