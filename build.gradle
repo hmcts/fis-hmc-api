@@ -184,7 +184,7 @@ pitest {
     'uk.gov.hmcts.reform.hmc.api.exceptions.*',
     'uk.gov.hmcts.reform.hmc.api.Application.*',
     'uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl',
-    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl',
+    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl'
   ]
   threads = 10
   outputFormats = ['XML', 'HTML']
