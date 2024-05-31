@@ -77,8 +77,8 @@ public class RoleAssignmentServiceTest {
             .surname("XYZ").build();
 
         List<RoleAssignment> roleAssignmentList =
-            Arrays.asList(buildRoleAssignment("12345", ROLE_ASSIGNMENT_HEARING_MANAGER),
-                          buildRoleAssignment("12345", ROLE_ASSIGNMENT_HEARING_VIEWER));
+            Arrays.asList(buildRoleAssignment(ROLE_ASSIGNMENT_HEARING_MANAGER),
+                          buildRoleAssignment(ROLE_ASSIGNMENT_HEARING_VIEWER));
 
         RoleAssignmentRequestResource roleAssignmentRequestResource =
             RoleAssignmentRequestResource.builder()
@@ -96,16 +96,18 @@ public class RoleAssignmentServiceTest {
         when(authTokenGenerator.generate()).thenReturn("authToken");
         when(idamTokenGenerator.getSysUserToken()).thenReturn("sysUserToken");
 
-        when(roleAssignmentServiceApi.createRoleAssignment(eq(roleAssignmentRequestResource), anyString(), eq("authToken"), eq("sysUserToken")))
+        when(roleAssignmentServiceApi.createRoleAssignment(
+            eq(roleAssignmentRequestResource),
+            anyString(), eq("authToken"), eq("sysUserToken")))
             .thenReturn(ResponseEntity.ok("OK"));
         ResponseEntity<Object> response = roleAssignmentService.assignHearingRoleToSysUser();
         Assertions.assertNotNull(response);
         verify(idamAuthService, times(1)).getUserDetails(any());
     }
 
-    private RoleAssignment buildRoleAssignment(String id, String roleName){
+    private RoleAssignment buildRoleAssignment(String roleName) {
         return RoleAssignment.builder()
-            .actorId(id)
+            .actorId("12345")
             .roleType(ROLE_ASSIGNMENT_ROLE_TYPE)
             .classification(ROLE_ASSIGNMENT_CLASSIFICATION)
             .roleName(roleName)

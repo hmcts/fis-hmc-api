@@ -6,6 +6,7 @@ public class IdGeneratorUtil {
     private IdGeneratorUtil() {
         throw new IllegalStateException("Utility class");
     }
+
     public static String getCorrelationId() {
         return UUID.randomUUID().toString();
     }

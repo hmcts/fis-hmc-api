@@ -91,8 +91,8 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
     @NotNull
     private static Boolean isAllCompletedHearingCheck(Hearings hearings) {
-       int allHearingSize =  hearings.getCaseHearings().stream()
-            .filter(eachHearing ->
+
+        int allHearingSize =  hearings.getCaseHearings().stream().filter(eachHearing ->
                         eachHearing.getHmcStatus().equals(COMPLETED)
                             || eachHearing
                             .getHmcStatus()

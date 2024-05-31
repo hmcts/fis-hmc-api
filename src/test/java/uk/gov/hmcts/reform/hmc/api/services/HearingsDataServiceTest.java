@@ -2,7 +2,10 @@ package uk.gov.hmcts.reform.hmc.api.services;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -234,7 +237,10 @@ class HearingsDataServiceTest {
         List<CaseDetails> cases = new ArrayList<>();
         cases.add(caseDetails);
         SearchResult searchResult = SearchResult.builder().cases(cases).build();
-        when(elasticSearch.searchCases(anyString(), eq("{\"query\":{\"terms\":{\"boost\":null,\"reference\":[\"123\"]}},\"size\":null}"), any(), any()))
+        when(elasticSearch.searchCases(anyString(),
+                                       eq("{\"query\":{\"terms\":{\"boost\":null," +
+                                              "\"reference\":[\"123\"]}},\"size\":null}"),
+                                       any(), any()))
                 .thenReturn(searchResult);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
