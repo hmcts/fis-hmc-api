@@ -1,18 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
-
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import feign.FeignException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +18,17 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +109,8 @@ public class HearingsServiceImpl implements HearingsService {
             List<CaseHearing> caseHearings = caseHearingsResponse.getCaseHearings();
             for (CaseHearing caseHearing : caseHearings) {
 
-                if (caseHearing.getHmcStatus().equals(LISTED) && caseHearing.getHearingDaySchedule() != null) {
+                if (List.of(LISTED, AWAITING_HEARING_DETAILS, COMPLETED).contains(caseHearing.getHmcStatus())
+                        && caseHearing.getHearingDaySchedule() != null) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         String venueId = hearingSchedule.getHearingVenueId();
 
@@ -217,6 +219,55 @@ public class HearingsServiceImpl implements HearingsService {
         return casesWithHearings;
     }
 
+    @Override
+    public List<Hearings> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization, String serviceAuthorization) {
+
+        List<Hearings> casesWithHearings = new ArrayList<>();
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        List<Hearings> hearingDetailsList =
+            hearingApiClient.getListOfHearingDetails(
+                userToken, s2sToken, listOfCaseIds);
+        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            for (var hearing : hearingDetailsList) {
+                try {
+                    hearingDetails = hearing;
+                    List<CaseHearing> filteredHearings =
+                        hearingDetails.getCaseHearings().stream()
+                            .filter(
+                                eachHearing ->
+                                    eachHearing.getHmcStatus().equals(LISTED)
+                                        || eachHearing
+                                        .getHmcStatus()
+                                        .equals(CANCELLED)
+                                        || eachHearing
+                                        .getHmcStatus()
+                                        .equals(COMPLETED))
+                            .toList();
+                    Hearings filteredCaseHearingsWithCount =
+                        Hearings.hearingsWith()
+                            .caseHearings(filteredHearings)
+                            .caseRef(hearingDetails.getCaseRef())
+                            .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                            .build();
+                    casesWithHearings.add(filteredCaseHearingsWithCount);
+                } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                    log.info(
+                        "Hearing api call HttpClientError exception {}",
+                        exception.getMessage()
+                    );
+                } catch (FeignException exception) {
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
+                } catch (Exception exception) {
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
+                }
+            }
+        }
+        return casesWithHearings;
+    }
+
     private void integrateVenueDetailsForCaseId(
             List<CourtDetail> allVenues,
             List<Hearings> casesWithHearings,
@@ -247,7 +298,6 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
-    @Nullable
     private static CourtDetail getMatchedCourtDetail(List<CourtDetail> allVenues, Map<String,
         String> caseIdWithRegionIdMap, Hearings hearings, HearingDaySchedule hearingSchedule) {
         CourtDetail matchedCourt = null;
@@ -278,7 +328,6 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
-    @Nullable
     private static CourtDetail getCourtDetailByRegionIdAndCourtStatus(List<CourtDetail> allVenues, String regionId) {
         CourtDetail matchedCourt;
         String finalRegionId = regionId;
@@ -295,7 +344,6 @@ public class HearingsServiceImpl implements HearingsService {
         return matchedCourt;
     }
 
-    @Nullable
     private static CourtDetail getCourtDetailByVenueIdAndCourtStatus(List<CourtDetail> allVenues,
                                                                      HearingDaySchedule hearingSchedule) {
         CourtDetail matchedCourt;
@@ -312,7 +360,6 @@ public class HearingsServiceImpl implements HearingsService {
         return matchedCourt;
     }
 
-    @Nullable
     private static CourtDetail getCourtDetail(List<CourtDetail> allVenues,
                                               Map<String, String> caseIdWithRegionIdMap, Hearings hearings) {
         return allVenues.stream()
@@ -331,7 +378,7 @@ public class HearingsServiceImpl implements HearingsService {
                         .orElse(null);
     }
 
-    @NotNull
+
     private static List<CaseHearing> getListedOrCancelledHearing(Hearings hearings) {
         return hearings.getCaseHearings().stream()
                         .filter(
