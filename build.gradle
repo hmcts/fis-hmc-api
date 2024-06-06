@@ -474,7 +474,7 @@ dependencies {
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
 
-  testImplementation 'com.github.hmcts:fortify-client:1.4.1:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.4.2:all'
   testImplementation 'org.projectlombok:lombok:1.18.32'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
   implementation group: 'io.rest-assured', name: 'rest-assured'
