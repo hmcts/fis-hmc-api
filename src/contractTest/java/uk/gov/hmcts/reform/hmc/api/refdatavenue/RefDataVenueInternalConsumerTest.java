@@ -9,18 +9,23 @@ import au.com.dius.pact.consumer.junit5.PactTestFor;
 import au.com.dius.pact.core.model.RequestResponsePact;
 import au.com.dius.pact.core.model.annotations.Pact;
 import org.apache.http.HttpStatus;
-import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
+import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
+import uk.gov.hmcts.reform.hmc.api.utils.ResourceLoader;
+
+import java.util.List;
 
 @PactTestFor(providerName = "referenceData_venueInternal", port = "8894")
 @TestPropertySource(
         properties = {"ref_data_venue.api.url=localhost:8894", "idam.api.url=localhost:5000"})
 public class RefDataVenueInternalConsumerTest extends RefDataVenueConsumerTestBase {
 
+    private final String validResponseBody = "CourtDetailsRespBody.json";
+
     @Pact(provider = "referenceData_venueInternal", consumer = "fpl_venueConfiguration")
     public RequestResponsePact generatePactFragmentForGetCourtDetailsByEpimmsId(
-            PactDslWithProvider builder) {
+            PactDslWithProvider builder) throws Exception {
         // @formatter:off
         return builder.given("Courts exists for given epimmsId")
                 .uponReceiving("A Request to get court details by epimmsId")
@@ -33,7 +38,7 @@ public class RefDataVenueInternalConsumerTest extends RefDataVenueConsumerTestBa
                 .path("/refdata/location/court-venues")
                 .query("epimms_id=epimms_id")
                 .willRespondWith()
-                .body(buildCourtsResponseDsl())
+                .body(ResourceLoader.loadJson(validResponseBody), "application/json")
                 .status(HttpStatus.SC_OK)
                 .toPact();
     }
@@ -41,8 +46,8 @@ public class RefDataVenueInternalConsumerTest extends RefDataVenueConsumerTestBa
     @Test
     @PactTestFor(pactMethod = "generatePactFragmentForGetCourtDetailsByEpimmsId")
     public void verifyGetCourtByEpimmsId() {
-        JSONObject courtDetailList =
-                refDataVenueApi.getCourtDetails(
+        List<CourtDetail> courtDetailList =
+            refDataApi.getCourtDetails(
                         AUTHORIZATION_TOKEN, SERVICE_AUTH_TOKEN, "epimms_id");
         assertThat(courtDetailList, is(notNullValue()));
     }
