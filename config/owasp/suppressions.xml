@@ -1,33 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-  <suppress>
-    <notes>json-20160212.jar</notes>
-    <cve>CVE-2022-45688</cve>
-  </suppress>
-  <suppress>
-    <notes>adal4j-1.6.4.jar</notes>
-    <cve>CVE-2021-42306</cve>
-  </suppress>
-
-  <suppress>
-    <notes>bcprov-jdk15on-1.70.jar</notes>
-    <cve>CVE-2023-33201</cve>
-    <cve>CVE-2023-33202</cve>
-    <cve>CVE-2024-29857</cve>
-    <cve>CVE-2024-30172</cve>
-    <cve>CVE-2024-30171</cve>
-  </suppress>
-
-  <suppress>
-    <notes>Temporary Suppression</notes>
-    <cve>CVE-2023-5072</cve>
-    <!--azure-->
-    <cve>CVE-2023-36052</cve>
-    <!--ktor-server-call-logging-jvm-->
-    <cve>CVE-2016-10543</cve>
-    <!--spring-web-->
-    <cve>CVE-2016-1000027</cve>
-
-    <cve>CVE-2023-34042</cve>
-  </suppress>
 </suppressions>
