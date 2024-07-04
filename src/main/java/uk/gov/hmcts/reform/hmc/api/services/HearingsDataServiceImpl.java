@@ -26,7 +26,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LAST_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SCREEN_FLOW;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TRUE;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.UNDERSCORE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -126,10 +125,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             publicCaseNameMapper = RE_MINOR;
             privateHearingRequiredFlagMapper = TRUE;
         }
-        String hmctsInternalCaseNameMapper =
-                hearingValues.getCaseReference()
-                        + UNDERSCORE
-                        + caseDetails.getData().get(APPLICANT_CASE_NAME);
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
@@ -151,7 +146,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         ServiceHearingValues serviceHearingValues =
                 ServiceHearingValues.hearingsDataWith()
                         .hmctsServiceID(ABA5)
-                        .hmctsInternalCaseName(hmctsInternalCaseNameMapper)
+                        .hmctsInternalCaseName(caseDetails.getData().get(APPLICANT_CASE_NAME).toString())
                         .publicCaseName(publicCaseNameMapper)
                         .caseAdditionalSecurityFlag(FALSE)
                         .caseCategories(getCaseCategories())
