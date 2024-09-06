@@ -21,7 +21,7 @@ data "azurerm_key_vault" "fis_kv_key_vault" {
 }
 
 module "servicebus_topic_subscription" {
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=4.x-DTSPO-18822"
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=DTSPO-18822"
   name                  = local.subscription_name
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
   resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
@@ -36,7 +36,7 @@ resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
 }
 
 module "servicebus_topic_subscription_new" {
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=4.x-DTSPO-18822"
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=DTSPO-18822"
   name                  = local.subscription_name_new
   namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
   resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
