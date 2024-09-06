@@ -21,10 +21,9 @@ data "azurerm_key_vault" "fis_kv_key_vault" {
 }
 
 module "servicebus_topic_subscription" {
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=4.x"
   name                  = local.subscription_name
-  namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
-  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  namespace_id        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.id
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
@@ -36,10 +35,9 @@ resource "azurerm_servicebus_subscription_rule" "hmctsServiceCode" {
 }
 
 module "servicebus_topic_subscription_new" {
-  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription"
+  source                = "git@github.com:hmcts/terraform-module-servicebus-subscription?ref=4.x"
   name                  = local.subscription_name_new
-  namespace_name        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.name
-  resource_group_name   = data.azurerm_servicebus_namespace.fis_servicebus_namespace.resource_group_name
+  namespace_id        = data.azurerm_servicebus_namespace.fis_servicebus_namespace.id
   topic_name            = join("-", ["hmc-to-cft", var.env])
 }
 
