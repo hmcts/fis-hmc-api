@@ -1,12 +1,22 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
+
 import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.IOException;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +52,8 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api("/")
+@Api(value = "/", description = "get hearings Values")
+@RequiredArgsConstructor
 public class HearingsController {
 
     private final IdamAuthService idamAuthService;
@@ -170,6 +181,36 @@ public class HearingsController {
                 return ResponseEntity.ok(
                         hearingsService.getHearingsByListOfCaseIds(
                                 caseIdWithRegionId, authorization, serviceAuthorization));
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+        }
+    }
+
+    @PostMapping(path = "/hearings-by-list-of-caseids-without-venue")
+    @ApiOperation("get hearings by case reference numbers without court venue details")
+    @ApiResponses(
+        value = {
+            @ApiResponse(code = 200, message = "get hearings by caseRefNo successfully"),
+            @ApiResponse(code = 400, message = "Bad Request")
+        })
+    public ResponseEntity<Object> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+        @RequestHeader(AUTHORIZATION) String authorization,
+        @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+        @RequestBody List<String> listOfCaseIds) {
+        try {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                return ResponseEntity.ok(
+                    hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+                        listOfCaseIds, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }

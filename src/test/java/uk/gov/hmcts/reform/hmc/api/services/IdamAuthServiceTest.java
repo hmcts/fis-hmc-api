@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -11,8 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.authorisation.ServiceAuthorisationApi;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
+import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import uk.gov.hmcts.reform.idam.client.models.UserInfo;
 
 @ExtendWith(SpringExtension.class)
@@ -48,6 +52,13 @@ class IdamAuthServiceTest {
     }
 
     @Test
+    void authoriseWhenTheServiceIsCalledFromPaymentAndS2sAuthorisedServices() {
+        ReflectionTestUtils.setField(idamAuthService, "s2sAuthorisedServices", "test,payment_api");
+        when(serviceAuthorisationApi.getServiceName(any())).thenReturn("payment_api");
+        assertTrue(idamAuthService.authoriseService("Bearer abcasda"));
+    }
+
+    @Test
     void throwNullPointerAuthUserException() {
         when(idamAuthService.authoriseUser(null)).thenThrow(NullPointerException.class);
         assertFalse(idamAuthService.authoriseUser(null));
@@ -63,5 +74,17 @@ class IdamAuthServiceTest {
     @Test
     void doNotAuthoriseUserWhenCalledWithInvalidToken() {
         assertFalse(idamAuthService.authoriseUser("Bearer malformed"));
+    }
+
+    @Test
+    void getUserDetailsTest() {
+        when(idamClient.getUserDetails(any()))
+            .thenReturn(UserDetails.builder().id(UUID.randomUUID().toString())
+                            .forename("forenameTest").surname("surnameTest").build());
+        UserDetails userDetails = idamAuthService.getUserDetails("Bearer abcasda");
+        assertNotNull(userDetails);
+        assertEquals("forenameTest", userDetails.getForename());
+        assertEquals("surnameTest", userDetails.getSurname().get());
+
     }
 }

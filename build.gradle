@@ -21,15 +21,24 @@ plugins {
   id 'checkstyle'
   id 'pmd'
   id 'jacoco'
-  id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+  id 'io.spring.dependency-management' version '1.1.5'
   id 'org.springframework.boot' version '2.7.18'
-  id 'org.owasp.dependencycheck' version '8.0.2'
-  id 'com.github.ben-manes.versions' version '0.44.0'
+  id 'org.owasp.dependencycheck' version '9.2.0'
+  id 'com.github.ben-manes.versions' version '0.51.0'
   id 'org.sonarqube' version '3.3'
   id 'idea'
-  id 'hmcts.ccd.sdk' version '0.25.16'
+  id 'hmcts.ccd.sdk' version '0.27.3'
   id 'au.com.dius.pact' version '4.1.7'
+  id 'info.solidsoft.pitest' version '1.15.0'
 }
+
+def versions = [
+  gradlePitest                 : '1.15.0',
+  pitest                       : '1.16.1',
+  sonarPitest                  : '0.5',
+  s2sClient                    : '4.0.3',
+]
+
 
 apply plugin: 'cz.habarta.typescript-generator'
 apply plugin: 'com.github.ben-manes.versions'
@@ -144,6 +153,12 @@ task smoke(type: Test) {
   failFast = true
 }
 
+task fortifyScan(type: JavaExec)  {
+  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+  classpath += sourceSets.test.runtimeClasspath
+  jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+}
+
 checkstyle {
   maxWarnings = 0
   toolVersion = '9.3'
@@ -157,6 +172,24 @@ pmd {
   // https://github.com/pmd/pmd/issues/876
   ruleSets = []
   ruleSetFiles = files("config/pmd/ruleset.xml")
+}
+
+pitest {
+  targetClasses = ['uk.gov.hmcts.reform.hmc.api.*']
+  excludedClasses = [
+    'uk.gov.hmcts.reform.hmc.api.config.*',
+    'uk.gov.hmcts.reform.hmc.api.model.*',
+    'uk.gov.hmcts.reform.hmc.api.enums.*',
+    'uk.gov.hmcts.reform.hmc.api.mapper.*',
+    'uk.gov.hmcts.reform.hmc.api.exceptions.*',
+    'uk.gov.hmcts.reform.hmc.api.Application.*',
+    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl',
+    'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl'
+  ]
+  threads = 10
+  outputFormats = ['XML', 'HTML']
+  timestampedReports = true
+  mutationThreshold = 80
 }
 
 jacocoTestReport {
@@ -194,10 +227,10 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/model/**',
   '**/uk/gov/hmcts/reform/hmc/api/exceptions/**',
   '**/uk/gov/hmcts/reform/hmc/api/enums/**',
-  '**/uk/gov/hmcts/reform/hmc/api/services/**',
+  'uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl',
+  'uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl',
   '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
-  '**/uk/gov/hmcts/reform/hmc/api/utils/CaseUtils.java',
-  '**/uk/gov/hmcts/reform/hmc/api/services/AutomateHearingServiceTest.java'
+  '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
 
 sonarqube {
@@ -207,6 +240,8 @@ sonarqube {
     property "sonar.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.pitest.mode", "reuseReport"
+    property "sonar.pitest.reportsDirectory", "build/reports/pitest"
   }
 }
 
@@ -253,7 +288,7 @@ repositories {
 
 ext {
   log4JVersion = '2.20.0'
-  set('springCloudAzureVersion', "4.14.0")
+  set('springCloudAzureVersion', "4.18.0")
   set('springCloudVersion', "2021.0.4")
 }
 
@@ -264,31 +299,31 @@ dependencyManagement {
   dependencies {
     dependencySet(
       group: 'com.fasterxml.jackson.core',
-      version: '2.16.0'
+      version: '2.17.2'
     ) {
       entry 'jackson-core'
       entry 'jackson-databind'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.16.0'
+      version: '2.17.2'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.15.2'
+      version: '2.17.1'
     ) {
       entry 'jackson-module-parameter-names'
     }
-    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.70'
+    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.74'
     // CVE-2018-10237 - Unbounded memory allocation
     // CVE-2023-2976 fix
     dependencySet(group: 'com.google.guava', version: '32.1.3-jre') {
       entry 'guava'
     }
-    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.84') {
+    dependencySet(group: 'org.apache.tomcat.embed', version: '9.0.89') {
       entry 'tomcat-embed-core'
       entry 'tomcat-embed-el'
       entry 'tomcat-embed-websocket'
@@ -296,7 +331,7 @@ dependencyManagement {
     dependencySet(group: 'xerces', version: '2.12.2') {
       entry 'xercesImpl'
     }
-    dependencySet(group: 'io.netty', version: '4.1.108.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.109.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -320,14 +355,14 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.5') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.1.14') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.1.19') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
     dependencySet(group: 'org.json', version: '20240303') {
       entry 'json'
     }
-    dependencySet(group: 'org.springframework', version: '5.3.33') {
+    dependencySet(group: 'org.springframework', version: '5.3.34') {
       entry 'spring-aop'
       entry 'spring-beans'
       entry 'spring-context'
@@ -337,23 +372,23 @@ dependencyManagement {
       entry 'spring-webmvc'
       entry 'spring-web'
     }
-    dependencySet(group: 'commons-io', version: '2.14.0') {
+    dependencySet(group: 'commons-io', version: '2.16.1') {
       entry 'commons-io'
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.0'
     //CVE-2023-34034
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.3'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.15.2'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
     dependencySet(group: 'org.apache.commons', version: '1.26.1') {
       entry 'commons-compress'
     }
-    dependencySet(group: 'io.ktor', version: '2.3.10') {
+    dependencySet(group: 'io.ktor', version: '2.3.11') {
       entry 'ktor-network-tls-jvm'
     }
 
     // CVE-2021-27568, CVE-2023-1370
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.40') {
       entry 'nimbus-jose-jwt'
     }
 
@@ -371,61 +406,69 @@ dependencyManagement {
       entry 'grpc-stub'
 
     }
-    dependencySet(group: 'com.nimbusds', version: '9.37.3') {
+    dependencySet(group: 'com.nimbusds', version: '9.40') {
       entry 'nimbus-jose-jwt'
     }
     //CVE-2023-3635
     dependencySet(group: 'com.squareup.okio', version: '3.9.0') {
       entry 'okio-jvm'
     }
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.12'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0'
   }
 }
 dependencies {
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.8.0'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: '2.7.18'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.1.1'
-  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.11.0'
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.2.1'
+  implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
+  implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
   implementation('org.springframework.retry:spring-retry')
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.0')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.0')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.2')
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.10'
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.3'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.9'
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-spring-webflux', version: '3.0.0'
-  implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
-  implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  //implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
+  implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
+  //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
+  implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.0.1'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
-  implementation group: 'com.azure', name: 'azure-core', version: '1.44.1'
-  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.14.7'
+  implementation group: 'com.azure', name: 'azure-core', version: '1.48.0'
+  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.3'
   implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
-  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.9'
-  implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.42'
+  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.14'
+  implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.88'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.89'
   implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.2'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
+  implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.1'
 
   implementation 'org.projectlombok:lombok:1.18.32'
   annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
 
-  testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
-  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
-  testImplementation 'org.apiguardian:apiguardian-api:1.0.0'
-  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.8.2')
+  testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+
+  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
+  testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
+  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath
@@ -435,6 +478,7 @@ dependencies {
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
 
+  testImplementation 'com.github.hmcts:fortify-client:1.4.2:all'
   testImplementation 'org.projectlombok:lombok:1.18.32'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.32'
   implementation group: 'io.rest-assured', name: 'rest-assured'
@@ -445,6 +489,11 @@ dependencies {
     exclude group: 'junit', module: 'junit'
     exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
   }
+
+  implementation group: 'org.pitest', name: 'pitest', version: versions.pitest
+  implementation group:'info.solidsoft.gradle.pitest', name: 'gradle-pitest-plugin', version: versions.gradlePitest
+  implementation group:'org.codehaus.sonar-plugins', name:'sonar-pitest-plugin', version: versions.sonarPitest
+
 }
 
 mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'

@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +43,7 @@ public class RefDataServiceImpl implements RefDataService {
         log.info("calling getCourtDetails service " + epimmsId);
         try {
             final List<String> courtIds =
-                    familyCourtIds.stream().map(String::trim).collect(Collectors.toList());
+                    familyCourtIds.stream().map(String::trim).toList();
 
             List<CourtDetail> courtDetailList =
                     refDataApi.getCourtDetails(
@@ -54,15 +53,9 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call completed successfully" + courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
-                            .filter(
-                                    courtDetail1 ->
-                                            courtIds.stream()
-                                                    .anyMatch(
-                                                            courtId ->
-                                                                    courtId.equals(
-                                                                            courtDetail1
-                                                                                    .getCourtTypeId())))
-                            .collect(Collectors.toList());
+                            .filter(courtDetail1 -> courtIds.stream()
+                                .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
+                            .toList();
             if (!filteredCourtDetail.isEmpty()) {
                 courtDetail = filteredCourtDetail.get(0);
                 if (courtDetail.getHearingVenueAddress() != null) {
@@ -70,7 +63,6 @@ public class RefDataServiceImpl implements RefDataService {
                 }
                 log.info("Court details filtered" + courtDetail);
             }
-            return courtDetail;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
@@ -116,7 +108,7 @@ public class RefDataServiceImpl implements RefDataService {
     @SuppressWarnings("unused")
     public List<CourtDetail> getCourtDetailsByServiceCode(String serviceCode) {
         List<CourtDetail> courtVenues = new ArrayList<>();
-        log.info("calling getCourtDetails service with serviceCode {} " + serviceCode);
+        log.info("calling getCourtDetails service with serviceCode {} ", serviceCode);
         try {
             VenuesDetail venueDetail =
                     refDataApi.getCourtDetailsByServiceCode(
@@ -125,11 +117,10 @@ public class RefDataServiceImpl implements RefDataService {
                             serviceCode);
             log.info("RefData call for allVenues completed successfully ");
 
-            final boolean match =
-                    familyCourtIds.stream().map(String::trim).collect(Collectors.toList()).stream()
+            final boolean match = familyCourtIds.stream().map(String::trim).toList().stream()
                             .anyMatch(courtId -> courtId.equals(venueDetail.getCourtTypeId()));
             if (venueDetail != null && !venueDetail.getCourtVenues().isEmpty() && match) {
-                return venueDetail.getCourtVenues();
+                courtVenues = venueDetail.getCourtVenues();
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info(

@@ -72,7 +72,6 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
                 judgeDetail = judgeDetailList.get(0);
                 log.info("Judge details filtered" + judgeDetail.getHearingJudgeName());
             }
-            return judgeDetail;
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("RefData Judicial call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);

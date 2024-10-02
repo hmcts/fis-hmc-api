@@ -20,6 +20,11 @@ public interface HearingsService {
             String authorization,
             String serviceAuthorization);
 
+    List<Hearings> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization,
+        String serviceAuthorization);
+
     Hearings getFutureHearings(String caseReference);
 
 
