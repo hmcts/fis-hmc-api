@@ -11,11 +11,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
@@ -27,7 +27,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkElement;
 @Getter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Builder(builderMethodName = "caseDataBuilder")
+@SuperBuilder(builderMethodName = "caseDataBuilder")
 public class CaseData  {
 
     private long id;
