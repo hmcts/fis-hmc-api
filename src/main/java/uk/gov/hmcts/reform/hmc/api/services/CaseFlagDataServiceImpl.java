@@ -203,7 +203,7 @@ public class CaseFlagDataServiceImpl {
         }
         Boolean isVulnerableFlag = false;
         String vulnerabilityDetails = "";
-        List<String> reasonableAdjustments = null;
+        List<String> reasonableAdjustments = new ArrayList<>();
 
         if (null != flagsDetailOfCurrParty) {
             isVulnerableFlag = isVulnerableFlag(flagsDetailOfCurrParty);
