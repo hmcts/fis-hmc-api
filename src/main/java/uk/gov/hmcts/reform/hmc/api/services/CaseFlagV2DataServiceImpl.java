@@ -24,6 +24,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -372,7 +373,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
         List<Element<FlagDetail>> flagsDetailsList = new ArrayList<>();
         for (Flags flags : partyFlagList) {
-            flagsDetailsList.addAll(flags.getDetails());
+            flagsDetailsList.addAll(null != flags.getDetails() ? flags.getDetails() : Collections.emptyList());
         }
 
         if (!flagsDetailsList.isEmpty()) {
