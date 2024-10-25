@@ -410,7 +410,7 @@ dependencyManagement {
       entry 'nimbus-jose-jwt'
     }
     //CVE-2023-3635
-    dependencySet(group: 'com.squareup.okio', version: '3.9.0') {
+    dependencySet(group: 'com.squareup.okio', version: '3.9.1') {
       entry 'okio-jvm'
     }
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.12'
