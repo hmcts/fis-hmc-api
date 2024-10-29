@@ -379,7 +379,7 @@ dependencyManagement {
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
     dependencySet(group: 'org.apache.commons', version: '1.27.1') {
       entry 'commons-compress'
     }
@@ -415,7 +415,7 @@ dependencyManagement {
     }
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.12'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
   }
 }
 dependencies {
@@ -429,7 +429,7 @@ dependencies {
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
 
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1')
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.17.2')
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.17.2')
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
