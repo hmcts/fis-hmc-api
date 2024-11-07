@@ -377,7 +377,7 @@ dependencyManagement {
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.3'
     //CVE-2023-34034
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.3.4'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
     dependencySet(group: 'org.apache.commons', version: '1.27.1') {
@@ -413,7 +413,7 @@ dependencyManagement {
     dependencySet(group: 'com.squareup.okio', version: '3.9.1') {
       entry 'okio-jvm'
     }
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.12'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.8.15'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
   }
