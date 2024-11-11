@@ -178,21 +178,9 @@ public class HearingsServiceImpl implements HearingsService {
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
-                    List<CaseHearing> filteredHearings =
-                            hearingDetails.getCaseHearings().stream()
-                                    .filter(
-                                            eachHearing ->
-                                                    eachHearing.getHmcStatus().equals(LISTED)
-                                                            || eachHearing
-                                                                    .getHmcStatus()
-                                                                    .equals(CANCELLED)
-                                                            || eachHearing
-                                                                    .getHmcStatus()
-                                                                    .equals(COMPLETED))
-                                    .toList();
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
-                                    .caseHearings(filteredHearings)
+                                    .caseHearings(hearingDetails.getCaseHearings())
                                     .caseRef(hearingDetails.getCaseRef())
                                     .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                                     .build();
