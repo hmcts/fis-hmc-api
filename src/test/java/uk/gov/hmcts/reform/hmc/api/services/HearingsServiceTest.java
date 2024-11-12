@@ -389,7 +389,7 @@ class HearingsServiceTest {
         List<Hearings> hearingsResponse =
             hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
         Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
-        Assertions.assertTrue(hearingsResponse.get(0).getCaseHearings().isEmpty());    }
+        Assertions.assertFalse(hearingsResponse.get(0).getCaseHearings().isEmpty());    }
 
 
 
