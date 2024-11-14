@@ -21,6 +21,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +50,9 @@ public class HearingsServiceImpl implements HearingsService {
 
     @Value("${hearing_component.api.url}")
     private String basePath;
+
+    @Value("${cafcass.excludeHearingStates}")
+    private String hearingStatesToBeExcluded;
 
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
@@ -178,9 +182,20 @@ public class HearingsServiceImpl implements HearingsService {
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
+                    String[] excludeHearingList = hearingStatesToBeExcluded.split(",");
+                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
+                    if (excludeHearingList.length > 0) {
+                        filteredHearings = filteredHearings.stream()
+                                .filter(
+                                    eachHearing ->
+                                        Arrays.stream(excludeHearingList)
+                                            .anyMatch(hearingStatus -> hearingStatus.equals(eachHearing.getHmcStatus()))
+                                )
+                                .toList();
+                    }
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
-                                    .caseHearings(hearingDetails.getCaseHearings())
+                                    .caseHearings(filteredHearings)
                                     .caseRef(hearingDetails.getCaseRef())
                                     .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                                     .build();
