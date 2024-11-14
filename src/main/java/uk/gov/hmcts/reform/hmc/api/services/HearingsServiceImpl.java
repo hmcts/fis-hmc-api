@@ -182,6 +182,7 @@ public class HearingsServiceImpl implements HearingsService {
                 try {
                     hearingDetails = hearing;
                     List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
+                    log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
                     if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
                         filteredHearings = filteredHearings.stream()
                                 .filter(
@@ -189,6 +190,7 @@ public class HearingsServiceImpl implements HearingsService {
                                         hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
                                 .toList();
                     }
+                    log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
                                     .caseHearings(filteredHearings)
