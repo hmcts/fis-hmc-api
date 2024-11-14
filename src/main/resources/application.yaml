@@ -46,7 +46,7 @@ hearing:
   search-case-type-id: PRLAPPS
 
 cafcass:
-  excludeHearingStates: ""
+  excludeHearingStates: ${CAFCASS_EXCLUDE_HEARING_STATES:""}
 ref_data_venue:
   api:
     url: ${REF_DATA_VENUE_URL:http://rd-location-ref-api-demo.service.core-compute-demo.internal/}
