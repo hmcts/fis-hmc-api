@@ -188,7 +188,7 @@ public class HearingsServiceImpl implements HearingsService {
                         filteredHearings = filteredHearings.stream()
                                 .filter(
                                     eachHearing ->
-                                        hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
+                                        !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
                                 .toList();
                     }
                     log.info("Filtered hearings {}", filteredHearings);
