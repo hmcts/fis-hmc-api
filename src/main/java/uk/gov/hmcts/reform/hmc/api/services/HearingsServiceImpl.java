@@ -276,16 +276,14 @@ public class HearingsServiceImpl implements HearingsService {
             Map<String, String> caseIdWithRegionIdMap) {
 
         for (Hearings hearings : casesWithHearings) {
-            List<CaseHearing> listedOrCancelledHearings = getListedOrCancelledHearing(hearings);
-            if (!listedOrCancelledHearings.isEmpty()) {
+            if (null != hearings && !hearings.getCaseHearings().isEmpty()) {
                 CourtDetail caseCourt = getCourtDetail(allVenues, caseIdWithRegionIdMap, hearings);
                 if (caseCourt != null) {
                     hearings.setCourtTypeId(caseCourt.getCourtTypeId());
                     hearings.setCourtName(caseCourt.getHearingVenueName());
                 }
 
-
-                for (CaseHearing caseHearing : listedOrCancelledHearings) {
+                for (CaseHearing caseHearing : hearings.getCaseHearings()) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = getMatchedCourtDetail(
                             allVenues,
