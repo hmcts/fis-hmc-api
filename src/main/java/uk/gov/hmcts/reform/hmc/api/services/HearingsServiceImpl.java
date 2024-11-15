@@ -378,18 +378,6 @@ public class HearingsServiceImpl implements HearingsService {
                         .orElse(null);
     }
 
-
-    private static List<CaseHearing> getListedOrCancelledHearing(Hearings hearings) {
-        return hearings.getCaseHearings().stream()
-                        .filter(
-                                hearing ->
-                                        (hearing.getHmcStatus().equals(LISTED)
-                                                        || hearing.getHmcStatus()
-                                                                .equals(CANCELLED))
-                                                && hearing.getHearingDaySchedule() != null)
-                        .toList();
-    }
-
     @Override
     public Hearings getFutureHearings(String caseReference) {
 
