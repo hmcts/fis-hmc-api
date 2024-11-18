@@ -78,7 +78,7 @@ public class HearingsServiceImpl implements HearingsService {
             caseHearingsResponse = hearingApiClient.getHearingDetails(idamTokenGenerator.generateIdamTokenForHearingCftData(),
                             s2sToken,
                             caseReference);
-            log.info("Fetch hearings call completed successfully {}", caseHearingsResponse);
+            log.info("Fetch hearings call completed successfully");
 
             integrateVenueDetails(caseHearingsResponse);
             log.info(
@@ -178,7 +178,6 @@ public class HearingsServiceImpl implements HearingsService {
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
                             userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
-            log.info("Hearing details list {}", hearingDetailsList);
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
@@ -191,7 +190,6 @@ public class HearingsServiceImpl implements HearingsService {
                                         !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
                                 .toList();
                     }
-                    log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
                                     .caseHearings(filteredHearings)
