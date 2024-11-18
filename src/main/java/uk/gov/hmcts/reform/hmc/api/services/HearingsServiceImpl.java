@@ -50,6 +50,9 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${hearing_component.api.url}")
     private String basePath;
 
+    @Value("#{'${cafcass.excludeHearingStates}'.split(',')}")
+    private List<String> hearingStatesToBeExcluded;
+
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
 
@@ -175,21 +178,20 @@ public class HearingsServiceImpl implements HearingsService {
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
                             userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
+            log.info("Hearing details list {}", hearingDetailsList);
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
-                    List<CaseHearing> filteredHearings =
-                            hearingDetails.getCaseHearings().stream()
-                                    .filter(
-                                            eachHearing ->
-                                                    eachHearing.getHmcStatus().equals(LISTED)
-                                                            || eachHearing
-                                                                    .getHmcStatus()
-                                                                    .equals(CANCELLED)
-                                                            || eachHearing
-                                                                    .getHmcStatus()
-                                                                    .equals(COMPLETED))
-                                    .toList();
+                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
+                    log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
+                    if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
+                        filteredHearings = filteredHearings.stream()
+                                .filter(
+                                    eachHearing ->
+                                        !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
+                                .toList();
+                    }
+                    log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
                                     .caseHearings(filteredHearings)
@@ -274,16 +276,14 @@ public class HearingsServiceImpl implements HearingsService {
             Map<String, String> caseIdWithRegionIdMap) {
 
         for (Hearings hearings : casesWithHearings) {
-            List<CaseHearing> listedOrCancelledHearings = getListedOrCancelledHearing(hearings);
-            if (!listedOrCancelledHearings.isEmpty()) {
+            if (null != hearings && !hearings.getCaseHearings().isEmpty()) {
                 CourtDetail caseCourt = getCourtDetail(allVenues, caseIdWithRegionIdMap, hearings);
                 if (caseCourt != null) {
                     hearings.setCourtTypeId(caseCourt.getCourtTypeId());
                     hearings.setCourtName(caseCourt.getHearingVenueName());
                 }
 
-
-                for (CaseHearing caseHearing : listedOrCancelledHearings) {
+                for (CaseHearing caseHearing : hearings.getCaseHearings()) {
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = getMatchedCourtDetail(
                             allVenues,
@@ -376,18 +376,6 @@ public class HearingsServiceImpl implements HearingsService {
                                                 && OPEN.equals(e.getCourtStatus()))
                         .findFirst()
                         .orElse(null);
-    }
-
-
-    private static List<CaseHearing> getListedOrCancelledHearing(Hearings hearings) {
-        return hearings.getCaseHearings().stream()
-                        .filter(
-                                hearing ->
-                                        (hearing.getHmcStatus().equals(LISTED)
-                                                        || hearing.getHmcStatus()
-                                                                .equals(CANCELLED))
-                                                && hearing.getHearingDaySchedule() != null)
-                        .toList();
     }
 
     @Override
