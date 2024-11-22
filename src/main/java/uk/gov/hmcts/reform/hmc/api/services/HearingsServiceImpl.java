@@ -249,7 +249,10 @@ public class HearingsServiceImpl implements HearingsService {
                                         .equals(CANCELLED)
                                         || eachHearing
                                         .getHmcStatus()
-                                        .equals(COMPLETED))
+                                        .equals(COMPLETED)
+                                        || eachHearing
+                                        .getHmcStatus()
+                                        .equals(AWAITING_HEARING_DETAILS))
                             .toList();
                     log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
