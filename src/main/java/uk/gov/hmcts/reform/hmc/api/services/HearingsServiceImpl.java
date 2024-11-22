@@ -230,8 +230,13 @@ public class HearingsServiceImpl implements HearingsService {
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds);
+        log.info("Hearing lists {}", hearingDetailsList);
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            log.info("Hearing list not empty");
             for (var hearing : hearingDetailsList) {
+                log.info("Hearing {}", hearing);
+                log.info("Hearing case ref {}", hearing.getCaseRef());
+                log.info("Hearing case hearings {}", hearing.getCaseHearings());
                 try {
                     hearingDetails = hearing;
                     List<CaseHearing> filteredHearings =
@@ -246,6 +251,7 @@ public class HearingsServiceImpl implements HearingsService {
                                         .getHmcStatus()
                                         .equals(COMPLETED))
                             .toList();
+                    log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
                         Hearings.hearingsWith()
                             .caseHearings(filteredHearings)
