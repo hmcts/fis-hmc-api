@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
@@ -149,8 +148,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
         List<CaseHearing> listedHearings =
                 hearings.getCaseHearings().stream()
-                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED)
-                        || eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
+                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED))
                         .toList();
 
         LocalDateTime tempNextDateListed = null;
