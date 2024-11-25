@@ -178,6 +178,8 @@ public class HearingsServiceImpl implements HearingsService {
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
                             userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
+            log.info("****List of hearing dertails** {}", hearingDetailsList);
+            log.info("****List of hearing dertails size** {}", hearingDetailsList.size());
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
@@ -207,7 +209,11 @@ public class HearingsServiceImpl implements HearingsService {
                     log.info("Hearing api call Exception exception {}", exception.getMessage());
                 }
             }
+            log.info("****outside object** {}", casesWithHearings);
+            log.info("****i am outside***");
             if (!casesWithHearings.isEmpty()) {
+                log.info("****casesWithHearings** {}", casesWithHearings);
+                log.info("****casesWithHearings size** {}", casesWithHearings.size());
                 List<CourtDetail> allVenues =
                         refDataService.getCourtDetailsByServiceCode(
                                 hearingDetails.getHmctsServiceCode());
