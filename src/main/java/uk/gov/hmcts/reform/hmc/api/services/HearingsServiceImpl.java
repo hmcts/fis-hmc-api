@@ -180,33 +180,35 @@ public class HearingsServiceImpl implements HearingsService {
                             userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
             log.info("****List of hearing dertails** {}", hearingDetailsList);
             log.info("****List of hearing dertails size** {}", hearingDetailsList.size());
-            for (var hearing : hearingDetailsList) {
-                try {
-                    hearingDetails = hearing;
-                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
-                    log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
-                    if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
-                        filteredHearings = filteredHearings.stream()
+            if(!CollectionUtils.isEmpty(hearingDetailsList)){
+                for (var hearing : hearingDetailsList) {
+                    try {
+                        hearingDetails = hearing;
+                        List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
+                        log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
+                        if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
+                            filteredHearings = filteredHearings.stream()
                                 .filter(
                                     eachHearing ->
                                         !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
                                 .toList();
-                    }
-                    Hearings filteredCaseHearingsWithCount =
+                        }
+                        Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
-                                    .caseHearings(filteredHearings)
-                                    .caseRef(hearingDetails.getCaseRef())
-                                    .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
-                                    .build();
-                    casesWithHearings.add(filteredCaseHearingsWithCount);
-                } catch (HttpClientErrorException | HttpServerErrorException exception) {
-                    log.info(
+                                .caseHearings(filteredHearings)
+                                .caseRef(hearingDetails.getCaseRef())
+                                .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                                .build();
+                        casesWithHearings.add(filteredCaseHearingsWithCount);
+                    } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                        log.info(
                             "Hearing api call HttpClientError exception {}",
                             exception.getMessage());
-                } catch (FeignException exception) {
-                    log.info("Hearing api call Feign exception {}", exception.getMessage());
-                } catch (Exception exception) {
-                    log.info("Hearing api call Exception exception {}", exception.getMessage());
+                    } catch (FeignException exception) {
+                        log.info("Hearing api call Feign exception {}", exception.getMessage());
+                    } catch (Exception exception) {
+                        log.info("Hearing api call Exception exception {}", exception.getMessage());
+                    }
                 }
             }
             log.info("****outside object** {}", casesWithHearings);
