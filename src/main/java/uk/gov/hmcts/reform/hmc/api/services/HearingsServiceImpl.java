@@ -179,7 +179,7 @@ public class HearingsServiceImpl implements HearingsService {
                     hearingApiClient.getListOfHearingDetails(
                             userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
             log.info("****List of hearing dertails** {}", hearingDetailsList);
-            if(!CollectionUtils.isEmpty(hearingDetailsList)){
+            if (!CollectionUtils.isEmpty(hearingDetailsList)) {
                 for (var hearing : hearingDetailsList) {
                     try {
                         hearingDetails = hearing;
