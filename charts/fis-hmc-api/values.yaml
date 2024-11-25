@@ -43,7 +43,7 @@ java:
     OIDC_S2S_MICROSERVICE_NAME: 'fis_hmc_api'
     PRL_URL: 'http://prl-cos-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
     PRL_HMC_S2S_AUTHORISED_SERVICES : xui_webapp,prl_cos_api,fis_hmc_api
-    CAFCASS_EXCLUDE_HEARING_STATES: HEARING_REQUESTED,AWAITING_LISTING,EXCEPTION,CANCELLATION_SUBMITTED
+    CAFCASS_EXCLUDE_HEARING_STATES: HEARING_REQUESTED,AWAITING_LISTING,EXCEPTION,CANCELLATION_SUBMITTED,UPDATE_SUBMITTED
     REF_DATA_VENUE_URL: 'http://rd-location-ref-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/'
     REF_DATA_JUDICIAL_URL: 'http://rd-judicial-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/'
     ROLE_ASSIGNMENT_SERVICE_URL: 'http://am-role-assignment-service-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal'
