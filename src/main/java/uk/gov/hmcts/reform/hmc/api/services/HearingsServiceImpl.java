@@ -19,8 +19,10 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -249,10 +251,7 @@ public class HearingsServiceImpl implements HearingsService {
                                         .equals(CANCELLED)
                                         || eachHearing
                                         .getHmcStatus()
-                                        .equals(COMPLETED)
-                                        || eachHearing
-                                        .getHmcStatus()
-                                        .equals(AWAITING_HEARING_DETAILS))
+                                        .equals(COMPLETED))
                             .toList();
                     log.info("Filtered hearings {}", filteredHearings);
                     Hearings filteredCaseHearingsWithCount =
@@ -275,6 +274,56 @@ public class HearingsServiceImpl implements HearingsService {
             }
         }
         return casesWithHearings;
+    }
+
+    @Override
+    public Map<String, List<String>> getHearingsListedForTodayByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization, String serviceAuthorization) {
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        List<Hearings> hearingDetailsList = hearingApiClient.getListOfHearingDetails(userToken, s2sToken, listOfCaseIds);
+        Map<String, List<String>> caseIdHearingIdMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            log.info("Hearing details retrieved from hmc");
+            List<String> validHearingIds = new ArrayList<>();
+            for (var caseWithHearings : hearingDetailsList) {
+                log.info("Case id {}", caseWithHearings.getCaseRef());
+                try {
+                    caseWithHearings.getCaseHearings().stream()
+                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
+                        .forEach(hearing -> {
+                            if (isHearingScheduledToday(hearing)) {
+                                validHearingIds.add(hearing.getHearingID().toString());
+                            }
+                        });
+                    if (!validHearingIds.isEmpty()) {
+                        log.info("There are hearings listed for today");
+                        caseIdHearingIdMap.put(caseWithHearings.getCaseRef(), validHearingIds);
+                        validHearingIds.clear();
+                    }
+                    log.info("Filtered hearings {}", caseIdHearingIdMap);
+                } catch (HttpClientErrorException | HttpServerErrorException exception) {
+                    log.info(
+                        "Hearing api call HttpClientError exception {}",
+                        exception.getMessage()
+                    );
+                } catch (FeignException exception) {
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
+                } catch (Exception exception) {
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
+                }
+            }
+        }
+        return caseIdHearingIdMap;
+    }
+
+    private boolean isHearingScheduledToday(CaseHearing hearing) {
+        log.info("hearing id {}", hearing.getHearingID());
+        log.info("hearing day schedule {}", hearing.getHearingDaySchedule());
+        return CollectionUtils.isNotEmpty(hearing.getHearingDaySchedule())
+            && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> LocalDate.now()
+            .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
     }
 
     private void integrateVenueDetailsForCaseId(
