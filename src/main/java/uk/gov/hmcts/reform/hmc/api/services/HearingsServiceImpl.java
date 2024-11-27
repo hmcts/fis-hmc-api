@@ -294,6 +294,7 @@ public class HearingsServiceImpl implements HearingsService {
                         .filter(eachHearing -> eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
                         .forEach(hearing -> {
                             if (isHearingScheduledToday(hearing)) {
+                                log.info("Hearing is scheduled for today {}", hearing.getHearingID());
                                 validHearingIds.add(hearing.getHearingID().toString());
                             }
                         });
@@ -322,8 +323,13 @@ public class HearingsServiceImpl implements HearingsService {
         log.info("hearing id {}", hearing.getHearingID());
         log.info("hearing day schedule {}", hearing.getHearingDaySchedule());
         return CollectionUtils.isNotEmpty(hearing.getHearingDaySchedule())
-            && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> LocalDate.now()
-            .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
+            && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> {
+                log.info("Hearing day start date {}", hearingDaySchedule.getHearingStartDateTime());
+                log.info("boolean {}", LocalDate.now()
+                    .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
+                return LocalDate.now()
+                .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate());
+        });
     }
 
     private void integrateVenueDetailsForCaseId(
