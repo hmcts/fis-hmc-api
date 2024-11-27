@@ -329,7 +329,7 @@ public class HearingsServiceImpl implements HearingsService {
                     .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
                 return LocalDate.now()
                 .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate());
-        });
+            });
     }
 
     private void integrateVenueDetailsForCaseId(
