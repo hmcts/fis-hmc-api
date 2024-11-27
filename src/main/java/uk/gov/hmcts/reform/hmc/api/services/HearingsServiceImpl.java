@@ -290,6 +290,7 @@ public class HearingsServiceImpl implements HearingsService {
             for (var caseWithHearings : hearingDetailsList) {
                 log.info("Case id {}", caseWithHearings.getCaseRef());
                 try {
+                    validHearingIds.clear();
                     caseWithHearings.getCaseHearings().stream()
                         .filter(eachHearing -> eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
                         .forEach(hearing -> {
@@ -301,7 +302,6 @@ public class HearingsServiceImpl implements HearingsService {
                     if (!validHearingIds.isEmpty()) {
                         log.info("There are hearings listed for today");
                         caseIdHearingIdMap.put(caseWithHearings.getCaseRef(), validHearingIds);
-                        validHearingIds.clear();
                     }
                     log.info("Filtered hearings {}", caseIdHearingIdMap);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
