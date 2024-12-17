@@ -218,7 +218,7 @@ public class HearingsController {
                 && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
                 return ResponseEntity.ok(
-                    hearingsService.getHearingsListedForTodayByListOfCaseIdsWithoutCourtVenueDetails(
+                    hearingsService.getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(
                         listOfCaseIds, authorization, serviceAuthorization));
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);

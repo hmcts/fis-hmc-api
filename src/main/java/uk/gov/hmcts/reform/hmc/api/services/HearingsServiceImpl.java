@@ -277,7 +277,7 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    public Map<String, List<String>> getHearingsListedForTodayByListOfCaseIdsWithoutCourtVenueDetails(
+    public Map<String, List<String>> getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(
         List<String> listOfCaseIds,
         String authorization, String serviceAuthorization) {
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
