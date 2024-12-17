@@ -306,14 +306,14 @@ dependencyManagement {
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.18.1'
+      version: '2.18.2'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.18.1'
+      version: '2.18.2'
     ) {
       entry 'jackson-module-parameter-names'
     }
@@ -377,7 +377,7 @@ dependencyManagement {
     }
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.3'
     //CVE-2023-34034
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.2.4'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.3.4'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
     dependencySet(group: 'org.apache.commons', version: '1.27.1') {
@@ -413,7 +413,7 @@ dependencyManagement {
     dependencySet(group: 'com.squareup.okio', version: '3.9.1') {
       entry 'okio-jvm'
     }
-    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.7.12'
+    dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.8.15'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.1'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.1'
   }
@@ -445,10 +445,10 @@ dependencies {
   //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.1'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
-  implementation group: 'com.azure', name: 'azure-core', version: '1.54.0'
-  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.5'
+  implementation group: 'com.azure', name: 'azure-core', version: '1.54.1'
+  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.7'
   implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
-  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.15'
+  implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.16'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.96'

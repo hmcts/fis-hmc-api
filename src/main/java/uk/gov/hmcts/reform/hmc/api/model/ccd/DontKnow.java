@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @JsonSerialize(using = CustomEnumSerializer.class)
 public enum DontKnow {
     @JsonProperty("dontKnow")
-    DONT_KNOW("Don't know");
+    dontKnow("Don't know");
 
     private final String displayedValue;
 
