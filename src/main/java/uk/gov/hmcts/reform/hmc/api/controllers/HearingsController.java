@@ -1,22 +1,13 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.ResponseEntity.status;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
-
 import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.io.IOException;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +30,7 @@ import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -67,17 +59,6 @@ public class HearingsController {
     private final AuthTokenGenerator authTokenGenerator;
 
     private final RoleAssignmentService roleAssignmentService;
-
-    public HearingsController(IdamAuthService idamAuthService, HearingsDataService hearingsDataService,
-                              HearingsService hearingsService, NextHearingDetailsService nextHearingDetailsService,
-                              AuthTokenGenerator authTokenGenerator, RoleAssignmentService roleAssignmentService) {
-        this.idamAuthService = idamAuthService;
-        this.hearingsDataService = hearingsDataService;
-        this.hearingsService = hearingsService;
-        this.nextHearingDetailsService = nextHearingDetailsService;
-        this.authTokenGenerator = authTokenGenerator;
-        this.roleAssignmentService = roleAssignmentService;
-    }
 
     /**
      * End point to fetch the hearingsData info based on the hearingValues passed.
