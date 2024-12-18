@@ -383,7 +383,7 @@ dependencyManagement {
     dependencySet(group: 'org.apache.commons', version: '1.27.1') {
       entry 'commons-compress'
     }
-    dependencySet(group: 'io.ktor', version: '2.3.12') {
+    dependencySet(group: 'io.ktor', version: '2.3.13') {
       entry 'ktor-network-tls-jvm'
     }
 
