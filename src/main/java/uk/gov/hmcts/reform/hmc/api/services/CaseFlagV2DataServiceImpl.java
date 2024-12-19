@@ -326,7 +326,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
-            ? Arrays.asList(partyDetails.getSolicitorTelephone()) : Arrays.asList();
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone())) : Arrays.asList();
 
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
@@ -385,7 +385,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
-            ? Arrays.asList(partyDetails.getPhoneNumber()) : Arrays.asList();
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber())) : Arrays.asList();
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
                 .firstName(partyDetails.getFirstName())
@@ -412,5 +412,9 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
     public static <T> Element<T> element(UUID id, T element) {
         return Element.<T>builder().id(id).value(element).build();
+    }
+
+    private String formatPhoneNumber(String phoneNumber) {
+        return phoneNumber.replaceAll("\\)", "").replaceAll("\\(", "");
     }
 }
