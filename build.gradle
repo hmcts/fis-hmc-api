@@ -455,8 +455,8 @@ dependencies {
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
   implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.1'
 
-  implementation 'org.projectlombok:lombok:1.18.34'
-  annotationProcessor 'org.projectlombok:lombok:1.18.34'
+  implementation 'org.projectlombok:lombok:1.18.36'
+  annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
   testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
 
@@ -478,8 +478,8 @@ dependencies {
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
 
   testImplementation 'com.github.hmcts:fortify-client:1.4.2:all'
-  testImplementation 'org.projectlombok:lombok:1.18.34'
-  testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+  testImplementation 'org.projectlombok:lombok:1.18.36'
+  testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
   testImplementation(platform('org.junit:junit-bom:5.8.2'))
