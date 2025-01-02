@@ -422,7 +422,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
     private String formatPhoneNumber(String phoneNumber) {
         String[] specialCharacterList = specialCharacters.split("");
-        log.info("special character list {}", specialCharacterList);
+        log.info("special character list {}", Arrays.toString(specialCharacterList));
         return phoneNumber.replaceAll("[^a-zA-Z0-9 +]", "");
     }
 }
