@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.enums.caseflags.PartyRole;
@@ -44,6 +45,10 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 @Service
 @RequiredArgsConstructor
 public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
+
+    @Value("${hearing.specialCharacters}")
+    private String specialCharacters;
+
     /**
      * mapping the all parties flag data to ServiceHearingValues .
      *
@@ -326,8 +331,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
-            ? Arrays.asList(partyDetails.getSolicitorTelephone()) : Arrays.asList();
-
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone())) : Arrays.asList();
+        log.info("** phone number after formatting {}", hearingChannelPhone);
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
             .lastName(partyDetails.getRepresentativeLastName())
@@ -385,7 +390,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
-            ? Arrays.asList(partyDetails.getPhoneNumber()) : Arrays.asList();
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber())) : Arrays.asList();
+        log.info("** phone number after formatting {}", hearingChannelPhone);
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
                 .firstName(partyDetails.getFirstName())
@@ -412,5 +418,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
     public static <T> Element<T> element(UUID id, T element) {
         return Element.<T>builder().id(id).value(element).build();
+    }
+
+    private String formatPhoneNumber(String phoneNumber) {
+        String[] specialCharacterList = specialCharacters.split("");
+        log.info("special character list {}", specialCharacterList);
+        return phoneNumber.replaceAll("[^a-zA-Z0-9 +]", "");
     }
 }
