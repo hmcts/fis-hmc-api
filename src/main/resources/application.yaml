@@ -44,7 +44,7 @@ hearing:
   api:
     url: ${HEARING_API_URL:http://rd-commondata-api-demo.service.core-compute-demo.internal}
   search-case-type-id: PRLAPPS
-  specialCharacters: "\.[]{}()<>*-=!?^$|"
+  specialCharacters: \.[]{}()<>*-=!?^$|
 
 cafcass:
   excludeHearingStates: HEARING_REQUESTED,AWAITING_LISTING,EXCEPTION,CANCELLATION_SUBMITTED,UPDATE_SUBMITTED
