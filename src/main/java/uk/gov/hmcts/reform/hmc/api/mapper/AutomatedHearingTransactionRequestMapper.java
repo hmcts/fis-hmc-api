@@ -9,6 +9,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingChannelsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
@@ -150,7 +151,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 hearingData.getHearingEstimatedHours(),
                 hearingData.getHearingEstimatedMinutes()
             ))
-            .hearingPriorityType(hearingData.getHearingPriorityTypeEnum().getDisplayedValue())
+            .hearingPriorityType(getHearingPriorityType(hearingData.getHearingPriorityTypeEnum()))
             .numberOfPhysicalAttendees(noOfPhysicalAttendees(
                 hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
                 hearingData,caseData
@@ -171,6 +172,13 @@ public final class AutomatedHearingTransactionRequestMapper {
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
             .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
             .build();
+    }
+
+    private static String getHearingPriorityType(HearingPriorityTypeEnum hearingPriorityTypeEnum) {
+        if (HearingPriorityTypeEnum.UrgentPriority.equals(hearingPriorityTypeEnum)) {
+            return "Urgent";
+        }
+        return "Standard";
     }
 
     private static HearingWindow hearingWindow(HearingData hearingData) {
