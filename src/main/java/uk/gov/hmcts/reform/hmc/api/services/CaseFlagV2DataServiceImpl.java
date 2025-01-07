@@ -424,9 +424,10 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         log.info("1: Replace special characters from list from application yaml with empty string");
         String[] specialCharacterList = specialCharacters.split("");
         log.info("special character list {}", Arrays.toString(specialCharacterList));
+        String formattedPhoneNumber = phoneNumber;
         for (String specialChar : specialCharacterList) {
-            phoneNumber = phoneNumber.replaceAll(specialChar, "");
+            formattedPhoneNumber = phoneNumber.replaceAll(specialChar, "");
         }
-        return phoneNumber;
+        return formattedPhoneNumber;
     }
 }
