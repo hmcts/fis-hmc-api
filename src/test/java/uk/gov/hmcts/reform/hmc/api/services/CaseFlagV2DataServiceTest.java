@@ -91,6 +91,9 @@ public class CaseFlagV2DataServiceTest {
             PartyDetails.builder()
                 .firstName(TEST)
                 .solicitorOrg(organisation)
+                .representativeFirstName(TEST)
+                .representativeLastName(TEST)
+                .solicitorTelephone("07654445674")
                 .partyLevelFlag(flags)
                 .build();
         Element<PartyDetails> partyDetailsElement =
