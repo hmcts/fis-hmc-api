@@ -109,6 +109,7 @@ public class CaseFlagV2DataServiceTest {
         caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
         caseDataMap.put(CASE_LINKS, caseLinksList);
         caseDataMap.put(CASE_MNGEMNT_LOC, caseManagementLocation);
+        caseDataMap.put("caseTypeOfApplication", "C100");
         caseDataMap.put(APPLICANTS, applicants);
         caseDataMap.put(RESPONDENTS, respondents);
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
@@ -161,6 +162,7 @@ public class CaseFlagV2DataServiceTest {
         PartyDetails partyDetails =
             PartyDetails.builder()
                 .firstName(TEST)
+                .phoneNumber("98765454334")
                 .solicitorOrg(organisation)
                 .partyLevelFlag(flags)
                 .build();
@@ -182,6 +184,7 @@ public class CaseFlagV2DataServiceTest {
         caseDataMap.put(CASE_MNGEMNT_LOC, caseManagementLocation);
         caseDataMap.put(APPLICANTS, applicants);
         caseDataMap.put(RESPONDENTS, respondents);
+        caseDataMap.put("caseTypeOfApplication", "C100");
         caseDataMap.put(APPLICANTS_FL401, partyDetails);
         caseDataMap.put(RESPONDENTS_FL401, partyDetails);
         ServiceHearingValues serviceHearingValues =
