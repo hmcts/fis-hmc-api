@@ -329,9 +329,9 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         }
         List<String> hearingChannelEmail = !isBlank(partyDetails.getSolicitorEmail())
             ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
-
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone())) : Arrays.asList();
+        log.info("** phone number formatted ***");
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
             .lastName(partyDetails.getRepresentativeLastName())
@@ -390,6 +390,8 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber())) : Arrays.asList();
+        log.info("** phone number formatted ***");
+
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
                 .firstName(partyDetails.getFirstName())
@@ -421,6 +423,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
     private String formatPhoneNumber(String phoneNumber) {
         log.info("1: Replace special characters from list from application yaml with empty string");
         String[] specialCharacterList = null != specialCharacters ? specialCharacters.split("") : new String[]{};
+        log.info("special character list {}", Arrays.toString(specialCharacterList));
         String formattedPhoneNumber = phoneNumber;
         for (String specialChar : specialCharacterList) {
             formattedPhoneNumber = phoneNumber.replaceAll(specialChar, "");
