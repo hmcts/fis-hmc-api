@@ -426,7 +426,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         log.info("special character list {}", Arrays.toString(specialCharacterList));
         String formattedPhoneNumber = phoneNumber;
         for (String specialChar : specialCharacterList) {
-            formattedPhoneNumber = phoneNumber.replaceAll(specialChar, "");
+            formattedPhoneNumber = phoneNumber.replace(specialChar, "");
         }
         return formattedPhoneNumber;
     }
