@@ -430,7 +430,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
                 formattedPhoneNumber = phoneNumber.replace(specialChar, "");
             }
         } catch (Exception e) {
-            log.error("Error while formatting phone number {}", e.getMessage());
+            log.error("Error while formatting phone number {}", (Object) e.getStackTrace());
         }
         return formattedPhoneNumber;
     }
