@@ -425,11 +425,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         String formattedPhoneNumber = phoneNumber;
         log.info("1: Replace special characters from list from application yaml with empty string");
         log.info("special character list {}", Arrays.toString(specialCharacterList));
-        try{
+        try {
             for (String specialChar : specialCharacterList) {
                 formattedPhoneNumber = phoneNumber.replace(specialChar, "");
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Error while formatting phone number {}", e.getMessage());
         }
         return formattedPhoneNumber;
