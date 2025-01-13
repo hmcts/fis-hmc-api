@@ -332,7 +332,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone())) : Arrays.asList();
 
-        log.info("** phone number formatted ***");
+        log.info("** phone number formatted *** {}", hearingChannelPhone);
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
             .lastName(partyDetails.getRepresentativeLastName())
@@ -391,7 +391,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber())) : Arrays.asList();
-        log.info("** phone number formatted ***");
+        log.info("** phone number formatted *** {}", hearingChannelPhone);
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
                 .firstName(partyDetails.getFirstName())
