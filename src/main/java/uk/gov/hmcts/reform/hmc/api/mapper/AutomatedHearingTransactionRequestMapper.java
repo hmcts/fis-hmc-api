@@ -161,7 +161,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 Collections.singletonList(
                     HearingLocation.hearingLocationWith()
                         .locationType(COURT)
-                        .locationId(hearingData.getCourtList().getValueCode())
+                        .locationId(hearingData.getCourtList().getValueCode().split(":")[0]) //Extract court id without :
                         .build()))
             .facilitiesRequired(List.of())
             .listingComments(hearingData.getAdditionalHearingDetails())
@@ -170,7 +170,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             .panelRequirements(new PanelRequirements())
             .leadJudgeContractType("")
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
-            .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getDisplayedValue()))
+            .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getId()))
             .build();
     }
 

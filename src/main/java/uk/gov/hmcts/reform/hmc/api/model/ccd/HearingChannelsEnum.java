@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -45,6 +46,7 @@ public enum HearingChannelsEnum {
     @JsonProperty("DEFAULT")
     DEFAULT("DEFAULT", "");
 
+    @Getter
     private final String id;
     private final String displayedValue;
 
