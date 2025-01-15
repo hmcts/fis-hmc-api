@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.mapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.jetbrains.annotations.NotNull;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
@@ -169,7 +170,7 @@ public final class AutomatedHearingTransactionRequestMapper {
             .hearingRequester(null != hearingData.getHearingJudgePersonalCode()
                                   ? hearingData.getHearingJudgePersonalCode() : EMPTY)
             .privateHearingRequiredFlag(C100.equals(CaseUtils.getCaseTypeOfApplication(caseData)))
-            .panelRequirements(new PanelRequirements())
+            .panelRequirements(new PanelRequirements()) //Need to revisit
             .leadJudgeContractType("")
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases().getValue() != null)
             .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getId()))
@@ -210,11 +211,11 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static int hearingDuration(String days, String hours, String minutes) {
 
-        if (days != null) {
+        if (Strings.isNotBlank(days)) {
             return Integer.parseInt(days) * 360;
-        } else if (hours != null) {
+        } else if (Strings.isNotBlank(hours)) {
             return Integer.parseInt(hours) * 60;
-        } else if (minutes != null) {
+        } else if (Strings.isNotBlank(minutes)) {
             int remainder = Integer.parseInt(minutes) % 5;
             if (remainder != 0) {
                 return (Integer.parseInt(minutes) / 5) * 5 + 5;
@@ -224,7 +225,11 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
-        return String.format("%sT%s:%s:00Z", firstDate, hours != null ? hours : "00", minutes != null ? minutes : "00");
+        return String.format(
+            "%sT%s:%s:00Z", firstDate,
+            Strings.isNotBlank(hours) ? hours : "00",
+            Strings.isNotBlank(minutes) ? minutes : "00"
+        );
     }
 
     private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData,CaseData caseData) {
