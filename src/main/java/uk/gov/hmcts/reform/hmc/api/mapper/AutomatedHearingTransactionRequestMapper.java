@@ -356,32 +356,32 @@ public final class AutomatedHearingTransactionRequestMapper {
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
-        List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
-        if (null != applicantLst) {
-            partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT));
-            CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
+        if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
+            List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
+            if (null != applicantLst) {
+                partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT));
+                CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
+            }
+            List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
+            if (null != respondedLst) {
+                partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT));
+                CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
+            }
+        } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
+            PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
+            if (null != applicantsFL401) {
+                partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT));
+                CaseFlagDataServiceImpl.addFL401PartyFlagData(
+                    partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
+            }
+            PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
+            if (null != respondentsFL401) {
+                partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT));
+                CaseFlagDataServiceImpl.addFL401PartyFlagData(
+                    partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
+            }
         }
 
-        List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
-        if (null != respondedLst) {
-            partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT));
-            CaseFlagDataServiceImpl.addPartyFlagData(
-                partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
-        }
-
-        PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
-        if (null != applicantsFL401) {
-            partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT));
-            CaseFlagDataServiceImpl.addFL401PartyFlagData(
-                partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
-        }
-
-        PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
-        if (null != respondentsFL401) {
-            partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT));
-            CaseFlagDataServiceImpl.addFL401PartyFlagData(
-                partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
-        }
         if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
             caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partiesFlagsModelList);
         }
