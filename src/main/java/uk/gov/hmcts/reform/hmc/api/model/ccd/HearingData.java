@@ -85,6 +85,9 @@ public class HearingData {
     private String respondentName;
     private String respondentSolicitor;
 
+    @JsonProperty("hearingSpecificDatesOptionsEnum")
+    private HearingSpecificDatesOptionsEnum hearingSpecificDatesOptionsEnum;
+
     @JsonProperty("firstDateOfTheHearing")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate firstDateOfTheHearing;

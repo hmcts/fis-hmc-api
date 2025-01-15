@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingChannelsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingSpecificDatesOptionsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
@@ -104,7 +105,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
-                .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set
+                .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set, If set to TRUE then can't access in LA
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
         AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
@@ -184,20 +185,24 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static HearingWindow hearingWindow(HearingData hearingData) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-        if (hearingData.getEarliestHearingDate() != null
-            || hearingData.getLatestHearingDate() != null || hearingData.getFirstDateOfTheHearing() != null) {
+        //specific date
+        if (HearingSpecificDatesOptionsEnum.Yes.equals(hearingData.getHearingSpecificDatesOptionsEnum())) {
             return HearingWindow.hearingWindowWith()
-                .dateRangeStart(hearingData.getEarliestHearingDate() != null
-                                    ? hearingData.getEarliestHearingDate().format(formatter) : null)
-                .dateRangeEnd(hearingData.getLatestHearingDate() != null ? hearingData.getLatestHearingDate().format(
-                    formatter) : null)
                 .firstDateTimeMustBe(hearingData.getFirstDateOfTheHearing() == null ? null :
                                          dateOfHearing(
                                              hearingData.getFirstDateOfTheHearing().format(formatter),
                                              hearingData.getHearingMustTakePlaceAtHour(),
                                              hearingData.getHearingMustTakePlaceAtMinute()
                                          ))
+                .build();
+        } else if (HearingSpecificDatesOptionsEnum.HearingRequiredBetweenCertainDates
+                .equals(hearingData.getHearingSpecificDatesOptionsEnum())) {
+            //date range
+            return HearingWindow.hearingWindowWith()
+                .dateRangeStart(hearingData.getEarliestHearingDate() != null
+                                    ? hearingData.getEarliestHearingDate().format(formatter) : null)
+                .dateRangeEnd(hearingData.getLatestHearingDate() != null ? hearingData.getLatestHearingDate().format(
+                    formatter) : null)
                 .build();
         }
         return null;
