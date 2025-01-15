@@ -104,7 +104,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
-                .caseRestrictedFlag(Boolean.TRUE) // the default value is TRUE always
+                .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
         AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
@@ -165,11 +165,12 @@ public final class AutomatedHearingTransactionRequestMapper {
                         .build()))
             .facilitiesRequired(List.of())
             .listingComments(hearingData.getAdditionalHearingDetails())
-            .hearingRequester(hearingData.getHearingJudgePersonalCode())
+            .hearingRequester(null != hearingData.getHearingJudgePersonalCode()
+                                  ? hearingData.getHearingJudgePersonalCode() : EMPTY)
             .privateHearingRequiredFlag(C100.equals(CaseUtils.getCaseTypeOfApplication(caseData)))
             .panelRequirements(new PanelRequirements())
             .leadJudgeContractType("")
-            .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases() != null)
+            .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases().getValue() != null)
             .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getId()))
             .build();
     }
