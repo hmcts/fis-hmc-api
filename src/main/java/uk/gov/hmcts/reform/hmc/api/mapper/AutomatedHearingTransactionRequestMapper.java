@@ -244,13 +244,13 @@ public final class AutomatedHearingTransactionRequestMapper {
                                                        hearingData.getRespondentSolicitor()));
         }
         totalNoOfParties.removeAll(Arrays.asList("", null));
-        totalParticipants = totalNoOfParties.size();
 
         if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
             && HearingChannelsEnum.INTER.equals(hearingData.getHearingChannelsEnum())) {
             //All parties attending the hearing in the same way
-            return totalParticipants;
+            return totalNoOfParties.size();
         } else if (YesOrNo.NO.name().equalsIgnoreCase(attendSameWayYesOrNo)) {
+            totalParticipants = totalNoOfParties.size();
             List<DynamicList> noOfParticipants = new ArrayList<>();
             if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 noOfParticipants = getParticipantSelectedOptions(hearingData);
