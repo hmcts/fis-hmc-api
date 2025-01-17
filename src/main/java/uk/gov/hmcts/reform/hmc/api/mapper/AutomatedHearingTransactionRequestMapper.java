@@ -234,31 +234,32 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static int noOfPhysicalAttendees(String attendSameWayYesOrNo, HearingData hearingData,CaseData caseData) {
         int totalParticipants = 0;
-        if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
-            && hearingData.getHearingChannelsEnum() == HearingChannelsEnum.INTER) {
-            List<String> noOfParticipants = new ArrayList<>();
-            if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
-                noOfParticipants.addAll(getParticipants(hearingData));
-            } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
-                noOfParticipants.addAll(Lists.newArrayList(hearingData.getApplicantName(),
-                                                           hearingData.getApplicantSolicitor(),
-                                                           hearingData.getRespondentName(),
-                                                           hearingData.getRespondentSolicitor()));
-            }
-            noOfParticipants.removeAll(Arrays.asList("", null));
-            totalParticipants = noOfParticipants.size();
-
+        List<String> totalNoOfParties = new ArrayList<>();
+        if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+            totalNoOfParties.addAll(getParticipants(hearingData));
+        } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
+            totalNoOfParties.addAll(Lists.newArrayList(hearingData.getApplicantName(),
+                                                       hearingData.getApplicantSolicitor(),
+                                                       hearingData.getRespondentName(),
+                                                       hearingData.getRespondentSolicitor()));
         }
-        if ("NO".equalsIgnoreCase(attendSameWayYesOrNo)) {
+        totalNoOfParties.removeAll(Arrays.asList("", null));
+
+        if (YesOrNo.YES.name().equalsIgnoreCase(attendSameWayYesOrNo)
+            && HearingChannelsEnum.INTER.equals(hearingData.getHearingChannelsEnum())) {
+            //All parties attending the hearing in the same way
+            return totalNoOfParties.size();
+        } else if (YesOrNo.NO.name().equalsIgnoreCase(attendSameWayYesOrNo)) {
+            totalParticipants = totalNoOfParties.size();
             List<DynamicList> noOfParticipants = new ArrayList<>();
             if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 noOfParticipants = getParticipantSelectedOptions(hearingData);
             } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
                 noOfParticipants = Lists.newArrayList(hearingData.getApplicantHearingChannel(),
-                                                           hearingData.getApplicantSolicitorHearingChannel(),
-                                                           hearingData.getRespondentHearingChannel(),
-                                                           hearingData.getRespondentSolicitorHearingChannel(),
-                                                           hearingData.getLocalAuthorityHearingChannel());
+                                                      hearingData.getApplicantSolicitorHearingChannel(),
+                                                      hearingData.getRespondentHearingChannel(),
+                                                      hearingData.getRespondentSolicitorHearingChannel());
+                //hearingData.getLocalAuthorityHearingChannel()); //Do we need to count LA here?
             }
 
             Map<Boolean, List<String>> selectedCodes = noOfParticipants.stream().filter(Objects::nonNull)
@@ -304,7 +305,8 @@ public final class AutomatedHearingTransactionRequestMapper {
                 hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5()
             ));
         }
-        if (hearingData.getLocalAuthorityHearingChannel() != null) {
+        //Do we need to count LA, CAF and CAF Cymru here?
+        /*if (hearingData.getLocalAuthorityHearingChannel() != null) {
             participants.add(hearingData.getLocalAuthorityHearingChannel());
         }
         if (hearingData.getCafcassCymruHearingChannel() != null) {
@@ -313,7 +315,7 @@ public final class AutomatedHearingTransactionRequestMapper {
 
         if (hearingData.getCafcassHearingChannel() != null) {
             participants.add(hearingData.getCafcassHearingChannel());
-        }
+        }*/
         return participants;
     }
 
