@@ -225,10 +225,11 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
+        //Format hours & minutes to 2 digit format
         return String.format(
             "%sT%s:%s:00Z", firstDate,
-            Strings.isNotBlank(hours) ? hours : "00",
-            Strings.isNotBlank(minutes) ? minutes : "00"
+            Strings.isNotBlank(hours) ? String.format("%02d", Integer.parseInt(hours)) : "00",
+            Strings.isNotBlank(minutes) ? String.format("%02d", Integer.parseInt(minutes)) : "00"
         );
     }
 
