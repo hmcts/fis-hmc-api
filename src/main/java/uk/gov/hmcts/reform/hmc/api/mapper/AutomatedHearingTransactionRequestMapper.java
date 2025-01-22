@@ -362,24 +362,24 @@ public final class AutomatedHearingTransactionRequestMapper {
         if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
             if (null != applicantLst) {
-                partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT));
+                partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT, caseData.getHearingData()));
                 CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
             }
             List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
             if (null != respondedLst) {
-                partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT));
+                partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT, caseData.getHearingData()));
                 CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
             }
         } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
             if (null != applicantsFL401) {
-                partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT));
+                partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT, caseData.getHearingData()));
                 CaseFlagDataServiceImpl.addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
             }
             PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
             if (null != respondentsFL401) {
-                partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT));
+                partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT, caseData.getHearingData()));
                 CaseFlagDataServiceImpl.addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
             }
@@ -391,10 +391,13 @@ public final class AutomatedHearingTransactionRequestMapper {
         return partyDetailsList;
     }
 
-    private static List<AutomatedHearingPartyDetails> addPartyData(List<Element<PartyDetails>> partyLst, String role) {
+    private static List<AutomatedHearingPartyDetails> addPartyData(List<Element<PartyDetails>> partyLst,
+                                                                   String role,
+                                                                   HearingData hearingData) {
 
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
-        partyLst.forEach(p -> partyDetailsList.addAll(preparePartyDetailsDTO(p.getValue(), p.getId(), role)));
+        partyLst.forEach(p -> partyDetailsList.addAll(preparePartyDetailsDTO(p.getValue(), p.getId(),
+                                                                             partyLst.indexOf(p), role, hearingData)));
 
         return partyDetailsList;
     }
@@ -435,7 +438,7 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static List<AutomatedHearingPartyDetails> preparePartyDetailsDTO(
-        PartyDetails partyDetails, UUID uuid, String role) {
+        PartyDetails partyDetails, UUID uuid, int partyIndex, String role, HearingData hearingData) {
         String partyId = null;
         if (null != uuid) {
             partyId = uuid.toString();
@@ -486,6 +489,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .hearingChannelPhone(hearingChannelPhone)
                 .interpreterLanguage(interpreterLanguageCode)
                 .relatedParties(List.of())
+                .preferredHearingChannel(getPreferredHearingChannel(partyIndex, role, false, hearingData))
                 .build();
 
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
@@ -507,14 +511,13 @@ public final class AutomatedHearingTransactionRequestMapper {
         /******Solicitor Party Details*********/
         if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
             AutomatedHearingPartyDetails details =
-                addPartyDetailsModelForSolicitor(partyDetails, partyDetails.getSolicitorPartyId());
+                addPartyDetailsModelForSolicitor(partyDetails, partyDetails.getSolicitorPartyId(), partyIndex, role, hearingData);
             if (null != details) {
                 partyDetailsList.add(details);
             }
         }
         return partyDetailsList;
     }
-
 
     private static List<PartyFlagsModel> getInterpreterLangCodes(
         List<PartyFlagsModel> curPartyFlagsModelList) {
@@ -577,7 +580,7 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static AutomatedHearingPartyDetails addPartyDetailsModelForSolicitor(
-        PartyDetails partyDetails, UUID uuid) {
+        PartyDetails partyDetails, UUID uuid, int partyIndex, String role, HearingData hearingData) {
 
         String partyId = null;
         if (uuid != null) {
@@ -599,6 +602,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                     .firstName(partyDetails.getRepresentativeFirstName())
                     .lastName(partyDetails.getRepresentativeLastName())
                     .hearingChannelEmail(hearingChannelEmail)
+                    .preferredHearingChannel(getPreferredHearingChannel(partyIndex, role, true, hearingData))
                     .build();
 
             partyDetailsModelForSol = AutomatedHearingPartyDetails.automatedHearingPartyDetailsWith()
@@ -623,13 +627,114 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static List<AutomatedHearingPartyDetails> addFL401PartyData(
-        PartyDetails partyDetails, String role) {
+        PartyDetails partyDetails, String role, HearingData hearingData) {
 
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         if (null != partyDetails) {
-            partyDetailsList.addAll(preparePartyDetailsDTO(partyDetails, partyDetails.getPartyId(), role));
+            partyDetailsList.addAll(preparePartyDetailsDTO(partyDetails, partyDetails.getPartyId(),-1, role, hearingData));
         }
         return partyDetailsList;
     }
 
+    private static String getPreferredHearingChannel(int partyIndex,
+                                                     String role,
+                                                     boolean isSolicitor,
+                                                     HearingData hearingData) {
+        if (YesOrNo.YES.name().equalsIgnoreCase(hearingData.getAllPartiesAttendHearingSameWayYesOrNo())) {
+            return hearingData.getHearingChannelsEnum().getId();
+        } else {
+            //Handle individual party/solicitor preferred hearing channel
+            if (APPLICANT.equals(role)) {
+                if (isSolicitor) {
+                    return getApplicantSolicitorPreferredHearingChannel(partyIndex, hearingData);
+                }
+                return getApplicantPreferredHearingChannel(partyIndex, hearingData);
+            } else if (RESPONDENT.equals(role)) {
+                if (isSolicitor) {
+                    return getRespondentSolicitorPreferredHearingChannel(partyIndex, hearingData);
+                }
+                return getRespondentPreferredHearingChannel(partyIndex, hearingData);
+            }
+        }
+        return null;
+    }
+
+    private static String getApplicantSolicitorPreferredHearingChannel(int partyIndex,
+                                                                       HearingData hearingData) {
+        return switch (partyIndex) {
+            case -1 -> //FL401 applicant solicitor
+                returnDynamicListValueCode(hearingData.getApplicantSolicitorHearingChannel());
+            //C100 applicant solicitors
+            case 0 ->
+                returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel1());
+            case 1 ->
+                returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel2());
+            case 2 ->
+                returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel3());
+            case 3 ->
+                returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel4());
+            case 4 ->
+                returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantSolicitorHearingChannel5());
+
+            default -> null;
+        };
+    }
+
+    private static String getRespondentSolicitorPreferredHearingChannel(int partyIndex,
+                                                                        HearingData hearingData) {
+        return switch (partyIndex) {
+            case -1 -> //FL401 respondent solicitor
+                returnDynamicListValueCode(hearingData.getRespondentSolicitorHearingChannel());
+            //C100 respondent solicitors
+            case 0 ->
+                returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel1());
+            case 1 ->
+                returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel2());
+            case 2 ->
+                returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel3());
+            case 3 ->
+                returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel4());
+            case 4 ->
+                returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5());
+
+            default -> null;
+        };
+    }
+
+    private static String getApplicantPreferredHearingChannel(int partyIndex,
+                                                              HearingData hearingData) {
+        return switch (partyIndex) {
+            case -1 -> //FL401 applicant
+                returnDynamicListValueCode(hearingData.getApplicantHearingChannel());
+            //C100 applicants
+            case 0 -> returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel1());
+            case 1 -> returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel2());
+            case 2 -> returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel3());
+            case 3 -> returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel4());
+            case 4 -> returnDynamicListValueCode(hearingData.getHearingDataApplicantDetails().getApplicantHearingChannel5());
+
+            default -> null;
+        };
+    }
+
+    private static String getRespondentPreferredHearingChannel(int partyIndex,
+                                                               HearingData hearingData) {
+        return switch (partyIndex) {
+            case -1 -> //FL401 respondent
+                returnDynamicListValueCode(hearingData.getRespondentHearingChannel());
+            //C100 respondents
+            case 0 -> returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel1());
+            case 1 -> returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel2());
+            case 2 -> returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel3());
+            case 3 -> returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel4());
+            case 4 -> returnDynamicListValueCode(hearingData.getHearingDataRespondentDetails().getRespondentHearingChannel5());
+
+            default -> null;
+        };
+    }
+
+    private static String returnDynamicListValueCode(DynamicList dynamicList) {
+        return null != dynamicList && null != dynamicList.getValue()
+            ? dynamicList.getValue().getCode() : null;
+    }
 }
