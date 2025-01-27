@@ -74,6 +74,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 @Slf4j
 public final class AutomatedHearingTransactionRequestMapper {
 
+    public static final String LOCAL_AUTHORITY = "Local Authority";
     private static boolean caseAdditionalSecurityFlag;
 
     private AutomatedHearingTransactionRequestMapper() {
@@ -238,11 +239,16 @@ public final class AutomatedHearingTransactionRequestMapper {
         List<String> totalNoOfParties = new ArrayList<>();
         if (C100.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
             totalNoOfParties.addAll(getParticipants(hearingData));
+            //Local Authority and Cafcass
+            totalNoOfParties.add(LOCAL_AUTHORITY);
+            totalNoOfParties.add("Cafcass/Cafcass Cymru");
         } else if (FL401.equalsIgnoreCase(caseData.getCaseTypeOfApplication())) {
             totalNoOfParties.addAll(Lists.newArrayList(hearingData.getApplicantName(),
                                                        hearingData.getApplicantSolicitor(),
                                                        hearingData.getRespondentName(),
                                                        hearingData.getRespondentSolicitor()));
+            //Local Authority and Cafcass
+            totalNoOfParties.add(LOCAL_AUTHORITY);
         }
         totalNoOfParties.removeAll(Arrays.asList("", null));
 
@@ -259,8 +265,8 @@ public final class AutomatedHearingTransactionRequestMapper {
                 noOfParticipants = Lists.newArrayList(hearingData.getApplicantHearingChannel(),
                                                       hearingData.getApplicantSolicitorHearingChannel(),
                                                       hearingData.getRespondentHearingChannel(),
-                                                      hearingData.getRespondentSolicitorHearingChannel());
-                //hearingData.getLocalAuthorityHearingChannel()); //Do we need to count LA here?
+                                                      hearingData.getRespondentSolicitorHearingChannel(),
+                                                      hearingData.getLocalAuthorityHearingChannel());
             }
 
             Map<Boolean, List<String>> selectedCodes = noOfParticipants.stream().filter(Objects::nonNull)
@@ -306,17 +312,16 @@ public final class AutomatedHearingTransactionRequestMapper {
                 hearingData.getHearingDataRespondentDetails().getRespondentSolicitorHearingChannel5()
             ));
         }
-        //Do we need to count LA, CAF and CAF Cymru here?
-        /*if (hearingData.getLocalAuthorityHearingChannel() != null) {
+        //Local Authority and Cafcass
+        if (hearingData.getLocalAuthorityHearingChannel() != null) {
             participants.add(hearingData.getLocalAuthorityHearingChannel());
         }
         if (hearingData.getCafcassCymruHearingChannel() != null) {
             participants.add(hearingData.getCafcassCymruHearingChannel());
         }
-
         if (hearingData.getCafcassHearingChannel() != null) {
             participants.add(hearingData.getCafcassHearingChannel());
-        }*/
+        }
         return participants;
     }
 
