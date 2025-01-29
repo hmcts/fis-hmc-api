@@ -27,6 +27,7 @@ public interface HearingApiClient {
     List<Hearings> getListOfHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
-            @RequestParam("ccdCaseRefs") List<String> ccdCaseRefs);
+            @RequestParam("ccdCaseRefs") List<String> ccdCaseRefs,
+            @RequestParam("caseTypeId") String caseTypeId);
 
 }
