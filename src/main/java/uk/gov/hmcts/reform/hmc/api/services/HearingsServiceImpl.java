@@ -29,6 +29,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE;
 
 @Service
 @RequiredArgsConstructor
@@ -177,7 +178,8 @@ public class HearingsServiceImpl implements HearingsService {
             final String s2sToken = authTokenGenerator.generate();
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
-                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
+                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()),
+                            ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
@@ -229,7 +231,7 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
-                userToken, s2sToken, listOfCaseIds);
+                userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
             for (var hearing : hearingDetailsList) {
                 try {
