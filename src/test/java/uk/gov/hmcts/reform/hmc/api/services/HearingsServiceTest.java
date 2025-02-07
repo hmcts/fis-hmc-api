@@ -189,7 +189,7 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
                 .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -262,7 +262,7 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -321,7 +321,7 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -380,7 +380,7 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
