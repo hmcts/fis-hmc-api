@@ -230,8 +230,7 @@ def sonarExclusions = [
   '**uk/gov/hmcts/reform/hmc/api/services/CaseFlagV2DataServiceImpl.java',
   '**uk/gov/hmcts/reform/hmc/api/services/CaseFlagDataServiceImpl.java',
   '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
-  '**/uk/gov/hmcts/reform/hmc/api/restclient/**',
-  '**/uk/gov/hmcts/reform/hmc/api/controllers/HearingsController.java'
+  '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
 
 sonarqube {
