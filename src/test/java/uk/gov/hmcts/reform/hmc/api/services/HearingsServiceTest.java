@@ -53,6 +53,7 @@ class HearingsServiceTest {
     private List<String> futureHearingStatusList;
 
     @InjectMocks HearingsServiceImpl hearingsService;
+
     @Mock private RefDataServiceImpl refDataService;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
@@ -466,7 +467,7 @@ class HearingsServiceTest {
             throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getHearingDetails(any(), any(), any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
@@ -476,7 +477,7 @@ class HearingsServiceTest {
             throws IOException, ParseException {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getHearingDetails(any(), any(), any()))
                 .thenThrow(new RuntimeException());
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
@@ -535,7 +536,7 @@ class HearingsServiceTest {
 
     @Test
     void shouldReturnEmptyMapNoFeignExceptionTest() {
-        when(hearingApiClient.getListOfHearingDetails(anyString(), anyString(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
             .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         Assertions.assertTrue(hearingsService
@@ -546,13 +547,23 @@ class HearingsServiceTest {
 
     @Test
     void shouldReturnNoFeignExceptionTest() {
-        when(hearingApiClient.getListOfHearingDetails(anyString(), anyString(), any(), anyString()))
-            .thenThrow(HttpClientErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway",
-                                                       null, null, null));
-        Assertions.assertTrue(hearingsService
-                                  .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),
-                                                                                                          "", "")
-                                  .isEmpty());
+        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
+            .thenThrow(HttpClientErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway", null,
+                                                       null, null));
+        Map<String, List<String>> response = hearingsService
+            .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),
+                                                                                    "", "");
+        Assertions.assertTrue(response.isEmpty());
+    }
+
+    @Test
+    void shouldReturnGeneralExceptionTest() {
+        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
+            .thenThrow(new RuntimeException());
+        Map<String, List<String>> response = hearingsService
+            .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),
+                                                                                    "", "");
+        Assertions.assertTrue(response.isEmpty());
     }
 
     public static FeignException feignException(int status, String message) {
