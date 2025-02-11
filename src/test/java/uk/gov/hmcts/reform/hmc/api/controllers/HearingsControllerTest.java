@@ -10,7 +10,6 @@ import feign.FeignException;
 import feign.Request;
 import feign.Response;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,8 +30,6 @@ import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
@@ -60,26 +57,8 @@ class HearingsControllerTest {
 
     @BeforeEach
     void setUp() {
-
         MockitoAnnotations.openMocks(this);
-        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
-
-        HearingDaySchedule hearingDaySchedule =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingVenueId("231596")
-                        .hearingJudgeId("4925644")
-                        .hearingStartDateTime(testNextHearingDate)
-                        .build();
-        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
-        hearingDayScheduleList.add(hearingDaySchedule);
-
-        CaseHearing caseHearing =
-                CaseHearing.caseHearingWith()
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList)
-                        .build();
-        List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing);
+        Mockito.when(authTokenGenerator.generate()).thenReturn("Auth");
     }
 
     @Test
@@ -489,6 +468,10 @@ class HearingsControllerTest {
         ResponseEntity<Object> response = hearingsController
             .updateNextHearingDetails("auth", "sauth", "caseId");
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(any())).thenReturn(NextHearingDetails.builder().build());
+        ResponseEntity<Object> response2 = hearingsController
+            .getNextHearingDate("auth", "sauth", "caseId");
+        Assertions.assertEquals(HttpStatus.OK, response2.getStatusCode());
     }
 
     @Test
@@ -500,27 +483,8 @@ class HearingsControllerTest {
         ResponseEntity<Object> response = hearingsController
             .updateNextHearingDetails("auth", "sauth", "caseId");
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
-    void testupdateNextHearingDate() {
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
-        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(Hearings.hearingsWith().build());
-        Mockito.when(nextHearingDetailsService.getNextHearingDate(any())).thenReturn(NextHearingDetails.builder().build());
-        ResponseEntity<Object> response = hearingsController
+        ResponseEntity<Object> response2 = hearingsController
             .getNextHearingDate("auth", "sauth", "caseId");
-        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @Test
-    void testupdateNextHearingDateException() {
-        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
-        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
-        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), any(), any()))
-            .thenThrow(new RuntimeException());
-        ResponseEntity<Object> response = hearingsController
-            .getNextHearingDate("auth", "sauth", "caseId");
-        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response2.getStatusCode());
     }
 }
