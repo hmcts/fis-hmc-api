@@ -163,12 +163,8 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
@@ -193,15 +189,19 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
+    /**
+     * End point to fetch the Hearings listed for current date based on list of case ids.
+     *
+     * @return hearings list mapped to the case id.
+     * @header authorization, User authorization token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @responseBody a map of case reference and corresponding hearings.
+     */
     @PostMapping(path = "/hearings-listed-for-today-by-list-of-caseids")
     @ApiOperation("get hearings listed for current date based on case reference numbers without court venue details")
     @ApiResponses(
@@ -247,8 +247,7 @@ public class HearingsController {
     public ResponseEntity<Object> getHearingsLinkData(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestBody final HearingValues hearingValues)
-            throws IOException, ParseException {
+            @RequestBody final HearingValues hearingValues) {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
@@ -258,12 +257,8 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
@@ -303,12 +298,8 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
@@ -337,12 +328,8 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
@@ -375,12 +362,8 @@ public class HearingsController {
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return handleException(e);
         }
     }
 
