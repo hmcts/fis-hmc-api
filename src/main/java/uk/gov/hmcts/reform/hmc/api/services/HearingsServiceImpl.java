@@ -206,12 +206,12 @@ public class HearingsServiceImpl implements HearingsService {
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
-                        HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION,
+                            "Hearing api call HttpClientError exception {}",
                             exception.getMessage());
                 } catch (FeignException exception) {
-                    log.info(HEARING_API_CALL_FEIGN_EXCEPTION, exception.getMessage());
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
                 } catch (Exception exception) {
-                    log.info(HEARING_API_CALL_EXCEPTION_EXCEPTION, exception.getMessage());
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
                 }
             }
             if (!casesWithHearings.isEmpty()) {
@@ -263,13 +263,13 @@ public class HearingsServiceImpl implements HearingsService {
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
-                        HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION,
+                        "Hearing api call HttpClientError exception {}",
                         exception.getMessage()
                     );
                 } catch (FeignException exception) {
-                    log.info(HEARING_API_CALL_FEIGN_EXCEPTION, exception.getMessage());
+                    log.info("Hearing api call Feign exception {}", exception.getMessage());
                 } catch (Exception exception) {
-                    log.info(HEARING_API_CALL_EXCEPTION_EXCEPTION, exception.getMessage());
+                    log.info("Hearing api call Exception exception {}", exception.getMessage());
                 }
             }
         }
@@ -481,11 +481,11 @@ public class HearingsServiceImpl implements HearingsService {
                             .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                             .build();
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.info(HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION, exception.getMessage());
+            log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
         } catch (FeignException exception) {
-            log.info(HEARING_API_CALL_FEIGN_EXCEPTION, exception.getMessage());
+            log.info("Hearing api call Feign exception {}", exception.getMessage());
         } catch (Exception exception) {
-            log.info(HEARING_API_CALL_EXCEPTION_EXCEPTION, exception.getMessage());
+            log.info("Hearing api call Exception exception {}", exception.getMessage());
         }
 
         return futureHearingsResponse;
