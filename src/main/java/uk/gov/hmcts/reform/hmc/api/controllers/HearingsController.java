@@ -42,7 +42,7 @@ import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
 @Slf4j
 @RequestMapping(path = "/")
 @RestController
-@Api(value = "/")
+@Api(value = "/", description = "get hearings Values")
 @RequiredArgsConstructor
 public class HearingsController {
 
@@ -399,13 +399,13 @@ public class HearingsController {
         }
     }
 
-    private ResponseEntity<Object> handleException(Exception e) {
-        if (e instanceof AuthorizationException || e instanceof ResponseStatusException) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } else if (e instanceof FeignException feignException) {
+    private ResponseEntity<Object> handleException(Exception exception) {
+        if (exception instanceof AuthorizationException || exception instanceof ResponseStatusException) {
+            return status(UNAUTHORIZED).body(new ApiError(exception.getMessage()));
+        } else if (exception instanceof FeignException feignException) {
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } else {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(exception.getMessage()));
         }
     }
 }
