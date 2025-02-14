@@ -5,13 +5,11 @@ import feign.Request;
 import feign.Response;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,8 +20,6 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.NextHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -64,30 +60,6 @@ class HearingsControllerTest {
     @Spy private  NextHearingDetailsService nextHearingDetailsService;
 
     private Hearings hearings;
-
-    @BeforeEach
-    void setUp() {
-
-        MockitoAnnotations.openMocks(this);
-        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
-
-        HearingDaySchedule hearingDaySchedule =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingVenueId("231596")
-                        .hearingJudgeId("4925644")
-                        .hearingStartDateTime(testNextHearingDate)
-                        .build();
-        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
-        hearingDayScheduleList.add(hearingDaySchedule);
-
-        CaseHearing caseHearing =
-                CaseHearing.caseHearingWith()
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList)
-                        .build();
-        List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing);
-    }
 
     @Test
     void hearingsControllerTest() throws IOException, ParseException {
@@ -154,7 +126,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void hearingsByListOfCaseIdsControllerTest() throws IOException, ParseException {
+    void hearingsByListOfCaseIdsControllerTest() {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -346,7 +318,7 @@ class HearingsControllerTest {
     }
 
     @Test
-    void allFutureHearingsByCaseRefNoControllerTest() throws IOException, ParseException {
+    void allFutureHearingsByCaseRefNoControllerTest() {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
@@ -358,6 +330,12 @@ class HearingsControllerTest {
 
         Assertions.assertEquals(
             HttpStatus.OK, hearingsForCaseRefNoResponse.getStatusCode());
+        ResponseEntity<Object> hearingsForAllCasesResponse =
+            hearingsController.getHearingsByListOfCaseIdsWithoutCourtVenueDetails("auth", "sauth", List.of("test"));
+        ResponseEntity<Object> hearingsForAllCasesResponse2 =
+            hearingsController.getListedHearingsForAllCaseIdsOnCurrentDate("auth", "sauth", List.of("test"));
+        Assertions.assertNotNull(hearingsForAllCasesResponse.getBody());
+        Assertions.assertNotNull(hearingsForAllCasesResponse2.getBody());
     }
 
     @Test
@@ -368,6 +346,12 @@ class HearingsControllerTest {
                 hearingsController.getFutureHearings("auth", "sauth", "testCaseRefno");
 
         Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsForCaseRefNoResponse.getStatusCode());
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsController
+            .getHearingsByListOfCaseIdsWithoutCourtVenueDetails("auth", "sauth", List.of("test"))
+            .getStatusCode());
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, hearingsController
+            .getListedHearingsForAllCaseIdsOnCurrentDate("auth", "sauth", List.of("test"))
+            .getStatusCode());
     }
 
     @Test
@@ -384,10 +368,24 @@ class HearingsControllerTest {
 
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForCaseRefNoResponse.getStatusCode());
+        Mockito.when(hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(Mockito.any(),
+                                                                                        Mockito.anyString(),
+                                                                                        Mockito.anyString()))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+        Mockito.when(hearingsService.getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(Mockito.any(),
+                                                                                                            Mockito.anyString(),
+                                                                                                            Mockito.anyString()))
+            .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
+        ResponseEntity<Object> hearingsForAllCasesResponse =
+            hearingsController.getListedHearingsForAllCaseIdsOnCurrentDate("auth", "sauth", List.of("test"));
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsForAllCasesResponse.getStatusCode());
+        ResponseEntity<Object> hearingsForAllCasesResponse2 =
+            hearingsController.getHearingsByListOfCaseIdsWithoutCourtVenueDetails("auth", "sauth", List.of("test"));
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, hearingsForAllCasesResponse2.getStatusCode());
     }
 
     @Test
-    void allFutureHearingsByCaseRefNoControllerExceptionTest() throws IOException, ParseException {
+    void allFutureHearingsByCaseRefNoControllerExceptionTest() {
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
 
@@ -398,6 +396,20 @@ class HearingsControllerTest {
                 hearingsController.getFutureHearings("auth", "sauth", "testCaseRefNo");
         Assertions.assertEquals(
                 HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse.getStatusCode());
+        Mockito.when(hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(Mockito.any(),
+                                                                                        Mockito.anyString(),
+                                                                                        Mockito.anyString()))
+            .thenThrow(new RuntimeException());
+        Mockito.when(hearingsService.getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(Mockito.any(),
+                                                                                                            Mockito.anyString(),
+                                                                                                            Mockito.anyString()))
+            .thenThrow(new RuntimeException());
+        ResponseEntity<Object> hearingsForAllCasesResponse1 =
+            hearingsController.getListedHearingsForAllCaseIdsOnCurrentDate("auth", "sauth", List.of("test"));
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse1.getStatusCode());
+        ResponseEntity<Object> hearingsForAllCasesResponse2 =
+            hearingsController.getHearingsByListOfCaseIdsWithoutCourtVenueDetails("auth", "sauth", List.of("test"));
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsForAllCasesResponse2.getStatusCode());
     }
 
     @Test
@@ -519,4 +531,32 @@ class HearingsControllerTest {
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, hearingsData1.getStatusCode());
     }
 
+    @Test
+    void testupdateNextHearingDetails() {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
+        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), any(), any())).thenReturn(Hearings.hearingsWith().build());
+        Mockito.when(nextHearingDetailsService.updateNextHearingDetails(any(), any())).thenReturn(true);
+        ResponseEntity<Object> response = hearingsController
+            .updateNextHearingDetails("auth", "sauth", "caseId");
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Mockito.when(nextHearingDetailsService.getNextHearingDate(any())).thenReturn(NextHearingDetails.builder().build());
+        ResponseEntity<Object> response2 = hearingsController
+            .getNextHearingDate("auth", "sauth", "caseId");
+        Assertions.assertEquals(HttpStatus.OK, response2.getStatusCode());
+    }
+
+    @Test
+    void testupdateNextHearingDetailsException() {
+        Mockito.when(idamAuthService.authoriseService(any())).thenReturn(true);
+        Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(true);
+        Mockito.when(hearingsService.getHearingsByCaseRefNo(any(), any(), any()))
+            .thenThrow(new RuntimeException());
+        ResponseEntity<Object> response = hearingsController
+            .updateNextHearingDetails("auth", "sauth", "caseId");
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        ResponseEntity<Object> response2 = hearingsController
+            .getNextHearingDate("auth", "sauth", "caseId");
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response2.getStatusCode());
+    }
 }

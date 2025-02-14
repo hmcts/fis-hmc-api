@@ -26,8 +26,10 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,16 +38,21 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE;
 
 @Service
 @RequiredArgsConstructor
 @SuppressWarnings("unchecked")
 public class HearingsServiceImpl implements HearingsService {
 
+    public static final String HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION = "Hearing api call HttpClientError exception {}";
+    public static final String HEARING_API_CALL_FEIGN_EXCEPTION = "Hearing api call Feign exception {}";
+    public static final String HEARING_API_CALL_EXCEPTION_EXCEPTION = "Hearing api call Exception exception {}";
+    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
-    private static final Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -187,7 +194,8 @@ public class HearingsServiceImpl implements HearingsService {
             final String s2sToken = authTokenGenerator.generate();
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
-                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()));
+                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()),
+                            ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
@@ -239,8 +247,9 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
-                userToken, s2sToken, listOfCaseIds);
+                userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            log.info("Hearing list not empty");
             for (var hearing : hearingDetailsList) {
                 try {
                     hearingDetails = hearing;
@@ -276,6 +285,56 @@ public class HearingsServiceImpl implements HearingsService {
             }
         }
         return casesWithHearings;
+    }
+
+    @Override
+    public Map<String, List<String>> getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization, String serviceAuthorization) {
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        List<Hearings> hearingDetailsList = new ArrayList<>();
+        try {
+            hearingDetailsList.addAll(hearingApiClient.getListOfHearingDetails(userToken, s2sToken, listOfCaseIds,
+                                                                                     ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE));
+        } catch (HttpClientErrorException | HttpServerErrorException exception) {
+            log.error(
+                HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION,
+                exception.getMessage()
+            );
+        } catch (FeignException exception) {
+            log.error(HEARING_API_CALL_FEIGN_EXCEPTION, exception.getMessage());
+        } catch (Exception exception) {
+            log.error(HEARING_API_CALL_EXCEPTION_EXCEPTION, exception.getMessage());
+        }
+        Map<String, List<String>> caseIdHearingIdMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+            log.info("Hearing details retrieved from hmc");
+            List<String> validHearingIds = new ArrayList<>();
+            for (var caseWithHearings : hearingDetailsList) {
+                log.info("checking hearing details for Case id {}", caseWithHearings.getCaseRef());
+                validHearingIds.clear();
+                caseWithHearings.getCaseHearings().stream()
+                    .filter(eachHearing -> eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
+                    .forEach(hearing -> {
+                        if (isHearingScheduledToday(hearing)) {
+                            log.info("Hearing is scheduled for today");
+                            validHearingIds.add(hearing.getHearingID().toString());
+                        }
+                    });
+                if (!validHearingIds.isEmpty()) {
+                    log.info("There are hearings listed for today");
+                    caseIdHearingIdMap.put(caseWithHearings.getCaseRef(), validHearingIds);
+                }
+            }
+        }
+        return caseIdHearingIdMap;
+    }
+
+    private boolean isHearingScheduledToday(CaseHearing hearing) {
+        return CollectionUtils.isNotEmpty(hearing.getHearingDaySchedule())
+            && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> LocalDate.now()
+            .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
     }
 
     private void integrateVenueDetailsForCaseId(

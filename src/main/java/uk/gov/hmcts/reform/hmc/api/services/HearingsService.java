@@ -25,6 +25,11 @@ public interface HearingsService {
         String authorization,
         String serviceAuthorization);
 
+    Map<String, List<String>> getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(
+        List<String> listOfCaseIds,
+        String authorization,
+        String serviceAuthorization);
+
     Hearings getFutureHearings(String caseReference);
 
 
