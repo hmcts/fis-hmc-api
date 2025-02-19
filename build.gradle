@@ -34,7 +34,7 @@ plugins {
 
 def versions = [
   gradlePitest                 : '1.15.0',
-  pitest                       : '1.17.3',
+  pitest                       : '1.16.3',
   sonarPitest                  : '0.5',
   s2sClient                    : '4.1.2',
 ]
