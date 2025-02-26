@@ -1,21 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
-import static org.springframework.http.ResponseEntity.status;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
-
 import feign.FeignException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
@@ -29,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.error.ApiError;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
@@ -37,6 +28,17 @@ import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 import uk.gov.hmcts.reform.hmc.api.services.NextHearingDetailsService;
 import uk.gov.hmcts.reform.hmc.api.services.RoleAssignmentService;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.ResponseEntity.status;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PROCESSING_REQUEST_AFTER_AUTHORIZATION;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SERVICE_AUTHORIZATION;
 
 /** Hearings controller to get data hearings data. */
 @Slf4j
@@ -92,6 +94,7 @@ public class HearingsController {
         } catch (FeignException feignException) {
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
+            log.error("Error while fetching hearings data", e);
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
     }
@@ -364,6 +367,44 @@ public class HearingsController {
             }
         } catch (Exception e) {
             return handleException(e);
+        }
+    }
+
+    /**
+     * End point to create hearing details for a case.
+     *
+     * @return success response, and initiates sync process to create hearings
+     *     passed.
+     * @header authorization, user authorization token.
+     * @header serviceAuthorization, S2S authorization token.
+     * @RequestBody caseDetails to take all the hearings belongs to case.
+     */
+    @PostMapping(path = "/automated-hearing")
+    @ApiOperation("create automated hearing")
+    @ApiResponses(
+            value = {
+                @ApiResponse(code = 200, message = "Initiated sync Create hearings successfully"),
+                @ApiResponse(code = 400, message = "Bad Request")
+            })
+    public ResponseEntity<Object> createAutomatedHearings(
+            @RequestHeader(AUTHORIZATION) String authorization,
+            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
+            @RequestBody final CaseData caseData) {
+        try {
+            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
+                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
+                HearingResponse hearingsResponse = hearingsService.createAutomatedHearings(caseData);
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
+                return ResponseEntity.ok(hearingsResponse);
+            } else {
+                throw new ResponseStatusException(UNAUTHORIZED);
+            }
+        } catch (AuthorizationException | ResponseStatusException e) {
+            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
+        } catch (FeignException feignException) {
+            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
+        } catch (Exception e) {
+            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
     }
 
