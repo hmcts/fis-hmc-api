@@ -70,6 +70,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
 
 @Slf4j
 public final class AutomatedHearingTransactionRequestMapper {
@@ -104,7 +105,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .hmctsInternalCaseName(caseData.getApplicantCaseName())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
-                .caseInterpreterRequiredFlag(YesOrNo.YES.equals(caseData.getAttendHearing().getIsInterpreterNeeded()))
+                .caseInterpreterRequiredFlag(YES.equalsIgnoreCase(caseData.getAttendHearing().getIsInterpreterNeeded()))
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
                 .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set, If set to TRUE then can't access in LA
@@ -159,7 +160,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
                 hearingData,caseData
             ))
-            .hearingInWelshFlag(YesOrNo.YES.equals(caseData.getAttendHearing().getIsWelshNeeded()))
+            .hearingInWelshFlag(YES.equalsIgnoreCase(caseData.getAttendHearing().getIsWelshNeeded()))
             .hearingLocations(
                 Collections.singletonList(
                     HearingLocation.hearingLocationWith()

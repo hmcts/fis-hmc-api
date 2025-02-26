@@ -28,7 +28,6 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.ManageOrders;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.OtherPersonRelationshipToChild;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
@@ -45,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.NO;
 
 @SpringBootTest
 @ExtendWith({MockitoExtension.class})
@@ -201,7 +201,7 @@ class AutomateHearingServiceTest {
             .familymanCaseNumber("123")
             .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
-            .attendHearing(AttendHearing.builder().isWelshNeeded(YesOrNo.NO).build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(NO).build())
             .allPartyFlags(AllPartyFlags.builder().build())
             .hearingData(hearingData)
             .applicants(partyDetailsList)
@@ -289,7 +289,7 @@ class AutomateHearingServiceTest {
             .familymanCaseNumber("123")
             .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
-            .attendHearing(AttendHearing.builder().isWelshNeeded(YesOrNo.NO).build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(NO).build())
             .allPartyFlags(AllPartyFlags.builder().build())
             .hearingData(hearingData)
             .applicants(partyDetailsList)
@@ -347,7 +347,7 @@ class AutomateHearingServiceTest {
             .familymanCaseNumber("123")
             .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
-            .attendHearing(AttendHearing.builder().isWelshNeeded(YesOrNo.NO).build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(NO).build())
             .allPartyFlags(AllPartyFlags.builder().build())
             .applicantsFL401(partyDetails)
             .respondentsFL401(partyDetails)
@@ -406,7 +406,7 @@ class AutomateHearingServiceTest {
             .familymanCaseNumber("123")
             .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
-            .attendHearing(AttendHearing.builder().isWelshNeeded(YesOrNo.NO).build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(NO).build())
             .allPartyFlags(AllPartyFlags.builder().build())
             .applicantsFL401(partyDetails)
             .respondentsFL401(partyDetails)
@@ -465,7 +465,7 @@ class AutomateHearingServiceTest {
             .familymanCaseNumber("123")
             .applicantsFL401(partyDetails)
             .caseManagementLocation(CaseManagementLocation.builder().baseLocation("test").build())
-            .attendHearing(AttendHearing.builder().isWelshNeeded(YesOrNo.NO).build())
+            .attendHearing(AttendHearing.builder().isWelshNeeded(NO).build())
             .allPartyFlags(AllPartyFlags.builder().build())
             .applicantsFL401(partyDetails)
             .respondentsFL401(partyDetails)
