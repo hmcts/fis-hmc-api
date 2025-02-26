@@ -104,7 +104,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .hmctsInternalCaseName(caseData.getApplicantCaseName())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
-                .caseInterpreterRequiredFlag(caseData.getAttendHearing().getIsInterpreterNeeded())
+                .caseInterpreterRequiredFlag(YesOrNo.YES.equals(caseData.getAttendHearing().getIsInterpreterNeeded()))
                 .caseCategories(getCaseCategories())
                 .caseManagementLocationCode(caseData.getCaseManagementLocation().getBaseLocation())
                 .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set, If set to TRUE then can't access in LA
@@ -159,7 +159,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 hearingData.getAllPartiesAttendHearingSameWayYesOrNo(),
                 hearingData,caseData
             ))
-            .hearingInWelshFlag(caseData.getAttendHearing().getIsWelshNeeded())
+            .hearingInWelshFlag(YesOrNo.YES.equals(caseData.getAttendHearing().getIsWelshNeeded()))
             .hearingLocations(
                 Collections.singletonList(
                     HearingLocation.hearingLocationWith()
