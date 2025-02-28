@@ -186,9 +186,9 @@ class AutomateHearingServiceTest {
                            .applicantHearingChannel(dynamicList)
                            .additionalHearingDetails("Test")
                            .instructionsForRemoteHearing("Test")
-                           .hearingEstimatedHours("02")
-                           .hearingEstimatedMinutes("40")
-                           .hearingEstimatedDays("15"), "No");
+                           .hearingEstimatedHours("1")
+                           .hearingEstimatedMinutes("30")
+                           .hearingEstimatedDays("2"), "No");
 
         List<Element<PartyDetails>> partyDetailsList = new ArrayList<>();
         partyDetailsList.add(element(partyDetails));
@@ -274,9 +274,9 @@ class AutomateHearingServiceTest {
                            .applicantHearingChannel(dynamicList)
                            .additionalHearingDetails("Test")
                            .instructionsForRemoteHearing("Test")
-                           .hearingEstimatedHours("02")
-                           .hearingEstimatedMinutes("40")
-                           .hearingEstimatedDays("15"), "Yes");
+                           .hearingEstimatedHours("2")
+                           .hearingEstimatedMinutes("12")
+                           .hearingEstimatedDays("1"), "Yes");
 
         List<Element<PartyDetails>> partyDetailsList = new ArrayList<>();
         partyDetailsList.add(element(partyDetails));
@@ -335,7 +335,7 @@ class AutomateHearingServiceTest {
                            .applicantHearingChannel(dynamicList)
                            .additionalHearingDetails("Test")
                            .instructionsForRemoteHearing("Test")
-                           .hearingEstimatedMinutes("40"), "Yes");
+                           .hearingEstimatedMinutes("38"), "Yes");
 
         List<Element<HearingData>> hearingDataList = new ArrayList<>();
         hearingDataList.add(element(hearingData));

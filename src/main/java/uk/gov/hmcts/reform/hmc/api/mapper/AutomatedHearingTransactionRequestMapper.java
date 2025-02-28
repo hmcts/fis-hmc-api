@@ -212,18 +212,23 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static int hearingDuration(String days, String hours, String minutes) {
-
+        int daysInMin = 0;
+        int hoursInMin = 0;
+        int min = 0;
         if (Strings.isNotBlank(days)) {
-            return Integer.parseInt(days) * 360;
-        } else if (Strings.isNotBlank(hours)) {
-            return Integer.parseInt(hours) * 60;
-        } else if (Strings.isNotBlank(minutes)) {
+            daysInMin = Integer.parseInt(days) * 360;
+        }
+        if (Strings.isNotBlank(hours)) {
+            hoursInMin = Integer.parseInt(hours) * 60;
+        }
+        if (Strings.isNotBlank(minutes)) {
+            min = Integer.parseInt(minutes);
             int remainder = Integer.parseInt(minutes) % 5;
             if (remainder != 0) {
-                return (Integer.parseInt(minutes) / 5) * 5 + 5;
+                min = (Integer.parseInt(minutes) / 5) * 5 + 5;
             }
         }
-        return 0;
+        return daysInMin + hoursInMin + min;
     }
 
     private static String dateOfHearing(@NotNull String firstDate, String hours, String minutes) {
