@@ -396,7 +396,7 @@ dependencyManagement {
       entry 'logback-classic'
       entry 'logback-core'
     }
-    dependencySet(group: 'io.grpc', version: '1.68.1') {
+    dependencySet(group: 'io.grpc', version: '1.70.0') {
       entry 'grpc-api'
       entry 'grpc-context'
       entry 'grpc-core'
