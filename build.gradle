@@ -313,7 +313,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.18.2'
+      version: '2.18.3'
     ) {
       entry 'jackson-module-parameter-names'
     }
