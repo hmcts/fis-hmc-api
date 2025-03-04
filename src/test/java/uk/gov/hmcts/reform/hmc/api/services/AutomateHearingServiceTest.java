@@ -233,7 +233,6 @@ class AutomateHearingServiceTest {
             .earliestHearingDate(LocalDate.now())
             .latestHearingDate(LocalDate.now())
             .hearingPriorityTypeEnum(HearingPriorityTypeEnum.StandardPriority)
-            .customDetails("test")
             .isRenderingRequiredFlag("true")
             .fillingFormRenderingInfo("test")
             .hearingDataApplicantDetails(hearingDataApplicantDetails)
@@ -392,7 +391,6 @@ class AutomateHearingServiceTest {
                            .cafcassHearingChannel(dynamicList)
                            .cafcassCymruHearingChannel(dynamicList)
                            .applicantHearingChannel(dynamicList)
-                           .additionalHearingDetails("Test")
                            .instructionsForRemoteHearing("Test")
                            .hearingEstimatedMinutes("40"), "No");
 
@@ -451,7 +449,7 @@ class AutomateHearingServiceTest {
                            .cafcassHearingChannel(dynamicList)
                            .cafcassCymruHearingChannel(dynamicList)
                            .applicantHearingChannel(dynamicList)
-                           .additionalHearingDetails("Test")
+                           .customDetails("Test")
                            .instructionsForRemoteHearing("Test")
                            .hearingEstimatedHours("02"), "Yes");
 

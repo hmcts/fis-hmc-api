@@ -147,7 +147,8 @@ public final class AutomatedHearingTransactionRequestMapper {
         DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
 
         return AutomatedHearingDetails.automatedHearingDetailsWith()
-            .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails()))
+            .autoListFlag(StringUtils.isEmpty(hearingData.getAdditionalHearingDetails())
+                              && StringUtils.isEmpty(hearingData.getCustomDetails()))
             .hearingType(hearingType != null ? hearingType.getCode() : null)
             .hearingWindow(hearingWindow(hearingData))
             .duration(hearingDuration(
@@ -168,7 +169,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                         .locationId(hearingData.getCourtList().getValueCode().split(":")[0]) //Extract court id without :
                         .build()))
             .facilitiesRequired(List.of())
-            .listingComments(hearingData.getAdditionalHearingDetails())
+            .listingComments(getListingComments(hearingData))
             .hearingRequester(null != hearingData.getHearingJudgePersonalCode()
                                   ? hearingData.getHearingJudgePersonalCode() : EMPTY)
             .privateHearingRequiredFlag(C100.equals(CaseUtils.getCaseTypeOfApplication(caseData)))
@@ -177,6 +178,16 @@ public final class AutomatedHearingTransactionRequestMapper {
             .hearingIsLinkedFlag(hearingData.getHearingListedLinkedCases().getValue() != null)
             .hearingChannels(List.of(hearingData.getHearingChannelsEnum().getId()))
             .build();
+    }
+
+    private static String getListingComments(HearingData hearingData) {
+        //PRL-7023 - set listing comments from free text field from hearing options 3/4
+        if (Strings.isNotBlank(hearingData.getAdditionalHearingDetails())) {
+            return hearingData.getAdditionalHearingDetails();
+        } else if (Strings.isNotBlank(hearingData.getCustomDetails())) {
+            return hearingData.getCustomDetails();
+        }
+        return null;
     }
 
     private static String getHearingPriorityType(HearingPriorityTypeEnum hearingPriorityTypeEnum) {
