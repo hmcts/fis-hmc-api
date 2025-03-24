@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
@@ -503,10 +503,10 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
 
         List<String> hearingChannelEmail =
-            !isBlank(partyDetails.getEmail())
+            isNotBlank(partyDetails.getEmail())
                 ? Collections.singletonList(partyDetails.getEmail())
                 : List.of();
-        List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
+        List<String> hearingChannelPhone = isNotBlank(partyDetails.getPhoneNumber())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), phoneNoSpecialChars)) : List.of();
         log.info("** phone number formatted ***");
 
@@ -623,12 +623,12 @@ public final class AutomatedHearingTransactionRequestMapper {
         AutomatedHearingPartyDetails partyDetailsModelForSol = null;
 
         List<String> hearingChannelEmail =
-            !isBlank(partyDetails.getSolicitorEmail())
+            isNotBlank(partyDetails.getSolicitorEmail())
                 ? Collections.singletonList(partyDetails.getSolicitorEmail())
                 : List.of();
 
-        if (!partyDetails.getRepresentativeFirstName().isBlank()
-            && !partyDetails.getRepresentativeLastName().isBlank()) {
+        if (isNotBlank(partyDetails.getRepresentativeFirstName())
+            && isNotBlank(partyDetails.getRepresentativeLastName())) {
             individualDetails =
                 IndividualDetails.builder()
                     .firstName(partyDetails.getRepresentativeFirstName())
