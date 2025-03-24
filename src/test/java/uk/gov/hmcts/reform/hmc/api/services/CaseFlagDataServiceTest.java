@@ -42,7 +42,6 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 
@@ -74,7 +73,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(YesOrNo.YES).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -143,7 +142,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(YesOrNo.NO).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -214,7 +213,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(YesOrNo.YES).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -284,7 +283,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(YesOrNo.NO).flagCode(PF0020).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0020).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
