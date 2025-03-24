@@ -53,6 +53,9 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
+    @Value("${hearing.specialCharacters}")
+    private String specialCharacters;
+
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -508,7 +511,7 @@ public class HearingsServiceImpl implements HearingsService {
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
         AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
-            caseData, ccdBaseUrl);
+            caseData, ccdBaseUrl, specialCharacters);
         printRequest(hearingRequest); // has to remove once all test completed
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,

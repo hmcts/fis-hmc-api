@@ -12,8 +12,10 @@ public final class AutomatedHearingTransformer {
     }
 
 
-    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,String ccdBaseUrl) {
-        return AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData,ccdBaseUrl);
+    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,
+                                                                           String ccdBaseUrl,
+                                                                           String phoneNoSpecialChars) {
+        return AutomatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(caseData,ccdBaseUrl,phoneNoSpecialChars);
     }
 
 }

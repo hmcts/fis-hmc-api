@@ -45,6 +45,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
@@ -82,7 +83,9 @@ public final class AutomatedHearingTransactionRequestMapper {
         throw new IllegalStateException("Utility class");
     }
 
-    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,String ccdBaseUrl) {
+    public static AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,
+                                                                           String ccdBaseUrl,
+                                                                           String phoneNoSpecialChars) {
 
         String publicCaseNameMapper = EMPTY;
         if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
@@ -94,7 +97,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
         }
 
-        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData);
+        List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData, phoneNoSpecialChars);
 
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode(HMCTS_SERVICE_ID) //Hardcoded in prl-cos-api
@@ -376,32 +379,34 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     @NotNull
-    private static List<AutomatedHearingPartyDetails>
-        getPartyDetails(CaseData caseData) {
+    private static List<AutomatedHearingPartyDetails> getPartyDetails(CaseData caseData,
+                                                                      String phoneNoSpecialChars) {
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
             if (null != applicantLst) {
-                partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT, caseData.getHearingData()));
+                partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT, caseData.getHearingData(), phoneNoSpecialChars));
                 CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
             }
             List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
             if (null != respondedLst) {
-                partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT, caseData.getHearingData()));
+                partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT, caseData.getHearingData(), phoneNoSpecialChars));
                 CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
             }
         } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
             if (null != applicantsFL401) {
-                partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT, caseData.getHearingData()));
+                partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT,
+                                                          caseData.getHearingData(), phoneNoSpecialChars));
                 CaseFlagDataServiceImpl.addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
             }
             PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
             if (null != respondentsFL401) {
-                partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT, caseData.getHearingData()));
+                partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT,
+                                                          caseData.getHearingData(), phoneNoSpecialChars));
                 CaseFlagDataServiceImpl.addFL401PartyFlagData(
                     partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
             }
@@ -415,11 +420,14 @@ public final class AutomatedHearingTransactionRequestMapper {
 
     private static List<AutomatedHearingPartyDetails> addPartyData(List<Element<PartyDetails>> partyLst,
                                                                    String role,
-                                                                   HearingData hearingData) {
+                                                                   HearingData hearingData,
+                                                                   String phoneNoSpecialChars) {
 
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         partyLst.forEach(p -> partyDetailsList.addAll(preparePartyDetailsDTO(p.getValue(), p.getId(),
-                                                                             partyLst.indexOf(p), role, hearingData)));
+                                                                             partyLst.indexOf(p), role, hearingData,
+                                                                             phoneNoSpecialChars
+        )));
 
         return partyDetailsList;
     }
@@ -459,8 +467,12 @@ public final class AutomatedHearingTransactionRequestMapper {
         return partyFlagsModelList;
     }
 
-    private static List<AutomatedHearingPartyDetails> preparePartyDetailsDTO(
-        PartyDetails partyDetails, UUID uuid, int partyIndex, String role, HearingData hearingData) {
+    private static List<AutomatedHearingPartyDetails> preparePartyDetailsDTO(PartyDetails partyDetails,
+                                                                             UUID uuid,
+                                                                             int partyIndex,
+                                                                             String role,
+                                                                             HearingData hearingData,
+                                                                             String phoneNoSpecialChars) {
         String partyId = null;
         if (null != uuid) {
             partyId = uuid.toString();
@@ -494,11 +506,9 @@ public final class AutomatedHearingTransactionRequestMapper {
             !isBlank(partyDetails.getEmail())
                 ? Collections.singletonList(partyDetails.getEmail())
                 : List.of();
-
-        List<String> hearingChannelPhone =
-            !isBlank(partyDetails.getPhoneNumber())
-                ? Collections.singletonList(partyDetails.getPhoneNumber())
-                : List.of();
+        List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), phoneNoSpecialChars)) : List.of();
+        log.info("** phone number formatted ***");
 
         IndividualDetails individualDetails =
             IndividualDetails.builder()
@@ -525,12 +535,12 @@ public final class AutomatedHearingTransactionRequestMapper {
         partyDetailsList.add(partyDetailsModel);
         Organisation org = partyDetails.getSolicitorOrg();
 
-        /****** Organisation Party Details********/
+        //Organisation Party Details
         if (org != null && org.getOrganisationID() != null) {
             partyDetailsList.add(addPartyDetailsModelForOrg(partyDetails, partyDetails.getSolicitorOrgUuid()));
         }
 
-        /******Solicitor Party Details*********/
+        //Solicitor Party Details
         if (partyDetails.getRepresentativeFirstName() != null || partyDetails.getRepresentativeLastName() != null) {
             AutomatedHearingPartyDetails details =
                 addPartyDetailsModelForSolicitor(partyDetails, partyDetails.getSolicitorPartyId(), partyIndex, role, hearingData);
@@ -649,11 +659,12 @@ public final class AutomatedHearingTransactionRequestMapper {
     }
 
     private static List<AutomatedHearingPartyDetails> addFL401PartyData(
-        PartyDetails partyDetails, String role, HearingData hearingData) {
+        PartyDetails partyDetails, String role, HearingData hearingData, String phoneNoSpecialChars) {
 
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         if (null != partyDetails) {
-            partyDetailsList.addAll(preparePartyDetailsDTO(partyDetails, partyDetails.getPartyId(),-1, role, hearingData));
+            partyDetailsList.addAll(preparePartyDetailsDTO(partyDetails, partyDetails.getPartyId(),-1,
+                                                           role, hearingData, phoneNoSpecialChars));
         }
         return partyDetailsList;
     }
