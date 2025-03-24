@@ -28,6 +28,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.ManageOrders;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.OtherPersonRelationshipToChild;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
@@ -105,7 +106,7 @@ class AutomateHearingServiceTest {
             .status("test")
             .flagComment("testing")
             .subTypeKey("123")
-            .hearingRelevant("test")
+            .hearingRelevant(YesOrNo.YES)
             .subTypeValue("test")
             .build();
 
