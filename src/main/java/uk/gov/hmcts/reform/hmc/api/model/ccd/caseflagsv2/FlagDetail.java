@@ -37,8 +37,8 @@ public class FlagDetail {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     public LocalDateTime dateTimeModified;
     public List<Element<String>> path;
-    public YesOrNo hearingRelevant;
+    public String hearingRelevant;
     public String flagCode;
     public String status;
-    public YesOrNo availableExternally;
+    public String availableExternally;
 }
