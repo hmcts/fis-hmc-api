@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
-import uk.gov.hmcts.reform.hmc.api.model.ccd.YesOrNo;
 
 import java.time.LocalDateTime;
 import java.util.List;
