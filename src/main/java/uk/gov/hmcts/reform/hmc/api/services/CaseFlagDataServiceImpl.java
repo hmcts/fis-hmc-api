@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
@@ -214,12 +214,12 @@ public class CaseFlagDataServiceImpl {
         IndividualDetailsModel individualDetailsModel;
 
         List<String> hearingChannelEmail =
-                !isBlank(partyDetails.getEmail())
+                isNotBlank(partyDetails.getEmail())
                         ? Arrays.asList(partyDetails.getEmail())
                         : Arrays.asList();
 
         List<String> hearingChannelPhone =
-                !isBlank(partyDetails.getPhoneNumber())
+                isNotBlank(partyDetails.getPhoneNumber())
                         ? Arrays.asList(partyDetails.getPhoneNumber())
                         : Arrays.asList();
 
@@ -414,11 +414,12 @@ public class CaseFlagDataServiceImpl {
         PartyDetailsModel partyDetailsModelForSol;
 
         List<String> hearingChannelEmail =
-                !isBlank(partyDetails.getSolicitorEmail())
+                isNotBlank(partyDetails.getSolicitorEmail())
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
 
-        if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
+        if (isNotBlank(partyDetails.getRepresentativeFirstName())
+            && isNotBlank(partyDetails.getRepresentativeLastName())) {
             individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                     .firstName(partyDetails.getRepresentativeFirstName())
