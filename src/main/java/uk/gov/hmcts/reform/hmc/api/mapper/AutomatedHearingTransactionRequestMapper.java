@@ -114,7 +114,7 @@ public final class AutomatedHearingTransactionRequestMapper {
                 .caseRestrictedFlag(Boolean.FALSE) //Need to revisit what to set, If set to TRUE then can't access in LA
                 .caseSlaStartDate(caseData.getIssueDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .build();
-        AutomatedHearingDetails hearingDetails = getHearingDetails(String.valueOf(caseData.getId()), caseData);
+        AutomatedHearingDetails hearingDetails = getHearingDetails(caseData);
         AutomatedHearingRequest hearingRequest = AutomatedHearingRequest.automatedHearingRequestWith().build();
         hearingRequest.setPartyDetails(partyDetailsList);
         hearingRequest.setCaseDetails(caseDetail);
@@ -144,8 +144,7 @@ public final class AutomatedHearingTransactionRequestMapper {
         return caseCategoriesList;
     }
 
-    private static AutomatedHearingDetails getHearingDetails(String id, CaseData caseData) {
-        log.info("id: {}",id);
+    private static AutomatedHearingDetails getHearingDetails(CaseData caseData) {
         HearingData hearingData = caseData.getHearingData();
         DynamicListElement hearingType = hearingData.getHearingTypes().getValue();
 
@@ -448,7 +447,6 @@ public final class AutomatedHearingTransactionRequestMapper {
             for (Element<FlagDetail> flagDetailElement : detailsList) {
                 FlagDetail flagDetail = flagDetailElement.getValue();
                 if (null != flagDetail) {
-                    log.info("flagDetail===> {}", flagDetail);
                     PartyFlagsModel partyFlagsModel =
                         PartyFlagsModel.partyFlagsModelWith()
                             .partyId(partyId)
@@ -508,7 +506,6 @@ public final class AutomatedHearingTransactionRequestMapper {
                 : List.of();
         List<String> hearingChannelPhone = isNotBlank(partyDetails.getPhoneNumber())
             ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), phoneNoSpecialChars)) : List.of();
-        log.info("** phone number formatted ***");
 
         IndividualDetails individualDetails =
             IndividualDetails.builder()

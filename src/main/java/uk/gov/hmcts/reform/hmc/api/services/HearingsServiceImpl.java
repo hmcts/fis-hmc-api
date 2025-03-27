@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
@@ -512,7 +509,6 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
             caseData, ccdBaseUrl, specialCharacters);
-        printRequest(hearingRequest); // has to remove once all test completed
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,
@@ -524,21 +520,5 @@ public class HearingsServiceImpl implements HearingsService {
             .hearingRequestID(hearingResponse.getHearingRequestID())
             .timeStamp(hearingResponse.getTimeStamp())
             .build();
-    }
-
-    private void printRequest(AutomatedHearingRequest hearingRequest) {
-
-        ObjectMapper objectMappers = new ObjectMapper();
-        objectMappers.registerModule(new JavaTimeModule());
-        try {
-            String automatedHearingRequestJson = objectMappers.writerWithDefaultPrettyPrinter().writeValueAsString(
-                hearingRequest);
-            log.info(
-                "Automated Hearing Request: createAutomatedHearings: hearingRequest: {}",
-                automatedHearingRequestJson
-            );
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
-        }
     }
 }
