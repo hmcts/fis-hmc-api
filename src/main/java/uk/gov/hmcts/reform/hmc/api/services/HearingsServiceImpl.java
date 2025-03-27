@@ -13,9 +13,13 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
+import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
@@ -42,6 +46,13 @@ public class HearingsServiceImpl implements HearingsService {
     public static final String HEARING_API_CALL_FEIGN_EXCEPTION = "Hearing api call Feign exception {}";
     public static final String HEARING_API_CALL_EXCEPTION_EXCEPTION = "Hearing api call Exception exception {}";
     private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
+
+    @Value("${ccd.ui.url}")
+    private String ccdBaseUrl;
+
+    @Value("${hearing.specialCharacters}")
+    private String specialCharacters;
+
     @Autowired AuthTokenGenerator authTokenGenerator;
 
     @Autowired IdamTokenGenerator idamTokenGenerator;
@@ -489,5 +500,25 @@ public class HearingsServiceImpl implements HearingsService {
         }
 
         return futureHearingsResponse;
+    }
+
+    @Override
+    public HearingResponse createAutomatedHearings(CaseData caseData) {
+
+        final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
+        final String s2sToken = authTokenGenerator.generate();
+        AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
+            caseData, ccdBaseUrl, specialCharacters);
+        HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
+            userToken,
+            s2sToken,
+            hearingRequest
+        );
+        return HearingResponse.builder()
+            .status(hearingResponse.getStatus())
+            .versionNumber(hearingResponse.getVersionNumber())
+            .hearingRequestID(hearingResponse.getHearingRequestID())
+            .timeStamp(hearingResponse.getTimeStamp())
+            .build();
     }
 }

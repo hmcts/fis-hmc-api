@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
@@ -137,7 +137,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private void addPartyFlagData(
+    public static void addPartyFlagData(
             List<PartyFlagsModel> partiesFlagsModelList,
             List<PartyDetailsModel> partyDetailsModelList,
             List<Element<PartyDetails>> partyLst,
@@ -156,7 +156,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private void addFL401PartyFlagData(
+    public static void addFL401PartyFlagData(
             List<PartyFlagsModel> partiesFlagsModelList,
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
@@ -174,7 +174,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    private void preparePartyDetailsDTO(
+    private static void preparePartyDetailsDTO(
             List<PartyDetailsModel> partyDetailsModelList,
             PartyDetails partyDetails,
             UUID uuid,
@@ -214,12 +214,12 @@ public class CaseFlagDataServiceImpl {
         IndividualDetailsModel individualDetailsModel;
 
         List<String> hearingChannelEmail =
-                !isBlank(partyDetails.getEmail())
+                isNotBlank(partyDetails.getEmail())
                         ? Arrays.asList(partyDetails.getEmail())
                         : Arrays.asList();
 
         List<String> hearingChannelPhone =
-                !isBlank(partyDetails.getPhoneNumber())
+                isNotBlank(partyDetails.getPhoneNumber())
                         ? Arrays.asList(partyDetails.getPhoneNumber())
                         : Arrays.asList();
 
@@ -266,7 +266,7 @@ public class CaseFlagDataServiceImpl {
         }
     }
 
-    protected List<PartyFlagsModel> getInterpreterLangCodes(
+    protected static List<PartyFlagsModel> getInterpreterLangCodes(
             List<PartyFlagsModel> curPartyFlagsModelList) {
         return curPartyFlagsModelList.stream()
                 .filter(
@@ -293,7 +293,7 @@ public class CaseFlagDataServiceImpl {
         return isListingCommentNeeded ? LISTING_COMMENTS : EMPTY;
     }
 
-    private List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, UUID uuid) {
+    private static List<PartyFlagsModel> getPartyFlagsModel(PartyDetails partyDetails, UUID uuid) {
         String partyId = null;
         if (null != uuid) {
             partyId = uuid.toString();
@@ -332,7 +332,7 @@ public class CaseFlagDataServiceImpl {
         return partyFlagsModelList;
     }
 
-    protected List<String> getReasonableAdjustmentsByParty(
+    protected static List<String> getReasonableAdjustmentsByParty(
             List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
@@ -345,13 +345,13 @@ public class CaseFlagDataServiceImpl {
                 .toList();
     }
 
-    protected Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
+    public static Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
 
         return partiesFlagsModelList.stream()
                 .anyMatch(partyFlag -> partyFlag.getFlagId().equals(PF0007));
     }
 
-    protected Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected static Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .anyMatch(
@@ -362,7 +362,7 @@ public class CaseFlagDataServiceImpl {
                                         || SM0002.equals(partyFlag.getValue().getFlagCode()));
     }
 
-    protected String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
+    protected static String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
                 .filter(
@@ -376,7 +376,7 @@ public class CaseFlagDataServiceImpl {
                 .collect(Collectors.joining(PLUS_SIGN));
     }
 
-    protected void addPartyDetailsModelForOrg(
+    protected static void addPartyDetailsModelForOrg(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
         String partyId = null;
         if (uuid != null) {
@@ -402,7 +402,7 @@ public class CaseFlagDataServiceImpl {
         partyDetailsModelList.add(partyDetailsModelForOrg);
     }
 
-    protected void addPartyDetailsModelForSolicitor(
+    protected static void addPartyDetailsModelForSolicitor(
             List<PartyDetailsModel> partyDetailsModelList, PartyDetails partyDetails, UUID uuid) {
 
         String partyId = null;
@@ -414,11 +414,12 @@ public class CaseFlagDataServiceImpl {
         PartyDetailsModel partyDetailsModelForSol;
 
         List<String> hearingChannelEmail =
-                !isBlank(partyDetails.getSolicitorEmail())
+                isNotBlank(partyDetails.getSolicitorEmail())
                         ? Arrays.asList(partyDetails.getSolicitorEmail())
                         : Arrays.asList();
 
-        if (!partyDetails.getRepresentativeFirstName().isBlank() && !partyDetails.getRepresentativeLastName().isBlank()) {
+        if (isNotBlank(partyDetails.getRepresentativeFirstName())
+            && isNotBlank(partyDetails.getRepresentativeLastName())) {
             individualDetailsModel =
                 IndividualDetailsModel.individualDetailsWith()
                     .firstName(partyDetails.getRepresentativeFirstName())
