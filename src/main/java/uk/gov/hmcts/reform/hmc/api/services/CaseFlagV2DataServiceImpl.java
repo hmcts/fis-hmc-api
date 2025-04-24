@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
@@ -330,8 +331,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         List<String> hearingChannelEmail = !isBlank(partyDetails.getSolicitorEmail())
             ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
-            ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone())) : Arrays.asList();
-        log.info("** phone number formatted ***");
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), specialCharacters)) : Arrays.asList();
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
             .lastName(partyDetails.getRepresentativeLastName())
@@ -389,8 +389,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             ? Arrays.asList(partyDetails.getEmail()) : Arrays.asList();
 
         List<String> hearingChannelPhone = !isBlank(partyDetails.getPhoneNumber())
-            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber())) : Arrays.asList();
-        log.info("** phone number formatted ***");
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), specialCharacters)) : Arrays.asList();
 
         IndividualDetailsModel individualDetailsModel =
             IndividualDetailsModel.individualDetailsWith()
@@ -420,18 +419,4 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         return Element.<T>builder().id(id).value(element).build();
     }
 
-    private String formatPhoneNumber(String phoneNumber) {
-        String[] specialCharacterList = null != specialCharacters ? specialCharacters.split("") : new String[]{};
-        String formattedPhoneNumber = phoneNumber;
-        log.info("1: Replace special characters from list from application yaml with empty string");
-        log.info("special character list {}", Arrays.toString(specialCharacterList));
-        try {
-            for (String specialChar : specialCharacterList) {
-                formattedPhoneNumber = formattedPhoneNumber.replace(specialChar, "");
-            }
-        } catch (Exception e) {
-            log.error("Error while formatting phone number", e);
-        }
-        return formattedPhoneNumber;
-    }
 }

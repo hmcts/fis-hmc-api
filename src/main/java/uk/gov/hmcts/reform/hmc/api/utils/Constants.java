@@ -149,5 +149,8 @@ public final class Constants {
 
     public static final String ROLE_ASSIGNMENT_ACTOR_ID_TYPE = "IDAM";
 
+    public static final String YES = "Yes";
+    public static final String NO = "No";
+
     private Constants() {}
 }

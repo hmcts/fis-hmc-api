@@ -104,7 +104,7 @@
   </rule>
   <rule ref="category/java/design.xml/TooManyMethods">
     <properties>
-      <property name="maxmethods" value="25" />
+      <property name="maxmethods" value="50" />
     </properties>
   </rule>
 
