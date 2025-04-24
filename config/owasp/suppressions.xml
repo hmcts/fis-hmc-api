@@ -10,23 +10,12 @@
     <cve>CVE-2023-36052</cve>
     <cve>CVE-2024-43591</cve>
   </suppress>
+  <!-- Suppress CVE-2024-38820 across all spring-* artifacts -->
   <suppress>
     <notes>
-      Suppressing CVE-2024-38820 for Spring Framework 5.3.39 temporarily while waiting for public 5.3.40 release or migration to Spring 6.x.
+      Suppressing known vulnerability CVE-2024-38820 in Spring Framework 5.3.39.
+      Will be resolved by upgrading to Spring 6.x or commercial Spring 5.3.40+.
     </notes>
     <cve>CVE-2024-38820</cve>
-    <packageUrl>pkg:maven/org.springframework/spring-core@5.3.39</packageUrl>
-  </suppress>
-  <suppress>
-    <cve>CVE-2024-38820</cve>
-    <packageUrl>pkg:maven/org.springframework/spring-context@5.3.39</packageUrl>
-  </suppress>
-  <suppress>
-    <cve>CVE-2024-38820</cve>
-    <packageUrl>pkg:maven/org.springframework/spring-aop@5.3.39</packageUrl>
-  </suppress>
-  <suppress>
-    <cve>CVE-2024-38820</cve>
-    <packageUrl>pkg:maven/org.springframework/spring-webmvc@5.3.39</packageUrl>
   </suppress>
 </suppressions>
