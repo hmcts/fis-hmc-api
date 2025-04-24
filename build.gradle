@@ -307,7 +307,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.18.2'
+      version: '2.18.3'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
@@ -429,6 +429,7 @@ dependencies {
   implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.5'
   implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.12.0'
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
+  implementation('org.springframework.retry:spring-retry')
 
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2')
   implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2')
