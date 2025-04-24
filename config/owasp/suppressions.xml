@@ -10,4 +10,12 @@
     <cve>CVE-2023-36052</cve>
     <cve>CVE-2024-43591</cve>
   </suppress>
+  <!-- Suppress CVE-2024-38820 across all spring-* artifacts -->
+  <suppress>
+    <notes>
+      Suppressing known vulnerability CVE-2024-38820 in Spring Framework 5.3.39.
+      Will be resolved by upgrading to Spring 6.x or commercial Spring 5.3.40+.
+    </notes>
+    <cve>CVE-2024-38820</cve>
+  </suppress>
 </suppressions>
