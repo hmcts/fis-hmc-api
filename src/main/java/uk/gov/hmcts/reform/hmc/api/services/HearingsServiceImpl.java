@@ -265,12 +265,14 @@ public class HearingsServiceImpl implements HearingsService {
                                         .getHmcStatus()
                                         .equals(COMPLETED))
                             .toList();
+                    log.info("checking hearings for case id {}", hearingDetails.getCaseRef());
                     Hearings filteredCaseHearingsWithCount =
                         Hearings.hearingsWith()
                             .caseHearings(filteredHearings)
                             .caseRef(hearingDetails.getCaseRef())
                             .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                             .build();
+                    log.info("adding hearing with case id {}", filteredCaseHearingsWithCount.getCaseRef());
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
