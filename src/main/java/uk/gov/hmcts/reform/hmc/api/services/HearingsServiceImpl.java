@@ -241,7 +241,7 @@ public class HearingsServiceImpl implements HearingsService {
     public List<Hearings> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
         List<String> listOfCaseIds,
         String authorization, String serviceAuthorization) {
-
+        log.info("getHearingsByListOfCaseIds {}", listOfCaseIds);
         List<Hearings> casesWithHearings = new ArrayList<>();
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
@@ -249,6 +249,9 @@ public class HearingsServiceImpl implements HearingsService {
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         log.info("returning total count of hearings: {}", hearingDetailsList.size());
+        List<String> returnedCaseIds = new ArrayList<>();
+        hearingDetailsList.forEach(hearingDetails -> returnedCaseIds.add(hearingDetails.getCaseRef()));
+        log.info("returned case ids: {}", returnedCaseIds);
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
             for (var hearing : hearingDetailsList) {
