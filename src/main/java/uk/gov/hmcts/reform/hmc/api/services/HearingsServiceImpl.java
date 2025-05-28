@@ -252,7 +252,7 @@ public class HearingsServiceImpl implements HearingsService {
         List<String> returnedCaseIds = new ArrayList<>();
         hearingDetailsList.forEach(hearingDetails -> returnedCaseIds.add(hearingDetails.getCaseRef()));
         log.info("returned case ids: {}", returnedCaseIds);
-        log.info("is listOfCaseIds equal to returned case ids: {}", listOfCaseIds.equals(returnedCaseIds));
+        log.info("is listOfCaseIds equal to returned case ids: {}", listOfCaseIds.containsAll(returnedCaseIds));
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
             for (var hearing : hearingDetailsList) {
