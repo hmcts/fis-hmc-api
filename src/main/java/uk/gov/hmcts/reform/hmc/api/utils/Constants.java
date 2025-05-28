@@ -130,6 +130,8 @@ public final class Constants {
 
     public static final String ROLE_ASSIGNMENT_HEARING_MANAGER = "hearing-manager";
 
+    public static final String ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER = "listed-hearing-viewer";
+
     public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS = "private-law-system-users";
 
     public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE =

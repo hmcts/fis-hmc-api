@@ -7,6 +7,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_CLASSI
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_GRANT_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_MANAGER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_VIEWER;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_CATEGORY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE;
@@ -56,7 +57,8 @@ public class RoleAssignmentServiceImpl implements RoleAssignmentService {
         List<RoleAssignment> roleAssignmentList =
                 Arrays.asList(
                         buildRoleAssignment(systemUserIdamID, ROLE_ASSIGNMENT_HEARING_MANAGER),
-                        buildRoleAssignment(systemUserIdamID, ROLE_ASSIGNMENT_HEARING_VIEWER));
+                        buildRoleAssignment(systemUserIdamID, ROLE_ASSIGNMENT_HEARING_VIEWER),
+                        buildRoleAssignment(systemUserIdamID, ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER));
         RoleAssignmentRequestResource roleAssignmentRequestResource =
                 RoleAssignmentRequestResource.builder()
                         .roleRequest(
