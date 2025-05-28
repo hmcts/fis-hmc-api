@@ -248,10 +248,13 @@ public class HearingsServiceImpl implements HearingsService {
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
+        log.info("returning total count of hearings: {}", hearingDetailsList.size());
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
             for (var hearing : hearingDetailsList) {
+                log.info("fis processing {}",hearing.getCaseRef());
                 try {
+                    log.info("try block hit");
                     hearingDetails = hearing;
                     List<CaseHearing> filteredHearings =
                         hearingDetails.getCaseHearings().stream()
@@ -265,12 +268,14 @@ public class HearingsServiceImpl implements HearingsService {
                                         .getHmcStatus()
                                         .equals(COMPLETED))
                             .toList();
+                    log.info("checking hearings for case id {}", hearingDetails.getCaseRef());
                     Hearings filteredCaseHearingsWithCount =
                         Hearings.hearingsWith()
                             .caseHearings(filteredHearings)
                             .caseRef(hearingDetails.getCaseRef())
                             .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
                             .build();
+                    log.info("adding hearing with case id {}", filteredCaseHearingsWithCount.getCaseRef());
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
