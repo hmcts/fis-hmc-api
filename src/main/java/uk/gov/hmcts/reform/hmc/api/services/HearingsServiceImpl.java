@@ -241,12 +241,10 @@ public class HearingsServiceImpl implements HearingsService {
     public List<Hearings> getHearingsByListOfCaseIdsWithoutCourtVenueDetails(
         List<String> listOfCaseIds,
         String authorization, String serviceAuthorization) {
-        
-        List<String> sentCaseIds = listOfCaseIds;
+
         List<Hearings> casesWithHearings = new ArrayList<>();
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
-        log.info("sentCaseIds==> {}", sentCaseIds);
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
