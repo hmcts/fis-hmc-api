@@ -249,12 +249,12 @@ public class HearingsServiceImpl implements HearingsService {
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         log.info("returning total count of hearings: {}", hearingDetailsList.size());
-        List<String> returnedCaseIds = new ArrayList<>();
-        hearingDetailsList.forEach(hearingList -> returnedCaseIds.add(hearingList.getCaseRef()));
-        log.info("returned case ids: {}", returnedCaseIds);
-        log.info("is listOfCaseIds equal to returned case ids: {}", listOfCaseIds.containsAll(returnedCaseIds));
         if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
+            List<String> returnedCaseIds = new ArrayList<>();
+            hearingDetailsList.forEach(hearingList -> returnedCaseIds.add(hearingList.getCaseRef()));
+            log.info("returned case ids: {}", returnedCaseIds);
+            log.info("is listOfCaseIds equal to returned case ids: {}", listOfCaseIds.containsAll(returnedCaseIds));
             for (var hearing : hearingDetailsList) {
                 log.info("fis processing {}",hearing.getCaseRef());
                 try {
