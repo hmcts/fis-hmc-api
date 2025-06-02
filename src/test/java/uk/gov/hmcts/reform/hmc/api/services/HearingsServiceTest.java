@@ -453,8 +453,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest()
-            {
+    void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
@@ -464,8 +463,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest()
-            {
+    void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(any(), any(), any()))
@@ -474,8 +472,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest()
-            {
+    void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(any(), any(), any()))
