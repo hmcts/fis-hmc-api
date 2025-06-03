@@ -14,21 +14,17 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
@@ -44,7 +40,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
 @SpringBootTest
-@ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
 @PropertySource("classpath:application.yaml")
 class HearingsServiceTest {
@@ -52,20 +47,26 @@ class HearingsServiceTest {
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
 
-    @InjectMocks HearingsServiceImpl hearingsService;
+    @Autowired
+    private HearingsServiceImpl hearingsService;
 
-    @Mock private RefDataServiceImpl refDataService;
+    @MockBean
+    private HearingApiClient hearingApiClient;
 
-    @Mock private AuthTokenGenerator authTokenGenerator;
+    @MockBean
+    private IdamTokenGenerator idamTokenGenerator;
 
-    @Mock private IdamTokenGenerator idamTokenGenerator;
+    @MockBean
+    private AuthTokenGenerator authTokenGenerator;
 
-    @Mock private HearingApiClient hearingApiClient;
+    @MockBean
+    private RefDataServiceImpl refDataService;
 
-    @Mock RefDataJudicialService refDataJudicialService;
+    @MockBean
+    private RefDataJudicialService refDataJudicialService;
 
     @Test
-    void shouldReturnCtfHearingsAuthExceptionTest() throws IOException, ParseException {
+    void shouldReturnCtfHearingsAuthExceptionTest() {
         Hearings caseHearings =
             Hearings.hearingsWith()
                 .caseRef("123")
@@ -85,7 +86,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnHearingsByCaseRefNoTest() throws IOException, ParseException {
+    void shouldReturnHearingsByCaseRefNoTest() {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
@@ -452,8 +453,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest()
-            throws IOException, ParseException {
+    void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
@@ -463,8 +463,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest()
-            throws IOException, ParseException {
+    void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(any(), any(), any()))
@@ -473,8 +472,7 @@ class HearingsServiceTest {
     }
 
     @Test
-    void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest()
-            throws IOException, ParseException {
+    void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(hearingApiClient.getHearingDetails(any(), any(), any()))

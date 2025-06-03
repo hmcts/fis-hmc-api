@@ -1,14 +1,10 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -34,7 +30,6 @@ import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,19 +42,21 @@ import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.NO;
 
 @SpringBootTest
-@ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
 @PropertySource("classpath:application.yaml")
 class AutomateHearingServiceTest {
 
-    @InjectMocks HearingsServiceImpl hearingsService;
+    @Autowired
+    private HearingsServiceImpl hearingsService;
 
-    @Mock private AuthTokenGenerator authTokenGenerator;
+    @MockBean
+    private AuthTokenGenerator authTokenGenerator;
 
-    @Mock private IdamTokenGenerator idamTokenGenerator;
+    @MockBean
+    private IdamTokenGenerator idamTokenGenerator;
 
-
-    @Mock private HearingApiClient hearingApiClient;
+    @MockBean
+    private HearingApiClient hearingApiClient;
 
     private static final String TEST_UUID = "00000000-0000-0000-0000-000000000000";
 
@@ -156,7 +153,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestC100() throws IOException, ParseException {
+    void shouldReturnAutomateHearingTestC100() {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -243,7 +240,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestC100ForParties() throws IOException, ParseException {
+    void shouldReturnAutomateHearingTestC100ForParties() {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -304,7 +301,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestF401() throws IOException, ParseException {
+    void shouldReturnAutomateHearingTestF401() {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -363,7 +360,7 @@ class AutomateHearingServiceTest {
 
 
     @Test
-    void shouldReturnAutomateHearingTestF401ForParties() throws IOException, ParseException {
+    void shouldReturnAutomateHearingTestF401ForParties() {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -429,7 +426,7 @@ class AutomateHearingServiceTest {
 
 
     @Test
-    void shouldReturnAutomateHearingsByExceptionTest() throws IOException, ParseException {
+    void shouldReturnAutomateHearingsByExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn(SERVICE_AUTH_TOKEN);
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(AUTHORIZATION_TOKEN);
 
@@ -474,7 +471,5 @@ class AutomateHearingServiceTest {
 
         assertThrows(NullPointerException.class, () -> hearingsService.createAutomatedHearings(caseData));
     }
-
-
 
 }
