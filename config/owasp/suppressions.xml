@@ -3,6 +3,10 @@
   <suppress>
     <notes>adal4j-1.6.4.jar</notes>
     <cve>CVE-2021-42306</cve>
+    <cve>CVE-2024-22259</cve> <!-- spring-5.3.27.jar -->
+    <cve>CVE-2024-38820</cve> <!-- spring-5.3.27.jar -->
+    <cve>CVE-2024-38808</cve> <!-- spring-5.3.27.jar -->
+    <cve>CVE-2024-48734</cve> <!-- beanUtils-1.9.4.jar -->
   </suppress>
 
   <suppress>
