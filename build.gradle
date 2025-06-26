@@ -2,13 +2,6 @@ buildscript {
   repositories {
     mavenLocal()
     mavenCentral()
-    maven {
-      url "https://jitpack.io"
-      content {
-        excludeGroup "com.github.ben-manes.versions"
-      }
-    }
-
   }
   dependencies {
     classpath "net.serenity-bdd:serenity-gradle-plugin:2.4.34"
@@ -283,8 +276,9 @@ dependencyCheck {
 repositories {
   mavenLocal()
   mavenCentral()
-  maven { url 'https://jitpack.io' }
-  jcenter()
+  maven {
+    url = uri('https://pkgs.dev.azure.com/hmcts/Artifacts/_packaging/hmcts-lib/maven/v1')
+  }
 }
 
 ext {
@@ -479,7 +473,7 @@ dependencies {
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
 
-  testImplementation 'com.github.hmcts:fortify-client:1.4.2:all'
+  testImplementation 'com.github.hmcts:fortify-client:1.3.0-azure:all'
   testImplementation 'org.projectlombok:lombok:1.18.38'
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
   implementation group: 'io.rest-assured', name: 'rest-assured'
