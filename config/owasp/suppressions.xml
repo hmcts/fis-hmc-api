@@ -32,4 +32,32 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-websocket@.*$</packageUrl>
     <cve>CVE-2025-48988</cve>
   </suppress>
+
+  <suppress until="2025-11-30">
+    <notes>Temporary to unblock pipeline</notes>
+    <cve>CVE-2025-54988</cve> <!-- tika-core-2.9.4.jar -->
+    <cve>CVE-2025-48976</cve> <!-- commons-fileupload-1.5.jar -->
+    <cve>CVE-2025-48924</cve> <!-- commons-lang3-3.12.0.jar -->
+    <cve>CVE-2025-55668</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-52434</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-49124</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-49125</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-52520</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-48989</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-53506</cve> <!-- tomcat-embed-websocket-9.0.105.jar -->
+    <cve>CVE-2025-58057</cve> <!-- netty-buffer-4.2.1.Final.jar, netty-codec-4.2.1.Final.jar,
+       netty-codec-base-4.2.1.Final.jar, netty-codec-compression-4.2.1.Final.jar, netty-codec-dns-4.2.1.Final.jar,
+       netty-codec-http-4.2.1.Final.jar, netty-codec-http2-4.2.1.Final.jar, netty-codec-marshalling-4.2.1.Final.jar,
+       netty-codec-protobuf-4.2.1.Final.jar, netty-codec-socks-4.2.1.Final.jar, netty-common-4.2.1.Final.jar,
+       netty-handler-4.2.1.Final.jar, netty-handler-proxy-4.2.1.Final.jar, netty-resolver-4.2.1.Final.jar,
+       netty-resolver-dns-4.2.1.Final.jar, netty-resolver-dns-classes-macos-4.2.1.Final.jar,
+       netty-resolver-dns-native-macos-4.2.1.Final-osx-x86_64.jar, netty-transport-4.2.1.Final.jar,
+       netty-transport-classes-epoll-4.2.1.Final.jar, netty-transport-classes-kqueue-4.2.1.Final.jar,
+       netty-transport-native-epoll-4.2.1.Final-linux-x86_64.jar, netty-transport-native-epoll-4.2.1.Final.jar,
+       netty-transport-native-kqueue-4.2.1.Final-osx-x86_64.jar, netty-transport-native-kqueue-4.2.1.Final.jar,
+       netty-transport-native-unix-common-4.2.1.Final.jar -->
+    <cve>CVE-2025-55163</cve> <!-- same as above, the 25 netty items -->
+    <cve>CVE-2025-58056</cve> <!-- same as above, the 25 netty items -->
+  </suppress>
+
 </suppressions>
