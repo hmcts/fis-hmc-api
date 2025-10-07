@@ -160,6 +160,7 @@ class HearingsDataServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
+        when(launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")).thenReturn(false);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
@@ -171,6 +172,7 @@ class HearingsDataServiceTest {
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         Assertions.assertEquals("Re-Minor", hearingsResponse.getPublicCaseName());
         Assertions.assertNotNull(hearingsResponse.getCaseDeepLink());
+        verify(caseFlagV2DataService, times(2)).setCaseFlagData(any(), any());
     }
 
     @Test
