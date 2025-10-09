@@ -14,10 +14,12 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Organisation;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.flagdata.FlagDetail;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +50,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class CaseFlagV2DataServiceTest {
+public class CaseFlagV2DataServiceImplTest {
 
     @InjectMocks
     private CaseFlagV2DataServiceImpl caseFlagV2DataService;
@@ -338,4 +340,101 @@ public class CaseFlagV2DataServiceTest {
         caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
         Assertions.assertEquals(ABA5, serviceHearingValues.getHmctsServiceID());
     }
+
+    private Element<PartyDetails> samplePartyElement() {
+        PartyDetails pd = PartyDetails.builder()
+            .firstName(TEST)
+            .lastName(TEST)
+            .email("x@y.com")
+            .phoneNumber("07123456789")
+            .build();
+        return Element.<PartyDetails>builder()
+            .id(UUID.randomUUID())
+            .value(pd)
+            .build();
+    }
+
+    private Flags flagsWith(String partyName, String code, String status) {
+        FlagDetail fd = FlagDetail.builder()
+            .flagCode(code)
+            .status(status)
+            .flagComment("comment")
+            .build();
+        Element<FlagDetail> fde = Element.<FlagDetail>builder()
+            .id(UUID.randomUUID())
+            .value(fd).build();
+        return Flags.builder()
+            .partyName(partyName)
+            .details(Collections.singletonList(fde))
+            .build();
+    }
+
+    private Map<String, Object> baseCaseDataC100(List<Element<PartyDetails>> applicants,
+                                                 List<Element<PartyDetails>> respondents) {
+        CaseManagementLocation cml = CaseManagementLocation.builder()
+            .region(TEST).baseLocation(TEST).build();
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put(APPLICANT_CASE_NAME, APPLICANT_CASE_NAME_TEST_VALUE);
+        caseDataMap.put(CASE_MNGEMNT_LOC, cml);
+        caseDataMap.put("caseTypeOfApplication", "C100");
+        caseDataMap.put(APPLICANTS, applicants);
+        caseDataMap.put(RESPONDENTS, respondents);
+        // FL401 singletons present but unused in C100 path
+        caseDataMap.put(APPLICANTS_FL401, applicants.get(0).getValue());
+        caseDataMap.put(RESPONDENTS_FL401, respondents.get(0).getValue());
+        return caseDataMap;
+    }
+
+    @Test
+    void mapsActiveFlags_only() throws IOException, ParseException {
+        // parties
+        Element<PartyDetails> applicant1 = samplePartyElement();
+        Element<PartyDetails> respondent1 = samplePartyElement();
+        List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
+        List<Element<PartyDetails>> respondents = Collections.singletonList(respondent1);
+
+        Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
+
+        // C100 external/internal keys the service will read:
+        // Applicant #1 external: caApplicant1ExternalFlags
+        // Respondent #1 internal: caRespondent1InternalFlags
+        Flags applicantActive = flagsWith("Applicant One", PF0002, "Active");
+        Flags respondentRequested = flagsWith("Respondent One", PF0020, "Requested"); // should be filtered OUT
+
+        caseData.put("caApplicant1ExternalFlags", applicantActive);
+        caseData.put("caRespondent1InternalFlags", respondentRequested);
+
+        ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+        CaseDetails cd = CaseDetails.builder().id(123L).caseTypeId(PRIVATE_LAW).data(caseData).build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(shv, cd);
+
+        // Assert only the ACTIVE one made it through
+        Assertions.assertNotNull(shv.getCaseFlags());
+        List<PartyFlagsModel> flags = shv.getCaseFlags().getFlags();
+        Assertions.assertEquals(1, flags.size(), "Only ACTIVE flags should be included");
+        Assertions.assertEquals(PF0002, flags.get(0).getFlagId());
+        Assertions.assertEquals("Active", flags.get(0).getFlagStatus());
+    }
+
+    @Test
+    void noFlags_whenNoneActive() throws IOException, ParseException {
+        Element<PartyDetails> applicant1 = samplePartyElement();
+        List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
+        List<Element<PartyDetails>> respondents = Collections.singletonList(samplePartyElement());
+
+        Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
+        // Only a Requested flag present
+        caseData.put("caApplicant1InternalFlags", flagsWith("Applicant One", PF0002, "Requested"));
+
+        ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+        CaseDetails cd = CaseDetails.builder().id(456L).caseTypeId(PRIVATE_LAW).data(caseData).build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(shv, cd);
+
+        Assertions.assertNotNull(shv.getCaseFlags());
+        Assertions.assertTrue(shv.getCaseFlags().getFlags().isEmpty(), "Requested flags must be filtered out");
+    }
+
+
 }
