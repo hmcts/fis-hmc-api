@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
@@ -128,12 +127,11 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         }
         return flags.getDetails().stream()
             .filter(e -> {
-                FlagDetail flagDetail = e.getValue();
-                return flagDetail != null && "Active".equalsIgnoreCase(flagDetail.getStatus());
+                FlagDetail flatDetail = e.getValue();
+                return flatDetail != null && "Active".equalsIgnoreCase(flatDetail.getStatus());
             })
-            .collect(Collectors.toList());
+            .toList();
     }
-
 
     private void findAndUpdateModelListsForC100(PartyRole.Representing representing,
                                                 CaseDetailResponse ccdResponse,
@@ -334,7 +332,7 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         List<String> hearingChannelEmail = !isBlank(partyDetails.getSolicitorEmail())
             ? Arrays.asList(partyDetails.getSolicitorEmail()) : Arrays.asList();
         List<String> hearingChannelPhone = !isBlank(partyDetails.getSolicitorTelephone())
-            ? Arrays.asList(formatPhoneNumber(partyDetails.getPhoneNumber(), specialCharacters)) : Arrays.asList();
+            ? Arrays.asList(formatPhoneNumber(partyDetails.getSolicitorTelephone(), specialCharacters)) : Arrays.asList();
 
         IndividualDetailsModel individualDetailsModel = IndividualDetailsModel.individualDetailsWith()
             .firstName(partyDetails.getRepresentativeFirstName())
