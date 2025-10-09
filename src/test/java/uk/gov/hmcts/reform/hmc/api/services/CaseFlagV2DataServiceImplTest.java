@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,31 +49,31 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class CaseFlagV2DataServiceImplTest {
+class CaseFlagV2DataServiceImplTest {
 
     @InjectMocks
     private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldSetCaseFlagTest() throws IOException, ParseException {
+    void shouldSetCaseFlagTest() throws IOException {
 
-        LinkedHashMap reasonMap = new LinkedHashMap();
+        Map<String, Object> reasonMap = new LinkedHashMap<>();
         reasonMap.put(REASON, REASON_TEST_VALUE);
 
-        LinkedHashMap reasonForLinkMap = new LinkedHashMap();
+        Map<String, Object> reasonForLinkMap = new LinkedHashMap<>();
         reasonForLinkMap.put(VALUE, reasonMap);
 
-        List reasonForLinkList = new ArrayList();
+        List<Map<String, Object>> reasonForLinkList = new ArrayList<>();
         reasonForLinkList.add(reasonForLinkMap);
 
-        LinkedHashMap valueMap = new LinkedHashMap();
+        Map<String, Object> valueMap = new LinkedHashMap<>();
         valueMap.put(REASON_FOR_LINK, reasonForLinkList);
 
-        LinkedHashMap caseLinkMap = new LinkedHashMap();
+        Map<String, Object> caseLinkMap = new LinkedHashMap<>();
         caseLinkMap.put(VALUE, valueMap);
 
-        List caseLinksList = new ArrayList();
+        List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
@@ -129,24 +128,24 @@ public class CaseFlagV2DataServiceImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldAddPartyDetailsModelForOrgTest() throws IOException, ParseException {
+    void shouldAddPartyDetailsModelForOrgTest() throws IOException {
 
-        LinkedHashMap reasonMap = new LinkedHashMap();
+        Map<String, Object> reasonMap = new LinkedHashMap<>();
         reasonMap.put(REASON, REASON_TEST_VALUE);
 
-        LinkedHashMap reasonForLinkMap = new LinkedHashMap();
+        Map<String, Object> reasonForLinkMap = new LinkedHashMap<>();
         reasonForLinkMap.put(VALUE, reasonMap);
 
-        List reasonForLinkList = new ArrayList();
+        List<Map<String, Object>> reasonForLinkList = new ArrayList<>();
         reasonForLinkList.add(reasonForLinkMap);
 
-        LinkedHashMap valueMap = new LinkedHashMap();
+        Map<String, Object> valueMap = new LinkedHashMap<>();
         valueMap.put(REASON_FOR_LINK, reasonForLinkList);
 
-        LinkedHashMap caseLinkMap = new LinkedHashMap();
+        Map<String, Object> caseLinkMap = new LinkedHashMap<>();
         caseLinkMap.put(VALUE, valueMap);
 
-        List caseLinksList = new ArrayList();
+        List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
@@ -202,24 +201,24 @@ public class CaseFlagV2DataServiceImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldAddPartyDetailsModelForSolicitorTest() throws IOException, ParseException {
+    void shouldAddPartyDetailsModelForSolicitorTest() throws IOException {
 
-        LinkedHashMap reasonMap = new LinkedHashMap();
+        Map<String, Object> reasonMap = new LinkedHashMap<>();
         reasonMap.put(REASON, REASON_TEST_VALUE);
 
-        LinkedHashMap reasonForLinkMap = new LinkedHashMap();
+        Map<String, Object> reasonForLinkMap = new LinkedHashMap<>();
         reasonForLinkMap.put(VALUE, reasonMap);
 
-        List reasonForLinkList = new ArrayList();
+        List<Map<String, Object>> reasonForLinkList = new ArrayList<>();
         reasonForLinkList.add(reasonForLinkMap);
 
-        LinkedHashMap valueMap = new LinkedHashMap();
+        Map<String, Object> valueMap = new LinkedHashMap<>();
         valueMap.put(REASON_FOR_LINK, reasonForLinkList);
 
-        LinkedHashMap caseLinkMap = new LinkedHashMap();
+        Map<String, Object> caseLinkMap = new LinkedHashMap<>();
         caseLinkMap.put(VALUE, valueMap);
 
-        List caseLinksList = new ArrayList();
+        List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
@@ -272,24 +271,24 @@ public class CaseFlagV2DataServiceImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldAddPartyDetailsModelWithVulnerabilityTest() throws IOException, ParseException {
+    void shouldAddPartyDetailsModelWithVulnerabilityTest() throws IOException {
 
-        LinkedHashMap reasonMap = new LinkedHashMap();
+        Map<String, Object> reasonMap = new LinkedHashMap<>();
         reasonMap.put(REASON, REASON_TEST_VALUE);
 
-        LinkedHashMap reasonForLinkMap = new LinkedHashMap();
+        Map<String, Object> reasonForLinkMap = new LinkedHashMap<>();
         reasonForLinkMap.put(VALUE, reasonMap);
 
-        List reasonForLinkList = new ArrayList();
+        List<Map<String, Object>> reasonForLinkList = new ArrayList<>();
         reasonForLinkList.add(reasonForLinkMap);
 
-        LinkedHashMap valueMap = new LinkedHashMap();
+        Map<String, Object> valueMap = new LinkedHashMap<>();
         valueMap.put(REASON_FOR_LINK, reasonForLinkList);
 
-        LinkedHashMap caseLinkMap = new LinkedHashMap();
+        Map<String, Object> caseLinkMap = new LinkedHashMap<>();
         caseLinkMap.put(VALUE, valueMap);
 
-        List caseLinksList = new ArrayList();
+        List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
         FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0020).build();
@@ -386,7 +385,7 @@ public class CaseFlagV2DataServiceImplTest {
     }
 
     @Test
-    void mapsActiveFlags_only() throws IOException, ParseException {
+    void mapsActiveFlagsOnly() throws IOException {
         // parties
         Element<PartyDetails> applicant1 = samplePartyElement();
         Element<PartyDetails> respondent1 = samplePartyElement();
@@ -418,7 +417,7 @@ public class CaseFlagV2DataServiceImplTest {
     }
 
     @Test
-    void noFlags_whenNoneActive() throws IOException, ParseException {
+    void noFlagsWhenNoneActive() throws IOException {
         Element<PartyDetails> applicant1 = samplePartyElement();
         List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
         List<Element<PartyDetails>> respondents = Collections.singletonList(samplePartyElement());
@@ -435,6 +434,5 @@ public class CaseFlagV2DataServiceImplTest {
         Assertions.assertNotNull(shv.getCaseFlags());
         Assertions.assertTrue(shv.getCaseFlags().getFlags().isEmpty(), "Requested flags must be filtered out");
     }
-
 
 }
