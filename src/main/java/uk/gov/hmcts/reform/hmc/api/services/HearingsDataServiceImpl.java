@@ -52,7 +52,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
-import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
@@ -103,7 +102,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Override
     public ServiceHearingValues getCaseData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization)
-            throws IOException, ParseException {
+            throws IOException {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
@@ -111,9 +110,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             Map<String, String> applicantMap =
-                    (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
+                    (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_APPLICANT_TABLE);
             Map<String, String> respondentTableMap =
-                    (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
+                    (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
                         applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
@@ -168,12 +167,12 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                         .numberOfPhysicalAttendees(0)
                         .hearingInWelshFlag(FALSE)
                         .hearingLocations(
-                                Arrays.asList(
+                                List.of(
                                         HearingLocation.hearingLocationWith()
                                                 .locationType(COURT)
                                                 .locationId(CASE_MANAGEMENT_LOCATION)
                                                 .build()))
-                        .facilitiesRequired(Arrays.asList())
+                        .facilitiesRequired(List.of())
                         .listingComments(EMPTY)
                         .hearingRequester(EMPTY)
                         .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
@@ -186,7 +185,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                 screenFlowJson != null
                                         ? (JSONArray) screenFlowJson.get(SCREEN_FLOW)
                                         : null)
-                        .hearingChannels(Arrays.asList())
+                        .hearingChannels(List.of())
                         .build();
 
             caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
@@ -222,7 +221,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     @Override
     public List<HearingLinkData> getHearingLinkData(
             HearingValues hearingValues, String authorisation, String serviceAuthorization)
-            throws IOException, ParseException {
+            throws IOException {
         CaseDetails caseDetails =
                 caseApiService.getCaseDetails(
                         hearingValues.getCaseReference(), authorisation, serviceAuthorization);
