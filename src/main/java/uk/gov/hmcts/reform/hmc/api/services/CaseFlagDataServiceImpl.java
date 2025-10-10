@@ -12,6 +12,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0021;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
@@ -346,10 +347,16 @@ public class CaseFlagDataServiceImpl {
     }
 
     public static Boolean isCaseAdditionalSecurityFlag(List<PartyFlagsModel> partiesFlagsModelList) {
-
+        if (partiesFlagsModelList == null || partiesFlagsModelList.isEmpty()) {
+            return false;
+        }
         return partiesFlagsModelList.stream()
-                .anyMatch(partyFlag -> partyFlag.getFlagId().equals(PF0007));
+            .anyMatch(f ->
+                          "Active".equalsIgnoreCase(f.getFlagStatus()) &&
+                              (PF0007.equals(f.getFlagId()) || PF0021.equals(f.getFlagId()))
+            );
     }
+
 
     protected static Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 

@@ -36,7 +36,9 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0020;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0021;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PRIVATE_LAW;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0013;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_FOR_LINK;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_TEST_VALUE;
@@ -44,6 +46,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_FIRST_NAME_TEST_VA
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_LAST_NAME_TEST_VALUE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS_FL401;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TEST;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
@@ -433,6 +436,112 @@ class CaseFlagV2DataServiceImplTest {
 
         Assertions.assertNotNull(shv.getCaseFlags());
         Assertions.assertTrue(shv.getCaseFlags().getFlags().isEmpty(), "Requested flags must be filtered out");
+    }
+
+    @Test
+    void pvpFlagMarksAdditionalSecurityTrue() throws IOException {
+        // parties
+        Element<PartyDetails> applicant1 = samplePartyElement();
+        List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
+        List<Element<PartyDetails>> respondents = Collections.singletonList(samplePartyElement());
+
+        Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
+
+        // PF0021 (Potentially Violent Person) as ACTIVE on Applicant #1 internal flags
+        Flags pvpActive = flagsWith("Applicant One", PF0021, "Active");
+        caseData.put("caApplicant1InternalFlags", pvpActive);
+
+        ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+        CaseDetails cd = CaseDetails.builder().id(789L).caseTypeId(PRIVATE_LAW).data(caseData).build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(shv, cd);
+
+        // Assert: security flag is set and PF0021 is present in outgoing flags
+        boolean security = java.util.Optional
+            .ofNullable(shv.getCaseAdditionalSecurityFlag())
+            .orElse(false);
+
+        Assertions.assertTrue(security, "PF0021 Active should set caseAdditionalSecurityFlag");
+
+        Assertions.assertNotNull(shv.getCaseFlags());
+        Assertions.assertTrue(
+            shv.getCaseFlags().getFlags().stream()
+                .anyMatch(f -> PF0021.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+            "PF0021 Active should be included in case flags"
+        );
+    }
+
+
+    @Test
+    void pvpRequestedDoesNotMarkAdditionalSecurity() throws IOException {
+        Element<PartyDetails> applicant1 = samplePartyElement();
+        List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
+        List<Element<PartyDetails>> respondents = Collections.singletonList(samplePartyElement());
+
+        Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
+
+        // PF0021 as Requested (not Active) — should NOT set additional security
+        Flags pvpRequested = flagsWith("Applicant One", PF0021, "Requested");
+        caseData.put("caApplicant1ExternalFlags", pvpRequested);
+
+        ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+        CaseDetails cd = CaseDetails.builder().id(790L).caseTypeId(PRIVATE_LAW).data(caseData).build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(shv, cd);
+
+        boolean security = java.util.Optional
+            .ofNullable(shv.getCaseAdditionalSecurityFlag())
+            .orElse(false);
+
+        Assertions.assertFalse(security, "PF0021 Requested should NOT set caseAdditionalSecurityFlag");  // depending on your ACTIVE-only filtering, PF0021 Requested may also be absent from flags:
+        if (shv.getCaseFlags() != null) {
+            Assertions.assertTrue(
+                shv.getCaseFlags().getFlags().stream().noneMatch(f -> PF0021.equals(f.getFlagId())),
+                "PF0021 Requested should not be included in outgoing flags when filtering to Active");
+        }
+    }
+
+    @Test
+    void raAndSmActiveFlowIntoCaseFlagsAndPartyDerivedList() throws IOException {
+        // parties
+        Element<PartyDetails> applicant1 = samplePartyElement();
+        List<Element<PartyDetails>> applicants = Collections.singletonList(applicant1);
+        List<Element<PartyDetails>> respondents = Collections.singletonList(samplePartyElement());
+
+        Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
+
+        // Put RA0013 and SM0002 as ACTIVE for Applicant #1 (mix internal/external just to show both read)
+        Flags raActive = flagsWith("Applicant One", RA0013, "Active");
+        Flags smActive = flagsWith("Applicant One", SM0002, "Active");
+        caseData.put("caApplicant1InternalFlags", raActive);
+        caseData.put("caApplicant1ExternalFlags", smActive);
+
+        ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
+        CaseDetails cd = CaseDetails.builder().id(999L).caseTypeId(PRIVATE_LAW).data(caseData).build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(shv, cd);
+
+        // 1) Top-level flags contain both codes
+        Assertions.assertNotNull(shv.getCaseFlags());
+        List<PartyFlagsModel> out = shv.getCaseFlags().getFlags();
+        Assertions.assertTrue(out.stream().anyMatch(f -> RA0013.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+                              "RA0013 Active should be present in caseFlags.flags");
+        Assertions.assertTrue(out.stream().anyMatch(f -> SM0002.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+                              "SM0002 Active should be present in caseFlags.flags");
+
+        // 2) Derived party reasonableAdjustments contains both codes
+        Assertions.assertNotNull(shv.getParties());
+        // Find the applicant party by partyID match
+        String applicantId = applicant1.getId().toString();
+        List<String> raList = shv.getParties().stream()
+            .filter(p -> applicantId.equals(p.getPartyID()))
+            .findFirst()
+            .orElseThrow(() -> new AssertionError("Applicant party not found"))
+            .getIndividualDetails()
+            .getReasonableAdjustments();
+
+        Assertions.assertTrue(raList.contains(RA0013), "reasonableAdjustments should contain RA0013");
+        Assertions.assertTrue(raList.contains(SM0002), "reasonableAdjustments should contain SM0002");
     }
 
 }
