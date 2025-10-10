@@ -40,19 +40,26 @@ import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HearingsDataServiceTest {
 
-    @InjectMocks private HearingsDataServiceImpl hearingservice;
+    @InjectMocks
+    private HearingsDataServiceImpl hearingservice;
 
-    @Mock private CaseApiService caseApiService;
+    @Mock
+    private CaseApiService caseApiService;
 
-    @Mock private CaseFlagV2DataServiceImpl caseFlagV2DataService;
+    @Mock
+    private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
-    @Mock private AuthTokenGenerator authTokenGenerator;
+    @Mock
+    private AuthTokenGenerator authTokenGenerator;
 
-    @Mock ResourceLoader resourceLoader;
+    @Mock
+    ResourceLoader resourceLoader;
 
-    @Mock private ElasticSearch elasticSearch;
+    @Mock
+    private ElasticSearch elasticSearch;
 
-    @Mock private Resource mockResource;
+    @Mock
+    private Resource mockResource;
 
     private InputStream inputStream;
 
@@ -63,12 +70,13 @@ class HearingsDataServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void shouldReturnHearingDetailsTest() throws IOException{
+    void shouldReturnHearingDetailsTest() throws IOException {
 
         ReflectionTestUtils.setField(
-                hearingservice,
-                "ccdBaseUrl",
-                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
 
         ReflectionTestUtils.setField(hearingservice, "resourceLoader", resourceLoader);
 
@@ -88,20 +96,23 @@ class HearingsDataServiceTest {
         caseDataMap.put("fl401ApplicantTable", applicantMap);
         caseDataMap.put("fl401RespondentTable", respondentMap);
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
-                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+            hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         Assertions.assertEquals("lastName and lastName", hearingsResponse.getPublicCaseName());
-        Assertions.assertEquals("https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/123#Case File View", hearingsResponse.getCaseDeepLink());
+        Assertions.assertEquals(
+            "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/123#Case File View",
+            hearingsResponse.getCaseDeepLink()
+        );
         Assertions.assertFalse(hearingsResponse.getCaseCategories().isEmpty());
 
     }
@@ -110,10 +121,10 @@ class HearingsDataServiceTest {
     void shouldReturnHearingDetailsTestForfl401() throws IOException {
 
         ReflectionTestUtils.setField(
-                hearingservice,
-                "ccdBaseUrl",
-                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
-
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
 
 
         Map<String, Object> caseDataMap = new HashMap<>();
@@ -121,19 +132,19 @@ class HearingsDataServiceTest {
         caseDataMap.put("caseTypeOfApplication", "FL401");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
 
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
 
         //changed test FPVTL-1305 as getCaseData calls the setCaseFlagsV2Data
         ServiceHearingValues hearingsResponse =
-                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+            hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         verify(caseFlagV2DataService, times(1)).setCaseFlagsV2Data(any(), any());
     }
@@ -141,25 +152,26 @@ class HearingsDataServiceTest {
     @Test
     void shouldReturnHearingDetailsTestForC100() throws IOException {
         ReflectionTestUtils.setField(
-                hearingservice,
-                "ccdBaseUrl",
-                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "C100");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
-                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+            hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
 
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         Assertions.assertEquals("Re-Minor", hearingsResponse.getPublicCaseName());
@@ -169,24 +181,25 @@ class HearingsDataServiceTest {
     @Test
     void shouldReturnHearingDetailsTestForOtherCases() throws IOException {
         ReflectionTestUtils.setField(
-                hearingservice,
-                "ccdBaseUrl",
-                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
         Map<String, Object> caseDataMap = new HashMap<>();
         caseDataMap.put("applicantCaseName", "PrivateLaw");
         caseDataMap.put("caseTypeOfApplication", "other");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues hearingsResponse =
-                hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
+            hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
     }
 
@@ -194,9 +207,10 @@ class HearingsDataServiceTest {
     @SuppressWarnings("unchecked")
     void shouldReturnHearingLinkDetailsTest() throws IOException {
         ReflectionTestUtils.setField(
-                hearingservice,
-                "ccdBaseUrl",
-                "https://manage-case.demo.platform.hmcts.net/cases/case-details/");
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
         LinkedHashMap reasonMap = new LinkedHashMap();
         reasonMap.put("Reason", "CLRC017");
 
@@ -220,25 +234,27 @@ class HearingsDataServiceTest {
         caseDataMap.put("applicantCaseName", "Test Case 1 DA 31");
         caseDataMap.put("caseLinks", caseLinksList);
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
 
         List<CaseDetails> cases = new ArrayList<>();
         cases.add(caseDetails);
         SearchResult searchResult = SearchResult.builder().cases(cases).build();
-        when(elasticSearch.searchCases(anyString(),
-                                       eq("{\"query\":{\"terms\":{\"boost\":null,\"reference\":[\"123\"]}},\"size\":null}"),
-                                       any(), any()))
-                .thenReturn(searchResult);
+        when(elasticSearch.searchCases(
+            anyString(),
+            eq("{\"query\":{\"terms\":{\"boost\":null,\"reference\":[\"123\"]}},\"size\":null}"),
+            any(), any()
+        ))
+            .thenReturn(searchResult);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
-                HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         List<HearingLinkData> lst =
-                hearingservice.getHearingLinkData(
-                        hearingValues, authorisation, serviceAuthorisation);
+            hearingservice.getHearingLinkData(
+                hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertFalse(lst.isEmpty());
         Assertions.assertEquals("Test Case 1 DA 31", lst.get(0).getCaseName());
         Assertions.assertNotNull(lst.get(0).getReasonsForLink());
