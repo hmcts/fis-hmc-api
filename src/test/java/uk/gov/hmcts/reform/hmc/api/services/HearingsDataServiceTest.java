@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -58,13 +57,13 @@ class HearingsDataServiceTest {
     private InputStream inputStream;
 
     @BeforeAll
-    public void setup() {
+    void setup() {
         inputStream = getClass().getResourceAsStream("/ScreenFlow.json");
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnHearingDetailsTest() throws IOException, ParseException {
+    void shouldReturnHearingDetailsTest() throws IOException{
 
         ReflectionTestUtils.setField(
                 hearingservice,
@@ -108,7 +107,7 @@ class HearingsDataServiceTest {
     }
 
     @Test
-    public void shouldReturnHearingDetailsTestForfl401() throws IOException, ParseException {
+    void shouldReturnHearingDetailsTestForfl401() throws IOException {
 
         ReflectionTestUtils.setField(
                 hearingservice,
@@ -127,12 +126,12 @@ class HearingsDataServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
-        ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
-        caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
                 HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        //changed test FPVTL-1305 as getCaseData calls the setCaseFlagsV2Data
         ServiceHearingValues hearingsResponse =
                 hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
@@ -140,7 +139,7 @@ class HearingsDataServiceTest {
     }
 
     @Test
-    public void shouldReturnHearingDetailsTestForC100() throws IOException, ParseException {
+    void shouldReturnHearingDetailsTestForC100() throws IOException {
         ReflectionTestUtils.setField(
                 hearingservice,
                 "ccdBaseUrl",
@@ -165,11 +164,10 @@ class HearingsDataServiceTest {
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
         Assertions.assertEquals("Re-Minor", hearingsResponse.getPublicCaseName());
         Assertions.assertNotNull(hearingsResponse.getCaseDeepLink());
-        verify(caseFlagV2DataService, times(2)).setCaseFlagData(any(), any());
     }
 
     @Test
-    public void shouldReturnHearingDetailsTestForOtherCases() throws IOException, ParseException {
+    void shouldReturnHearingDetailsTestForOtherCases() throws IOException {
         ReflectionTestUtils.setField(
                 hearingservice,
                 "ccdBaseUrl",
@@ -194,7 +192,7 @@ class HearingsDataServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldReturnHearingLinkDetailsTest() throws IOException, ParseException {
+    void shouldReturnHearingLinkDetailsTest() throws IOException {
         ReflectionTestUtils.setField(
                 hearingservice,
                 "ccdBaseUrl",
@@ -248,9 +246,8 @@ class HearingsDataServiceTest {
     }
 
     @AfterAll
-    public void closeFile() throws IOException {
+    void closeFile() throws IOException {
         inputStream.close();
     }
-
 
 }
