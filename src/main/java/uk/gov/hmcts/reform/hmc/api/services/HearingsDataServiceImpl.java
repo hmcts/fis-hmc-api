@@ -91,7 +91,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     private final CaseFlagV2DataServiceImpl caseFlagV2DataService;
     private final ElasticSearch elasticSearch;
     private final AuthTokenGenerator authTokenGenerator;
-    private final LaunchDarklyClient launchDarklyClient;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
