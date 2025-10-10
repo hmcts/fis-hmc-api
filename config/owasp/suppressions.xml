@@ -9,11 +9,6 @@
     <cve>CVE-2025-48734</cve> <!-- beanUtils-1.9.4.jar -->
   </suppress>
 
-  <suppress>
-    <!--azure-->
-    <cve>CVE-2023-36052</cve>
-    <cve>CVE-2024-43591</cve>
-  </suppress>
   <!-- Suppress CVE-2024-38820 across all spring-* artifacts -->
   <suppress>
     <notes>
@@ -22,20 +17,9 @@
     </notes>
     <cve>CVE-2024-38820</cve>
   </suppress>
-  <suppress>
-    <notes><![CDATA[file name: tomcat-embed-core-9.0.104.jar]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-core@.*$</packageUrl>
-    <cve>CVE-2025-48988</cve>
-  </suppress>
-  <suppress>
-    <notes><![CDATA[file name: tomcat-embed-websocket-9.0.104.jar]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.apache\.tomcat\.embed/tomcat\-embed\-websocket@.*$</packageUrl>
-    <cve>CVE-2025-48988</cve>
-  </suppress>
 
   <suppress until="2025-11-30">
     <notes>Temporary to unblock pipeline</notes>
-    <cve>CVE-2025-48976</cve> <!-- commons-fileupload-1.5.jar -->
     <cve>CVE-2025-48924</cve> <!-- commons-lang3-3.12.0.jar -->
   </suppress>
 
