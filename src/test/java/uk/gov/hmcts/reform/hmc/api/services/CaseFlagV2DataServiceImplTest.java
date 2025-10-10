@@ -401,7 +401,7 @@ class CaseFlagV2DataServiceImplTest {
         // Applicant #1 external: caApplicant1ExternalFlags
         // Respondent #1 internal: caRespondent1InternalFlags
         Flags applicantActive = flagsWith("Applicant One", PF0002, "Active");
-        Flags respondentRequested = flagsWith("Respondent One", PF0020, "Requested"); // should be filtered OUT
+        Flags respondentRequested = flagsWith("Respondent One", PF0020, "Requested");
 
         caseData.put("caApplicant1ExternalFlags", applicantActive);
         caseData.put("caRespondent1InternalFlags", respondentRequested);
@@ -466,7 +466,8 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertNotNull(shv.getCaseFlags());
         Assertions.assertTrue(
             shv.getCaseFlags().getFlags().stream()
-                .anyMatch(f -> PF0021.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+                .anyMatch(f -> PF0021.equals(f.getFlagId())
+                    && "Active".equalsIgnoreCase(f.getFlagStatus())),
             "PF0021 Active should be included in case flags"
         );
     }
