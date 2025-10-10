@@ -58,9 +58,6 @@ class HearingsDataServiceTest {
 
     private InputStream inputStream;
 
-    @Mock
-    LaunchDarklyClient launchDarklyClient;
-
     @BeforeAll
     public void setup() {
         inputStream = getClass().getResourceAsStream("/ScreenFlow.json");
@@ -133,8 +130,6 @@ class HearingsDataServiceTest {
                 .thenReturn(caseDetails);
         ServiceHearingValues serviceHearingValues = ServiceHearingValues.hearingsDataWith().build();
         caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
-        when(launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")).thenReturn(true);
-
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
         HearingValues hearingValues =
@@ -160,7 +155,6 @@ class HearingsDataServiceTest {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
                 .thenReturn(caseDetails);
-        when(launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")).thenReturn(false);
 
         String authorisation = "xyz";
         String serviceAuthorisation = "xyz";
