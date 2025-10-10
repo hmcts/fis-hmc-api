@@ -76,7 +76,7 @@ public class ServiceBusConfiguration {
 
     @Bean
     @Profile("!test")
-    public ServiceBusProcessorClient serviceBusProcessorClient() throws URISyntaxException{
+    public ServiceBusProcessorClient serviceBusProcessorClient() throws URISyntaxException {
         URI endpoint = new URI("sb://" + host);
         String connectionString = "Endpoint=" + endpoint + "/"
             + ";SharedAccessKeyName=" + sharedAccessKeyName
