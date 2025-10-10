@@ -189,13 +189,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                                         : null)
                         .hearingChannels(Arrays.asList())
                         .build();
-        if (launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")) {
-            log.info("Case flags V2 flag is enabled");
+
             caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
-        } else {
-            log.info("Case flags V2 flag is disabled");
-            caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
-        }
+
         return serviceHearingValues;
     }
 
