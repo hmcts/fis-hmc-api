@@ -16,9 +16,4 @@
     <cve>CVE-2024-38820</cve>
   </suppress>
 
-  <suppress until="2025-11-30">
-    <notes>Temporary to unblock pipeline</notes>
-    <cve>CVE-2025-48924</cve> <!-- commons-lang3-3.12.0.jar -->
-  </suppress>
-
 </suppressions>
