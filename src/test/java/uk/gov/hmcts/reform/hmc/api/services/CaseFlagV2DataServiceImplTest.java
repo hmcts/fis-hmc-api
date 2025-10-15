@@ -494,7 +494,7 @@ class CaseFlagV2DataServiceImplTest {
             .ofNullable(shv.getCaseAdditionalSecurityFlag())
             .orElse(false);
 
-        Assertions.assertFalse(security, "PF0021 Requested should NOT set caseAdditionalSecurityFlag");  // depending on your ACTIVE-only filtering, PF0021 Requested may also be absent from flags:
+        Assertions.assertFalse(security, "PF0021 Requested should NOT set caseAdditionalSecurityFlag");
         if (shv.getCaseFlags() != null) {
             Assertions.assertTrue(
                 shv.getCaseFlags().getFlags().stream().noneMatch(f -> PF0021.equals(f.getFlagId())),
@@ -525,9 +525,13 @@ class CaseFlagV2DataServiceImplTest {
         // 1) Top-level flags contain both codes
         Assertions.assertNotNull(shv.getCaseFlags());
         List<PartyFlagsModel> out = shv.getCaseFlags().getFlags();
-        Assertions.assertTrue(out.stream().anyMatch(f -> RA0013.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+        Assertions.assertTrue(out.stream()
+                                  .anyMatch(f -> RA0013.equals(f.getFlagId())
+                                      && "Active".equalsIgnoreCase(f.getFlagStatus())),
                               "RA0013 Active should be present in caseFlags.flags");
-        Assertions.assertTrue(out.stream().anyMatch(f -> SM0002.equals(f.getFlagId()) && "Active".equalsIgnoreCase(f.getFlagStatus())),
+        Assertions.assertTrue(out.stream()
+                                  .anyMatch(f -> SM0002.equals(f.getFlagId())
+                                      && "Active".equalsIgnoreCase(f.getFlagStatus())),
                               "SM0002 Active should be present in caseFlags.flags");
 
         // 2) Derived party reasonableAdjustments contains both codes
