@@ -533,6 +533,18 @@ class HearingsServiceTest {
     }
 
     @Test
+    void shouldReturnEmptyListIfNoHearings() {
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+            .thenReturn(List.of());
+        List<Hearings> hearingsResponse = hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(List.of("test"),
+                                                                                     "Auth", "sauth");
+        Assertions.assertTrue(hearingsResponse.isEmpty());
+    }
+
+    @Test
     void shouldReturnEmptyMapNoFeignExceptionTest() {
         when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
             .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
