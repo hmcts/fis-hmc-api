@@ -35,7 +35,7 @@ public interface PrlUpdateApi {
 
     @RequestMapping(
             method = RequestMethod.PUT,
-            value = "/hearing-management-next-hearing-date-update/",
+            value = "/hearing-management-next-hearing-date-update",
             headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
     ResponseEntity prlNextHearingDateUpdate(
             @RequestHeader(AUTHORIZATION) String authorization,
