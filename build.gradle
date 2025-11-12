@@ -347,7 +347,7 @@ dependencyManagement {
       entry 'netty-transport-native-kqueue'
       entry 'netty-transport-native-unix-common'
     }
-    dependencySet(group: 'commons-fileupload', version: '1.5') {
+    dependencySet(group: 'commons-fileupload', version: '1.6.0') {
       entry 'commons-fileupload'
     }
     dependencySet(group: 'io.projectreactor.netty', version: '1.1.23') {
@@ -442,12 +442,16 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.56.0'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.14'
-  implementation group: 'com.microsoft.azure', name: 'azure-servicebus', version: '3.6.7'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.17'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+
+  implementation group: 'org.apache.tika', name: 'tika-core', version: '3.2.3'
+  // pin specific version of beanutils as pact not updated
+  implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.11.0'
+  // pin due to CVE-2025-489
+  implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.18.0'
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.111'
-  implementation group: 'org.apache.tika', name: 'tika-core', version: '2.9.4'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
   implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.3'
 
