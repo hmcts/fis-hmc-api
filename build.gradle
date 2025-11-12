@@ -301,7 +301,7 @@ dependencyManagement {
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.20.0'
+      version: '2.20.1'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
