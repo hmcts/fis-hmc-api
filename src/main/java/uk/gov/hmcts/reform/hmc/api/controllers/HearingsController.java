@@ -424,6 +424,7 @@ public class HearingsController {
     }
 
     private ResponseEntity<Object> handleException(Exception exception) {
+        log.error("error when processing request", exception);
         if (exception instanceof AuthorizationException || exception instanceof ResponseStatusException) {
             return status(UNAUTHORIZED).body(new ApiError(exception.getMessage()));
         } else if (exception instanceof FeignException feignException) {
