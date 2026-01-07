@@ -5,6 +5,7 @@
     <cve>CVE-2024-22259</cve> <!-- spring-5.3.27.jar -->
     <cve>CVE-2024-38820</cve> <!-- spring-5.3.27.jar -->
     <cve>CVE-2024-38808</cve> <!-- spring-5.3.27.jar -->
+    <cve>CVE-2025-67735</cve>
   </suppress>
 
   <!-- Suppress CVE-2024-38820 across all spring-* artifacts -->
