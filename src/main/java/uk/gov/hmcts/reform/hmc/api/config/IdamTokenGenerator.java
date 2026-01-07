@@ -16,6 +16,8 @@ import static uk.gov.hmcts.reform.hmc.api.config.CacheConfiguration.REF_DATA_USE
 @EnableCaching
 public class IdamTokenGenerator {
 
+    public static final String REF_DATA_USER_TOKEN_CACHE_KEY = "refDataUserToken";
+
     @Value("${idam.refDataUserAuth.username}")
     private String refDataUserName;
 
