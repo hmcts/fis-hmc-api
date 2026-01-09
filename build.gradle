@@ -375,7 +375,7 @@ dependencyManagement {
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.5.7'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
-    dependencySet(group: 'org.apache.commons', version: '1.27.1') {
+    dependencySet(group: 'org.apache.commons', version: '1.28.0') {
       entry 'commons-compress'
     }
     dependencySet(group: 'io.ktor', version: '2.3.13') {
