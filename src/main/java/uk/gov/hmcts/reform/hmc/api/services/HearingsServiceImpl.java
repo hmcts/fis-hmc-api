@@ -1,9 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -192,7 +192,7 @@ public class HearingsServiceImpl implements HearingsService {
                 try {
                     List<CaseHearing> filteredHearings = hearing.getCaseHearings();
                     log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
-                    if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
+                    if (ObjectUtils.isNotEmpty(hearingStatesToBeExcluded)) {
                         filteredHearings = filteredHearings.stream()
                                 .filter(
                                     eachHearing ->
@@ -240,7 +240,7 @@ public class HearingsServiceImpl implements HearingsService {
             hearingApiClient.getListOfHearingDetails(
                 userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         log.info("returning total count of hearings: {}", hearingDetailsList.size());
-        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+        if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
             List<String> returnedCaseIds = new ArrayList<>();
             hearingDetailsList.forEach(hearingList -> returnedCaseIds.add(hearingList.getCaseRef()));
@@ -300,7 +300,7 @@ public class HearingsServiceImpl implements HearingsService {
             log.error("Hearing api call Exception exception {}", exception.getMessage());
         }
         Map<String, List<String>> caseIdHearingIdMap = new HashMap<>();
-        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+        if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing details retrieved from hmc");
             List<String> validHearingIds = new ArrayList<>();
             for (var caseWithHearings : hearingDetailsList) {
@@ -324,7 +324,7 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     private boolean isHearingScheduledToday(CaseHearing hearing) {
-        return CollectionUtils.isNotEmpty(hearing.getHearingDaySchedule())
+        return ObjectUtils.isNotEmpty(hearing.getHearingDaySchedule())
             && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> LocalDate.now()
             .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
     }
