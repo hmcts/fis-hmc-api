@@ -38,6 +38,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.NO;
 
@@ -162,7 +163,12 @@ class AutomateHearingServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
-        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+        when(hearingApiClient.createHearingDetails(any(),
+                                                   any(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   any()))
             .thenReturn(response);
 
         getHearingData(HearingData.builder()
@@ -249,8 +255,14 @@ class AutomateHearingServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
-        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+        when(hearingApiClient.createHearingDetails(any(),
+                                                   any(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   any()))
             .thenReturn(response);
+
 
         getHearingData(HearingData.builder()
                            .hearingTypes(dynamicList)
@@ -310,8 +322,14 @@ class AutomateHearingServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
-        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+        when(hearingApiClient.createHearingDetails(any(),
+                                                   any(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   any()))
             .thenReturn(response);
+
 
         getHearingData(HearingData.builder()
                            .hearingTypes(dynamicList)
@@ -369,8 +387,14 @@ class AutomateHearingServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn(SERVICE_AUTH_TOKEN);
         when(authTokenGenerator.generate()).thenReturn(AUTHORIZATION_TOKEN);
-        when(hearingApiClient.createHearingDetails(any(), any(), any()))
+        when(hearingApiClient.createHearingDetails(any(),
+                                                   any(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   anyString(),
+                                                   any()))
             .thenReturn(response);
+
 
         getHearingData(HearingData.builder()
                            .hearingTypes(dynamicList)

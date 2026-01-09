@@ -54,6 +54,13 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
 
+    @Value("${hearing_component.api.deployment-id:#{null}}")
+    private String hmctsDeploymentId;
+    @Value("${role-assignment.api.url:#{null}}")
+    private String roleAssignmentUrl;
+    @Value("${core_case_data.api.url:#{null}}")
+    private String dataStoreUrl;
+
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamTokenGenerator idamTokenGenerator;
     private final RefDataService refDataService;
@@ -497,6 +504,9 @@ public class HearingsServiceImpl implements HearingsService {
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,
+            hmctsDeploymentId,
+            dataStoreUrl,
+            roleAssignmentUrl,
             hearingRequest
         );
         return HearingResponse.builder()
