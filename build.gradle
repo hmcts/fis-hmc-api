@@ -456,7 +456,7 @@ dependencies {
   implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.112'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
   implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.3'
-  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.0'
+  implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.3'
 
   implementation 'org.projectlombok:lombok:1.18.42'
   annotationProcessor 'org.projectlombok:lombok:1.18.42'
