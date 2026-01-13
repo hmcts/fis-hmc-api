@@ -83,7 +83,7 @@ class HearingsServiceTest {
                                                 anyString(),
                                                 anyString(),
                                                 anyString(),
-                                                "123"))
+                                                eq("123")))
             .thenReturn(caseHearings);
         Hearings response = hearingsService.getHearingsByCaseRefNo("123", "", "");
         Assertions.assertNotNull(response);
