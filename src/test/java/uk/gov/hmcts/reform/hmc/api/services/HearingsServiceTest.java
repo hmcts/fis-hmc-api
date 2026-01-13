@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
@@ -77,8 +78,8 @@ class HearingsServiceTest {
                 .build();
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN",
-                                                "MOCK_S2S_TOKEN",
+        when(hearingApiClient.getHearingDetails(eq("MOCK_AUTH_TOKEN"),
+                                                eq("MOCK_S2S_TOKEN"),
                                                 anyString(),
                                                 anyString(),
                                                 anyString(),
@@ -133,12 +134,12 @@ class HearingsServiceTest {
         when(refDataJudicialService.getJudgeDetails("4925644"))
             .thenReturn(JudgeDetail.judgeDetailWith().hearingJudgeName("JudgeA").build());
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
-        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN",
-                                                "MOCK_S2S_TOKEN",
+        when(hearingApiClient.getHearingDetails(eq("MOCK_AUTH_TOKEN"),
+                                                eq("MOCK_S2S_TOKEN"),
                                                 anyString(),
                                                 anyString(),
                                                 anyString(),
-                                                "123"))
+                                                eq("123")))
             .thenReturn(caseHearings);
         Hearings hearings = hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
         Assertions.assertNotNull(hearings);
