@@ -85,8 +85,11 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Fetching hearings for casereference received from cos api - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
             caseHearingsResponse = hearingApiClient.getHearingDetails(idamTokenGenerator.generateIdamTokenForHearingCftData(),
-                            s2sToken,
-                            caseReference);
+                                                                      s2sToken,
+                                                                      hmctsDeploymentId,
+                                                                      dataStoreUrl,
+                                                                      roleAssignmentUrl,
+                                                                      caseReference);
             log.info("Fetch hearings call completed successfully");
 
             integrateVenueDetails(caseHearingsResponse);
@@ -186,7 +189,12 @@ public class HearingsServiceImpl implements HearingsService {
             final String s2sToken = authTokenGenerator.generate();
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
-                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()),
+                            userToken,
+                            s2sToken,
+                            hmctsDeploymentId,
+                            dataStoreUrl,
+                            roleAssignmentUrl,
+                            new ArrayList<>(caseIdWithRegionIdMap.keySet()),
                             ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
             for (var hearing : hearingDetailsList) {
                 try {
@@ -238,7 +246,13 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
-                userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
+                userToken,
+                s2sToken,
+                hmctsDeploymentId,
+                dataStoreUrl,
+                roleAssignmentUrl,
+                listOfCaseIds,
+                ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
         log.info("returning total count of hearings: {}", hearingDetailsList.size());
         if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
@@ -294,8 +308,13 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList = new ArrayList<>();
         try {
-            hearingDetailsList.addAll(hearingApiClient.getListOfHearingDetails(userToken, s2sToken, listOfCaseIds,
-                                                                                     ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE));
+            hearingDetailsList.addAll(hearingApiClient.getListOfHearingDetails(userToken,
+                                                                               s2sToken,
+                                                                               hmctsDeploymentId,
+                                                                               dataStoreUrl,
+                                                                               roleAssignmentUrl,
+                                                                               listOfCaseIds,
+                                                                               ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE));
         } catch (Exception exception) {
             log.error("Hearing api call Exception exception {}", exception.getMessage());
         }
@@ -444,7 +463,12 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         Hearings futureHearingsResponse = null;
         try {
-            Hearings hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
+            Hearings hearingDetails = hearingApiClient.getHearingDetails(userToken,
+                                                                         s2sToken,
+                                                                         hmctsDeploymentId,
+                                                                         dataStoreUrl,
+                                                                         roleAssignmentUrl,
+                                                                         caseReference);
 
             final List<String> hearingStatuses =
                     futureHearingStatusList.stream().map(String::trim).toList();

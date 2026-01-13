@@ -30,6 +30,9 @@ public interface HearingApiClient {
     Hearings getHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(value = HMCTS_DEPLOYMENT_ID, required = false) String hmctsDeploymentId,
+            @RequestHeader(value = DATA_STORE_URL, required = false) String dataStoreUrl,
+            @RequestHeader(value = ROLE_ASSIGNMENT_URL, required = false) String roleAssignmentUrl,
             @PathVariable("caseReference") String caseReference);
 
 
@@ -37,6 +40,9 @@ public interface HearingApiClient {
     List<Hearings> getListOfHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(value = HMCTS_DEPLOYMENT_ID, required = false) String hmctsDeploymentId,
+            @RequestHeader(value = DATA_STORE_URL, required = false) String dataStoreUrl,
+            @RequestHeader(value = ROLE_ASSIGNMENT_URL, required = false) String roleAssignmentUrl,
             @RequestParam("ccdCaseRefs") List<String> ccdCaseRefs,
             @RequestParam("caseTypeId") String caseTypeId);
 
