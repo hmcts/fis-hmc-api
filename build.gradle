@@ -312,7 +312,7 @@ dependencyManagement {
     ) {
       entry 'jackson-module-parameter-names'
     }
-    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.79'
+    dependency group: 'org.bouncycastle', name: 'bcpkix-jdk18on', version: '1.83'
     // CVE-2018-10237 - Unbounded memory allocation
     // CVE-2023-2976 fix
     dependencySet(group: 'com.google.guava', version: '32.1.3-jre') {
