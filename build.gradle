@@ -370,7 +370,7 @@ dependencyManagement {
     dependencySet(group: 'commons-io', version: '2.21.0') {
       entry 'commons-io'
     }
-    dependency group: 'org.yaml',name: 'snakeyaml', version: '2.3'
+    dependency group: 'org.yaml',name: 'snakeyaml', version: '2.5'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.5.7'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
