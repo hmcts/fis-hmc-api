@@ -22,7 +22,7 @@ plugins {
   id 'org.sonarqube' version '3.5.0.2730'
   id 'idea'
   id 'hmcts.ccd.sdk' version '0.27.3'
-  id 'au.com.dius.pact' version '4.1.7'
+  id 'au.com.dius.pact' version '4.6.19'
   id 'info.solidsoft.pitest' version '1.15.0'
 }
 
