@@ -461,16 +461,16 @@ dependencies {
   implementation 'org.projectlombok:lombok:1.18.42'
   annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
-  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.8.2"
+  testRuntimeOnly "org.junit.platform:junit-platform-commons:1.14.2"
 
-  testImplementation('org.junit.jupiter:junit-jupiter:5.9.2')
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+  testImplementation('org.junit.jupiter:junit-jupiter:5.14.2')
+  testImplementation 'org.junit.jupiter:junit-jupiter-api:5.14.2'
 
-  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.2"
+  contractTestImplementation("org.junit.jupiter:junit-jupiter-api:5.14.2")
+  contractTestRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.2")
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.14.2"
   testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
-  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.9.2')
+  contractTestImplementation('org.junit.jupiter:junit-jupiter-api:5.14.2')
 
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath
@@ -485,7 +485,7 @@ dependencies {
   testAnnotationProcessor 'org.projectlombok:lombok:1.18.42'
   implementation group: 'io.rest-assured', name: 'rest-assured'
   implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
-  testImplementation(platform('org.junit:junit-bom:5.8.2'))
+  testImplementation(platform('org.junit:junit-bom:5.14.2'))
   testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', {
     exclude group: 'junit', module: 'junit'
