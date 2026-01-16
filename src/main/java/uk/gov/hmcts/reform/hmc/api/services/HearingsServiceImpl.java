@@ -18,7 +18,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -123,7 +122,7 @@ public class HearingsServiceImpl implements HearingsService {
                         log.info("judgeId {}", judgeId);
                         setHearingSchedule(hearingSchedule, venueId);
 
-                        setHearingJudgeName(hearingSchedule, judgeId);
+                        // setHearingJudgeName(hearingSchedule, judgeId);
                     }
                 }
             }
@@ -145,6 +144,7 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
+    /*
     private void setHearingJudgeName(HearingDaySchedule hearingSchedule, String judgeId) {
         if (null != judgeId) {
             log.info("judgeId==> {}", judgeId);
@@ -156,6 +156,7 @@ public class HearingsServiceImpl implements HearingsService {
             }
         }
     }
+    */
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.

@@ -138,7 +138,7 @@ class HearingsServiceTest {
         Assertions.assertEquals("venueAddressTest", hearingDayScheduleResponse.getHearingVenueAddress());
         Assertions.assertEquals("TEST", hearingDayScheduleResponse.getHearingVenueName());
         Assertions.assertEquals("venueLocationCode", hearingDayScheduleResponse.getHearingVenueLocationCode());
-        Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
+        // Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
         Assertions.assertEquals("LISTED", hearings.getCaseHearings().get(0).getHmcStatus());
         Assertions.assertEquals(1, hearings.getCaseHearings().size());
     }
