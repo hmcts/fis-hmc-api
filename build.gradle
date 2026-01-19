@@ -294,21 +294,21 @@ dependencyManagement {
   dependencies {
     dependencySet(
       group: 'com.fasterxml.jackson.core',
-      version: '2.18.2'
+      version: '2.21.0'
     ) {
       entry 'jackson-core'
       entry 'jackson-databind'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.datatype',
-      version: '2.20.1'
+      version: '2.21.0'
     ) {
       entry 'jackson-datatype-jdk8'
       entry 'jackson-datatype-jsr310'
     }
     dependencySet(
       group: 'com.fasterxml.jackson.module',
-      version: '2.20.1'
+      version: '2.21.0'
     ) {
       entry 'jackson-module-parameter-names'
     }
@@ -373,8 +373,8 @@ dependencyManagement {
     dependency group: 'org.yaml',name: 'snakeyaml', version: '2.5'
     //CVE-2023-34034
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.5.7'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.21.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.21.0'
     dependencySet(group: 'org.apache.commons', version: '1.28.0') {
       entry 'commons-compress'
     }
@@ -409,8 +409,8 @@ dependencyManagement {
       entry 'okio-jvm'
     }
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.8.16'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
-    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.21.0'
+    dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.21.0'
   }
 }
 dependencies {
@@ -427,9 +427,9 @@ dependencies {
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '6.3.0'
   implementation('org.springframework.retry:spring-retry')
 
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2')
-  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.18.2')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.21.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.21.0')
+  implementation(group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.21')
   implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4JVersion
   implementation group: 'org.apache.logging.log4j', name: 'log4j-to-slf4j', version: log4JVersion
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.10'
