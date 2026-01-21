@@ -5,6 +5,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
@@ -77,7 +78,12 @@ class HearingsServiceTest {
                 .build();
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN", "MOCK_S2S_TOKEN", "123"))
+        when(hearingApiClient.getHearingDetails(eq("MOCK_AUTH_TOKEN"),
+                                                eq("MOCK_S2S_TOKEN"),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                eq("123")))
             .thenReturn(caseHearings);
         Hearings response = hearingsService.getHearingsByCaseRefNo("123", "", "");
         Assertions.assertNotNull(response);
@@ -128,7 +134,12 @@ class HearingsServiceTest {
         when(refDataJudicialService.getJudgeDetails("4925644"))
             .thenReturn(JudgeDetail.judgeDetailWith().hearingJudgeName("JudgeA").build());
         when(refDataService.getCourtDetails("231596")).thenReturn(courtDetail);
-        when(hearingApiClient.getHearingDetails("MOCK_AUTH_TOKEN", "MOCK_S2S_TOKEN", "123"))
+        when(hearingApiClient.getHearingDetails(eq("MOCK_AUTH_TOKEN"),
+                                                eq("MOCK_S2S_TOKEN"),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                eq("123")))
             .thenReturn(caseHearings);
         Hearings hearings = hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
         Assertions.assertNotNull(hearings);
@@ -193,7 +204,13 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
                 .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -266,7 +283,13 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -325,7 +348,13 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -384,7 +413,13 @@ class HearingsServiceTest {
         when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
             .thenReturn(List.of(caseHearings));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
@@ -445,7 +480,12 @@ class HearingsServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getHearingDetails(anyString(),
+                                                any(),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                any()))
                 .thenReturn(caseHearings);
 
         Hearings hearingsResponse = hearingsService.getFutureHearings("testCaseRefNo");
@@ -456,7 +496,12 @@ class HearingsServiceTest {
     void shouldReturnAllFutureHearingsByCaseRefNoFeignExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getHearingDetails(anyString(), any(), any()))
+        when(hearingApiClient.getHearingDetails(anyString(),
+                                                any(),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                any()))
                 .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         Assertions.assertNull(hearingsService.getFutureHearings(""));
@@ -466,7 +511,12 @@ class HearingsServiceTest {
     void shouldReturnAllFutureHearingsByCaseRefNoAuthExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getHearingDetails(any(), any(), any()))
+        when(hearingApiClient.getHearingDetails(any(),
+                                                any(),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                any()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
@@ -475,7 +525,12 @@ class HearingsServiceTest {
     void shouldReturnAllFutureHearingsByCaseRefNoExceptionTest() {
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(hearingApiClient.getHearingDetails(any(), any(), any()))
+        when(hearingApiClient.getHearingDetails(any(),
+                                                any(),
+                                                anyString(),
+                                                anyString(),
+                                                anyString(),
+                                                any()))
                 .thenThrow(new RuntimeException());
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
@@ -517,7 +572,13 @@ class HearingsServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
             .thenReturn(List.of(caseHearings));
 
         List<Hearings> hearingsResponse = hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(List.of("test"),
@@ -537,7 +598,13 @@ class HearingsServiceTest {
         when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
 
-        when(hearingApiClient.getListOfHearingDetails(anyString(), any(), any(), anyString()))
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
             .thenReturn(List.of());
         List<Hearings> hearingsResponse = hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(List.of("test"),
                                                                                      "Auth", "sauth");
@@ -546,7 +613,13 @@ class HearingsServiceTest {
 
     @Test
     void shouldReturnEmptyMapNoFeignExceptionTest() {
-        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(any(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      any()))
             .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         Assertions.assertTrue(hearingsService
@@ -557,7 +630,13 @@ class HearingsServiceTest {
 
     @Test
     void shouldReturnNoFeignExceptionTest() {
-        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(any(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      any()))
             .thenThrow(HttpClientErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway", null,
                                                        null, null));
         Map<String, List<String>> response = hearingsService
@@ -568,7 +647,13 @@ class HearingsServiceTest {
 
     @Test
     void shouldReturnGeneralExceptionTest() {
-        when(hearingApiClient.getListOfHearingDetails(any(), any(), any(), any()))
+        when(hearingApiClient.getListOfHearingDetails(any(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      any()))
             .thenThrow(new RuntimeException());
         Map<String, List<String>> response = hearingsService
             .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),

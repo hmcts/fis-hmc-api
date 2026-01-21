@@ -89,6 +89,10 @@ core_case_data:
   api:
     url: ${CASE_DATA_STORE_BASEURL:http://ccd-data-store-api-aat.service.core-compute-aat.internal}
 
+role-assignment:
+  api:
+    url: ${ROLE_ASSIGNMENT_SERVICE_URL:}
+
 ccd:
   ui:
     url: ${CCD_UI_URL:https://manage-case.aat.platform.hmcts.net/cases/case-details/}
@@ -100,6 +104,7 @@ hearing_component:
   api:
     url: ${HMC_CFT_HEARING_BASEURL:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/hearings/}
     feign-url: ${HMC_CFT_HEARING_BASEURL_FOR_FEIGN:http://hmc-cft-hearing-service-demo.service.core-compute-demo.internal/}
+    deployment-id: ${HMC_DEPLOYMENT_ID:}
   futureHearingStatus: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, CANCELLATION_REQUESTED, CANCELLATION_SUBMITTED, AWAITING_ACTUALS
   futureHearingStatusForNonCancel: HEARING_REQUESTED, AWAITING_LISTING, LISTED, UPDATE_REQUESTED, UPDATE_SUBMITTED, EXCEPTION, AWAITING_ACTUALS
   familyCourtIds: 10, 18, 25
