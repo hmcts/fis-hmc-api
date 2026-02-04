@@ -21,11 +21,18 @@ import java.util.concurrent.TimeoutException;
         url = "${hearing_component.api.feign-url}",
         configuration = FeignClientProperties.FeignClientConfiguration.class)
 public interface HearingApiClient {
+    String SERVICE_AUTHORIZATION = "ServiceAuthorization";
+    String ROLE_ASSIGNMENT_URL = "Role-Assignment-Url";
+    String DATA_STORE_URL = "Data-Store-Url";
+    String HMCTS_DEPLOYMENT_ID = "hmctsDeploymentId";
 
     @GetMapping(path = "/hearings/{caseReference}")
     Hearings getHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(value = HMCTS_DEPLOYMENT_ID, required = false) String hmctsDeploymentId,
+            @RequestHeader(value = DATA_STORE_URL, required = false) String dataStoreUrl,
+            @RequestHeader(value = ROLE_ASSIGNMENT_URL, required = false) String roleAssignmentUrl,
             @PathVariable("caseReference") String caseReference);
 
 
@@ -33,6 +40,9 @@ public interface HearingApiClient {
     List<Hearings> getListOfHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(value = HMCTS_DEPLOYMENT_ID, required = false) String hmctsDeploymentId,
+            @RequestHeader(value = DATA_STORE_URL, required = false) String dataStoreUrl,
+            @RequestHeader(value = ROLE_ASSIGNMENT_URL, required = false) String roleAssignmentUrl,
             @RequestParam("ccdCaseRefs") List<String> ccdCaseRefs,
             @RequestParam("caseTypeId") String caseTypeId);
 
@@ -42,6 +52,9 @@ public interface HearingApiClient {
     HearingResponse createHearingDetails(
             @RequestHeader("Authorization") String authorisation,
             @RequestHeader("ServiceAuthorization") String serviceAuthorization,
+            @RequestHeader(value = HMCTS_DEPLOYMENT_ID, required = false) String hmctsDeploymentId,
+            @RequestHeader(value = DATA_STORE_URL, required = false) String dataStoreUrl,
+            @RequestHeader(value = ROLE_ASSIGNMENT_URL, required = false) String roleAssignmentUrl,
             @RequestBody AutomatedHearingRequest hearingRequest);
 
 }
