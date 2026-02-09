@@ -1,7 +1,9 @@
 package uk.gov.hmcts.reform.hmc.api.clients;
 
+import static org.springframework.http.HttpHeaders.ACCEPT;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static uk.gov.hmcts.reform.hmc.api.services.RefDataJudicialApi.CONTENT_TYPE_V2;
 
 import org.json.simple.JSONObject;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -25,7 +27,7 @@ public interface RefDataJudgeApi {
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/refdata/judicial/users",
-            headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
+            headers = {CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE, ACCEPT + "=" + CONTENT_TYPE_V2})
     JSONObject getJudgeDetails(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
