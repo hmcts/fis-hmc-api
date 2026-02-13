@@ -1,24 +1,24 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.LACKING_CAPACITY;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.LANGUAGE_INTERPRETER;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.POTENTIALLY_VIOLENT_PERSON;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.SCREENING_WITNESS_FROM_ACCUSED;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.SIGN_LANGUAGE_INTERPRETER;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.UNACCEPTABLE_DISRUPTIVE_CUSTOMER_BEHAVIOUR;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.UNACCOMPANIED_MINOR;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.VULNERABLE_USER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTING_COMMENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0007;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0021;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TWO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -275,8 +275,8 @@ public class CaseFlagDataServiceImpl {
         return curPartyFlagsModelList.stream()
             .filter(
                 eachPartyFlag ->
-                    eachPartyFlag.getFlagId().equals(RA0042)
-                        || eachPartyFlag.getFlagId().equals(PF0015))
+                    eachPartyFlag.getFlagId().equals(SIGN_LANGUAGE_INTERPRETER.getFlagCode())
+                        || eachPartyFlag.getFlagId().equals(LANGUAGE_INTERPRETER.getFlagCode()))
             .distinct()
             .toList();
     }
@@ -288,7 +288,8 @@ public class CaseFlagDataServiceImpl {
                 .map(PartyFlagsModel::getFlagId)
                 .filter(
                     eachFlag ->
-                        eachFlag.equals(RA0042) || eachFlag.equals(PF0015))
+                        eachFlag.equals(SIGN_LANGUAGE_INTERPRETER.getFlagCode())
+                            || eachFlag.equals(LANGUAGE_INTERPRETER.getFlagCode()))
                 .distinct()
                 .toList()
                 .size()
@@ -336,7 +337,7 @@ public class CaseFlagDataServiceImpl {
         return partyFlagsModelList;
     }
 
-    protected static List<String> getReasonableAdjustmentsByParty(
+    public static List<String> getReasonableAdjustmentsByParty(
         List<Element<FlagDetail>> flagsDetailOfCurrParty) {
 
         return flagsDetailOfCurrParty.stream()
@@ -356,31 +357,30 @@ public class CaseFlagDataServiceImpl {
         return partiesFlagsModelList.stream()
             .anyMatch(f ->
                           "Active".equalsIgnoreCase(f.getFlagStatus())
-                              && (PF0007.equals(f.getFlagId()) || PF0021.equals(f.getFlagId()))
+                              && (UNACCEPTABLE_DISRUPTIVE_CUSTOMER_BEHAVIOUR.getFlagCode().equals(f.getFlagId())
+                              || POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(f.getFlagId()))
             );
     }
 
 
-    protected static Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
-
+    public static Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
         return flagsDetailOfCurrParty.stream()
             .anyMatch(
                 partyFlag ->
-                    partyFlag.getValue().getFlagCode().equals(PF0002)
-                        || PF0013.equals(partyFlag.getValue().getFlagCode())
-                        || PF0018.equals(partyFlag.getValue().getFlagCode())
-                        || SM0002.equals(partyFlag.getValue().getFlagCode()));
+                    VULNERABLE_USER.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || UNACCOMPANIED_MINOR.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || LACKING_CAPACITY.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || SCREENING_WITNESS_FROM_ACCUSED.getFlagCode().equals(partyFlag.getValue().getFlagCode()));
     }
 
-    protected static String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
-
+    public static String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
         return flagsDetailOfCurrParty.stream()
             .filter(
                 partyFlag ->
-                    PF0002.equals(partyFlag.getValue().getFlagCode())
-                        || PF0013.equals(partyFlag.getValue().getFlagCode())
-                        || PF0018.equals(partyFlag.getValue().getFlagCode())
-                        || SM0002.equals(partyFlag.getValue().getFlagCode()))
+                    VULNERABLE_USER.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || UNACCOMPANIED_MINOR.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || LACKING_CAPACITY.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || SCREENING_WITNESS_FROM_ACCUSED.getFlagCode().equals(partyFlag.getValue().getFlagCode()))
             .distinct()
             .map(p -> p.getValue().getName())
             .collect(Collectors.joining(PLUS_SIGN));

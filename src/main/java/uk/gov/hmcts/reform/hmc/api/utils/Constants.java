@@ -88,18 +88,6 @@ public final class Constants {
 
     public static final String LISTING_COMMENTS =
             "Applicant Name/Respondent Name: Multiple Interpreters. See case flags.";
-    public static final String PF0002 = "PF0002";
-    public static final String PF0007 = "PF0007";
-    public static final String PF0013 = "PF0013";
-    public static final String PF0018 = "PF0018";
-
-    public static final String PF0020 = "PF0020";
-    public static final String PF0021 = "PF0021";//potentially violent person flag
-    public static final String SM0002 = "SM0002";
-    public static final String RA0013 = "RA0013";//documents in large print
-    public static final String RA0042 = "RA0042"; // Sign  Language Interpreter
-
-    public static final String PF0015 = "PF0015"; // Language Interpreter
 
     public static final String RA = "RA";
 
