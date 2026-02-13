@@ -283,7 +283,10 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode()).build();
+        FlagDetail flagDetail = FlagDetail.builder()
+            .hearingRelevant(TEST)
+            .flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode())
+            .build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 

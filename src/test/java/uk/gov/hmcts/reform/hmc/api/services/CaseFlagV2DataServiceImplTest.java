@@ -290,7 +290,10 @@ class CaseFlagV2DataServiceImplTest {
         List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode()).build();
+        FlagDetail flagDetail = FlagDetail.builder()
+            .hearingRelevant(TEST)
+            .flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode())
+            .build();
         Element<FlagDetail> flagDetailElement =
             Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -493,7 +496,8 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertFalse(security, "PF0021 Requested should NOT set caseAdditionalSecurityFlag");
         if (shv.getCaseFlags() != null) {
             Assertions.assertTrue(
-                shv.getCaseFlags().getFlags().stream().noneMatch(f -> POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(f.getFlagId())),
+                shv.getCaseFlags().getFlags().stream()
+                    .noneMatch(f -> POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(f.getFlagId())),
                 "PF0021 Requested should not be included in outgoing flags when filtering to Active");
         }
     }
@@ -541,8 +545,10 @@ class CaseFlagV2DataServiceImplTest {
             .getIndividualDetails()
             .getReasonableAdjustments();
 
-        Assertions.assertTrue(raList.contains(DOCUMENTS_IN_LARGE_PRINT.getFlagCode()), "reasonableAdjustments should contain RA0013");
-        Assertions.assertTrue(raList.contains(SCREENING_WITNESS_FROM_ACCUSED.getFlagCode()), "reasonableAdjustments should contain SM0002");
+        Assertions.assertTrue(raList.contains(DOCUMENTS_IN_LARGE_PRINT.getFlagCode()),
+                              "reasonableAdjustments should contain RA0013");
+        Assertions.assertTrue(raList.contains(SCREENING_WITNESS_FROM_ACCUSED.getFlagCode()),
+                              "reasonableAdjustments should contain SM0002");
     }
 
 }
