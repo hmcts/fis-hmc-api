@@ -368,6 +368,7 @@ public class CaseFlagDataServiceImpl {
             .anyMatch(
                 partyFlag ->
                     VULNERABLE_USER.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(partyFlag.getValue().getFlagCode()) // workaround for banner
                         || UNACCOMPANIED_MINOR.getFlagCode().equals(partyFlag.getValue().getFlagCode())
                         || LACKING_CAPACITY.getFlagCode().equals(partyFlag.getValue().getFlagCode())
                         || SCREENING_WITNESS_FROM_ACCUSED.getFlagCode().equals(partyFlag.getValue().getFlagCode()));
@@ -378,6 +379,7 @@ public class CaseFlagDataServiceImpl {
             .filter(
                 partyFlag ->
                     VULNERABLE_USER.getFlagCode().equals(partyFlag.getValue().getFlagCode())
+                        || POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(partyFlag.getValue().getFlagCode()) // workaround for banner
                         || UNACCOMPANIED_MINOR.getFlagCode().equals(partyFlag.getValue().getFlagCode())
                         || LACKING_CAPACITY.getFlagCode().equals(partyFlag.getValue().getFlagCode())
                         || SCREENING_WITNESS_FROM_ACCUSED.getFlagCode().equals(partyFlag.getValue().getFlagCode()))
