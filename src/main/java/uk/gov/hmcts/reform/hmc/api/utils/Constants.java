@@ -94,9 +94,9 @@ public final class Constants {
     public static final String PF0018 = "PF0018";
 
     public static final String PF0020 = "PF0020";
-
+    public static final String PF0021 = "PF0021";//potentially violent person flag
     public static final String SM0002 = "SM0002";
-
+    public static final String RA0013 = "RA0013";//documents in large print
     public static final String RA0042 = "RA0042"; // Sign  Language Interpreter
 
     public static final String PF0015 = "PF0015"; // Language Interpreter
@@ -130,6 +130,8 @@ public final class Constants {
 
     public static final String ROLE_ASSIGNMENT_HEARING_MANAGER = "hearing-manager";
 
+    public static final String ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER = "listed-hearing-viewer";
+
     public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS = "private-law-system-users";
 
     public static final String ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE =
@@ -148,6 +150,9 @@ public final class Constants {
     public static final String ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE = "PRLAPPS";
 
     public static final String ROLE_ASSIGNMENT_ACTOR_ID_TYPE = "IDAM";
+
+    public static final String YES = "Yes";
+    public static final String NO = "No";
 
     private Constants() {}
 }

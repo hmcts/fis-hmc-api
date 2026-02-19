@@ -29,22 +29,22 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TRUE;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -52,7 +52,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
-import uk.gov.hmcts.reform.hmc.api.config.launchdarkly.LaunchDarklyClient;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caselinksdata.CaseLinkData;
@@ -91,33 +90,32 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     private final CaseFlagV2DataServiceImpl caseFlagV2DataService;
     private final ElasticSearch elasticSearch;
     private final AuthTokenGenerator authTokenGenerator;
-    private final LaunchDarklyClient launchDarklyClient;
 
     /**
      * This method will fetch the hearingsData info based on the hearingValues passed.
      *
-     * @param authorisation User authorization token.
+     * @param authorisation        User authorization token.
      * @param serviceAuthorization S2S authorization token.
-     * @param hearingValues combination of caseRefNo and hearingId to fetch hearingsData.
+     * @param hearingValues        combination of caseRefNo and hearingId to fetch hearingsData.
      * @return hearingsData, response data for the input hearingValues.
      */
     @Override
     public ServiceHearingValues getCaseData(
-            HearingValues hearingValues, String authorisation, String serviceAuthorization)
-            throws IOException, ParseException {
+        HearingValues hearingValues, String authorisation, String serviceAuthorization)
+        throws IOException {
         CaseDetails caseDetails =
-                caseApiService.getCaseDetails(
-                        hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+            caseApiService.getCaseDetails(
+                hearingValues.getCaseReference(), authorisation, serviceAuthorization);
         String publicCaseNameMapper = EMPTY;
         Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             Map<String, String> applicantMap =
-                    (LinkedHashMap) caseDetails.getData().get(FL401_APPLICANT_TABLE);
+                (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_APPLICANT_TABLE);
             Map<String, String> respondentTableMap =
-                    (LinkedHashMap) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
+                (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
             if (applicantMap != null && respondentTableMap != null) {
                 publicCaseNameMapper =
-                        applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
+                    applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
             } else {
                 publicCaseNameMapper = EMPTY;
             }
@@ -132,9 +130,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
         try (InputStream inputStream = resource.getInputStream()) {
             screenFlowJson =
-                    (JSONObject)
-                            parser.parse(
-                                    new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                (JSONObject)
+                    parser.parse(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -144,75 +142,71 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         }
 
         ServiceHearingValues serviceHearingValues =
-                ServiceHearingValues.hearingsDataWith()
-                        .hmctsServiceID(ABA5)
-                        .hmctsInternalCaseName(caseDetails.getData().get(APPLICANT_CASE_NAME).toString())
-                        .publicCaseName(publicCaseNameMapper)
-                        .caseAdditionalSecurityFlag(FALSE)
-                        .caseCategories(getCaseCategories())
-                        .caseDeepLink(
-                                ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
-                        .caseRestrictedFlag(FALSE)
-                        .externalCaseReference(EMPTY)
-                        .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
-                        .caseSlaStartDate(caseSlaStartDateMapper)
-                        .autoListFlag(FALSE)
-                        .hearingType(HEARING_TYPE)
-                        .hearingWindow(
-                                HearingWindow.hearingWindowWith()
-                                        .dateRangeStart(EMPTY)
-                                        .dateRangeEnd(EMPTY)
-                                        .firstDateTimeMustBe(EMPTY)
-                                        .build())
-                        .duration(0)
-                        .hearingPriorityType(HEARING_PRIORITY)
-                        .numberOfPhysicalAttendees(0)
-                        .hearingInWelshFlag(FALSE)
-                        .hearingLocations(
-                                Arrays.asList(
-                                        HearingLocation.hearingLocationWith()
-                                                .locationType(COURT)
-                                                .locationId(CASE_MANAGEMENT_LOCATION)
-                                                .build()))
-                        .facilitiesRequired(Arrays.asList())
-                        .listingComments(EMPTY)
-                        .hearingRequester(EMPTY)
-                        .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
-                        .caseInterpreterRequiredFlag(FALSE)
-                        .panelRequirements(null)
-                        .leadJudgeContractType(EMPTY)
-                        .judiciary(Judiciary.judiciaryWith().build())
-                        .hearingIsLinkedFlag(FALSE)
-                        .screenFlow(
-                                screenFlowJson != null
-                                        ? (JSONArray) screenFlowJson.get(SCREEN_FLOW)
-                                        : null)
-                        .hearingChannels(Arrays.asList())
-                        .build();
-        if (launchDarklyClient.isFeatureEnabled("hearing-case-flags-v2")) {
-            log.info("Case flags V2 flag is enabled");
-            caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
-        } else {
-            log.info("Case flags V2 flag is disabled");
-            caseFlagV2DataService.setCaseFlagData(serviceHearingValues, caseDetails);
-        }
+            ServiceHearingValues.hearingsDataWith()
+                .hmctsServiceID(ABA5)
+                .hmctsInternalCaseName(caseDetails.getData().get(APPLICANT_CASE_NAME).toString())
+                .publicCaseName(publicCaseNameMapper)
+                .caseAdditionalSecurityFlag(FALSE)
+                .caseCategories(getCaseCategories())
+                .caseDeepLink(
+                    ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
+                .caseRestrictedFlag(FALSE)
+                .externalCaseReference(EMPTY)
+                .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
+                .caseSlaStartDate(caseSlaStartDateMapper)
+                .autoListFlag(FALSE)
+                .hearingType(HEARING_TYPE)
+                .hearingWindow(
+                    HearingWindow.hearingWindowWith()
+                        .dateRangeStart(EMPTY)
+                        .dateRangeEnd(EMPTY)
+                        .firstDateTimeMustBe(EMPTY)
+                        .build())
+                .duration(0)
+                .hearingPriorityType(HEARING_PRIORITY)
+                .numberOfPhysicalAttendees(0)
+                .hearingInWelshFlag(FALSE)
+                .hearingLocations(
+                    List.of(
+                        HearingLocation.hearingLocationWith()
+                            .locationType(COURT)
+                            .locationId(CASE_MANAGEMENT_LOCATION)
+                            .build()))
+                .facilitiesRequired(List.of())
+                .listingComments(EMPTY)
+                .hearingRequester(EMPTY)
+                .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
+                .caseInterpreterRequiredFlag(FALSE)
+                .panelRequirements(null)
+                .leadJudgeContractType(EMPTY)
+                .judiciary(Judiciary.judiciaryWith().build())
+                .hearingIsLinkedFlag(FALSE)
+                .screenFlow(
+                    screenFlowJson != null
+                        ? (JSONArray) screenFlowJson.get(SCREEN_FLOW)
+                        : null)
+                .hearingChannels(List.of())
+                .build();
+
+        caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
+
         return serviceHearingValues;
     }
 
     private List<CaseCategories> getCaseCategories() {
         List<CaseCategories> caseCategoriesList = new ArrayList<>();
         CaseCategories caseCategories =
-                CaseCategories.caseCategoriesWith()
-                        .categoryType(CASE_TYPE)
-                        .categoryValue(CATEGORY_VALUE)
-                        .build();
+            CaseCategories.caseCategoriesWith()
+                .categoryType(CASE_TYPE)
+                .categoryValue(CATEGORY_VALUE)
+                .build();
 
         CaseCategories caseSubCategories =
-                CaseCategories.caseCategoriesWith()
-                        .categoryType(CASE_SUB_TYPE)
-                        .categoryValue(CATEGORY_VALUE)
-                        .categoryParent(CATEGORY_VALUE)
-                        .build();
+            CaseCategories.caseCategoriesWith()
+                .categoryType(CASE_SUB_TYPE)
+                .categoryValue(CATEGORY_VALUE)
+                .categoryParent(CATEGORY_VALUE)
+                .build();
 
         caseCategoriesList.add(caseCategories);
         caseCategoriesList.add(caseSubCategories);
@@ -226,42 +220,42 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
     @Override
     public List<HearingLinkData> getHearingLinkData(
-            HearingValues hearingValues, String authorisation, String serviceAuthorization)
-            throws IOException, ParseException {
+        HearingValues hearingValues, String authorisation, String serviceAuthorization)
+        throws IOException {
         CaseDetails caseDetails =
-                caseApiService.getCaseDetails(
-                        hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+            caseApiService.getCaseDetails(
+                hearingValues.getCaseReference(), authorisation, serviceAuthorization);
         CaseDetailResponse ccdResponse = getCcdCaseData(caseDetails);
 
         List<CaseLinkElement<CaseLinkData>> caseLinkDataList =
-                ccdResponse.getCaseData().getCaseLinks();
+            ccdResponse.getCaseData().getCaseLinks();
 
         List<HearingLinkData> serviceLinkedCases = new ArrayList<>();
         if (caseLinkDataList != null) {
 
             List<String> caseReferences =
-                    caseLinkDataList.stream()
-                            .map(e -> e.getValue().getCaseReference())
-                            .collect(Collectors.toList());
+                caseLinkDataList.stream()
+                    .map(e -> e.getValue().getCaseReference())
+                    .collect(Collectors.toList());
 
             final SearchResult searchResult =
-                    getCaseNameForCaseReference(authorisation, caseReferences);
+                getCaseNameForCaseReference(authorisation, caseReferences);
 
             for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
                 CaseLinkData caseLinkData = caseLinkDataObj.getValue();
                 if (caseLinkData.getReasonForLink() != null) {
                     List<String> reasonList =
-                            caseLinkData.getReasonForLink().stream()
-                                    .map(e -> e.getValue().getReason())
-                                    .collect(Collectors.toList());
+                        caseLinkData.getReasonForLink().stream()
+                            .map(e -> e.getValue().getReason())
+                            .collect(Collectors.toList());
                     HearingLinkData hearingLinkData =
-                            HearingLinkData.hearingLinkDataWith()
-                                    .caseReference(caseLinkData.getCaseReference())
-                                    .reasonsForLink(reasonList)
-                                    .caseName(
-                                            getCaseName(
-                                                    searchResult, caseLinkData.getCaseReference()))
-                                    .build();
+                        HearingLinkData.hearingLinkDataWith()
+                            .caseReference(caseLinkData.getCaseReference())
+                            .reasonsForLink(reasonList)
+                            .caseName(
+                                getCaseName(
+                                    searchResult, caseLinkData.getCaseReference()))
+                            .build();
                     serviceLinkedCases.add(hearingLinkData);
                 }
             }
@@ -276,30 +270,30 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             final List<CaseDetails> cases = searchResult.getCases();
 
             return cases.stream()
-                    .filter(e -> caseReference.equals(e.getId().toString()))
-                    .findFirst()
-                    .map(caseDetails -> (String) caseDetails.getData().get(APPLICANT_CASE_NAME))
-                    .orElse(EMPTY_STRING);
+                .filter(e -> caseReference.equals(e.getId().toString()))
+                .findFirst()
+                .map(caseDetails -> (String) caseDetails.getData().get(APPLICANT_CASE_NAME))
+                .orElse(EMPTY_STRING);
         }
         return EMPTY_STRING;
     }
 
     private SearchResult getCaseNameForCaseReference(
-            String authorisation, List<String> caseReferences) throws JsonProcessingException {
+        String authorisation, List<String> caseReferences) throws JsonProcessingException {
 
         final QueryParam elasticSearchQueryParam = buildCcdQueryParam(caseReferences);
         ObjectMapper objectMapper = FisHmcObjectMapper.getObjectMapper();
         String searchString = objectMapper.writeValueAsString(elasticSearchQueryParam);
         return elasticSearch.searchCases(
-                authorisation, searchString, authTokenGenerator.generate(), caseTypeId);
+            authorisation, searchString, authTokenGenerator.generate(), caseTypeId);
     }
 
     private QueryParam buildCcdQueryParam(List<String> caseReference) {
         Terms terms =
-                Terms.builder()
-                        .caseReference(caseReference)
-                        .boost(ccdElasticSearchApiBoost)
-                        .build();
+            Terms.builder()
+                .caseReference(caseReference)
+                .boost(ccdElasticSearchApiBoost)
+                .build();
         Query query = Query.builder().terms(terms).build();
         return QueryParam.builder().query(query).size(ccdElasticSearchApiResultSize).build();
     }
