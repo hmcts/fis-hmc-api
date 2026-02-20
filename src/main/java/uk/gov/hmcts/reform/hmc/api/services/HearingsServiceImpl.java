@@ -199,7 +199,6 @@ public class HearingsServiceImpl implements HearingsService {
             for (var hearing : hearingDetailsList) {
                 try {
                     List<CaseHearing> filteredHearings = hearing.getCaseHearings();
-                    log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
                     if (ObjectUtils.isNotEmpty(hearingStatesToBeExcluded)) {
                         filteredHearings = filteredHearings.stream()
                                 .filter(
@@ -355,6 +354,7 @@ public class HearingsServiceImpl implements HearingsService {
 
         for (Hearings hearings : casesWithHearings) {
             if (null != hearings && !hearings.getCaseHearings().isEmpty()) {
+                log.info("Setting hearing venue details for case reference {}", hearings.getCaseRef());
                 CourtDetail caseCourt = getCourtDetail(allVenues, caseIdWithRegionIdMap, hearings);
                 if (caseCourt != null) {
                     hearings.setCourtTypeId(caseCourt.getCourtTypeId());
@@ -362,6 +362,7 @@ public class HearingsServiceImpl implements HearingsService {
                 }
 
                 for (CaseHearing caseHearing : hearings.getCaseHearings()) {
+                    log.info("Setting venue details for hearing ID {}", caseHearing.getHearingID());
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = getMatchedCourtDetail(
                             allVenues,
