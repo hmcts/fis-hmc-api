@@ -105,11 +105,13 @@ public class HearingsServiceImpl implements HearingsService {
                     "HttpClientErrorException {} during getHearingsByCaseRefNo for case {}",
                     exception,
                     caseReference);
+            throw exception;
         } catch (Exception exception) {
             log.error(
                     "Exception {} during getHearingsByCaseRefNo for case {}",
                     exception,
                     caseReference);
+            throw exception;
         }
         return caseHearingsResponse;
     }

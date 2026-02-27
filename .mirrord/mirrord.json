@@ -1,0 +1,20 @@
+{
+  "feature": {
+    "network": {
+      "incoming": "mirror",
+      "outgoing": true
+    },
+    "fs": "read",
+    "env": true
+  },
+  "target": {
+    "path": {
+      "pod": "prl-ccd-definitions-pr-3186-fis-hmc-api-58c464f4fd-fs565"
+    },
+    "namespace": "private-law"
+  },
+  "agent": {
+    "namespace": "private-law"
+  }
+
+}
