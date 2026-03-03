@@ -404,10 +404,6 @@ dependencyManagement {
     dependencySet(group: 'com.nimbusds', version: '9.48') {
       entry 'nimbus-jose-jwt'
     }
-    //CVE-2023-3635
-    dependencySet(group: 'com.squareup.okio', version: '3.16.4') {
-      entry 'okio-jvm'
-    }
     dependency group: 'org.springframework.security', name: 'spring-security-crypto', version: '5.8.16'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
     dependency group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
