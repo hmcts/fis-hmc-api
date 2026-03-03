@@ -28,7 +28,6 @@ import uk.gov.hmcts.reform.hmc.api.model.request.OrganisationDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
-import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyType;
 import uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl;
@@ -44,6 +43,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
@@ -77,7 +77,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
 public final class AutomatedHearingTransactionRequestMapper {
 
     public static final String LOCAL_AUTHORITY = "Local Authority";
-    private static boolean caseAdditionalSecurityFlag;
 
     private AutomatedHearingTransactionRequestMapper() {
         throw new IllegalStateException("Utility class");
@@ -98,6 +97,8 @@ public final class AutomatedHearingTransactionRequestMapper {
         }
 
         List<AutomatedHearingPartyDetails> partyDetailsList = getPartyDetails(caseData, phoneNoSpecialChars);
+        List<PartyFlagsModel> partyFlags = getAllPartyFlags(caseData);
+        Boolean caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partyFlags);
 
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode(HMCTS_SERVICE_ID) //Hardcoded in prl-cos-api
@@ -377,43 +378,60 @@ public final class AutomatedHearingTransactionRequestMapper {
         return noOfParticipants;
     }
 
-    @NotNull
-    private static List<AutomatedHearingPartyDetails> getPartyDetails(CaseData caseData,
-                                                                      String phoneNoSpecialChars) {
+    private static List<PartyFlagsModel> getAllPartyFlags(CaseData caseData) {
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
-        List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
+
+        if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
+            List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
+            if (isNotEmpty(applicantLst)) {
+                applicantLst.forEach(applicant -> partiesFlagsModelList.addAll(getPartyFlagsModel(applicant.getValue(),
+                                                                                                 applicant.getId())));
+            }
+            List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
+            if (isNotEmpty(respondedLst)) {
+                respondedLst.forEach(respondent -> partiesFlagsModelList.addAll(getPartyFlagsModel(respondent.getValue(),
+                                                                                                  respondent.getId())));
+            }
+        } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
+            PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
+            if (isNotEmpty(applicantsFL401)) {
+                partiesFlagsModelList.addAll(getPartyFlagsModel(applicantsFL401, applicantsFL401.getPartyId()));
+            }
+
+            PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
+            if (isNotEmpty(respondentsFL401)) {
+                partiesFlagsModelList.addAll(getPartyFlagsModel(respondentsFL401, respondentsFL401.getPartyId()));
+            }
+        }
+
+        return partiesFlagsModelList;
+    }
+
+    @NotNull
+    private static List<AutomatedHearingPartyDetails> getPartyDetails(CaseData caseData, String phoneNoSpecialChars) {
         List<AutomatedHearingPartyDetails> partyDetailsList = new ArrayList<>();
         if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             List<Element<PartyDetails>> applicantLst = caseData.getApplicants();
             if (null != applicantLst) {
                 partyDetailsList.addAll(addPartyData(applicantLst, APPLICANT, caseData.getHearingData(), phoneNoSpecialChars));
-                CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, applicantLst, APPLICANT);
             }
             List<Element<PartyDetails>> respondedLst = caseData.getRespondents();
             if (null != respondedLst) {
                 partyDetailsList.addAll(addPartyData(respondedLst, RESPONDENT, caseData.getHearingData(), phoneNoSpecialChars));
-                CaseFlagDataServiceImpl.addPartyFlagData(partiesFlagsModelList, partyDetailsModelList, respondedLst, RESPONDENT);
             }
         } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             PartyDetails applicantsFL401 = caseData.getApplicantsFL401();
             if (null != applicantsFL401) {
                 partyDetailsList.addAll(addFL401PartyData(applicantsFL401, APPLICANT,
                                                           caseData.getHearingData(), phoneNoSpecialChars));
-                CaseFlagDataServiceImpl.addFL401PartyFlagData(
-                    partiesFlagsModelList, partyDetailsModelList, applicantsFL401, APPLICANT);
             }
             PartyDetails respondentsFL401 = caseData.getRespondentsFL401();
             if (null != respondentsFL401) {
                 partyDetailsList.addAll(addFL401PartyData(respondentsFL401, RESPONDENT,
                                                           caseData.getHearingData(), phoneNoSpecialChars));
-                CaseFlagDataServiceImpl.addFL401PartyFlagData(
-                    partiesFlagsModelList, partyDetailsModelList, respondentsFL401, RESPONDENT);
             }
         }
 
-        if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
-            caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partiesFlagsModelList);
-        }
         return partyDetailsList;
     }
 
