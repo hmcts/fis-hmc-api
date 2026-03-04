@@ -27,6 +27,7 @@
    file name: kotlin-reflect-1.6.21.jar
    ]]>
     Introduced by pact library, test dependency - should hopefully be resolved by pact 4.7 when out of beta
+      Possibly incorrect tagging of CVE too - it was resolved in 1.4.21 but the cve has been tagged as up to 2.1.0
     </notes>
     <cve>CVE-2020-29582</cve>
   </suppress></suppressions>
