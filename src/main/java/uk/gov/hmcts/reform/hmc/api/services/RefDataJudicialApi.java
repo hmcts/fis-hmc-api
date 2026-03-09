@@ -25,7 +25,7 @@ public interface RefDataJudicialApi {
     String SERVICE_AUTHORIZATION = "ServiceAuthorization";
     String ACCEPT = "accept";
     String CONTENT_TYPE_VAL = "application/json";
-    String CONTENT_TYPE_V2 = "application/vnd.jrd.v2+json";
+    String CONTENT_TYPE_V2 = "application/vnd.jrd.api+json;Version=2.0";
 
     @RequestMapping(
         method = RequestMethod.POST,
