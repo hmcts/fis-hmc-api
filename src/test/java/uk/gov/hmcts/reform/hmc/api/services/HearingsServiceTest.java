@@ -237,6 +237,71 @@ class HearingsServiceTest {
     }
 
     @Test
+    void shouldReturnCtfHearingsByListOfCaseIdsTestWithMissingHearingDaySchedule() {
+
+        CourtDetail courtDetail =
+            CourtDetail.courtDetailWith()
+                .courtTypeId("18")
+                .hearingVenueId("231596")
+                .hearingVenueName("TEST")
+                .hearingVenueLocationCode("LocationCodeTest")
+                .hearingVenueAddress("AddressTest")
+                .hearingVenuePostCode("PostCodeTest")
+                .regionId("RegionId")
+                .courtStatus(OPEN)
+                .build();
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail);
+
+        JudgeDetail judgeDetail = JudgeDetail.judgeDetailWith().hearingJudgeName("test").build();
+        List<JudgeDetail> judgeDetailsList = new ArrayList<>();
+        judgeDetailsList.add(judgeDetail);
+
+        CaseHearing caseHearing =
+            CaseHearing.caseHearingWith()
+                .hmcStatus("LISTED")
+                .hearingDaySchedule(new ArrayList<>())
+                .build();
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing);
+
+        Hearings caseHearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .courtName("TEST")
+                .courtTypeId("18")
+                .build();
+
+        when(idamTokenGenerator.generateIdamTokenForHearingCftData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(refDataService.getCourtDetailsByServiceCode("ABA5")).thenReturn(courtDetailsList);
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+
+        when(hearingApiClient.getListOfHearingDetails(anyString(),
+                                                      any(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      anyString(),
+                                                      any(),
+                                                      anyString()))
+            .thenReturn(List.of(caseHearings));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> hearingsResponse =
+            hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId, "Auth", "sauth");
+        CaseHearing caseHearingResp = hearingsResponse.get(0).getCaseHearings().get(0);
+        Assertions.assertEquals("ABA5", hearingsResponse.get(0).getHmctsServiceCode());
+        Assertions.assertEquals("18", hearingsResponse.get(0).getCourtTypeId());
+        Assertions.assertEquals("TEST", hearingsResponse.get(0).getCourtName());
+        Assertions.assertNotNull(caseHearingResp.getHmcStatus());
+        Assertions.assertEquals("LISTED", caseHearingResp.getHmcStatus());
+        Assertions.assertTrue(caseHearingResp.getHearingDaySchedule().isEmpty());
+    }
+
+    @Test
     void shouldReturnCtfHearingsByListOfCaseIdsCompletedCaseHearingTest() {
 
         CourtDetail courtDetail =
@@ -609,6 +674,48 @@ class HearingsServiceTest {
         List<Hearings> hearingsResponse = hearingsService.getHearingsByListOfCaseIdsWithoutCourtVenueDetails(List.of("test"),
                                                                                      "Auth", "sauth");
         Assertions.assertTrue(hearingsResponse.isEmpty());
+    }
+
+    @Test
+    void shouldReturnEmptyMapWhenHttpClientExceptionIsThrown() {
+        when(hearingApiClient.getListOfHearingDetails(
+            any(),
+            any(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(),
+            any()
+        )).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> response = hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId,
+                                                                                     "Auth",
+                                                                             "sauth");
+        Assertions.assertTrue(response.isEmpty());
+    }
+
+    @Test
+    void shouldReturnEmptyMapWhenFeignExceptionIsThrown() {
+        when(hearingApiClient.getListOfHearingDetails(
+            any(),
+            any(),
+            anyString(),
+            anyString(),
+            anyString(),
+            any(),
+            any()
+        )).thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+
+        Map<String, String> caseIdWithRegionId = new HashMap<>();
+        caseIdWithRegionId.put("123", "RegionId-231596");
+
+        List<Hearings> response = hearingsService.getHearingsByListOfCaseIds(caseIdWithRegionId,
+                                                                             "Auth",
+                                                                             "sauth");
+        Assertions.assertTrue(response.isEmpty());
     }
 
     @Test
