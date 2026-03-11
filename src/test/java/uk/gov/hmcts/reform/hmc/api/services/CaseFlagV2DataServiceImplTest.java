@@ -25,6 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.DOCUMENTS_IN_LARGE_PRINT;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.POTENTIALLY_VIOLENT_PERSON;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.QUALIFIED_LEGAL_REPRESENTATIVE;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.SCREENING_WITNESS_FROM_ACCUSED;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.VULNERABLE_USER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS_FL401;
@@ -34,11 +39,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_LINKS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MNGEMNT_LOC;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_NAME;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0020;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0021;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PRIVATE_LAW;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0013;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_FOR_LINK;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_TEST_VALUE;
@@ -46,7 +47,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_FIRST_NAME_TEST_VA
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REP_LAST_NAME_TEST_VALUE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENTS_FL401;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TEST;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VALUE;
 
@@ -58,7 +58,6 @@ class CaseFlagV2DataServiceImplTest {
     private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldSetCaseFlagTest() throws IOException {
 
         Map<String, Object> reasonMap = new LinkedHashMap<>();
@@ -79,7 +78,7 @@ class CaseFlagV2DataServiceImplTest {
         List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
             Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -130,7 +129,6 @@ class CaseFlagV2DataServiceImplTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldAddPartyDetailsModelForOrgTest() throws IOException {
 
         Map<String, Object> reasonMap = new LinkedHashMap<>();
@@ -151,7 +149,7 @@ class CaseFlagV2DataServiceImplTest {
         List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
             Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -203,7 +201,6 @@ class CaseFlagV2DataServiceImplTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldAddPartyDetailsModelForSolicitorTest() throws IOException {
 
         Map<String, Object> reasonMap = new LinkedHashMap<>();
@@ -224,7 +221,7 @@ class CaseFlagV2DataServiceImplTest {
         List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
             Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -273,7 +270,6 @@ class CaseFlagV2DataServiceImplTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldAddPartyDetailsModelWithVulnerabilityTest() throws IOException {
 
         Map<String, Object> reasonMap = new LinkedHashMap<>();
@@ -294,7 +290,10 @@ class CaseFlagV2DataServiceImplTest {
         List<Map<String, Object>> caseLinksList = new ArrayList<>();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0020).build();
+        FlagDetail flagDetail = FlagDetail.builder()
+            .hearingRelevant(TEST)
+            .flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode())
+            .build();
         Element<FlagDetail> flagDetailElement =
             Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -400,8 +399,8 @@ class CaseFlagV2DataServiceImplTest {
         // C100 external/internal keys the service will read:
         // Applicant #1 external: caApplicant1ExternalFlags
         // Respondent #1 internal: caRespondent1InternalFlags
-        Flags applicantActive = flagsWith("Applicant One", PF0002, "Active");
-        Flags respondentRequested = flagsWith("Respondent One", PF0020, "Requested");
+        Flags applicantActive = flagsWith("Applicant One", VULNERABLE_USER.getFlagCode(), "Active");
+        Flags respondentRequested = flagsWith("Respondent One", QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode(), "Requested");
 
         caseData.put("caApplicant1ExternalFlags", applicantActive);
         caseData.put("caRespondent1InternalFlags", respondentRequested);
@@ -415,7 +414,7 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertNotNull(shv.getCaseFlags());
         List<PartyFlagsModel> flags = shv.getCaseFlags().getFlags();
         Assertions.assertEquals(1, flags.size(), "Only ACTIVE flags should be included");
-        Assertions.assertEquals(PF0002, flags.get(0).getFlagId());
+        Assertions.assertEquals(VULNERABLE_USER.getFlagCode(), flags.get(0).getFlagId());
         Assertions.assertEquals("Active", flags.get(0).getFlagStatus());
     }
 
@@ -427,7 +426,7 @@ class CaseFlagV2DataServiceImplTest {
 
         Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
         // Only a Requested flag present
-        caseData.put("caApplicant1InternalFlags", flagsWith("Applicant One", PF0002, "Requested"));
+        caseData.put("caApplicant1InternalFlags", flagsWith("Applicant One", VULNERABLE_USER.getFlagCode(), "Requested"));
 
         ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
         CaseDetails cd = CaseDetails.builder().id(456L).caseTypeId(PRIVATE_LAW).data(caseData).build();
@@ -448,7 +447,7 @@ class CaseFlagV2DataServiceImplTest {
         Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
 
         // PF0021 (Potentially Violent Person) as ACTIVE on Applicant #1 internal flags
-        Flags pvpActive = flagsWith("Applicant One", PF0021, "Active");
+        Flags pvpActive = flagsWith("Applicant One", POTENTIALLY_VIOLENT_PERSON.getFlagCode(), "Active");
         caseData.put("caApplicant1InternalFlags", pvpActive);
 
         ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
@@ -466,7 +465,7 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertNotNull(shv.getCaseFlags());
         Assertions.assertTrue(
             shv.getCaseFlags().getFlags().stream()
-                .anyMatch(f -> PF0021.equals(f.getFlagId())
+                .anyMatch(f -> POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(f.getFlagId())
                     && "Active".equalsIgnoreCase(f.getFlagStatus())),
             "PF0021 Active should be included in case flags"
         );
@@ -482,7 +481,7 @@ class CaseFlagV2DataServiceImplTest {
         Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
 
         // PF0021 as Requested (not Active) — should NOT set additional security
-        Flags pvpRequested = flagsWith("Applicant One", PF0021, "Requested");
+        Flags pvpRequested = flagsWith("Applicant One", POTENTIALLY_VIOLENT_PERSON.getFlagCode(), "Requested");
         caseData.put("caApplicant1ExternalFlags", pvpRequested);
 
         ServiceHearingValues shv = ServiceHearingValues.hearingsDataWith().hmctsServiceID(ABA5).build();
@@ -497,7 +496,8 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertFalse(security, "PF0021 Requested should NOT set caseAdditionalSecurityFlag");
         if (shv.getCaseFlags() != null) {
             Assertions.assertTrue(
-                shv.getCaseFlags().getFlags().stream().noneMatch(f -> PF0021.equals(f.getFlagId())),
+                shv.getCaseFlags().getFlags().stream()
+                    .noneMatch(f -> POTENTIALLY_VIOLENT_PERSON.getFlagCode().equals(f.getFlagId())),
                 "PF0021 Requested should not be included in outgoing flags when filtering to Active");
         }
     }
@@ -512,8 +512,8 @@ class CaseFlagV2DataServiceImplTest {
         Map<String, Object> caseData = baseCaseDataC100(applicants, respondents);
 
         // Put RA0013 and SM0002 as ACTIVE for Applicant #1 (mix internal/external just to show both read)
-        Flags raActive = flagsWith("Applicant One", RA0013, "Active");
-        Flags smActive = flagsWith("Applicant One", SM0002, "Active");
+        Flags raActive = flagsWith("Applicant One", DOCUMENTS_IN_LARGE_PRINT.getFlagCode(), "Active");
+        Flags smActive = flagsWith("Applicant One", SCREENING_WITNESS_FROM_ACCUSED.getFlagCode(), "Active");
         caseData.put("caApplicant1InternalFlags", raActive);
         caseData.put("caApplicant1ExternalFlags", smActive);
 
@@ -526,11 +526,11 @@ class CaseFlagV2DataServiceImplTest {
         Assertions.assertNotNull(shv.getCaseFlags());
         List<PartyFlagsModel> out = shv.getCaseFlags().getFlags();
         Assertions.assertTrue(out.stream()
-                                  .anyMatch(f -> RA0013.equals(f.getFlagId())
+                                  .anyMatch(f -> DOCUMENTS_IN_LARGE_PRINT.getFlagCode().equals(f.getFlagId())
                                       && "Active".equalsIgnoreCase(f.getFlagStatus())),
                               "RA0013 Active should be present in caseFlags.flags");
         Assertions.assertTrue(out.stream()
-                                  .anyMatch(f -> SM0002.equals(f.getFlagId())
+                                  .anyMatch(f -> SCREENING_WITNESS_FROM_ACCUSED.getFlagCode().equals(f.getFlagId())
                                       && "Active".equalsIgnoreCase(f.getFlagStatus())),
                               "SM0002 Active should be present in caseFlags.flags");
 
@@ -545,8 +545,10 @@ class CaseFlagV2DataServiceImplTest {
             .getIndividualDetails()
             .getReasonableAdjustments();
 
-        Assertions.assertTrue(raList.contains(RA0013), "reasonableAdjustments should contain RA0013");
-        Assertions.assertTrue(raList.contains(SM0002), "reasonableAdjustments should contain SM0002");
+        Assertions.assertTrue(raList.contains(DOCUMENTS_IN_LARGE_PRINT.getFlagCode()),
+                              "reasonableAdjustments should contain RA0013");
+        Assertions.assertTrue(raList.contains(SCREENING_WITNESS_FROM_ACCUSED.getFlagCode()),
+                              "reasonableAdjustments should contain SM0002");
     }
 
 }
