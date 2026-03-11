@@ -198,31 +198,31 @@ public class HearingsServiceImpl implements HearingsService {
                         new ArrayList<>(caseIdWithRegionIdMap.keySet()),
                         ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE
                     );
-                    for (var hearing : hearingDetailsList) {
+                for (var hearing : hearingDetailsList) {
 
-                        List<CaseHearing> filteredHearings = hearing.getCaseHearings();
-                        if (ObjectUtils.isNotEmpty(hearingStatesToBeExcluded)) {
-                            filteredHearings = filteredHearings.stream()
-                                .filter(
-                                    eachHearing ->
-                                        !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
-                                .toList();
-                        }
-                        Hearings filteredCaseHearingsWithCount =
-                            Hearings.hearingsWith()
-                                .caseHearings(filteredHearings)
-                                .caseRef(hearing.getCaseRef())
-                                .hmctsServiceCode(hearing.getHmctsServiceCode())
-                                .build();
-                        casesWithHearings.add(filteredCaseHearingsWithCount);
+                    List<CaseHearing> filteredHearings = hearing.getCaseHearings();
+                    if (ObjectUtils.isNotEmpty(hearingStatesToBeExcluded)) {
+                        filteredHearings = filteredHearings.stream()
+                            .filter(
+                                eachHearing ->
+                                    !hearingStatesToBeExcluded.contains(eachHearing.getHmcStatus()))
+                            .toList();
                     }
-                    if (!casesWithHearings.isEmpty()) {
-                        List<CourtDetail> allVenues =
-                            refDataService.getCourtDetailsByServiceCode(
-                                hearingDetailsList.get(0).getHmctsServiceCode());
+                    Hearings filteredCaseHearingsWithCount =
+                        Hearings.hearingsWith()
+                            .caseHearings(filteredHearings)
+                            .caseRef(hearing.getCaseRef())
+                            .hmctsServiceCode(hearing.getHmctsServiceCode())
+                            .build();
+                    casesWithHearings.add(filteredCaseHearingsWithCount);
+                }
+                if (!casesWithHearings.isEmpty()) {
+                    List<CourtDetail> allVenues =
+                        refDataService.getCourtDetailsByServiceCode(
+                            hearingDetailsList.get(0).getHmctsServiceCode());
 
-                        integrateVenueDetailsForCaseId(allVenues, casesWithHearings, caseIdWithRegionIdMap);
-                    }
+                    integrateVenueDetailsForCaseId(allVenues, casesWithHearings, caseIdWithRegionIdMap);
+                }
             } catch (HttpClientErrorException | HttpServerErrorException exception) {
                 log.info("Hearing api call HttpClientError exception {}", exception.getMessage());
             } catch (FeignException exception) {
