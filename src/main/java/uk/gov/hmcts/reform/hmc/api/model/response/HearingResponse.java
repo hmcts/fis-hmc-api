@@ -3,9 +3,9 @@ package uk.gov.hmcts.reform.hmc.api.model.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.joda.time.DateTime;
 
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -20,7 +20,7 @@ public class HearingResponse {
     @Size(max = 100)
     private String status;
 
-    private DateTime timeStamp;
+    private LocalDateTime timeStamp;
 
     private Number versionNumber;
 

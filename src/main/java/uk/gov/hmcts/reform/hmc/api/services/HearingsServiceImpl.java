@@ -1,16 +1,13 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
@@ -39,30 +36,14 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ATTRIB
 
 @Service
 @RequiredArgsConstructor
-@SuppressWarnings("unchecked")
+@Slf4j
 public class HearingsServiceImpl implements HearingsService {
-
-    public static final String HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION = "Hearing api call HttpClientError exception {}";
-    public static final String HEARING_API_CALL_FEIGN_EXCEPTION = "Hearing api call Feign exception {}";
-    public static final String HEARING_API_CALL_EXCEPTION_EXCEPTION = "Hearing api call Exception exception {}";
-    private static Logger log = LoggerFactory.getLogger(HearingsServiceImpl.class);
 
     @Value("${ccd.ui.url}")
     private String ccdBaseUrl;
 
     @Value("${hearing.specialCharacters}")
     private String specialCharacters;
-
-    @Autowired AuthTokenGenerator authTokenGenerator;
-
-    @Autowired IdamTokenGenerator idamTokenGenerator;
-
-    @Autowired RefDataService refDataService;
-
-    @Autowired RefDataJudicialService refDataJudicialService;
-
-    @Autowired HearingApiClient hearingApiClient;
-    RestTemplate restTemplate = new RestTemplate();
 
     @Value("${hearing_component.api.url}")
     private String basePath;
@@ -73,7 +54,18 @@ public class HearingsServiceImpl implements HearingsService {
     @Value("#{'${hearing_component.futureHearingStatus}'.split(',')}")
     private List<String> futureHearingStatusList;
 
-    private Hearings hearingDetails;
+    @Value("${hearing_component.api.deployment-id:#{null}}")
+    private String hmctsDeploymentId;
+    @Value("${role-assignment.api.url:#{null}}")
+    private String roleAssignmentUrl;
+    @Value("${core_case_data.api.url:#{null}}")
+    private String dataStoreUrl;
+
+    private final AuthTokenGenerator authTokenGenerator;
+    private final IdamTokenGenerator idamTokenGenerator;
+    private final RefDataService refDataService;
+    private final RefDataJudicialService refDataJudicialService;
+    private final HearingApiClient hearingApiClient;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -93,8 +85,11 @@ public class HearingsServiceImpl implements HearingsService {
             log.info("Fetching hearings for casereference received from cos api - {}", caseReference);
             final String s2sToken = authTokenGenerator.generate();
             caseHearingsResponse = hearingApiClient.getHearingDetails(idamTokenGenerator.generateIdamTokenForHearingCftData(),
-                            s2sToken,
-                            caseReference);
+                                                                      s2sToken,
+                                                                      hmctsDeploymentId,
+                                                                      dataStoreUrl,
+                                                                      roleAssignmentUrl,
+                                                                      caseReference);
             log.info("Fetch hearings call completed successfully");
 
             integrateVenueDetails(caseHearingsResponse);
@@ -194,14 +189,17 @@ public class HearingsServiceImpl implements HearingsService {
             final String s2sToken = authTokenGenerator.generate();
             List<Hearings>  hearingDetailsList =
                     hearingApiClient.getListOfHearingDetails(
-                            userToken, s2sToken, new ArrayList<>(caseIdWithRegionIdMap.keySet()),
+                            userToken,
+                            s2sToken,
+                            hmctsDeploymentId,
+                            dataStoreUrl,
+                            roleAssignmentUrl,
+                            new ArrayList<>(caseIdWithRegionIdMap.keySet()),
                             ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
             for (var hearing : hearingDetailsList) {
                 try {
-                    hearingDetails = hearing;
-                    List<CaseHearing> filteredHearings = hearingDetails.getCaseHearings();
-                    log.info("Excluded hearing statuses {}", hearingStatesToBeExcluded);
-                    if (CollectionUtils.isNotEmpty(hearingStatesToBeExcluded)) {
+                    List<CaseHearing> filteredHearings = hearing.getCaseHearings();
+                    if (ObjectUtils.isNotEmpty(hearingStatesToBeExcluded)) {
                         filteredHearings = filteredHearings.stream()
                                 .filter(
                                     eachHearing ->
@@ -211,8 +209,8 @@ public class HearingsServiceImpl implements HearingsService {
                     Hearings filteredCaseHearingsWithCount =
                             Hearings.hearingsWith()
                                     .caseHearings(filteredHearings)
-                                    .caseRef(hearingDetails.getCaseRef())
-                                    .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                                    .caseRef(hearing.getCaseRef())
+                                    .hmctsServiceCode(hearing.getHmctsServiceCode())
                                     .build();
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
@@ -228,7 +226,7 @@ public class HearingsServiceImpl implements HearingsService {
             if (!casesWithHearings.isEmpty()) {
                 List<CourtDetail> allVenues =
                         refDataService.getCourtDetailsByServiceCode(
-                                hearingDetails.getHmctsServiceCode());
+                            hearingDetailsList.get(0).getHmctsServiceCode());
 
                 integrateVenueDetailsForCaseId(allVenues, casesWithHearings, caseIdWithRegionIdMap);
             }
@@ -247,14 +245,26 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList =
             hearingApiClient.getListOfHearingDetails(
-                userToken, s2sToken, listOfCaseIds, ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
-        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+                userToken,
+                s2sToken,
+                hmctsDeploymentId,
+                dataStoreUrl,
+                roleAssignmentUrl,
+                listOfCaseIds,
+                ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE);
+        log.info("returning total count of hearings: {}", hearingDetailsList.size());
+        if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing list not empty");
+            List<String> returnedCaseIds = new ArrayList<>();
+            hearingDetailsList.forEach(hearingList -> returnedCaseIds.add(hearingList.getCaseRef()));
+            log.info("returned case ids: {}", returnedCaseIds);
+            log.info("is listOfCaseIds equal to returned case ids: {}", listOfCaseIds.containsAll(returnedCaseIds));
             for (var hearing : hearingDetailsList) {
+                log.info("fis processing {}",hearing.getCaseRef());
                 try {
-                    hearingDetails = hearing;
+                    log.info("try block hit");
                     List<CaseHearing> filteredHearings =
-                        hearingDetails.getCaseHearings().stream()
+                        hearing.getCaseHearings().stream()
                             .filter(
                                 eachHearing ->
                                     eachHearing.getHmcStatus().equals(LISTED)
@@ -265,12 +275,14 @@ public class HearingsServiceImpl implements HearingsService {
                                         .getHmcStatus()
                                         .equals(COMPLETED))
                             .toList();
+                    log.info("checking hearings for case id {}", hearing.getCaseRef());
                     Hearings filteredCaseHearingsWithCount =
                         Hearings.hearingsWith()
                             .caseHearings(filteredHearings)
-                            .caseRef(hearingDetails.getCaseRef())
-                            .hmctsServiceCode(hearingDetails.getHmctsServiceCode())
+                            .caseRef(hearing.getCaseRef())
+                            .hmctsServiceCode(hearing.getHmctsServiceCode())
                             .build();
+                    log.info("adding hearing with case id {}", filteredCaseHearingsWithCount.getCaseRef());
                     casesWithHearings.add(filteredCaseHearingsWithCount);
                 } catch (HttpClientErrorException | HttpServerErrorException exception) {
                     log.info(
@@ -295,20 +307,18 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         List<Hearings> hearingDetailsList = new ArrayList<>();
         try {
-            hearingDetailsList.addAll(hearingApiClient.getListOfHearingDetails(userToken, s2sToken, listOfCaseIds,
-                                                                                     ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE));
-        } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.error(
-                HEARING_API_CALL_HTTP_CLIENT_ERROR_EXCEPTION,
-                exception.getMessage()
-            );
-        } catch (FeignException exception) {
-            log.error(HEARING_API_CALL_FEIGN_EXCEPTION, exception.getMessage());
+            hearingDetailsList.addAll(hearingApiClient.getListOfHearingDetails(userToken,
+                                                                               s2sToken,
+                                                                               hmctsDeploymentId,
+                                                                               dataStoreUrl,
+                                                                               roleAssignmentUrl,
+                                                                               listOfCaseIds,
+                                                                               ROLE_ASSIGNMENT_ATTRIBUTE_CASE_TYPE));
         } catch (Exception exception) {
-            log.error(HEARING_API_CALL_EXCEPTION_EXCEPTION, exception.getMessage());
+            log.error("Hearing api call Exception exception {}", exception.getMessage());
         }
         Map<String, List<String>> caseIdHearingIdMap = new HashMap<>();
-        if (CollectionUtils.isNotEmpty(hearingDetailsList)) {
+        if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing details retrieved from hmc");
             List<String> validHearingIds = new ArrayList<>();
             for (var caseWithHearings : hearingDetailsList) {
@@ -332,7 +342,7 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     private boolean isHearingScheduledToday(CaseHearing hearing) {
-        return CollectionUtils.isNotEmpty(hearing.getHearingDaySchedule())
+        return ObjectUtils.isNotEmpty(hearing.getHearingDaySchedule())
             && hearing.getHearingDaySchedule().stream().anyMatch(hearingDaySchedule -> LocalDate.now()
             .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
     }
@@ -344,6 +354,7 @@ public class HearingsServiceImpl implements HearingsService {
 
         for (Hearings hearings : casesWithHearings) {
             if (null != hearings && !hearings.getCaseHearings().isEmpty()) {
+                log.info("Setting hearing venue details for case reference {}", hearings.getCaseRef());
                 CourtDetail caseCourt = getCourtDetail(allVenues, caseIdWithRegionIdMap, hearings);
                 if (caseCourt != null) {
                     hearings.setCourtTypeId(caseCourt.getCourtTypeId());
@@ -351,6 +362,7 @@ public class HearingsServiceImpl implements HearingsService {
                 }
 
                 for (CaseHearing caseHearing : hearings.getCaseHearings()) {
+                    log.info("Setting venue details for hearing ID {}", caseHearing.getHearingID());
                     for (HearingDaySchedule hearingSchedule : caseHearing.getHearingDaySchedule()) {
                         CourtDetail matchedCourt = getMatchedCourtDetail(
                             allVenues,
@@ -452,7 +464,12 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         Hearings futureHearingsResponse = null;
         try {
-            hearingDetails = hearingApiClient.getHearingDetails(userToken, s2sToken, caseReference);
+            Hearings hearingDetails = hearingApiClient.getHearingDetails(userToken,
+                                                                         s2sToken,
+                                                                         hmctsDeploymentId,
+                                                                         dataStoreUrl,
+                                                                         roleAssignmentUrl,
+                                                                         caseReference);
 
             final List<String> hearingStatuses =
                     futureHearingStatusList.stream().map(String::trim).toList();
@@ -512,6 +529,9 @@ public class HearingsServiceImpl implements HearingsService {
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,
+            hmctsDeploymentId,
+            dataStoreUrl,
+            roleAssignmentUrl,
             hearingRequest
         );
         return HearingResponse.builder()

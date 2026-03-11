@@ -39,6 +39,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_CLASSI
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_GRANT_TYPE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_MANAGER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_HEARING_VIEWER;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_CATEGORY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_PROCESS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_REQUEST_REFERENCE;
@@ -72,13 +73,14 @@ public class RoleAssignmentServiceTest {
         UserDetails user = UserDetails.builder()
             .id("12345")
             .email("test@hmcts.net")
-            .roles(List.of("hearing-manager", "hearing-viewer"))
+            .roles(List.of("hearing-manager", "hearing-viewer", "listed-hearing-viewer"))
             .forename("ABC")
             .surname("XYZ").build();
 
         List<RoleAssignment> roleAssignmentList =
             Arrays.asList(buildRoleAssignment(ROLE_ASSIGNMENT_HEARING_MANAGER),
-                          buildRoleAssignment(ROLE_ASSIGNMENT_HEARING_VIEWER));
+                          buildRoleAssignment(ROLE_ASSIGNMENT_HEARING_VIEWER),
+                          buildRoleAssignment(ROLE_ASSIGNMENT_LISTED_HEARING_VIEWER));
 
         RoleAssignmentRequestResource roleAssignmentRequestResource =
             RoleAssignmentRequestResource.builder()
