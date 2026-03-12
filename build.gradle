@@ -437,9 +437,7 @@ dependencies {
   implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
   implementation group: 'io.springfox', name: 'springfox-spring-webflux', version: '3.0.0'
-  //implementation group: 'uk.gov.hmcts.reform', name: 'service-auth-provider-client', version: '4.0.0'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
-  //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.2'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.56.0'
@@ -453,7 +451,7 @@ dependencies {
   implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.11.0'
   // pin due to CVE-2025-489
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '9.0.113'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
   implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.3'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.3'
