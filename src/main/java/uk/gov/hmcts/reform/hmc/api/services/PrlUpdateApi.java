@@ -31,7 +31,7 @@ public interface PrlUpdateApi {
     ResponseEntity prlUpdate(
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody HearingDTO hearingDto,
-            @PathVariable ("caseState") State caseState);
+            @PathVariable("caseState") State caseState);
 
     @RequestMapping(
             method = RequestMethod.PUT,
