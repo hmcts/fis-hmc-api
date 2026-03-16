@@ -1,5 +1,37 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
+import groovy.util.logging.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.context.WebApplicationContext;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
@@ -22,41 +54,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_CASE_REFERENCE;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import groovy.util.logging.Slf4j;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 @Slf4j
 @SpringBootTest
