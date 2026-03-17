@@ -3,10 +3,12 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
@@ -20,8 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,6 +159,32 @@ class HearingsServiceTest {
         Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
         Assertions.assertEquals("LISTED", hearings.getCaseHearings().get(0).getHmcStatus());
         Assertions.assertEquals(1, hearings.getCaseHearings().size());
+    }
+
+    static Stream<Arguments> invalidInputs() {
+        return Stream.of(
+            Arguments.of(HttpClientErrorException.class),
+            Arguments.of(HttpServerErrorException.class),
+            Arguments.of(RuntimeException.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidInputs")
+    void shouldPropogateHttpErrorTest(Class<? extends Exception> expectedException) {
+        when(hearingApiClient.getHearingDetails(any(),
+                                                any(),
+                                                any(),
+                                                any(),
+                                                any(),
+                                                any()))
+            .thenThrow(expectedException);
+
+        assertThrows(
+            expectedException, () -> {
+                hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
+            }
+        );
     }
 
     @Test
@@ -567,7 +600,7 @@ class HearingsServiceTest {
                                                 anyString(),
                                                 anyString(),
                                                 any()))
-                .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+                .thenThrow(feignException(INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
@@ -727,7 +760,7 @@ class HearingsServiceTest {
                                                       anyString(),
                                                       any(),
                                                       any()))
-            .thenThrow(feignException(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Not found"));
+            .thenThrow(feignException(INTERNAL_SERVER_ERROR.value(), "Not found"));
 
         Assertions.assertTrue(hearingsService
                                   .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),
