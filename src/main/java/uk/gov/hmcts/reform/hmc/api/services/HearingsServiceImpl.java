@@ -10,7 +10,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
+import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransactionRequestMapper;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
@@ -20,6 +20,7 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class HearingsServiceImpl implements HearingsService {
     private final RefDataService refDataService;
     private final RefDataJudicialService refDataJudicialService;
     private final HearingApiClient hearingApiClient;
+    private final AutomatedHearingTransactionRequestMapper automatedHearingTransactionRequestMapper;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -520,12 +522,12 @@ public class HearingsServiceImpl implements HearingsService {
     }
 
     @Override
-    public HearingResponse createAutomatedHearings(CaseData caseData) {
+    public HearingResponse createAutomatedHearings(CaseData caseData) throws IOException {
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
-        AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
-            caseData, ccdBaseUrl, specialCharacters);
+        AutomatedHearingRequest hearingRequest = automatedHearingTransactionRequestMapper.mappingHearingTransactionRequest(
+            caseData, ccdBaseUrl);
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,
