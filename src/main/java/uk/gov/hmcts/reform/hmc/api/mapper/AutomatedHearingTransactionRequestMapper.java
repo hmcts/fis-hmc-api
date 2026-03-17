@@ -50,6 +50,11 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.LANGUAGE_INTERPRETER;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.SIGN_LANGUAGE_INTERPRETER;
+import static uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl.getReasonableAdjustmentsByParty;
+import static uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl.getVulnerabilityDetails;
+import static uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl.isVulnerableFlag;
 import static uk.gov.hmcts.reform.hmc.api.utils.CaseUtils.formatPhoneNumber;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
@@ -65,17 +70,8 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ONE;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0013;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0015;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0018;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PLUS_SIGN;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RA0042;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SM0002;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
 
 @Slf4j
@@ -583,35 +579,9 @@ public class AutomatedHearingTransactionRequestMapper {
         return curPartyFlagsModelList.stream()
             .filter(
                 eachPartyFlag ->
-                    eachPartyFlag.getFlagId().equals(RA0042)
-                        || eachPartyFlag.getFlagId().equals(PF0015))
+                    eachPartyFlag.getFlagId().equals(SIGN_LANGUAGE_INTERPRETER.getFlagCode())
+                        || eachPartyFlag.getFlagId().equals(LANGUAGE_INTERPRETER.getFlagCode()))
             .distinct()
-            .toList();
-    }
-
-    private String getVulnerabilityDetails(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
-
-        return flagsDetailOfCurrParty.stream()
-            .filter(
-                partyFlag ->
-                    PF0002.equals(partyFlag.getValue().getFlagCode())
-                        || PF0013.equals(partyFlag.getValue().getFlagCode())
-                        || PF0018.equals(partyFlag.getValue().getFlagCode())
-                        || SM0002.equals(partyFlag.getValue().getFlagCode()))
-            .distinct()
-            .map(p -> p.getValue().getName())
-            .collect(Collectors.joining(PLUS_SIGN));
-    }
-
-    private List<String> getReasonableAdjustmentsByParty(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
-
-        return flagsDetailOfCurrParty.stream()
-            .filter(
-                partyFlag ->
-                    partyFlag.getValue().getFlagCode().startsWith(RA)
-                        || partyFlag.getValue().getFlagCode().startsWith(SM))
-            .distinct()
-            .map(partyFlag -> partyFlag.getValue().getFlagCode())
             .toList();
     }
 
@@ -672,17 +642,6 @@ public class AutomatedHearingTransactionRequestMapper {
                     .build();
         }
         return partyDetailsModelForSol;
-    }
-
-    private Boolean isVulnerableFlag(List<Element<FlagDetail>> flagsDetailOfCurrParty) {
-
-        return flagsDetailOfCurrParty.stream()
-            .anyMatch(
-                partyFlag ->
-                    partyFlag.getValue().getFlagCode().equals(PF0002)
-                        || PF0013.equals(partyFlag.getValue().getFlagCode())
-                        || PF0018.equals(partyFlag.getValue().getFlagCode())
-                        || SM0002.equals(partyFlag.getValue().getFlagCode()));
     }
 
     private List<AutomatedHearingPartyDetails> addFL401PartyData(
