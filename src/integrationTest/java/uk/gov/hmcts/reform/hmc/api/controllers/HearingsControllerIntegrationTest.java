@@ -281,5 +281,5 @@ public class HearingsControllerIntegrationTest {
         assertTrue(json.contains("testCaseRefNo"));
         assertTrue(json.contains("testCaseRefName"));
     }
-    
+
 }

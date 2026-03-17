@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static feign.Request.HttpMethod.GET;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -260,7 +261,7 @@ class HearingsServiceTest {
         CaseHearing caseHearing =
             CaseHearing.caseHearingWith()
                 .hmcStatus("LISTED")
-                .hearingDaySchedule(new ArrayList<>())
+                .hearingDaySchedule(null)
                 .build();
         List<CaseHearing> caseHearingList = new ArrayList<>();
         caseHearingList.add(caseHearing);
@@ -298,7 +299,7 @@ class HearingsServiceTest {
         Assertions.assertEquals("TEST", hearingsResponse.get(0).getCourtName());
         Assertions.assertNotNull(caseHearingResp.getHmcStatus());
         Assertions.assertEquals("LISTED", caseHearingResp.getHmcStatus());
-        Assertions.assertTrue(caseHearingResp.getHearingDaySchedule().isEmpty());
+        Assertions.assertNull(hearingsResponse.get(0).getCaseHearings().get(0).getHearingDaySchedule());
     }
 
     @Test
