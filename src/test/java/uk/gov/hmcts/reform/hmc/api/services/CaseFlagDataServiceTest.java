@@ -1,5 +1,7 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.QUALIFIED_LEGAL_REPRESENTATIVE;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.VULNERABLE_USER;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANTS_FL401;
@@ -9,8 +11,6 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_LINKS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_MNGEMNT_LOC;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ORGANISATION_TEST_NAME;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0002;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PF0020;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.PRIVATE_LAW;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.REASON_FOR_LINK;
@@ -73,7 +73,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -142,7 +142,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -213,7 +213,7 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0002).build();
+        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(VULNERABLE_USER.getFlagCode()).build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
@@ -283,7 +283,10 @@ class CaseFlagDataServiceTest {
         List caseLinksList = new ArrayList();
         caseLinksList.add(caseLinkMap);
 
-        FlagDetail flagDetail = FlagDetail.builder().hearingRelevant(TEST).flagCode(PF0020).build();
+        FlagDetail flagDetail = FlagDetail.builder()
+            .hearingRelevant(TEST)
+            .flagCode(QUALIFIED_LEGAL_REPRESENTATIVE.getFlagCode())
+            .build();
         Element<FlagDetail> flagDetailElement =
                 Element.<FlagDetail>builder().id(UUID.randomUUID()).value(flagDetail).build();
 
