@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
@@ -615,7 +616,7 @@ class HearingsServiceTest {
                                                 anyString(),
                                                 anyString(),
                                                 any()))
-                .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+                .thenThrow(new HttpServerErrorException(BAD_GATEWAY));
         Assertions.assertNull(hearingsService.getFutureHearings(""));
     }
 
@@ -719,7 +720,7 @@ class HearingsServiceTest {
             anyString(),
             any(),
             any()
-        )).thenThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+        )).thenThrow(new HttpClientErrorException(INTERNAL_SERVER_ERROR));
 
         Map<String, String> caseIdWithRegionId = new HashMap<>();
         caseIdWithRegionId.put("123", "RegionId-231596");
@@ -777,7 +778,7 @@ class HearingsServiceTest {
                                                       anyString(),
                                                       any(),
                                                       any()))
-            .thenThrow(HttpClientErrorException.create(HttpStatus.BAD_GATEWAY, "Bad Gateway", null,
+            .thenThrow(HttpClientErrorException.create(BAD_GATEWAY, "Bad Gateway", null,
                                                        null, null));
         Map<String, List<String>> response = hearingsService
             .getHearingsListedForCurrentDateByListOfCaseIdsWithoutCourtVenueDetails(new ArrayList<>(),
