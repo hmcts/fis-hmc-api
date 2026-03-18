@@ -1,10 +1,34 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import static feign.Request.HttpMethod.GET;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
+
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,25 +46,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
 import uk.gov.hmcts.reform.hmc.api.model.response.JudgeDetail;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.OPEN;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -154,6 +159,31 @@ class HearingsServiceTest {
         Assertions.assertEquals("JudgeA", hearingDayScheduleResponse.getHearingJudgeName());
         Assertions.assertEquals("LISTED", hearings.getCaseHearings().get(0).getHmcStatus());
         Assertions.assertEquals(1, hearings.getCaseHearings().size());
+    }
+
+    static Stream<Arguments> invalidInputs() {
+        return Stream.of(
+            Arguments.of(HttpClientErrorException.class),
+            Arguments.of(HttpServerErrorException.class)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidInputs")
+    void shouldPropogateHttpErrorTest(Class<? extends Exception> expectedException) {
+        when(hearingApiClient.getHearingDetails(any(),
+                                                any(),
+                                                any(),
+                                                any(),
+                                                any(),
+                                                any()))
+            .thenThrow(expectedException);
+
+        assertThrows(
+            expectedException, () -> {
+                hearingsService.getHearingsByCaseRefNo("123", "Auth", "sauth");
+            }
+        );
     }
 
     @Test
