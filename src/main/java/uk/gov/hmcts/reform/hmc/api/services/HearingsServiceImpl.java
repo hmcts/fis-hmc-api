@@ -387,7 +387,7 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
-    private static CourtDetail getMatchedCourtDetail(List<CourtDetail> allVenues, Map<String,
+    private CourtDetail getMatchedCourtDetail(List<CourtDetail> allVenues, Map<String,
         String> caseIdWithRegionIdMap, Hearings hearings, HearingDaySchedule hearingSchedule) {
         if (hearingSchedule.getHearingVenueId() != null) {
             return getCourtDetailByVenueIdAndCourtStatus(allVenues, hearingSchedule.getHearingVenueId());
@@ -396,7 +396,7 @@ public class HearingsServiceImpl implements HearingsService {
         return getCourtDetailByRegionIdAndCourtStatus(allVenues, regionId);
     }
 
-    private static void setMatchedCourtHearingSchedule(HearingDaySchedule hearingSchedule, CourtDetail matchedCourt) {
+    private void setMatchedCourtHearingSchedule(HearingDaySchedule hearingSchedule, CourtDetail matchedCourt) {
         if (matchedCourt != null) {
             hearingSchedule.setHearingVenueName(matchedCourt.getHearingVenueName());
             hearingSchedule.setHearingVenueAddress(buildVenueAddress(matchedCourt));
@@ -405,7 +405,7 @@ public class HearingsServiceImpl implements HearingsService {
         }
     }
 
-    private static String buildVenueAddress(CourtDetail courtDetail) {
+    private String buildVenueAddress(CourtDetail courtDetail) {
         String address = courtDetail.getHearingVenueAddress();
         if (address == null) {
             return null;
@@ -413,21 +413,21 @@ public class HearingsServiceImpl implements HearingsService {
         return address.concat(" " + courtDetail.getHearingVenuePostCode());
     }
 
-    private static CourtDetail getCourtDetailByRegionIdAndCourtStatus(List<CourtDetail> allVenues, String regionId) {
+    private CourtDetail getCourtDetailByRegionIdAndCourtStatus(List<CourtDetail> allVenues, String regionId) {
         return allVenues.stream()
             .filter(e -> regionId.equals(e.getRegionId()) && OPEN.equals(e.getCourtStatus()))
             .findFirst()
             .orElse(null);
     }
 
-    private static CourtDetail getCourtDetailByVenueIdAndCourtStatus(List<CourtDetail> allVenues, String venueId) {
+    private CourtDetail getCourtDetailByVenueIdAndCourtStatus(List<CourtDetail> allVenues, String venueId) {
         return allVenues.stream()
             .filter(e -> venueId.equals(e.getHearingVenueId()) && OPEN.equals(e.getCourtStatus()))
             .findFirst()
             .orElse(null);
     }
 
-    private static CourtDetail getCourtDetail(List<CourtDetail> allVenues,
+    private CourtDetail getCourtDetail(List<CourtDetail> allVenues,
                                               Map<String, String> caseIdWithRegionIdMap, Hearings hearings) {
         return allVenues.stream()
                         .filter(
