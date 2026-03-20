@@ -117,8 +117,9 @@ public class AutomatedHearingService {
 
     private Optional<Integer> findPartyIndex(String partyId, List<Element<PartyDetails>> parties) {
         Optional<Element<PartyDetails>> partyDetailsElement = parties.stream()
-            .filter(el -> UUID.fromString(partyId).equals(el.getValue().getPartyId())
-                || UUID.fromString(partyId).equals(el.getValue().getSolicitorPartyId()))
+            .filter(el -> UUID.fromString(partyId).equals(el.getValue().getPartyId()) // FL401 parties
+                || UUID.fromString(partyId).equals(el.getId()) // C100 parties
+                || UUID.fromString(partyId).equals(el.getValue().getSolicitorPartyId())) // Solicitors
             .findFirst();
 
         return partyDetailsElement.map(parties::indexOf);

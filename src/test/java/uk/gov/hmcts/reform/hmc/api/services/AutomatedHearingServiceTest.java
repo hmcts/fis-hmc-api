@@ -14,6 +14,9 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataApplicantDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataRespondentDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.FlagDetail;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.Flags;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingCaseCategories;
@@ -29,11 +32,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.POTENTIALLY_VIOLENT_PERSON;
+import static uk.gov.hmcts.reform.hmc.api.enums.caseflags.CaseFlag.VULNERABLE_USER;
 import static uk.gov.hmcts.reform.hmc.api.services.AutomateHearingServiceTest.element;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COURT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.FL401;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.NO;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
 
 @ExtendWith(MockitoExtension.class)
 class AutomatedHearingServiceTest {
@@ -43,14 +49,40 @@ class AutomatedHearingServiceTest {
         new AutomatedHearingCaseCategories("caseSubType", "ABA5-PRL", "ABA5-PRL")
     );
 
-    private static final DynamicList INTER = DynamicList.builder()
+    private static final DynamicList INTER_CHANNEL = DynamicList.builder()
         .value(DynamicListElement.builder()
                    .code("INTER")
                    .label("Inter")
                    .build())
         .build();
 
+    private static final DynamicList TEL_CHANNEL = DynamicList.builder()
+        .value(DynamicListElement.builder()
+                   .code("TEL")
+                   .label("Tel")
+                   .build())
+        .build();
+
+    private static final Flags VULNERABLE_USER_FLAGS = Flags.builder()
+        .details(List.of(element(
+            FlagDetail.builder()
+                .flagCode(VULNERABLE_USER.getFlagCode())
+                .name("Vulnerable user")
+                .status("Active")
+                .build())))
+        .build();
+
+    private static final Flags PVP_FLAGS = Flags.builder()
+        .details(List.of(element(
+            FlagDetail.builder()
+                .flagCode(POTENTIALLY_VIOLENT_PERSON.getFlagCode())
+                .name("Potentially violent person")
+                .status("Active")
+                .build())))
+        .build();
+
     @Spy
+    @SuppressWarnings("unused")
     private CaseFlagV2DataServiceImpl caseFlagV2DataService;
 
     @InjectMocks
@@ -58,7 +90,7 @@ class AutomatedHearingServiceTest {
 
     @Test
     void shouldMapC100CaseCorrectly() {
-        CaseData caseData = getC100BaseCaseData();
+        CaseData caseData = getC100BaseCaseData(YES);
 
         AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
 
@@ -152,20 +184,64 @@ class AutomatedHearingServiceTest {
 
     @Test
     void shouldHavePartyFlagsMappedCorrectly() {
+        CaseData caseData = getC100BaseCaseData(YES);
+        caseData.setAllPartyFlags(AllPartyFlags.builder()
+                                      .caApplicant1InternalFlags(VULNERABLE_USER_FLAGS)
+                                      .caRespondent1InternalFlags(PVP_FLAGS)
+                                      .build());
 
+        AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
+
+        assertThat(result.getPartyDetails().get(0).getIndividualDetails())
+            .extracting("vulnerableFlag", "vulnerabilityDetails")
+            .containsExactly(true, "Vulnerable user");
+        assertThat(result.getPartyDetails().get(1).getIndividualDetails())
+            .extracting("vulnerableFlag", "vulnerabilityDetails")
+            .containsExactly(true, "Potentially violent person");
     }
 
     @Test
     void shouldMapSolicitorDetailsAndFlagsCorrectly() {
+        CaseData caseData = getC100BaseCaseData(YES);
+        caseData.setApplicants(List.of(element(
+            PartyDetails.builder()
+                .partyId(UUID.randomUUID())
+                .lastName("Smith")
+                .solicitorPartyId(UUID.randomUUID())
+                .solicitorOrgUuid(UUID.randomUUID())
+                .representativeFirstName("Steven")
+                .representativeLastName("Solicitor")
+                .build()
+        )));
+        caseData.setAllPartyFlags(AllPartyFlags.builder()
+                                      .caApplicantSolicitor1ExternalFlags(VULNERABLE_USER_FLAGS)
+                                      .build());
 
+        AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
+
+        assertThat(result.getPartyDetails().get(1).getIndividualDetails())
+            .extracting("vulnerableFlag", "vulnerabilityDetails")
+            .containsExactly(true, "Vulnerable user");
     }
 
     @Test
     void shouldHaveCorrectPreferredHearingChannels() {
+        CaseData caseData = getC100BaseCaseData(NO);
+        caseData.getHearingData().getHearingDataApplicantDetails().setApplicantHearingChannel1(INTER_CHANNEL);
+        caseData.getHearingData().getHearingDataRespondentDetails().setRespondentHearingChannel1(TEL_CHANNEL);
 
+        AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
+
+        // Applicant INTER
+        assertThat(result.getPartyDetails().get(0).getIndividualDetails().getPreferredHearingChannel())
+            .isEqualTo("INTER");
+
+        // Respondent TEL
+        assertThat(result.getPartyDetails().get(1).getIndividualDetails().getPreferredHearingChannel())
+            .isEqualTo("TEL");
     }
 
-    private CaseData getC100BaseCaseData() {
+    private CaseData getC100BaseCaseData(String sameAttendance) {
         DynamicList hearingTypes = DynamicList.builder()
             .value(DynamicListElement.builder()
                        .code("HT")
@@ -183,7 +259,7 @@ class AutomatedHearingServiceTest {
         HearingData hearingData = HearingData.builder()
             .hearingTypes(hearingTypes)
             .hearingChannelsEnum(HearingChannelsEnum.INTER)
-            .allPartiesAttendHearingSameWayYesOrNo("YES")
+            .allPartiesAttendHearingSameWayYesOrNo(sameAttendance)
             .hearingPriorityTypeEnum(HearingPriorityTypeEnum.StandardPriority)
             .courtList(courtList)
             .hearingEstimatedHours("2")
@@ -191,11 +267,11 @@ class AutomatedHearingServiceTest {
             .hearingJudgePersonalCode("Judge123")
             .hearingDataApplicantDetails(HearingDataApplicantDetails.hearingDataApplicantDetails()
                                              .applicantName1("John Smith")
-                                             .applicantHearingChannel1(INTER)
+                                             .applicantHearingChannel1(INTER_CHANNEL)
                                              .build())
             .hearingDataRespondentDetails(HearingDataRespondentDetails.hearingDataRespondentDetails()
                                               .respondentName1("Jane Jones")
-                                              .respondentHearingChannel1(INTER)
+                                              .respondentHearingChannel1(INTER_CHANNEL)
                                               .build())
             .hearingListedLinkedCases(DynamicList.builder()
                                           .value(null) // hearing is not linked
