@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.hmc.api.mapper;
+package uk.gov.hmcts.reform.hmc.api.services;
 
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -28,8 +28,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
 import uk.gov.hmcts.reform.hmc.api.model.response.PartyFlagsModel;
-import uk.gov.hmcts.reform.hmc.api.services.CaseFlagDataServiceImpl;
-import uk.gov.hmcts.reform.hmc.api.services.CaseFlagV2DataServiceImpl;
 import uk.gov.hmcts.reform.hmc.api.utils.CaseUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -62,14 +60,13 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
 @Slf4j
 @Service
 @AllArgsConstructor
-public class AutomatedHearingTransactionRequestMapper {
+public class AutomatedHearingService {
 
     private final CaseFlagV2DataServiceImpl caseFlagService;
 
     public static final String LOCAL_AUTHORITY = "Local Authority";
 
-    public AutomatedHearingRequest mappingHearingTransactionRequest(CaseData caseData,
-                                                                           String ccdBaseUrl) {
+    public AutomatedHearingRequest mapCaseDataToAutoHearingRequest(CaseData caseData, String ccdBaseUrl) {
 
         String publicCaseNameMapper = EMPTY;
         if (C100.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
