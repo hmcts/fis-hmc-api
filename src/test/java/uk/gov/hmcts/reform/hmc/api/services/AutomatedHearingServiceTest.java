@@ -13,6 +13,7 @@ import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataApplicantDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingDataRespondentDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingPriorityTypeEnum;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.HearingSpecificDatesOptionsEnum;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.PartyDetails;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.AllPartyFlags;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.caseflagsv2.FlagDetail;
@@ -25,6 +26,7 @@ import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingDetails;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.request.PanelRequirements;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingLocation;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingWindow;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -180,6 +182,44 @@ class AutomatedHearingServiceTest {
 
         assertThat(result.getPartyDetails()).isNotNull();
         assertThat(result.getPartyDetails()).hasSize(2);
+    }
+
+    @Test
+    void shouldMapSpecificHearingWindowsCorrectly() {
+        CaseData caseData = getC100BaseCaseData(YES);
+        caseData.getHearingData().setHearingSpecificDatesOptionsEnum(HearingSpecificDatesOptionsEnum.Yes);
+        caseData.getHearingData().setFirstDateOfTheHearing(LocalDate.of(2026, 1, 1));
+        caseData.getHearingData().setHearingMustTakePlaceAtHour("13");
+
+        AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
+
+        assertThat(result).isNotNull();
+
+        HearingWindow expectedWindow = HearingWindow.hearingWindowWith()
+            .firstDateTimeMustBe("2026-01-01T13:00:00Z")
+            .build();
+
+        assertThat(result.getHearingDetails().getHearingWindow()).isEqualTo(expectedWindow);
+    }
+
+    @Test
+    void shouldMapWhenHearingIsBetweenCertainDatesCorrectly() {
+        CaseData caseData = getC100BaseCaseData(YES);
+        caseData.getHearingData()
+            .setHearingSpecificDatesOptionsEnum(HearingSpecificDatesOptionsEnum.HearingRequiredBetweenCertainDates);
+        caseData.getHearingData().setEarliestHearingDate(LocalDate.of(2026, 1, 1));
+        caseData.getHearingData().setLatestHearingDate(LocalDate.of(2026, 1, 2));
+
+        AutomatedHearingRequest result = automatedHearingService.mapCaseDataToAutoHearingRequest(caseData, "http://ccd/");
+
+        assertThat(result).isNotNull();
+
+        HearingWindow expectedWindow = HearingWindow.hearingWindowWith()
+            .dateRangeStart("2026-01-01")
+            .dateRangeEnd("2026-01-02")
+            .build();
+
+        assertThat(result.getHearingDetails().getHearingWindow()).isEqualTo(expectedWindow);
     }
 
     @Test
