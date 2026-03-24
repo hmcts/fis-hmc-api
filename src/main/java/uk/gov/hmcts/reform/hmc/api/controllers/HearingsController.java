@@ -120,10 +120,8 @@ public class HearingsController {
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(
-                        hearingsService.getHearingsByCaseRefNo(
-                                caseReference, authorization, serviceAuthorization));
+                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION + INTERNAL_SERVER_ERROR.getReasonPhrase());
+                throw new ResponseStatusException(INTERNAL_SERVER_ERROR);
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
