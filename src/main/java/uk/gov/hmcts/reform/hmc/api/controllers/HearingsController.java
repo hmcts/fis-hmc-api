@@ -121,7 +121,7 @@ public class HearingsController {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION + INTERNAL_SERVER_ERROR.getReasonPhrase());
-                throw new ResponseStatusException(INTERNAL_SERVER_ERROR);
+                throw new RuntimeException("Simulate internal server error");
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
