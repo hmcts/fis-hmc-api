@@ -117,7 +117,7 @@ public class HearingsController {
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
-            return status(INTERNAL_SERVER_ERROR).body("Internal server error testing");
+        return status(INTERNAL_SERVER_ERROR).body("Internal server error testing");
     }
 
     /**
