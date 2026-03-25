@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.AuthorizationException;
-import uk.gov.hmcts.reform.hmc.api.exceptions.ServerErrorException;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
@@ -118,21 +117,7 @@ public class HearingsController {
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestHeader("caseReference") String caseReference) {
-        try {
-            if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
-                    && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
-                log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION + INTERNAL_SERVER_ERROR.getReasonPhrase());
-                throw new ServerErrorException("Simulate internal server error", INTERNAL_SERVER_ERROR, new Exception());
-            } else {
-                throw new ResponseStatusException(UNAUTHORIZED);
-            }
-        } catch (AuthorizationException | ResponseStatusException e) {
-            return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
-        } catch (FeignException feignException) {
-            return status(feignException.status()).body(new ApiError(feignException.getMessage()));
-        } catch (Exception e) {
-            return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
-        }
+            return status(INTERNAL_SERVER_ERROR).body("Internal server error testing");
     }
 
     /**
