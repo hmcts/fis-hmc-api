@@ -181,6 +181,7 @@ public class HearingsServiceImpl implements HearingsService {
      */
     @Override
     public List<Hearings> getHearingsByListOfCaseIds(
+        log.info("TEST log statement to check correct hearings version is being used");
         Map<String, String> caseIdWithRegionIdMap,
         String authorization,
         String serviceAuthorization) {
@@ -378,6 +379,7 @@ public class HearingsServiceImpl implements HearingsService {
             CaseHearing caseHearing) {
 
         log.info("Setting venue details for hearing ID {}", caseHearing.getHearingID());
+        log.info("Is Hearing Day schedule empty: " + caseHearing.getHearingDaySchedule().isEmpty())
         if (caseHearing.getHearingDaySchedule().isEmpty()) {
             log.info("Hearing schedule is empty for hearing ID {}", caseHearing.getHearingID());
         } else {
