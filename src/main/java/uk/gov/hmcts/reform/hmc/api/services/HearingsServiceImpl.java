@@ -379,7 +379,7 @@ public class HearingsServiceImpl implements HearingsService {
             CaseHearing caseHearing) {
 
         log.info("Setting venue details for hearing ID {}", caseHearing.getHearingID());
-        log.info("Is Hearing Day schedule empty: " + caseHearing.getHearingDaySchedule().isEmpty())
+        log.info("Is Hearing Day schedule empty: " + caseHearing.getHearingDaySchedule().isEmpty());
         if (caseHearing.getHearingDaySchedule().isEmpty()) {
             log.info("Hearing schedule is empty for hearing ID {}", caseHearing.getHearingID());
         } else {
