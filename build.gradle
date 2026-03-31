@@ -188,10 +188,11 @@ pitest {
 
 jacocoTestReport {
   executionData(test, integration)
+
   reports {
     xml.required = true
     csv.required = false
-    xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
 
@@ -233,7 +234,7 @@ sonarqube {
     property "sonar.projectKey", "uk.gov.hmcts.reform:fis-hmc-api"
     property "sonar.exclusions", sonarExclusions.join(', ')
     property "sonar.coverage.exclusions", sonarExclusions.join(', ')
-    property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.destination.path}"
+    property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoTestReport.reports.xml.outputLocation}"
     property "sonar.pitest.mode", "reuseReport"
     property "sonar.pitest.reportsDirectory", "build/reports/pitest"
   }
