@@ -21,7 +21,6 @@ plugins {
   id 'com.github.ben-manes.versions' version '0.51.0'
   id 'org.sonarqube' version '3.5.0.2730'
   id 'idea'
-  id 'hmcts.ccd.sdk' version '0.27.3'
   id 'au.com.dius.pact' version '4.1.7'
   id 'info.solidsoft.pitest' version '1.15.0'
 }
@@ -444,7 +443,6 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
   //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.2'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
   implementation group: 'com.azure', name: 'azure-core', version: '1.56.0'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.14'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.20'
