@@ -228,6 +228,20 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
 
+jacocoTestReport {
+  executionData(test, integration)
+
+  reports {
+    xml.required = true
+    csv.required = false
+    xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+  }
+}
+
+jacoco {
+  toolVersion = "0.8.14"
+}
+
 sonarqube {
   properties {
     property "sonar.projectName", "fis :: fis-hmc-api"
