@@ -345,6 +345,15 @@ public class HearingsServiceImpl implements HearingsService {
             .equals(hearingDaySchedule.getHearingStartDateTime().toLocalDate()));
     }
 
+    private boolean hasFutureHearingSchedule(CaseHearing hearing) {
+        if (hearing.getHearingDaySchedule() == null || hearing.getHearingDaySchedule().isEmpty()) {
+            return false;
+        }
+        return hearing.getHearingDaySchedule().stream()
+            .anyMatch(schedule -> schedule.getHearingStartDateTime() != null
+                              && schedule.getHearingStartDateTime().isAfter(LocalDateTime.now()));
+    }
+
     private void integrateVenueDetailsForCaseId(
             List<CourtDetail> allVenues,
             List<Hearings> casesWithHearings,
@@ -478,19 +487,8 @@ public class HearingsServiceImpl implements HearingsService {
 
             final List<CaseHearing> allFutureHearings =
                     filteredHearingsByStatus.stream()
-                            .filter(
-                                    hearing ->
-                                            hearing.getHearingDaySchedule() != null
-                                                    && !hearing.getHearingDaySchedule().stream()
-                                                                    .filter(
-                                                                            hearDaySche ->
-                                                                                    hearDaySche
-                                                                                            .getHearingStartDateTime()
-                                                                                            .isAfter(
-                                                                                                    LocalDateTime
-                                                                                                            .now()))
-                                                                    .toList()
-                                                                    .isEmpty()).toList();
+                            .filter(this::hasFutureHearingSchedule)
+                            .toList();
 
             futureHearingsResponse =
                     Hearings.hearingsWith()
