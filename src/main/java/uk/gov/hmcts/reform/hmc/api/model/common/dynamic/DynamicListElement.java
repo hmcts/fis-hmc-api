@@ -18,7 +18,7 @@ import static org.apache.commons.lang3.StringUtils.abbreviate;
 @Data
 @Jacksonized
 @Builder
-public class DynamicListElement {
+public final class DynamicListElement {
     public static final UUID DEFAULT_CODE = UUID.fromString("00000000-0000-0000-0000-000000000000");
     public static final String DEFAULT_LABEL = "";
     public static final DynamicListElement EMPTY = DynamicListElement.builder().build();
