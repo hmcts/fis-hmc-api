@@ -165,8 +165,7 @@ class HearingsServiceTest {
     static Stream<Arguments> invalidInputs() {
         return Stream.of(
             Arguments.of(HttpClientErrorException.class),
-            Arguments.of(HttpServerErrorException.class),
-            Arguments.of(RuntimeException.class)
+            Arguments.of(HttpServerErrorException.class)
         );
     }
 

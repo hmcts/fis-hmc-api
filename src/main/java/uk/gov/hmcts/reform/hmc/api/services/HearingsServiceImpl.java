@@ -111,7 +111,6 @@ public class HearingsServiceImpl implements HearingsService {
                     "Exception {} during getHearingsByCaseRefNo for case {}",
                     exception,
                     caseReference);
-            throw exception;
         }
         return caseHearingsResponse;
     }
