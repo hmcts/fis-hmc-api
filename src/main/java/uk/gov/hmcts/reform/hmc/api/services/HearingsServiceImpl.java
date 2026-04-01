@@ -184,7 +184,7 @@ public class HearingsServiceImpl implements HearingsService {
         Map<String, String> caseIdWithRegionIdMap,
         String authorization,
         String serviceAuthorization) {
-
+        log.info("TEST log statement to check correct hearings version is being used");
         List<Hearings> casesWithHearings = new ArrayList<>();
         if (!caseIdWithRegionIdMap.isEmpty()) {
             final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
@@ -387,6 +387,7 @@ public class HearingsServiceImpl implements HearingsService {
             CaseHearing caseHearing) {
 
         log.info("Setting venue details for hearing ID {}", caseHearing.getHearingID());
+        log.info("Is Hearing Day schedule empty: {} ", caseHearing.getHearingDaySchedule().isEmpty());
         if (caseHearing.getHearingDaySchedule().isEmpty()) {
             log.info("Hearing schedule is empty for hearing ID {}", caseHearing.getHearingID());
         } else {
