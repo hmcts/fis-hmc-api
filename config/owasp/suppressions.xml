@@ -22,7 +22,7 @@
    ]]></notes>
     <cve>CVE-2025-68161</cve>
   </suppress>
-  <suppress until="2026-04-04">
+  <suppress until="2026-05-01">
     <notes><![CDATA[
    file name: kotlin-reflect-1.6.21.jar
    ]]>
