@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.response.PartyDetailsModel;
+
 import java.util.List;
 
 @Data
@@ -34,5 +36,17 @@ public class AutomatedHearingPartyDetails {
     @JsonProperty("unavailabilityRange")
     private List<UnavailabilityRange> unavailabilityRange;
 
-
+    public static AutomatedHearingPartyDetails fromPartyDetailsModel(PartyDetailsModel partyDetailsModel) {
+        return AutomatedHearingPartyDetails.automatedHearingPartyDetailsWith()
+            .partyID(partyDetailsModel.getPartyID())
+            .partyType(partyDetailsModel.getPartyType().name())
+            .partyRole(partyDetailsModel.getPartyRole())
+            .individualDetails(partyDetailsModel.getIndividualDetails() != null
+                ? IndividualDetails.fromIndividualDetailsModel(partyDetailsModel.getIndividualDetails())
+                : null)
+            .organisationDetails(partyDetailsModel.getOrganisationDetails() != null
+                ? OrganisationDetails.fromOrganisationDetailsModel(partyDetailsModel.getOrganisationDetails())
+                : null)
+            .build();
+    }
 }
