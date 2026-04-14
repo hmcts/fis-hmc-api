@@ -1,10 +1,43 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.junit.Assert.assertTrue;
+import groovy.util.logging.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.context.WebApplicationContext;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,57 +55,33 @@ import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_CASE_REFERENC
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
 
-import groovy.util.logging.Slf4j;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
-
 @Slf4j
 @SpringBootTest
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"unchecked"})
 public class HearingsControllerIntegrationTest {
 
     private MockMvc mockMvc;
 
-    @Autowired private WebApplicationContext webApplicationContext;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-    @MockBean private CoreCaseDataApi coreCaseDataApi;
+    @MockBean
+    private HearingsDataService hearingsDataService;
 
-    @MockBean private AuthTokenGenerator authTokenGenerator;
+    @MockBean
+    private HearingsService hearingsService;
 
-    @MockBean private IdamAuthService idamAuthService;
+    @MockBean
+    private CoreCaseDataApi coreCaseDataApi;
 
-    @MockBean private HearingsDataService hearingsDataService;
+    @MockBean
+    private AuthTokenGenerator authTokenGenerator;
 
-    @MockBean private HearingsService hearingsService;
+    @MockBean
+    private IdamAuthService idamAuthService;
+
 
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
@@ -80,7 +89,7 @@ public class HearingsControllerIntegrationTest {
     private static final String LIST_OF_CASE_IDS_REQUEST_BODY_JSON =
             "classpath:requests/list-of-case-ids.json";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
@@ -119,6 +128,7 @@ public class HearingsControllerIntegrationTest {
                 .thenReturn(caseDetails);
 
         String hearingValuesRequestBody = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
+
         MvcResult res =
                 mockMvc.perform(
                                 post(SERVICE_HEARING_VALUES_ENDPOINT)
@@ -162,10 +172,8 @@ public class HearingsControllerIntegrationTest {
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
-        Mockito.when(
-                        hearingsService.getHearingsByCaseRefNo(
-                                anyString(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
-                .thenReturn(caseHearings);
+        Mockito.when(hearingsService.getHearingsByCaseRefNo(
+            anyString(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN))).thenReturn(caseHearings);
 
         MvcResult res =
                 mockMvc.perform(
@@ -182,6 +190,8 @@ public class HearingsControllerIntegrationTest {
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("testJudgeId"));
         assertTrue(json.contains("testVenueId"));
+        verify(hearingsService, Mockito.times(1))
+                .getHearingsByCaseRefNo(anyString(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN));
     }
 
     @Test
@@ -211,8 +221,6 @@ public class HearingsControllerIntegrationTest {
         List<Hearings> listOfHearings = new ArrayList<>();
         listOfHearings.add(caseHearings);
 
-        String listOfCaseIdsRequestBody = readFileFrom(LIST_OF_CASE_IDS_REQUEST_BODY_JSON);
-
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         Mockito.when(
@@ -220,15 +228,16 @@ public class HearingsControllerIntegrationTest {
                                 anyMap(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
                 .thenReturn(listOfHearings);
 
+        String listOfCaseIdsRequestBody = readFileFrom(LIST_OF_CASE_IDS_REQUEST_BODY_JSON);
         MvcResult res =
                 mockMvc.perform(
-                                get(HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT)
+                                post(HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT)
                                         .contentType(APPLICATION_JSON)
                                         .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
                                         .header(
                                                 SERVICE_AUTHORISATION_HEADER,
                                                 TEST_SERVICE_AUTH_TOKEN)
-                                        .content(listOfCaseIdsRequestBody)
+                                    .content(listOfCaseIdsRequestBody)
                                         .accept(APPLICATION_JSON))
                         .andExpect(status().isOk())
                         .andReturn();
@@ -272,4 +281,5 @@ public class HearingsControllerIntegrationTest {
         assertTrue(json.contains("testCaseRefNo"));
         assertTrue(json.contains("testCaseRefName"));
     }
+
 }
