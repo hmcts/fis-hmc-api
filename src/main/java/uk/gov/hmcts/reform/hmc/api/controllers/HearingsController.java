@@ -404,6 +404,7 @@ public class HearingsController {
         } catch (FeignException feignException) {
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
+            log.error("Exception occurred while creating automated hearing", e);
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
     }
