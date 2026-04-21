@@ -106,7 +106,7 @@ public class ServiceBusConfiguration {
             ObjectMapper mapper = new ObjectMapper();
 
             Hearing hearing = mapper.readValue(body, Hearing.class);
-
+            log.info("Hearing {}", hearing);
             if (HMCTS_SERVICE_ID.equals(hearing.getHmctsServiceCode())
                 && isHearingStateConsumptionRequired(hearing.getHearingUpdate().getHmcStatus())) {
                 HearingUpdateDTO hearingUpdateDto =
