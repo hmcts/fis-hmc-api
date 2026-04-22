@@ -86,6 +86,7 @@ public class ServiceBusConfiguration {
             .connectionString(connectionString)
             .processor()
             .topicName(topic)
+            .disableAutoComplete()
             .subscriptionName(subscription)
             .receiveMode(ServiceBusReceiveMode.PEEK_LOCK)
             .processMessage(this::processMessage)
