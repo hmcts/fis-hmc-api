@@ -91,7 +91,7 @@ public class HearingsServiceImpl implements HearingsService {
                                                                       roleAssignmentUrl,
                                                                       caseReference);
             log.info("Fetch hearings call completed successfully");
-
+            log.info("CaseHearingsResponse {}", caseHearingsResponse);
             integrateVenueDetails(caseHearingsResponse);
             log.info(
                 "Number of hearings fetched for casereference - {} is {}",

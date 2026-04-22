@@ -164,10 +164,12 @@ public class ServiceBusConfiguration {
                 Hearings hearings =
                     hearingsService.getHearingsByCaseRefNo(
                         hearingDto.getCaseRef(), userToken, serviceToken);
+                log.info("hearings {}", hearings);
                 State caseState = null;
                 if (hearings != null) {
                     NextHearingDetails nextHearingDetails =
                         nextHearingDetailsService.getNextHearingDate(hearings);
+                    log.info("nextHearingDetails {}", nextHearingDetails);
                     if (nextHearingDetails != null) {
                         log.info("Next Hearing details " + nextHearingDetails);
                         NextHearingDetailsDTO nextHearingDetailsDTO =
