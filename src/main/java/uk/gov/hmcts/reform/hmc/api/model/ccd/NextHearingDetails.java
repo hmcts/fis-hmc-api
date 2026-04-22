@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Data
 @Getter
@@ -18,6 +19,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Builder(toBuilder = true)
+@ToString
 public class NextHearingDetails {
 
     private Long hearingID;
