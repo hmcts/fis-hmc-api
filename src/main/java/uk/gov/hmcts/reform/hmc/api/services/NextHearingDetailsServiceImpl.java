@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
@@ -10,6 +11,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -148,7 +150,7 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
 
         List<CaseHearing> listedHearings =
                 hearings.getCaseHearings().stream()
-                        .filter(eachHearing -> eachHearing.getHmcStatus().equals(LISTED))
+                        .filter(getHearingPredicate())
                         .toList();
 
         LocalDateTime tempNextDateListed = null;
@@ -172,6 +174,13 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
             }
         }
         return nextHearingDetails.getHearingDateTime() != null ? nextHearingDetails : null;
+    }
+
+    private Predicate<CaseHearing> getHearingPredicate() {
+        return eachHearing -> {
+            String hmcStatus = eachHearing.getHmcStatus();
+            return LISTED.equals(hmcStatus) || AWAITING_HEARING_DETAILS.equalsIgnoreCase(hmcStatus);
+        };
     }
 
     /**
