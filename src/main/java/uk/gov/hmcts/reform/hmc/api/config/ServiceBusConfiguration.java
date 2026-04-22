@@ -189,12 +189,16 @@ public class ServiceBusConfiguration {
                     isPrlSuccess =
                         prlUpdateService.updatePrlServiceWithHearing(
                             hearingDto, caseState);
+                    log.info("isPrlSuccess {}", isPrlSuccess);
                     if (isPrlSuccess) {
+                        log.info("Abut to complete context.complete()");
                         context.complete();
                     }
                 }
+                log.info("Abut to abandon context.abandon()");
                 context.abandon();
             }
+            log.info("Abut to Complete 123 context.complete()");
             context.complete();
         } catch (Exception e) {
             log.error("There was a problem processing the message: {}", e.getMessage(), e);
