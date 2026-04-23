@@ -6,12 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @Builder(builderMethodName = "hearingsWith")
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Hearings {
     private String hmctsServiceCode;
 
