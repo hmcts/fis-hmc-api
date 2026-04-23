@@ -193,10 +193,12 @@ public class ServiceBusConfiguration {
                     if (isPrlSuccess) {
                         log.info("Abut to complete context.complete()");
                         context.complete();
+                        return;
                     }
                 }
                 log.info("Abut to abandon context.abandon()");
                 context.abandon();
+                return;
             }
             log.info("Abut to Complete 123 context.complete()");
             context.complete();
