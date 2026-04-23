@@ -29,7 +29,7 @@ import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Set;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
@@ -214,7 +214,7 @@ public class ServiceBusConfiguration {
     }
 
     private boolean isHearingStateConsumptionRequired(String hearingStatus) {
-        List<String> allowedHmcStatus = List.of(
+        Set<String> allowedHmcStatus = Set.of(
             LISTED,
             COMPLETED,
             POSTPONED,
