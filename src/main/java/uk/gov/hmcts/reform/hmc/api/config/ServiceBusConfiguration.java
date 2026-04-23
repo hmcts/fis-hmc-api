@@ -107,7 +107,7 @@ public class ServiceBusConfiguration {
             ObjectMapper mapper = new ObjectMapper();
 
             Hearing hearing = mapper.readValue(body, Hearing.class);
-            log.info("Hearing {}", hearing);
+
             if (HMCTS_SERVICE_ID.equals(hearing.getHmctsServiceCode())
                 && isHearingStateConsumptionRequired(hearing.getHearingUpdate().getHmcStatus())) {
                 HearingUpdateDTO hearingUpdateDto =
@@ -165,12 +165,10 @@ public class ServiceBusConfiguration {
                 Hearings hearings =
                     hearingsService.getHearingsByCaseRefNo(
                         hearingDto.getCaseRef(), userToken, serviceToken);
-                log.info("hearings {}", hearings);
                 State caseState = null;
                 if (hearings != null) {
                     NextHearingDetails nextHearingDetails =
                         nextHearingDetailsService.getNextHearingDate(hearings);
-                    log.info("nextHearingDetails {}", nextHearingDetails);
                     if (nextHearingDetails != null) {
                         log.info("Next Hearing details " + nextHearingDetails);
                         NextHearingDetailsDTO nextHearingDetailsDTO =
@@ -189,18 +187,14 @@ public class ServiceBusConfiguration {
                     isPrlSuccess =
                         prlUpdateService.updatePrlServiceWithHearing(
                             hearingDto, caseState);
-                    log.info("isPrlSuccess {}", isPrlSuccess);
                     if (isPrlSuccess) {
-                        log.info("Abut to complete context.complete()");
                         context.complete();
                         return;
                     }
                 }
-                log.info("Abut to abandon context.abandon()");
                 context.abandon();
                 return;
             }
-            log.info("Abut to Complete 123 context.complete()");
             context.complete();
         } catch (Exception e) {
             log.error("There was a problem processing the message: {}", e.getMessage(), e);

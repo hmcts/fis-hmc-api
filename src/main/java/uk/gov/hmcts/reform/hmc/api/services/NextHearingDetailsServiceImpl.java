@@ -157,14 +157,12 @@ public class NextHearingDetailsServiceImpl implements NextHearingDetailsService 
         NextHearingDetails nextHearingDetails = new NextHearingDetails();
 
         for (CaseHearing listHearing : listedHearings) {
-            log.info("listHearing {}", listHearing);
             Optional<LocalDateTime> minDateOfHearingDaySche =
                     listHearing.getHearingDaySchedule().stream()
                             .filter(u -> u.getHearingStartDateTime().isAfter(LocalDateTime.now()))
                             .map(HearingDaySchedule::getHearingStartDateTime)
                             .min(LocalDateTime::compareTo);
-            log.info("minDateOfHearingDaySche.isPresent() {}", minDateOfHearingDaySche.isPresent());
-            log.info("tempNextDateListed {}", tempNextDateListed);
+
             if (minDateOfHearingDaySche.isPresent()
                     && (tempNextDateListed == null
                             || tempNextDateListed.isAfter(minDateOfHearingDaySche.get()))) {
