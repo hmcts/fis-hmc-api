@@ -30,4 +30,13 @@
       Possibly incorrect tagging of CVE too - it was resolved in 1.4.21 but the cve has been tagged as up to 2.1.0
     </notes>
     <cve>CVE-2020-29582</cve>
-  </suppress></suppressions>
+  </suppress>
+  <suppress>
+    <notes>Until Spring 3 upgrade</notes>
+    <cve>CVE-2026-22737</cve>
+    <cve>CVE-2026-22748</cve>
+    <cve>CVE-2026-22735</cve>
+    <cve>CVE-2026-22746</cve>
+    <cve>CVE-2026-22733</cve>
+  </suppress>
+></suppressions>
