@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.response.IndividualDetailsModel;
 
 import java.util.List;
 
@@ -41,4 +42,21 @@ public class IndividualDetails {
 
     private String otherReasonableAdjustmentDetails;
 
+    public static IndividualDetails fromIndividualDetailsModel(IndividualDetailsModel individualDetailsModel) {
+        return IndividualDetails.builder()
+            // no title used in IndividualDetailsModel
+            .firstName(individualDetailsModel.getFirstName())
+            .lastName(individualDetailsModel.getLastName())
+            .preferredHearingChannel(individualDetailsModel.getPreferredHearingChannel())
+            .interpreterLanguage(individualDetailsModel.getInterpreterLanguage())
+            .reasonableAdjustments(individualDetailsModel.getReasonableAdjustments())
+            .vulnerableFlag(individualDetailsModel.getVulnerableFlag())
+            .vulnerabilityDetails(individualDetailsModel.getVulnerabilityDetails())
+            .hearingChannelEmail(individualDetailsModel.getHearingChannelEmail())
+            .hearingChannelPhone(individualDetailsModel.getHearingChannelPhone())
+            .custodyStatus(individualDetailsModel.getCustodyStatus())
+            // no related parties ever set to be other than an empty list
+            // no other reasonable adjustment details used in IndividualDetailsModel
+            .build();
+    }
 }
