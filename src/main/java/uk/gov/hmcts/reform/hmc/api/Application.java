@@ -8,6 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @EnableFeignClients(
         basePackages = {
+            "uk.gov.hmcts.reform.authorisation",
             "uk.gov.hmcts.reform.hmc.api",
             "uk.gov.hmcts.reform.idam.client",
         })

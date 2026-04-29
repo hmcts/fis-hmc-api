@@ -321,10 +321,9 @@ public class HearingsServiceImpl implements HearingsService {
         Map<String, List<String>> caseIdHearingIdMap = new HashMap<>();
         if (ObjectUtils.isNotEmpty(hearingDetailsList)) {
             log.info("Hearing details retrieved from hmc");
-            List<String> validHearingIds = new ArrayList<>();
             for (var caseWithHearings : hearingDetailsList) {
                 log.info("checking hearing details for Case id {}", caseWithHearings.getCaseRef());
-                validHearingIds.clear();
+                List<String> validHearingIds = new ArrayList<>();
                 caseWithHearings.getCaseHearings().stream()
                     .filter(eachHearing -> eachHearing.getHmcStatus().equals(AWAITING_HEARING_DETAILS))
                     .forEach(hearing -> {
