@@ -47,60 +47,34 @@ java {
   }
 }
 
-sourceSets {
-  functionalTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/functionalTest/java')
+def configureSourceSet(String name) {
+  sourceSets.create(name) { sourceSet ->
+    sourceSet.java {
+      compileClasspath += sourceSets.main.output + sourceSets.test.output
+      runtimeClasspath += sourceSets.main.output + sourceSets.test.output
+      srcDir "src/${name}/java"
     }
-    resources.srcDir file('src/functionalTest/resources')
-  }
-
-  integrationTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/integrationTest/java')
-    }
-    resources.srcDir file('src/integrationTest/resources')
-  }
-
-  contractTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/contractTest/java')
-    }
-    resources.srcDir file('src/contractTest/resources')
-  }
-  smokeTest {
-    java {
-      compileClasspath += main.output
-      runtimeClasspath += main.output
-      srcDir file('src/smokeTest/java')
-    }
-    resources.srcDir file('src/smokeTest/resources')
+    sourceSet.resources.srcDir "src/${name}/resources"
   }
 }
+
+['smokeTest', 'integrationTest', 'functionalTest', 'contractTest'].each { configureSourceSet(it) }
 
 configurations {
   functionalTestImplementation.extendsFrom testImplementation
-  functionalTestRuntimeOnly.extendsFrom testRuntime
+  functionalTestRuntimeOnly.extendsFrom runtimeOnly
 
   integrationTestImplementation.extendsFrom testImplementation
-  integrationTestRuntimeOnly.extendsFrom testRuntime
+  integrationTestRuntimeOnly.extendsFrom runtimeOnly
 
   smokeTestImplementation.extendsFrom testImplementation
-  smokeTestRuntime.extendsFrom testRuntime
-  smokeTestCompile.extendsFrom testCompile
+  smokeTestRuntimeOnly.extendsFrom runtimeOnly
 
   contractTestImplementation.extendsFrom testImplementation
-  contractTestRuntime.extendsFrom testRuntime
-  contractTestCompile.extendsFrom testCompile
+  contractTestRuntimeOnly.extendsFrom testRuntimeOnly
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
 }
 
@@ -109,46 +83,41 @@ tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
   useJUnitPlatform()
+  failFast = true
 
   testLogging {
     exceptionFormat = 'full'
   }
 }
 
-test {
-  failFast = true
-  useJUnitPlatform()
-}
 
-task functional(type: Test) {
+tasks.register('functional', Test) {
   description = "Runs functional tests"
   group = "Verification"
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
   finalizedBy(aggregate)
-  failFast = true
 }
 
-task integration(type: Test) {
+tasks.register('integration', Test) {
   description = "Runs integration tests"
   group = "Verification"
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
-  failFast = true
 }
 
-task smoke(type: Test) {
+tasks.register('smoke', Test) {
   description = "Runs Smoke Tests"
+  group = "Verification"
   setTestClassesDirs(sourceSets.smokeTest.output.classesDirs)
   setClasspath(sourceSets.smokeTest.runtimeClasspath)
   include "uk/gov/hmcts/reform/hmc/api/**"
-  failFast = true
 }
 
-task fortifyScan(type: JavaExec)  {
-  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+tasks.register('fortifyScan', JavaExec) {
+  mainClass = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -475,18 +444,14 @@ dependencies {
   }
   testImplementation group: 'io.rest-assured', name: 'rest-assured'
   testImplementation platform("org.junit:junit-bom:${junitBomVersion}")
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+  testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-core', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-junit', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-rest-assured', version: '2.6.0'
   testImplementation group: 'net.serenity-bdd', name: 'serenity-spring', version: '2.6.0'
   testImplementation 'com.github.hmcts:fortify-client:1.3.0-azure:all'
   testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
-
-  contractTestImplementation(platform("org.junit:junit-bom:${junitBomVersion}"))
-  contractTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-  contractTestImplementation sourceSets.main.runtimeClasspath
-  contractTestImplementation sourceSets.test.runtimeClasspath
 }
 
 mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'

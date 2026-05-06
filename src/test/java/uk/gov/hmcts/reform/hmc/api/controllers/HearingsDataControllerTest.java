@@ -2,71 +2,37 @@ package uk.gov.hmcts.reform.hmc.api.controllers;
 
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
 import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
 import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
 import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static uk.gov.hmcts.reform.hmc.api.controllers.HearingsControllerTest.feignException;
 
-@RunWith(MockitoJUnitRunner.class)
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class HearingsDataControllerTest {
+class HearingsDataControllerTest {
 
     @InjectMocks
     private HearingsController hearingsController;
 
     @Spy
-    private  final IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
+    private final IdamAuthService idamAuthService = Mockito.mock(IdamAuthService.class);
 
     @Spy private HearingsDataService hearingsDataService;
-
-    @BeforeEach
-    void setUp() {
-
-        MockitoAnnotations.openMocks(this);
-        LocalDateTime testNextHearingDate = LocalDateTime.of(2024, 04, 28, 1, 0);
-
-        HearingDaySchedule hearingDaySchedule =
-            HearingDaySchedule.hearingDayScheduleWith()
-                .hearingVenueId("231596")
-                .hearingJudgeId("4925644")
-                .hearingStartDateTime(testNextHearingDate)
-                .build();
-        List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
-        hearingDayScheduleList.add(hearingDaySchedule);
-
-        CaseHearing caseHearing =
-            CaseHearing.caseHearingWith()
-                .hmcStatus("LISTED")
-                .hearingDaySchedule(hearingDayScheduleList)
-                .build();
-        List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing);
-    }
 
     @Test
     void hearingsDataControllerTest() throws IOException, ParseException {

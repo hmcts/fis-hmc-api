@@ -1,24 +1,21 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.Arrays;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.ccd.client.model.SearchResult;
 
-@RunWith(MockitoJUnitRunner.class)
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 public class ElasticSearchTest {
 
     @Mock private CoreCaseDataApi coreCaseDataApi;
@@ -29,22 +26,15 @@ public class ElasticSearchTest {
     public static final String TEST_SERVICE_AUTHORIZATION = "testServiceAuthorisation";
     public static final String PRL_CASE_TYPE = "PRLAPPS";
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
     @DisplayName("test case for CCD elastic search.")
-    void testSearchCases() throws IOException {
+    void testSearchCases() {
 
         String searchString = "";
 
         SearchResult mockResult =
                 SearchResult.builder()
-                        .cases(
-                                Arrays.asList(
-                                        CaseDetails.builder().caseTypeId(PRL_CASE_TYPE).build()))
+                        .cases(List.of(CaseDetails.builder().caseTypeId(PRL_CASE_TYPE).build()))
                         .build();
 
         when(coreCaseDataApi.searchCases(
@@ -59,7 +49,9 @@ public class ElasticSearchTest {
                         searchString,
                         TEST_SERVICE_AUTHORIZATION,
                         PRL_CASE_TYPE);
-        assertNotNull(searchResult);
-        assertEquals(PRL_CASE_TYPE, mockResult.getCases().get(0).getCaseTypeId());
+        assertThat(searchResult.getCases())
+            .singleElement()
+            .extracting(CaseDetails::getCaseTypeId)
+            .isEqualTo(PRL_CASE_TYPE);
     }
 }
