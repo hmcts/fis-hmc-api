@@ -61,6 +61,7 @@ public class CaseData  {
 
     @JsonAlias({"applicantCaseName", "applicantOrRespondentCaseName"})
     private String applicantCaseName;
+    @JsonUnwrapped
     private AllPartyFlags allPartyFlags;
 
     @JsonUnwrapped

@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 import uk.gov.hmcts.reform.hmc.api.enums.caseflags.PartyRole;
 import uk.gov.hmcts.reform.hmc.api.mapper.FisHmcObjectMapper;
+import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseDetailResponse;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Element;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Flags;
@@ -50,6 +52,55 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
     @Value("${hearing.specialCharacters}")
     private String specialCharacters;
 
+    public void setPartyDetailsLists(List<PartyFlagsModel> partiesFlagsModelList,
+                                     List<PartyDetailsModel> partyDetailsModelList,
+                                     CaseData caseData) {
+        Map<String, Object> caseDataMap = FisHmcObjectMapper.getObjectMapper().convertValue(caseData, new TypeReference<>() {});
+
+        String caseType = caseData.getCaseTypeOfApplication();
+
+        if (C100.equalsIgnoreCase(caseType)) {
+            // Applicants + their solicitors
+            findAndUpdateModelListsForC100(
+                PartyRole.Representing.CAAPPLICANT, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, APPLICANT
+            );
+            findAndUpdateModelListsForC100(
+                PartyRole.Representing.CAAPPLICANTSOLICITOR, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, APPLICANT
+            );
+
+            // Respondents + their solicitors
+            findAndUpdateModelListsForC100(
+                PartyRole.Representing.CARESPONDENT, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
+            );
+            findAndUpdateModelListsForC100(
+                PartyRole.Representing.CARESPONDENTSOLICITOR, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
+            );
+
+        } else if (FL401.equalsIgnoreCase(caseType)) {
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DAAPPLICANT, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, APPLICANT
+            );
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DAAPPLICANTSOLICITOR, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, APPLICANT
+            );
+
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DARESPONDENT, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
+            );
+            findAndUpdateModelListsForFL401(
+                PartyRole.Representing.DARESPONDENTSOLICITOR, caseData, caseDataMap,
+                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
+            );
+        }
+    }
+
     /**
      * Mapping ACTIVE party flags to ServiceHearingValues .
      *
@@ -64,52 +115,10 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
         setBaseLocation(serviceHearingValues, ccdResponse);
         log.info("Base location is set");
 
-        Map<String, Object> caseDataMap = caseDetails.getData();
+        // update flags/details lists
         List<PartyFlagsModel> partiesFlagsModelList = new ArrayList<>();
         List<PartyDetailsModel> partyDetailsModelList = new ArrayList<>();
-
-        String caseType = ccdResponse.getCaseData().getCaseTypeOfApplication();
-
-        if (C100.equalsIgnoreCase(caseType)) {
-            // Applicants + their solicitors
-            findAndUpdateModelListsForC100(
-                PartyRole.Representing.CAAPPLICANT, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, APPLICANT
-            );
-            findAndUpdateModelListsForC100(
-                PartyRole.Representing.CAAPPLICANTSOLICITOR, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, APPLICANT
-            );
-
-            // Respondents + their solicitors
-            findAndUpdateModelListsForC100(
-                PartyRole.Representing.CARESPONDENT, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
-            );
-            findAndUpdateModelListsForC100(
-                PartyRole.Representing.CARESPONDENTSOLICITOR, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
-            );
-
-        } else if (FL401.equalsIgnoreCase(caseType)) {
-            findAndUpdateModelListsForFL401(
-                PartyRole.Representing.DAAPPLICANT, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, APPLICANT
-            );
-            findAndUpdateModelListsForFL401(
-                PartyRole.Representing.DAAPPLICANTSOLICITOR, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, APPLICANT
-            );
-
-            findAndUpdateModelListsForFL401(
-                PartyRole.Representing.DARESPONDENT, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
-            );
-            findAndUpdateModelListsForFL401(
-                PartyRole.Representing.DARESPONDENTSOLICITOR, ccdResponse, caseDataMap,
-                partiesFlagsModelList, partyDetailsModelList, RESPONDENT
-            );
-        }
+        setPartyDetailsLists(partiesFlagsModelList, partyDetailsModelList, ccdResponse.getCaseData());
 
         if (!partiesFlagsModelList.isEmpty() || !partyDetailsModelList.isEmpty()) {
             CaseFlags caseFlags = CaseFlags.caseFlagsWith().flags(partiesFlagsModelList).build();
@@ -134,14 +143,14 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
     }
 
     private void findAndUpdateModelListsForC100(PartyRole.Representing representing,
-                                                CaseDetailResponse ccdResponse,
+                                                CaseData caseData,
                                                 Map<String, Object> caseDataMap,
                                                 List<PartyFlagsModel> partiesFlagsModelList,
                                                 List<PartyDetailsModel> partyDetailsModelList,
                                                 String partyRole) {
 
         List<Element<PartyDetails>> partyDetailsListElements =
-            representing.getCaTarget().apply(ccdResponse.getCaseData());
+            representing.getCaTarget().apply(caseData);
         if (partyDetailsListElements == null || partyDetailsListElements.isEmpty()) {
             return;
         }
@@ -170,13 +179,13 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
 
 
     private void findAndUpdateModelListsForFL401(PartyRole.Representing representing,
-                                                 CaseDetailResponse ccdResponse,
+                                                 CaseData caseData,
                                                  Map<String, Object> caseDataMap,
                                                  List<PartyFlagsModel> partiesFlagsModelList,
                                                  List<PartyDetailsModel> partyDetailsModelList,
                                                  String partyRole) {
 
-        PartyDetails partyDetails = representing.getDaTarget().apply(ccdResponse.getCaseData());
+        PartyDetails partyDetails = representing.getDaTarget().apply(caseData);
         if (partyDetails == null) {
             return;
         }

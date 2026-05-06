@@ -10,7 +10,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.mapper.AutomatedHearingTransformer;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
 import uk.gov.hmcts.reform.hmc.api.model.request.AutomatedHearingRequest;
 import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
@@ -66,6 +65,7 @@ public class HearingsServiceImpl implements HearingsService {
     private final RefDataService refDataService;
     private final RefDataJudicialService refDataJudicialService;
     private final HearingApiClient hearingApiClient;
+    private final AutomatedHearingService automatedHearingService;
 
     /**
      * This method will fetch all the hearings which belongs to a particular caseRefNumber.
@@ -525,8 +525,8 @@ public class HearingsServiceImpl implements HearingsService {
 
         final String userToken = idamTokenGenerator.generateIdamTokenForHearingCftData();
         final String s2sToken = authTokenGenerator.generate();
-        AutomatedHearingRequest hearingRequest = AutomatedHearingTransformer.mappingHearingTransactionRequest(
-            caseData, ccdBaseUrl, specialCharacters);
+        AutomatedHearingRequest hearingRequest = automatedHearingService.mapCaseDataToAutoHearingRequest(
+            caseData, ccdBaseUrl);
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,

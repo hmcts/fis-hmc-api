@@ -4,7 +4,7 @@ variable "product" {
 }
 
 variable "component" {
-  type    = string
+  type = string
 }
 
 variable "location" {
@@ -17,7 +17,7 @@ variable "env" {
 }
 
 variable "subscription" {
-type = string
+  type = string
 }
 
 variable "common_tags" {

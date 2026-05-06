@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.hmcts.reform.hmc.api.model.response.OrganisationDetailsModel;
 
 @Data
 @NoArgsConstructor
@@ -19,5 +20,13 @@ public class OrganisationDetails {
     private String organisationType;
     private String cftOrganisationID;
 
+
+    public static OrganisationDetails fromOrganisationDetailsModel(OrganisationDetailsModel organisationDetailsModel) {
+        return OrganisationDetails.builder()
+            .name(organisationDetailsModel.getName())
+            .organisationType(organisationDetailsModel.getOrganisationType())
+            .cftOrganisationID(organisationDetailsModel.getCftOrganisationID())
+            .build();
+    }
 
 }

@@ -30,6 +30,7 @@ import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicList;
 import uk.gov.hmcts.reform.hmc.api.model.common.dynamic.DynamicListElement;
 import uk.gov.hmcts.reform.hmc.api.model.response.HearingResponse;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +155,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestC100() {
+    void shouldReturnAutomateHearingTestC100() throws IOException {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -246,7 +247,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestC100ForParties() {
+    void shouldReturnAutomateHearingTestC100ForParties() throws IOException {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -313,7 +314,7 @@ class AutomateHearingServiceTest {
     }
 
     @Test
-    void shouldReturnAutomateHearingTestF401() {
+    void shouldReturnAutomateHearingTestF401() throws IOException {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
@@ -378,7 +379,7 @@ class AutomateHearingServiceTest {
 
 
     @Test
-    void shouldReturnAutomateHearingTestF401ForParties() {
+    void shouldReturnAutomateHearingTestF401ForParties() throws IOException {
 
         HearingResponse response = HearingResponse.builder()
             .hearingRequestID("123")
