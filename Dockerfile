@@ -4,6 +4,7 @@ FROM hmctsprod.azurecr.io/base/java:21-distroless
 # Change to non-root privilege
 USER hmcts
 
+COPY lib/AI-Agent.xml /opt/app/
 COPY lib/applicationinsights.json /opt/app/
 COPY build/libs/fis-hmc-api.jar /opt/app/
 

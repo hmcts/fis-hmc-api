@@ -32,9 +32,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
@@ -58,19 +58,19 @@ class HearingsServiceTest {
     @Autowired
     private HearingsServiceImpl hearingsService;
 
-    @MockBean
+    @MockitoBean
     private HearingApiClient hearingApiClient;
 
-    @MockBean
+    @MockitoBean
     private IdamTokenGenerator idamTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private AuthTokenGenerator authTokenGenerator;
 
-    @MockBean
+    @MockitoBean
     private RefDataServiceImpl refDataService;
 
-    @MockBean
+    @MockitoBean
     private RefDataJudicialService refDataJudicialService;
 
     @Test

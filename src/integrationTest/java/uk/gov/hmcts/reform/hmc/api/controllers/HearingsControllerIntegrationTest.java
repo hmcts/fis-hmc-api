@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -64,15 +64,15 @@ public class HearingsControllerIntegrationTest {
 
     @Autowired private WebApplicationContext webApplicationContext;
 
-    @MockBean private CoreCaseDataApi coreCaseDataApi;
+    @MockitoBean private CoreCaseDataApi coreCaseDataApi;
 
-    @MockBean private AuthTokenGenerator authTokenGenerator;
+    @MockitoBean private AuthTokenGenerator authTokenGenerator;
 
-    @MockBean private IdamAuthService idamAuthService;
+    @MockitoBean private IdamAuthService idamAuthService;
 
-    @MockBean private HearingsDataService hearingsDataService;
+    @MockitoBean private HearingsDataService hearingsDataService;
 
-    @MockBean private HearingsService hearingsService;
+    @MockitoBean private HearingsService hearingsService;
 
     private static final String HEARING_VALUES_REQUEST_BODY_JSON =
             "classpath:requests/hearing-values.json";
