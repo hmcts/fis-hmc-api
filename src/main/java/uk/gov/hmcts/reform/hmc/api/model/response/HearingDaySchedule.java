@@ -14,7 +14,7 @@ import lombok.ToString;
 @Builder(builderMethodName = "hearingDayScheduleWith")
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "hearingJudgeName")
 public class HearingDaySchedule {
 
     private LocalDateTime hearingStartDateTime;
