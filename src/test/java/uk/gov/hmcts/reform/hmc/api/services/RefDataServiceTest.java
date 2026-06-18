@@ -75,6 +75,45 @@ class RefDataServiceTest {
     }
 
     @Test
+    public void shouldFetchFirstVenueDetailsWhenMultipleCourtsWithSameIdReturnedRefDataTest() throws IOException, ParseException {
+        CourtDetail courtDetail1 =
+            CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        CourtDetail courtDetail2 =
+            CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        CourtDetail courtDetail3 =
+            CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        CourtDetail courtDetail4 =
+            CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        CourtDetail courtDetail5 =
+            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
+        CourtDetail courtDetail6 =
+            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
+        CourtDetail courtDetail7 =
+            CourtDetail.courtDetailWith().courtTypeId("31").hearingVenueId("231596").build();
+        CourtDetail courtDetail8 =
+            CourtDetail.courtDetailWith().courtTypeId("27").hearingVenueId("231596").build();
+
+        List<CourtDetail> courtDetailsList = new ArrayList<>();
+        courtDetailsList.add(courtDetail1);
+        courtDetailsList.add(courtDetail2);
+        courtDetailsList.add(courtDetail3);
+        courtDetailsList.add(courtDetail4);
+        courtDetailsList.add(courtDetail5);
+        courtDetailsList.add(courtDetail6);
+        courtDetailsList.add(courtDetail7);
+        courtDetailsList.add(courtDetail8);
+
+        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+
+        String epimmsId = "231596";
+        CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
+        assertNotNull(courtDetailResp);
+        assertEquals("231596", courtDetailResp.getHearingVenueId());
+    }
+
+    @Test
     public void shouldFetchVenueDetailsRefDataWhenCourtTypeNotThereTest() throws IOException, ParseException {
         CourtDetail courtDetail =
             CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").build();
