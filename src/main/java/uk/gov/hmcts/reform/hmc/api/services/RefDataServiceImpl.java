@@ -19,16 +19,21 @@ import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
 @Service
 @Slf4j
-@SuppressWarnings("unchecked")
 public class RefDataServiceImpl implements RefDataService {
 
-    @Autowired AuthTokenGenerator authTokenGenerator;
+    final AuthTokenGenerator authTokenGenerator;
 
-    @Autowired IdamTokenGenerator idamTokenGenerator;
-    @Autowired RefDataApi refDataApi;
+    final IdamTokenGenerator idamTokenGenerator;
+    final RefDataApi refDataApi;
 
     @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
     private List<String> familyCourtIds;
+
+    public RefDataServiceImpl(AuthTokenGenerator authTokenGenerator, IdamTokenGenerator idamTokenGenerator, RefDataApi refDataApi) {
+        this.authTokenGenerator = authTokenGenerator;
+        this.idamTokenGenerator = idamTokenGenerator;
+        this.refDataApi = refDataApi;
+    }
 
     /**
      * This method will get all the court details of a particular venueId(epimmsId).
@@ -40,7 +45,7 @@ public class RefDataServiceImpl implements RefDataService {
     @SuppressWarnings("unused")
     public CourtDetail getCourtDetails(String epimmsId) {
         CourtDetail courtDetail = null;
-        log.info("calling getCourtDetails service " + epimmsId);
+        log.info("Johnny: calling getCourtDetails service {}", epimmsId);
         try {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
@@ -50,7 +55,7 @@ public class RefDataServiceImpl implements RefDataService {
                             idamTokenGenerator.generateIdamTokenForRefData(),
                             authTokenGenerator.generate(),
                             epimmsId);
-            log.info("RefData call completed successfully" + courtDetailList);
+            log.info("RefData call completed successfully{}", courtDetailList);
             List<CourtDetail> filteredCourtDetail =
                     courtDetailList.stream()
                             .filter(courtDetail1 -> courtIds.stream()
