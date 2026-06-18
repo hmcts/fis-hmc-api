@@ -4,7 +4,6 @@ import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -29,7 +28,9 @@ public class RefDataServiceImpl implements RefDataService {
     @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
     private List<String> familyCourtIds;
 
-    public RefDataServiceImpl(AuthTokenGenerator authTokenGenerator, IdamTokenGenerator idamTokenGenerator, RefDataApi refDataApi) {
+    public RefDataServiceImpl(AuthTokenGenerator authTokenGenerator,
+                              IdamTokenGenerator idamTokenGenerator,
+                              RefDataApi refDataApi) {
         this.authTokenGenerator = authTokenGenerator;
         this.idamTokenGenerator = idamTokenGenerator;
         this.refDataApi = refDataApi;
