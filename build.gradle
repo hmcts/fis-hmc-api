@@ -283,7 +283,7 @@ repositories {
 
 ext {
   log4JVersion = '2.25.4'
-  set('springCloudAzureVersion', "6.3.0")
+  set('springCloudAzureVersion', "6.4.0")
   set('springCloudVersion', "2025.0.2")
   junitBomVersion = '6.0.3'
 }
@@ -445,7 +445,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
   //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.2'
-  implementation group: 'com.azure', name: 'azure-core', version: '1.58.0'
+  implementation group: 'com.azure', name: 'azure-core', version: '1.58.1'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.18'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.20'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
