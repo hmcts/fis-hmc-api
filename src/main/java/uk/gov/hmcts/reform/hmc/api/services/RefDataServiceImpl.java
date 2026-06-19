@@ -42,7 +42,7 @@ public class RefDataServiceImpl implements RefDataService {
     @SuppressWarnings("unused")
     public CourtDetail getCourtDetails(String epimmsId) {
         CourtDetail courtDetail = null;
-        log.info("Johnny: calling getCourtDetails service {}", epimmsId);
+        log.info("Calling getCourtDetails service {}", epimmsId);
         try {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
