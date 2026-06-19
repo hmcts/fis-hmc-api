@@ -41,6 +41,7 @@ class RefDataClientTest {
         CourtDetail expected = CourtDetail.courtDetailWith()
             .courtTypeId("18")
             .hearingVenueId("231596")
+            .serviceCode("ABA5")
             .build();
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
@@ -52,6 +53,7 @@ class RefDataClientTest {
         assertNotNull(result);
         assertEquals("18", result.getCourtTypeId());
         assertEquals("231596", result.getHearingVenueId());
+        assertEquals("ABA5", result.getServiceCode());
     }
 
     @Test
@@ -112,7 +114,7 @@ class RefDataClientTest {
         List<CourtDetail> result = refDataClient.fetchCourtDetailList("231596");
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("10", result.get(0).getCourtTypeId());
+        assertEquals("10", result.getFirst().getCourtTypeId());
     }
 
     @Test

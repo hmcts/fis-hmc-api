@@ -1,23 +1,20 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import feign.FeignException;
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.exceptions.RefDataException;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingDTO;
 import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -25,10 +22,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 public class RefDataServiceImpl implements RefDataService {
 
-    final AuthTokenGenerator authTokenGenerator;
-
-    final IdamTokenGenerator idamTokenGenerator;
-    final RefDataApi refDataApi;
     final RefDataClient refDataClient;
 
     @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
@@ -58,7 +51,7 @@ public class RefDataServiceImpl implements RefDataService {
 
             // If new-contract returned a valid matching court, use it. Otherwise fall back to legacy behaviour.
             final String returnedCourtTypeId = returnedCourtDetail != null ? returnedCourtDetail.getCourtTypeId() : null;
-            if (returnedCourtDetail != null && returnedCourtTypeId != null
+            if (returnedCourtDetail != null && returnedCourtDetail.getServiceCode() != null && returnedCourtTypeId != null
                     && courtIds.stream().anyMatch(courtId -> courtId.equals(returnedCourtTypeId))) {
                 courtDetail = returnedCourtDetail;
                 if (courtDetail.getHearingVenueAddress() != null) {
