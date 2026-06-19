@@ -1,23 +1,5 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
-import static feign.Request.HttpMethod.GET;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import feign.FeignException;
 import feign.Request;
 import feign.Response;
@@ -40,13 +22,30 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static feign.Request.HttpMethod.GET;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 class RefDataServiceTest {
 
     @InjectMocks private RefDataServiceImpl refDataService;
 
-    @Mock private RefDataApi refDataApi;
+    @Mock private RefDataClient refDataClient;
 
     @Mock private AuthTokenGenerator authTokenGenerator;
 
@@ -61,12 +60,10 @@ class RefDataServiceTest {
     public void shouldFetchVenueDetailsRefDataTest() throws IOException, ParseException {
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail);
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
 
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
@@ -93,19 +90,12 @@ class RefDataServiceTest {
         CourtDetail courtDetail8 =
             CourtDetail.courtDetailWith().courtTypeId("27").hearingVenueId("231596").build();
 
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail1);
-        courtDetailsList.add(courtDetail2);
-        courtDetailsList.add(courtDetail3);
-        courtDetailsList.add(courtDetail4);
-        courtDetailsList.add(courtDetail5);
-        courtDetailsList.add(courtDetail6);
-        courtDetailsList.add(courtDetail7);
-        courtDetailsList.add(courtDetail8);
+        // The API now returns a single pre-filtered CourtDetail; simulate a matching court
+        CourtDetail returnedCourt = courtDetail5; // courtTypeId "10" is within familyCourtIds
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(returnedCourt);
 
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
@@ -117,12 +107,10 @@ class RefDataServiceTest {
     public void shouldFetchVenueDetailsRefDataWhenCourtTypeNotThereTest() throws IOException, ParseException {
         CourtDetail courtDetail =
             CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").build();
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail);
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
         assertNull(courtDetailResp);
@@ -134,13 +122,11 @@ class RefDataServiceTest {
             throws IOException, ParseException {
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail);
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(authTokenGenerator.generate())
+        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
+        when(refDataClient.fetchCourtDetail(anyString()))
                 .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
         String epimmsId = "231596";
         assertThrows(RefDataException.class, () -> refDataService.getCourtDetails(epimmsId));
     }
@@ -159,8 +145,7 @@ class RefDataServiceTest {
                     .hearingVenuePostCode("courtPostCodeTest")
                         .build();
 
-        List<CourtDetail> courtDetailsList = new ArrayList<>();
-        courtDetailsList.add(courtDetail);
+        // single CourtDetail is used directly by mocks; no list required
 
         HearingUpdateDTO hearingupdateDto =
                 HearingUpdateDTO.hearingUpdateRequestDTOWith()
@@ -180,7 +165,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any())).thenReturn(courtDetailsList);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
         HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
         assertNotNull(hearingResp);
         assertEquals("courtDetailVenueTest", hearingResp.getHearingUpdate().getHearingVenueName());
@@ -208,7 +193,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetails(anyString(), any(), any()))
+        when(refDataClient.fetchCourtDetail(anyString()))
             .thenThrow(feignException(HttpStatus.BAD_REQUEST.value(), "Not found"));
 
         HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
@@ -235,7 +220,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
+        when(refDataClient.fetchByServiceCode(anyString())).thenReturn(venue);
         List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
         assertNotNull(courtList);
         assertFalse(courtList.isEmpty());
@@ -260,9 +245,66 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsByServiceCode(anyString(), any(), any())).thenReturn(venue);
+        when(refDataClient.fetchByServiceCode(anyString())).thenReturn(venue);
         List<CourtDetail> courtList = refDataService.getCourtDetailsByServiceCode("mock_serviceCode");
         assertTrue(courtList.isEmpty());
+    }
+
+    @Test
+    void newContractNullLegacyReturnsMatchFallbackTest() {
+        CourtDetail legacyMatch =
+            CourtDetail.courtDetailWith().courtTypeId("18").hearingVenueId("231596").build();
+        List<CourtDetail> legacyList = new ArrayList<>();
+        legacyList.add(legacyMatch);
+
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
+
+        CourtDetail result = refDataService.getCourtDetails("231596");
+        assertNotNull(result);
+        assertEquals("231596", result.getHearingVenueId());
+        // new contract not used, legacy used once
+        assertEquals(0, refDataService.getNewContractUsedCount());
+        assertEquals(1, refDataService.getLegacyFallbackUsedCount());
+    }
+
+    @Test
+    void newContractNonMatchingLegacyReturnsMatchFallbackTest() {
+        CourtDetail newNonMatch =
+            CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").build();
+        CourtDetail legacyMatch =
+            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
+        List<CourtDetail> legacyList = new ArrayList<>();
+        legacyList.add(legacyMatch);
+
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(newNonMatch);
+        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
+
+        CourtDetail result = refDataService.getCourtDetails("231596");
+        assertNotNull(result);
+        assertEquals("231596", result.getHearingVenueId());
+        assertEquals(0, refDataService.getNewContractUsedCount());
+        assertEquals(1, refDataService.getLegacyFallbackUsedCount());
+    }
+
+    @Test
+    void bothCallsFailNonHttpReturnsNullTest() {
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(List.of());
+
+        CourtDetail result = refDataService.getCourtDetails("231596");
+        assertNull(result);
+        assertEquals(0, refDataService.getNewContractUsedCount());
+        assertEquals(0, refDataService.getLegacyFallbackUsedCount());
+    }
+
+    @Test
+    void legacyThrowsHttpExceptionIsPropagated() {
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetailList(anyString()))
+            .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
+
+        assertThrows(RefDataException.class, () -> refDataService.getCourtDetails("231596"));
     }
 
     public static FeignException feignException(int status, String message) {

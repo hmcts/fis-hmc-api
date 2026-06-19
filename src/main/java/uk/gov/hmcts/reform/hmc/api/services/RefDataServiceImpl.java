@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,25 +18,26 @@ import uk.gov.hmcts.reform.hmc.api.model.request.HearingUpdateDTO;
 import uk.gov.hmcts.reform.hmc.api.model.response.CourtDetail;
 import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class RefDataServiceImpl implements RefDataService {
 
     final AuthTokenGenerator authTokenGenerator;
 
     final IdamTokenGenerator idamTokenGenerator;
     final RefDataApi refDataApi;
+    final RefDataClient refDataClient;
 
     @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
     private List<String> familyCourtIds;
 
-    public RefDataServiceImpl(AuthTokenGenerator authTokenGenerator,
-                              IdamTokenGenerator idamTokenGenerator,
-                              RefDataApi refDataApi) {
-        this.authTokenGenerator = authTokenGenerator;
-        this.idamTokenGenerator = idamTokenGenerator;
-        this.refDataApi = refDataApi;
-    }
+    // Counters to monitor usage of the new contract vs legacy fallback. Not final so Lombok
+    // doesn't include them in the generated constructor.
+    private AtomicLong newContractUsedCounter = new AtomicLong(0);
+    private AtomicLong legacyFallbackUsedCounter = new AtomicLong(0);
 
     /**
      * This method will get all the court details of a particular venueId(epimmsId).
@@ -50,24 +53,38 @@ public class RefDataServiceImpl implements RefDataService {
         try {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
+            // First try the new API contract which returns a single pre-filtered CourtDetail.
+            CourtDetail returnedCourtDetail = callRefDataNewContract(epimmsId);
 
-            List<CourtDetail> courtDetailList =
-                    refDataApi.getCourtDetails(
-                            idamTokenGenerator.generateIdamTokenForRefData(),
-                            authTokenGenerator.generate(),
-                            epimmsId);
-            log.info("RefData call completed successfully{}", courtDetailList);
-            List<CourtDetail> filteredCourtDetail =
-                    courtDetailList.stream()
-                            .filter(courtDetail1 -> courtIds.stream()
-                                .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
-                            .toList();
-            if (!filteredCourtDetail.isEmpty()) {
-                courtDetail = filteredCourtDetail.getFirst();
+            // If new-contract returned a valid matching court, use it. Otherwise fall back to legacy behaviour.
+            final String returnedCourtTypeId = returnedCourtDetail != null ? returnedCourtDetail.getCourtTypeId() : null;
+            if (returnedCourtDetail != null && returnedCourtTypeId != null
+                    && courtIds.stream().anyMatch(courtId -> courtId.equals(returnedCourtTypeId))) {
+                courtDetail = returnedCourtDetail;
                 if (courtDetail.getHearingVenueAddress() != null) {
                     courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                 }
-                log.info("Court details filtered {}", courtDetail);
+                newContractUsedCounter.incrementAndGet();
+                log.info("Using new-contract CourtDetail {} (newContractUsedCount={})",
+                         courtDetail, newContractUsedCounter.get());
+            } else {
+                // Legacy fallback: call API that returns a list and apply the existing filtering logic
+                List<CourtDetail> courtDetailList = callRefDataLegacyList(epimmsId);
+                log.info("RefData legacy call completed successfully {}", courtDetailList);
+
+                List<CourtDetail> filteredCourtDetail = courtDetailList.stream()
+                        .filter(courtDetail1 -> courtIds.stream()
+                                .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
+                        .toList();
+                if (!filteredCourtDetail.isEmpty()) {
+                    courtDetail = filteredCourtDetail.get(0);
+                    if (courtDetail.getHearingVenueAddress() != null) {
+                        courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
+                    }
+                    legacyFallbackUsedCounter.incrementAndGet();
+                    log.info("Using legacy-filtered CourtDetail {} (legacyFallbackUsedCount={})",
+                             courtDetail, legacyFallbackUsedCounter.get());
+                }
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("RefData call HttpClientError exception {}", exception.getMessage());
@@ -76,6 +93,15 @@ public class RefDataServiceImpl implements RefDataService {
             log.info("RefData call Feign exception {}", exception.getMessage());
         }
         return courtDetail;
+    }
+
+    private CourtDetail callRefDataNewContract(String epimmsId) {
+        // Delegate to RefDataClient which handles token generation and error handling
+        return refDataClient.fetchCourtDetail(epimmsId);
+    }
+
+    private List<CourtDetail> callRefDataLegacyList(String epimmsId) {
+        return refDataClient.fetchCourtDetailList(epimmsId);
     }
 
     /**
@@ -105,6 +131,17 @@ public class RefDataServiceImpl implements RefDataService {
     }
 
     /**
+     * Expose counters for monitoring and tests.
+     */
+    public long getNewContractUsedCount() {
+        return newContractUsedCounter.get();
+    }
+
+    public long getLegacyFallbackUsedCount() {
+        return legacyFallbackUsedCounter.get();
+    }
+
+    /**
      * This method will get all the court details of a particular venueId(serviceCode).
      *
      * @param serviceCode data to get court details from refData.
@@ -116,11 +153,7 @@ public class RefDataServiceImpl implements RefDataService {
         List<CourtDetail> courtVenues = new ArrayList<>();
         log.info("calling getCourtDetails service with serviceCode {} ", serviceCode);
         try {
-            VenuesDetail venueDetail =
-                    refDataApi.getCourtDetailsByServiceCode(
-                            idamTokenGenerator.generateIdamTokenForRefData(),
-                            authTokenGenerator.generate(),
-                            serviceCode);
+            VenuesDetail venueDetail = refDataClient.fetchByServiceCode(serviceCode);
             log.info("RefData call for allVenues completed successfully ");
 
             final boolean match = familyCourtIds.stream().map(String::trim).toList().stream()
