@@ -70,7 +70,7 @@ public class RefDataServiceImpl implements RefDataService {
                                 .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
                         .toList();
                 if (!filteredCourtDetail.isEmpty()) {
-                    courtDetail = filteredCourtDetail.get(0);
+                    courtDetail = filteredCourtDetail.getFirst();
                     if (courtDetail.getHearingVenueAddress() != null) {
                         courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                     }
