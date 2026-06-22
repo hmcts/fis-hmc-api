@@ -46,9 +46,8 @@ public class RefDataServiceImpl implements RefDataService {
                 log.info("returnedCourtDetailList: {}", returnedCourtDetailList);
             }
 
-            CourtDetail matchedCourtDetail = null;
             if (returnedCourtDetailList != null) {
-                matchedCourtDetail = returnedCourtDetailList.stream()
+                courtDetail = returnedCourtDetailList.stream()
                         .filter(detail -> {
                             if (detail.getServiceCode() == null) {
                                 return detail.getCourtTypeId() != null
@@ -61,8 +60,7 @@ public class RefDataServiceImpl implements RefDataService {
                         .orElse(null);
             }
 
-            if (matchedCourtDetail != null) {
-                courtDetail = matchedCourtDetail;
+            if (courtDetail != null) {
                 if (courtDetail.getHearingVenueAddress() != null) {
                     courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                 }
