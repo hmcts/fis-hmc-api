@@ -58,7 +58,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldFetchVenueDetailsRefDataTest() {
+    void shouldFetchVenueDetailsRefDataTest() {
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").serviceCode("ABA5").build();
 
@@ -73,7 +73,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldFetchFirstVenueDetailsWhenMultipleCourtsReturnedFromNewContractTest() {
+     void shouldFetchFirstVenueDetailsWhenMultipleCourtsReturnedFromNewContractTest() {
         CourtDetail courtDetail1 =
             CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").serviceCode("ABA5").build();
         CourtDetail courtDetail2 =
@@ -99,21 +99,22 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldFetchVenueDetailsRefDataWhenCourtTypeNotThereTest() {
-        CourtDetail courtDetail =
-            CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").serviceCode("ABA5").build();
+    void shouldReturnNullWhenNoCourtMatches() {
+        // This detail has a courtTypeId "99" which is not in your [10, 18, 25] list
+        // AND a serviceCode that doesn't match HMCTS_SERVICE_ID
+        CourtDetail nonMatchingDetail =
+            CourtDetail.courtDetailWith().courtTypeId("99").serviceCode("WRONG_CODE").build();
 
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(nonMatchingDetail));
+
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
-        assertNull(courtDetailResp);
 
+        assertNull(courtDetailResp);
     }
 
     @Test
-    public void shouldFetchVenueDetailsRefDataS2sExceptionTest() {
+    void shouldFetchVenueDetailsRefDataS2sExceptionTest() {
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataClient.fetchCourtDetail(anyString()))
@@ -123,7 +124,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldFetchVenueDetailsRefDataHttpClientExceptionTest() {
+     void shouldFetchVenueDetailsRefDataHttpClientExceptionTest() {
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataClient.fetchCourtDetail(anyString()))
@@ -133,7 +134,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldUpdateHearingWithCourtDetailsRefDataTest() {
+    void shouldUpdateHearingWithCourtDetailsRefDataTest() {
 
         CourtDetail courtDetail =
                 CourtDetail.courtDetailWith()
@@ -176,7 +177,7 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldUpdateHearingWithCourtDetailsRefDataTest1() {
+    void shouldUpdateHearingWithCourtDetailsRefDataTest1() {
         HearingUpdateDTO hearingupdateDto =
             HearingUpdateDTO.hearingUpdateRequestDTOWith()
                 .hearingVenueId("231596")

@@ -16,6 +16,8 @@ import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 import java.util.ArrayList;
 import java.util.List;
 
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -40,12 +42,21 @@ public class RefDataServiceImpl implements RefDataService {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
             List<CourtDetail> returnedCourtDetailList = refDataClient.fetchCourtDetail(epimmsId);
+            if (returnedCourtDetailList != null) {
+                log.info("returnedCourtDetailList: {}", returnedCourtDetailList);
+            }
 
             CourtDetail matchedCourtDetail = null;
             if (returnedCourtDetailList != null) {
                 matchedCourtDetail = returnedCourtDetailList.stream()
-                        .filter(detail -> detail.getServiceCode() != null && detail.getCourtTypeId() != null
-                                && courtIds.stream().anyMatch(courtId -> courtId.equals(detail.getCourtTypeId())))
+                        .filter(detail -> {
+                            if (detail.getServiceCode() == null) {
+                                return detail.getCourtTypeId() != null
+                                        && courtIds.stream().anyMatch(courtId -> courtId.equals(detail.getCourtTypeId()));
+                            } else {
+                                return HMCTS_SERVICE_ID.equals(detail.getServiceCode());
+                            }
+                        })
                         .findFirst()
                         .orElse(null);
             }
