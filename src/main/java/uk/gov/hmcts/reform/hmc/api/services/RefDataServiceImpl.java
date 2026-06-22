@@ -15,7 +15,6 @@ import uk.gov.hmcts.reform.hmc.api.model.response.VenuesDetail;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Slf4j
@@ -27,11 +26,6 @@ public class RefDataServiceImpl implements RefDataService {
     @Value("#{'${hearing_component.familyCourtIds}'.split(',')}")
     private List<String> familyCourtIds;
 
-    // Counters to monitor usage of the new contract vs legacy fallback. Not final so Lombok
-    // doesn't include them in the generated constructor.
-    private AtomicLong newContractUsedCounter = new AtomicLong(0);
-    private AtomicLong legacyFallbackUsedCounter = new AtomicLong(0);
-
     /**
      * This method will get all the court details of a particular venueId(epimmsId).
      *
@@ -39,17 +33,14 @@ public class RefDataServiceImpl implements RefDataService {
      * @return courtDetail, particular Court detail.
      */
     @Override
-    @SuppressWarnings("unused")
     public CourtDetail getCourtDetails(String epimmsId) {
         CourtDetail courtDetail = null;
         log.info("Calling getCourtDetails service {}", epimmsId);
         try {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
-            // First try the new API contract which returns a list of CourtDetail.
-            List<CourtDetail> returnedCourtDetailList = callRefDataNewContract(epimmsId);
+            List<CourtDetail> returnedCourtDetailList = refDataClient.fetchCourtDetail(epimmsId);
 
-            // If new-contract returned a list containing a valid matching court, use it. Otherwise fall back to legacy behaviour.
             CourtDetail matchedCourtDetail = null;
             if (returnedCourtDetailList != null) {
                 matchedCourtDetail = returnedCourtDetailList.stream()
@@ -64,28 +55,9 @@ public class RefDataServiceImpl implements RefDataService {
                 if (courtDetail.getHearingVenueAddress() != null) {
                     courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                 }
-                newContractUsedCounter.incrementAndGet();
-                log.info("Using new-contract CourtDetail {} (newContractUsedCount={})",
-                         courtDetail, newContractUsedCounter.get());
-            } else {
-                // Legacy fallback: call API that returns a list and apply the existing filtering logic
-                List<CourtDetail> courtDetailList = callRefDataLegacyList(epimmsId);
-                log.info("RefData legacy call completed successfully {}", courtDetailList);
-
-                List<CourtDetail> filteredCourtDetail = courtDetailList.stream()
-                        .filter(courtDetail1 -> courtIds.stream()
-                                .anyMatch(courtId -> courtId.equals(courtDetail1.getCourtTypeId())))
-                        .toList();
-                if (!filteredCourtDetail.isEmpty()) {
-                    courtDetail = filteredCourtDetail.getFirst();
-                    if (courtDetail.getHearingVenueAddress() != null) {
-                        courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
-                    }
-                    legacyFallbackUsedCounter.incrementAndGet();
-                    log.info("Using legacy-filtered CourtDetail {} (legacyFallbackUsedCount={})",
-                             courtDetail, legacyFallbackUsedCounter.get());
-                }
+                log.info("Found CourtDetail {}", courtDetail);
             }
+            log.warn("Failed to find CourtDetail with court ID {}", epimmsId);
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
@@ -95,14 +67,7 @@ public class RefDataServiceImpl implements RefDataService {
         return courtDetail;
     }
 
-    private List<CourtDetail> callRefDataNewContract(String epimmsId) {
-        // Delegate to RefDataClient which handles token generation and error handling
-        return refDataClient.fetchCourtDetail(epimmsId);
-    }
 
-    private List<CourtDetail> callRefDataLegacyList(String epimmsId) {
-        return refDataClient.fetchCourtDetailList(epimmsId);
-    }
 
     /**
      * This method will update the hearing with court details.
@@ -130,16 +95,7 @@ public class RefDataServiceImpl implements RefDataService {
         return hearingDto;
     }
 
-    /**
-     * Expose counters for monitoring and tests.
-     */
-    public long getNewContractUsedCount() {
-        return newContractUsedCounter.get();
-    }
 
-    public long getLegacyFallbackUsedCount() {
-        return legacyFallbackUsedCounter.get();
-    }
 
     /**
      * This method will get all the court details of a particular venueId(serviceCode).

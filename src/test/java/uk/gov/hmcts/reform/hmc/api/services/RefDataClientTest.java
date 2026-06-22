@@ -99,70 +99,7 @@ class RefDataClientTest {
         assertTrue(result.isEmpty());
     }
 
-    // --- fetchCourtDetailList tests ---
 
-    @Test
-    void fetchCourtDetailListSuccessTest() {
-        CourtDetail detail = CourtDetail.courtDetailWith()
-            .courtTypeId("10")
-            .hearingVenueId("231596")
-            .build();
-        List<CourtDetail> expected = List.of(detail);
-
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsLegacyList("MOCK_IDAM_TOKEN", "MOCK_S2S_TOKEN", "231596"))
-            .thenReturn(expected);
-
-        List<CourtDetail> result = refDataClient.fetchCourtDetailList("231596");
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("10", result.getFirst().getCourtTypeId());
-    }
-
-    @Test
-    void fetchCourtDetailListReturnsEmptyListOnNonHttpException() {
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsLegacyList(anyString(), anyString(), anyString()))
-            .thenThrow(new RuntimeException("Connection error"));
-
-        List<CourtDetail> result = refDataClient.fetchCourtDetailList("231596");
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void fetchCourtDetailListThrowsHttpClientErrorException() {
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsLegacyList(anyString(), anyString(), anyString()))
-            .thenThrow(new HttpClientErrorException(HttpStatus.FORBIDDEN, "Forbidden"));
-
-        assertThrows(HttpClientErrorException.class, () -> refDataClient.fetchCourtDetailList("231596"));
-    }
-
-    @Test
-    void fetchCourtDetailListThrowsHttpServerErrorException() {
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsLegacyList(anyString(), anyString(), anyString()))
-            .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY, "Bad gateway"));
-
-        assertThrows(HttpServerErrorException.class, () -> refDataClient.fetchCourtDetailList("231596"));
-    }
-
-    @Test
-    void fetchCourtDetailListReturnsEmptyListWhenApiReturnsNull() {
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataApi.getCourtDetailsLegacyList(anyString(), anyString(), anyString()))
-            .thenReturn(null);
-
-        List<CourtDetail> result = refDataClient.fetchCourtDetailList("231596");
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
 
     // --- fetchByServiceCode tests ---
 

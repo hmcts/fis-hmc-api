@@ -73,38 +73,22 @@ class RefDataServiceTest {
     }
 
     @Test
-    public void shouldFetchFirstVenueDetailsWhenMultipleCourtsWithSameIdReturnedRefDataTest() {
+    public void shouldFetchFirstVenueDetailsWhenMultipleCourtsReturnedFromNewContractTest() {
         CourtDetail courtDetail1 =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").build();
+            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").serviceCode("ABA5").build();
         CourtDetail courtDetail2 =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").build();
+            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").serviceCode("ABA5").build();
         CourtDetail courtDetail3 =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").build();
-        CourtDetail courtDetail4 =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").build();
-        CourtDetail courtDetail5 =
-            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
-        CourtDetail courtDetail6 =
-            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
-        CourtDetail courtDetail7 =
-            CourtDetail.courtDetailWith().courtTypeId("31").hearingVenueId("231596").build();
-        CourtDetail courtDetail8 =
-            CourtDetail.courtDetailWith().courtTypeId("27").hearingVenueId("231596").build();
+            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").serviceCode("ABA5").build();
 
-        List<CourtDetail> legacyList = new ArrayList<>();
-        legacyList.add(courtDetail1);
-        legacyList.add(courtDetail2);
-        legacyList.add(courtDetail3);
-        legacyList.add(courtDetail4);
-        legacyList.add(courtDetail5);
-        legacyList.add(courtDetail6);
-        legacyList.add(courtDetail7);
-        legacyList.add(courtDetail8);
+        List<CourtDetail> courtList = new ArrayList<>();
+        courtList.add(courtDetail1);
+        courtList.add(courtDetail2);
+        courtList.add(courtDetail3);
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
-        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtList);
 
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
@@ -267,109 +251,11 @@ class RefDataServiceTest {
     }
 
     @Test
-    void newContractNullLegacyReturnsMatchFallbackTest() {
-        CourtDetail legacyMatch =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").build();
-        List<CourtDetail> legacyList = new ArrayList<>();
-        legacyList.add(legacyMatch);
-
+    void newContractReturnsEmptyListReturnsNullTest() {
         when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
-        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
-
-        CourtDetail result = refDataService.getCourtDetails("231596");
-        assertNotNull(result);
-        assertEquals("231596", result.getHearingVenueId());
-        // new contract not used, legacy used once
-        assertEquals(0, refDataService.getNewContractUsedCount());
-        assertEquals(1, refDataService.getLegacyFallbackUsedCount());
-    }
-
-    @Test
-    void newContractNonMatchingLegacyReturnsMatchFallbackTest() {
-        CourtDetail newNonMatch =
-            CourtDetail.courtDetailWith().courtTypeId("30").hearingVenueId("231596").build();
-        CourtDetail legacyMatch =
-            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
-        List<CourtDetail> legacyList = new ArrayList<>();
-        legacyList.add(legacyMatch);
-
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(newNonMatch));
-        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
-
-        CourtDetail result = refDataService.getCourtDetails("231596");
-        assertNotNull(result);
-        assertEquals("231596", result.getHearingVenueId());
-        assertEquals(0, refDataService.getNewContractUsedCount());
-        assertEquals(1, refDataService.getLegacyFallbackUsedCount());
-    }
-
-    @Test
-    void newContractNullServiceCodeLegacyReturnsMatchFallbackTest() {
-        CourtDetail newNullServiceCode =
-            CourtDetail.courtDetailWith().courtTypeId(COURT_TYPE_ID).hearingVenueId("231596").serviceCode(null).build();
-        CourtDetail legacyMatch =
-            CourtDetail.courtDetailWith().courtTypeId("10").hearingVenueId("231596").build();
-        List<CourtDetail> legacyList = new ArrayList<>();
-        legacyList.add(legacyMatch);
-
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(newNullServiceCode));
-        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
-
-        CourtDetail result = refDataService.getCourtDetails("231596");
-        assertNotNull(result);
-        assertEquals("231596", result.getHearingVenueId());
-        assertEquals(0, refDataService.getNewContractUsedCount());
-        assertEquals(1, refDataService.getLegacyFallbackUsedCount());
-    }
-
-    @Test
-    void shouldReturnCourtDetailWithServiceCodeWhenNewContractUsed() {
-        CourtDetail courtDetail =
-                CourtDetail.courtDetailWith()
-                        .courtTypeId(COURT_TYPE_ID)
-                        .hearingVenueId("231596")
-                        .serviceCode("ABA5")
-                        .build();
-
-        when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
-        when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
-
-        CourtDetail courtDetailResp = refDataService.getCourtDetails("231596");
-        assertNotNull(courtDetailResp);
-        assertEquals("231596", courtDetailResp.getHearingVenueId());
-        assertEquals("ABA5", courtDetailResp.getServiceCode());
-        assertEquals(1, refDataService.getNewContractUsedCount());
-        assertEquals(0, refDataService.getLegacyFallbackUsedCount());
-    }
-
-    @Test
-    void bothCallsFailNonHttpReturnsNullTest() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
-        when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(List.of());
 
         CourtDetail result = refDataService.getCourtDetails("231596");
         assertNull(result);
-        assertEquals(0, refDataService.getNewContractUsedCount());
-        assertEquals(0, refDataService.getLegacyFallbackUsedCount());
-    }
-
-    @Test
-    void legacyThrowsHttpExceptionIsPropagated() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
-        when(refDataClient.fetchCourtDetailList(anyString()))
-            .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
-
-        assertThrows(RefDataException.class, () -> refDataService.getCourtDetails("231596"));
-    }
-
-    @Test
-    void legacyThrowsHttpClientErrorExceptionIsPropagated() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
-        when(refDataClient.fetchCourtDetailList(anyString()))
-            .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-
-        assertThrows(RefDataException.class, () -> refDataService.getCourtDetails("231596"));
     }
 
     public static FeignException feignException(int status, String message) {

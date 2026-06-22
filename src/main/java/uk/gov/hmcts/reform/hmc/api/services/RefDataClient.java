@@ -32,30 +32,13 @@ public class RefDataClient {
                     authTokenGenerator.generate(),
                     epimmsId,
                     HMCTS_SERVICE_ID);
-            log.info("RefDataClient: new-contract call succeeded for {}: returned {} items", epimmsId,
+            log.info("RefDataClient: call succeeded for {}: returned {} items", epimmsId,
                      courtDetailList == null ? 0 : courtDetailList.size());
             return courtDetailList != null ? courtDetailList : List.of();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.info("RefDataClient: new-contract call failed for {}: {}", epimmsId, ex.getMessage());
-            return List.of();
-        }
-    }
-
-    public List<CourtDetail> fetchCourtDetailList(String epimmsId) {
-        try {
-            List<CourtDetail> courtDetailList = refDataApi.getCourtDetailsLegacyList(
-                    idamTokenGenerator.generateIdamTokenForRefData(),
-                    authTokenGenerator.generate(),
-                    epimmsId);
-            log.info("RefDataClient: legacy call succeeded for {}: returned {} items", epimmsId,
-                     courtDetailList == null ? 0 : courtDetailList.size());
-            return courtDetailList != null ? courtDetailList : List.of();
-        } catch (HttpClientErrorException | HttpServerErrorException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            log.info("RefDataClient: legacy call failed for {}: {}", epimmsId, ex.getMessage());
+            log.info("RefDataClient: call failed for {}: {}", epimmsId, ex.getMessage());
             return List.of();
         }
     }

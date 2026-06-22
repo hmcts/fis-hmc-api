@@ -33,19 +33,7 @@ public interface RefDataApi {
             @RequestParam("epimms_id") final String epimmsId,
             @RequestParam("service_code") final String serviceCode);
 
-    /**
-     * Legacy fallback: returns a list of CourtDetail for the same endpoint.
-     * Keep this method available until we confirm all callers are using the new single-result contract.
-     */
-    @Deprecated
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/refdata/location/court-venues",
-            headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
-    List<CourtDetail> getCourtDetailsLegacyList(
-            @RequestHeader(AUTHORIZATION) String authorization,
-            @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestParam("epimms_id") final String epimmsId);
+
 
     @RequestMapping(
             method = RequestMethod.GET,
