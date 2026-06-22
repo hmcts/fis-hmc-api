@@ -40,24 +40,22 @@ public class RefDataServiceImpl implements RefDataService {
         log.info("Calling getCourtDetails service {}", epimmsId);
         try {
             final List<String> courtIds =
-                    familyCourtIds.stream().map(String::trim).toList();
+                familyCourtIds.stream().map(String::trim).toList();
             List<CourtDetail> returnedCourtDetailList = refDataClient.fetchCourtDetail(epimmsId);
             if (returnedCourtDetailList != null) {
                 log.info("returnedCourtDetailList: {}", returnedCourtDetailList);
-            }
 
-            if (returnedCourtDetailList != null) {
                 courtDetail = returnedCourtDetailList.stream()
-                        .filter(detail -> {
-                            if (detail.getServiceCode() == null) {
-                                return detail.getCourtTypeId() != null
-                                        && courtIds.stream().anyMatch(courtId -> courtId.equals(detail.getCourtTypeId()));
-                            } else {
-                                return HMCTS_SERVICE_ID.equals(detail.getServiceCode());
-                            }
-                        })
-                        .findFirst()
-                        .orElse(null);
+                    .filter(detail -> {
+                        if (detail.getServiceCode() == null) {
+                            return detail.getCourtTypeId() != null
+                                && courtIds.stream().anyMatch(courtId -> courtId.equals(detail.getCourtTypeId()));
+                        } else {
+                            return HMCTS_SERVICE_ID.equals(detail.getServiceCode());
+                        }
+                    })
+                    .findFirst()
+                    .orElse(null);
             }
 
             if (courtDetail != null) {
