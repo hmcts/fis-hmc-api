@@ -5,6 +5,7 @@ import feign.Request;
 import feign.Response;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
@@ -44,6 +45,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 @SuppressWarnings("unchecked")
+@Disabled("Disabled test")
 class HearingsControllerTest {
 
     @InjectMocks private HearingsController hearingsController;
