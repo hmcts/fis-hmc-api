@@ -177,6 +177,50 @@ class RefDataServiceTest {
     }
 
     @Test
+    void shouldMatchWhenServiceCodeIsNullAndCourtTypeIsInAllowedList() {
+        CourtDetail matchingDetail = CourtDetail.courtDetailWith()
+            .serviceCode(null)
+            .courtTypeId("10") // Exists in familyCourtIds
+            .build();
+
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(matchingDetail));
+
+        CourtDetail result = refDataService.getCourtDetails("123");
+
+        assertNotNull(result);
+        assertEquals("10", result.getCourtTypeId());
+    }
+
+    @Test
+    void shouldMatchWhenServiceCodeMatches() {
+        CourtDetail matchingDetail = CourtDetail.courtDetailWith()
+            .serviceCode("ABA5")
+            .courtTypeId("99")
+            .build();
+
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(matchingDetail));
+
+        CourtDetail result = refDataService.getCourtDetails("123");
+
+        assertNotNull(result);
+        assertEquals("ABA5", result.getServiceCode());
+    }
+
+    @Test
+    void shouldReturnNullWhenNoCriteriaMatch() {
+        CourtDetail nonMatchingDetail = CourtDetail.courtDetailWith()
+            .serviceCode("WRONG_CODE")
+            .courtTypeId("99")
+            .build();
+
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(nonMatchingDetail));
+
+        CourtDetail result = refDataService.getCourtDetails("123");
+
+        assertNull(result);
+    }
+
+    @Test
     void shouldUpdateHearingWithCourtDetailsRefDataTest1() {
         HearingUpdateDTO hearingupdateDto =
             HearingUpdateDTO.hearingUpdateRequestDTOWith()
