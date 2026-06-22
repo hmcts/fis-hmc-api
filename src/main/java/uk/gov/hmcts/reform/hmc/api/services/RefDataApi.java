@@ -27,7 +27,7 @@ public interface RefDataApi {
             method = RequestMethod.GET,
             value = "/refdata/location/court-venues",
             headers = CONTENT_TYPE + "=" + APPLICATION_JSON_VALUE)
-    CourtDetail getCourtDetails(
+    List<CourtDetail> getCourtDetails(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestParam("epimms_id") final String epimmsId,

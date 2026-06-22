@@ -64,7 +64,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
 
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
@@ -103,7 +103,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
         when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
 
         String epimmsId = "231596";
@@ -121,7 +121,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
         String epimmsId = "231596";
         CourtDetail courtDetailResp = refDataService.getCourtDetails(epimmsId);
         assertNull(courtDetailResp);
@@ -182,7 +182,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
         HearingDTO hearingResp = refDataService.getHearingWithCourtDetails(hearingDto);
         assertNotNull(hearingResp);
         assertEquals("courtDetailVenueTest", hearingResp.getHearingUpdate().getHearingVenueName());
@@ -273,7 +273,7 @@ class RefDataServiceTest {
         List<CourtDetail> legacyList = new ArrayList<>();
         legacyList.add(legacyMatch);
 
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
         when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
 
         CourtDetail result = refDataService.getCourtDetails("231596");
@@ -293,7 +293,7 @@ class RefDataServiceTest {
         List<CourtDetail> legacyList = new ArrayList<>();
         legacyList.add(legacyMatch);
 
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(newNonMatch);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(newNonMatch));
         when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
 
         CourtDetail result = refDataService.getCourtDetails("231596");
@@ -312,7 +312,7 @@ class RefDataServiceTest {
         List<CourtDetail> legacyList = new ArrayList<>();
         legacyList.add(legacyMatch);
 
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(newNullServiceCode);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(newNullServiceCode));
         when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(legacyList);
 
         CourtDetail result = refDataService.getCourtDetails("231596");
@@ -333,7 +333,7 @@ class RefDataServiceTest {
 
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_AUTH_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(courtDetail);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of(courtDetail));
 
         CourtDetail courtDetailResp = refDataService.getCourtDetails("231596");
         assertNotNull(courtDetailResp);
@@ -345,7 +345,7 @@ class RefDataServiceTest {
 
     @Test
     void bothCallsFailNonHttpReturnsNullTest() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
         when(refDataClient.fetchCourtDetailList(anyString())).thenReturn(List.of());
 
         CourtDetail result = refDataService.getCourtDetails("231596");
@@ -356,7 +356,7 @@ class RefDataServiceTest {
 
     @Test
     void legacyThrowsHttpExceptionIsPropagated() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
         when(refDataClient.fetchCourtDetailList(anyString()))
             .thenThrow(new HttpServerErrorException(HttpStatus.BAD_GATEWAY));
 
@@ -365,7 +365,7 @@ class RefDataServiceTest {
 
     @Test
     void legacyThrowsHttpClientErrorExceptionIsPropagated() {
-        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(null);
+        when(refDataClient.fetchCourtDetail(anyString())).thenReturn(List.of());
         when(refDataClient.fetchCourtDetailList(anyString()))
             .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 

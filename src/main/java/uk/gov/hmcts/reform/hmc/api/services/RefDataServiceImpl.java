@@ -46,14 +46,21 @@ public class RefDataServiceImpl implements RefDataService {
         try {
             final List<String> courtIds =
                     familyCourtIds.stream().map(String::trim).toList();
-            // First try the new API contract which returns a single pre-filtered CourtDetail.
-            CourtDetail returnedCourtDetail = callRefDataNewContract(epimmsId);
+            // First try the new API contract which returns a list of CourtDetail.
+            List<CourtDetail> returnedCourtDetailList = callRefDataNewContract(epimmsId);
 
-            // If new-contract returned a valid matching court, use it. Otherwise fall back to legacy behaviour.
-            final String returnedCourtTypeId = returnedCourtDetail != null ? returnedCourtDetail.getCourtTypeId() : null;
-            if (returnedCourtDetail != null && returnedCourtDetail.getServiceCode() != null && returnedCourtTypeId != null
-                    && courtIds.stream().anyMatch(courtId -> courtId.equals(returnedCourtTypeId))) {
-                courtDetail = returnedCourtDetail;
+            // If new-contract returned a list containing a valid matching court, use it. Otherwise fall back to legacy behaviour.
+            CourtDetail matchedCourtDetail = null;
+            if (returnedCourtDetailList != null) {
+                matchedCourtDetail = returnedCourtDetailList.stream()
+                        .filter(detail -> detail.getServiceCode() != null && detail.getCourtTypeId() != null
+                                && courtIds.stream().anyMatch(courtId -> courtId.equals(detail.getCourtTypeId())))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (matchedCourtDetail != null) {
+                courtDetail = matchedCourtDetail;
                 if (courtDetail.getHearingVenueAddress() != null) {
                     courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                 }
@@ -88,7 +95,7 @@ public class RefDataServiceImpl implements RefDataService {
         return courtDetail;
     }
 
-    private CourtDetail callRefDataNewContract(String epimmsId) {
+    private List<CourtDetail> callRefDataNewContract(String epimmsId) {
         // Delegate to RefDataClient which handles token generation and error handling
         return refDataClient.fetchCourtDetail(epimmsId);
     }

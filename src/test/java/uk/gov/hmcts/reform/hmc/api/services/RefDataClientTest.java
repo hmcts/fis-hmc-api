@@ -47,24 +47,26 @@ class RefDataClientTest {
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails("MOCK_IDAM_TOKEN", "MOCK_S2S_TOKEN", "231596", HMCTS_SERVICE_ID))
-            .thenReturn(expected);
+            .thenReturn(List.of(expected));
 
-        CourtDetail result = refDataClient.fetchCourtDetail("231596");
+        List<CourtDetail> result = refDataClient.fetchCourtDetail("231596");
         assertNotNull(result);
-        assertEquals("18", result.getCourtTypeId());
-        assertEquals("231596", result.getHearingVenueId());
-        assertEquals("ABA5", result.getServiceCode());
+        assertEquals(1, result.size());
+        assertEquals("18", result.get(0).getCourtTypeId());
+        assertEquals("231596", result.get(0).getHearingVenueId());
+        assertEquals("ABA5", result.get(0).getServiceCode());
     }
 
     @Test
-    void fetchCourtDetailReturnsNullOnNonHttpException() {
+    void fetchCourtDetailReturnsEmptyListOnNonHttpException() {
         when(idamTokenGenerator.generateIdamTokenForRefData()).thenReturn("MOCK_IDAM_TOKEN");
         when(authTokenGenerator.generate()).thenReturn("MOCK_S2S_TOKEN");
         when(refDataApi.getCourtDetails(anyString(), anyString(), anyString(), anyString()))
             .thenThrow(new RuntimeException("Network timeout"));
 
-        CourtDetail result = refDataClient.fetchCourtDetail("231596");
-        assertNull(result);
+        List<CourtDetail> result = refDataClient.fetchCourtDetail("231596");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -88,12 +90,13 @@ class RefDataClientTest {
     }
 
     @Test
-    void fetchCourtDetailReturnsNullOnTokenGenerationFailure() {
+    void fetchCourtDetailReturnsEmptyListOnTokenGenerationFailure() {
         when(idamTokenGenerator.generateIdamTokenForRefData())
             .thenThrow(new RuntimeException("Token generation failed"));
 
-        CourtDetail result = refDataClient.fetchCourtDetail("231596");
-        assertNull(result);
+        List<CourtDetail> result = refDataClient.fetchCourtDetail("231596");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     // --- fetchCourtDetailList tests ---

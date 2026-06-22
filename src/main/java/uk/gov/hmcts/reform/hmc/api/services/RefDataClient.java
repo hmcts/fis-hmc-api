@@ -25,20 +25,21 @@ public class RefDataClient {
     private final AuthTokenGenerator authTokenGenerator;
     private final IdamTokenGenerator idamTokenGenerator;
 
-    public CourtDetail fetchCourtDetail(String epimmsId) {
+    public List<CourtDetail> fetchCourtDetail(String epimmsId) {
         try {
-            CourtDetail courtDetail = refDataApi.getCourtDetails(
+            List<CourtDetail> courtDetailList = refDataApi.getCourtDetails(
                     idamTokenGenerator.generateIdamTokenForRefData(),
                     authTokenGenerator.generate(),
                     epimmsId,
                     HMCTS_SERVICE_ID);
-            log.info("RefDataClient: new-contract call succeeded for {}: {}", epimmsId, courtDetail);
-            return courtDetail;
+            log.info("RefDataClient: new-contract call succeeded for {}: returned {} items", epimmsId,
+                     courtDetailList == null ? 0 : courtDetailList.size());
+            return courtDetailList != null ? courtDetailList : List.of();
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             throw ex;
         } catch (Exception ex) {
             log.info("RefDataClient: new-contract call failed for {}: {}", epimmsId, ex.getMessage());
-            return null;
+            return List.of();
         }
     }
 
