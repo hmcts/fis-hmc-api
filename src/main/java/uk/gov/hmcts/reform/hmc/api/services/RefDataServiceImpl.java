@@ -56,8 +56,9 @@ public class RefDataServiceImpl implements RefDataService {
                     courtDetail.setHearingVenueAddress(courtDetail.getHearingVenueAddress());
                 }
                 log.info("Found CourtDetail {}", courtDetail);
+            } else {
+                log.warn("Failed to find CourtDetail with court ID {}", epimmsId);
             }
-            log.warn("Failed to find CourtDetail with court ID {}", epimmsId);
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
             log.info("RefData call HttpClientError exception {}", exception.getMessage());
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
