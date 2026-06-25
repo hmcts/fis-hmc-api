@@ -196,7 +196,7 @@ jacocoTestReport {
 }
 
 jacoco {
-  toolVersion = "0.8.14"
+  toolVersion = "0.8.15"
 }
 
 jacocoTestCoverageVerification {
@@ -283,7 +283,7 @@ repositories {
 
 ext {
   log4JVersion = '2.25.4'
-  set('springCloudAzureVersion', "6.3.0")
+  set('springCloudAzureVersion', "6.4.0")
   set('springCloudVersion', "2025.0.2")
   junitBomVersion = '6.0.3'
 }
@@ -353,7 +353,7 @@ dependencyManagement {
     dependencySet(group: 'commons-fileupload', version: '1.6.0') {
       entry 'commons-fileupload'
     }
-    dependencySet(group: 'io.projectreactor.netty', version: '1.3.2') {
+    dependencySet(group: 'io.projectreactor.netty', version: '1.3.6') {
       entry 'reactor-netty'
       entry 'reactor-netty-http'
     }
@@ -390,7 +390,7 @@ dependencyManagement {
       entry 'nimbus-jose-jwt'
     }
 
-    dependencySet(group: 'ch.qos.logback', version: '1.5.32') {
+    dependencySet(group: 'ch.qos.logback', version: '1.5.34') {
       entry 'logback-classic'
       entry 'logback-core'
     }
@@ -445,7 +445,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: versions.s2sClient
   //implementation group: 'uk.gov.hmcts.reform', name: 'idam-client', version: '2.0.0'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '2.1.2'
-  implementation group: 'com.azure', name: 'azure-core', version: '1.58.0'
+  implementation group: 'com.azure', name: 'azure-core', version: '1.58.1'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.17.18'
   implementation group: 'au.com.dius.pact.consumer', name: 'junit5', version: '4.6.20'
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
@@ -456,7 +456,7 @@ dependencies {
   implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.11.0'
   // pin due to CVE-2025-489
   implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.20.0'
-  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.55'
+  implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.1.56'
   implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '2.1.1'
   implementation group: 'org.pitest', name: 'pitest-junit5-plugin', version: '1.2.3'
   implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: '3.2.4'
