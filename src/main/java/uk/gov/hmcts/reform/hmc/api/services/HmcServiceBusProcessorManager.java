@@ -14,7 +14,7 @@ public class HmcServiceBusProcessorManager {
     private final LaunchDarklyClient launchDarklyClient;
     private final ServiceBusProcessorClient processorClient;
 
-    @Scheduled(fixedDelayString = "${hmc.servicebus.flag-check-delay:30000}")
+    @Scheduled(fixedDelayString = "${hmc.servicebus.flag-check-delay:300000}")
     public void refreshProcessorState() {
         boolean enabled = launchDarklyClient.isFeatureEnabled("hmc-servicebus-enabled");
 
