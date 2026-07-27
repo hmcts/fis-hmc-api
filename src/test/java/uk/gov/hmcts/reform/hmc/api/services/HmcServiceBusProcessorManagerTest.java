@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HmcServiceBusProcessorManagerTest {
-
     public static final String HMC_SERVICEBUS_ENABLED = "hmc-servicebus-enabled";
     @Mock
     private LaunchDarklyClient launchDarklyClient;
