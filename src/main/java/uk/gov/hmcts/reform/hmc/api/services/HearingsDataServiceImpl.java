@@ -103,9 +103,20 @@ public class HearingsDataServiceImpl implements HearingsDataService {
     public ServiceHearingValues getCaseData(
         HearingValues hearingValues, String authorisation, String serviceAuthorization)
         throws IOException {
+        log.info(
+            "Fetching service hearing values case data for caseReference={}, hearingId={}",
+            hearingValues.getCaseReference(),
+            hearingValues.getHearingId()
+        );
         CaseDetails caseDetails =
             caseApiService.getCaseDetails(
                 hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+        log.info(
+            "Retrieved CCD case details for service hearing values caseReference={}, caseTypeOfApplication={}, issueDate={}",
+            hearingValues.getCaseReference(),
+            caseDetails.getData().get(CASE_TYPE_OF_APPLICATION),
+            caseDetails.getData().get(ISSUE_DATE)
+        );
         String publicCaseNameMapper = EMPTY;
         Boolean privateHearingRequiredFlagMapper = FALSE;
         if (FL401.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
@@ -189,6 +200,17 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 .build();
 
         caseFlagV2DataService.setCaseFlagsV2Data(serviceHearingValues, caseDetails);
+        log.info(
+            "Built service hearing values for caseReference={}, hearingRequester={}, hearingLocations={}, "
+                + "panelRequirements={}, hearingType={}, autoListFlag={}, privateHearingRequiredFlag={}",
+            hearingValues.getCaseReference(),
+            serviceHearingValues.getHearingRequester(),
+            serviceHearingValues.getHearingLocations(),
+            serviceHearingValues.getPanelRequirements(),
+            serviceHearingValues.getHearingType(),
+            serviceHearingValues.getAutoListFlag(),
+            serviceHearingValues.getPrivateHearingRequiredFlag()
+        );
 
         return serviceHearingValues;
     }

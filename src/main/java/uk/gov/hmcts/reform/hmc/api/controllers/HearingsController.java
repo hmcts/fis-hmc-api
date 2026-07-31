@@ -81,20 +81,48 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
+            log.info(
+                "Received service hearing values request from COS/HMC for caseReference={}, hearingId={}",
+                hearingValues.getCaseReference(),
+                hearingValues.getHearingId()
+            );
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
-                return ResponseEntity.ok(
-                        hearingsDataService.getCaseData(
-                                hearingValues, authorization, serviceAuthorization));
+                Object serviceHearingValues = hearingsDataService.getCaseData(
+                    hearingValues, authorization, serviceAuthorization);
+                log.info(
+                    "Completed service hearing values request for caseReference={}, hearingId={}",
+                    hearingValues.getCaseReference(),
+                    hearingValues.getHearingId()
+                );
+                return ResponseEntity.ok(serviceHearingValues);
             } else {
                 throw new ResponseStatusException(UNAUTHORIZED);
             }
         } catch (ResponseStatusException e) {
+            log.error(
+                "Unauthorised service hearing values request for caseReference={}, hearingId={}",
+                hearingValues.getCaseReference(),
+                hearingValues.getHearingId(),
+                e
+            );
             return status(UNAUTHORIZED).body(new ApiError(e.getMessage()));
         } catch (FeignException feignException) {
+            log.error(
+                "Feign exception while processing service hearing values request for caseReference={}, hearingId={}, status={}",
+                hearingValues.getCaseReference(),
+                hearingValues.getHearingId(),
+                feignException.status(),
+                feignException
+            );
             return status(feignException.status()).body(new ApiError(feignException.getMessage()));
         } catch (Exception e) {
-            log.error("Error while fetching hearings data", e);
+            log.error(
+                "Error while fetching service hearing values for caseReference={}, hearingId={}",
+                hearingValues.getCaseReference(),
+                hearingValues.getHearingId(),
+                e
+            );
             return status(INTERNAL_SERVER_ERROR).body(new ApiError(e.getMessage()));
         }
     }

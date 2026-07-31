@@ -3,6 +3,8 @@ package uk.gov.hmcts.reform.hmc.api.services;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -43,7 +45,7 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
     @SuppressWarnings("unused")
     public JudgeDetail getJudgeDetails(String judgeId) {
         JudgeDetail judgeDetail = null;
-        log.info("calling getJudgeDetails service " + judgeId);
+        log.info("Calling RefData Judicial getJudgeDetails for judgeId={}", judgeId);
         List<String> personalCodeList = new ArrayList<>();
         personalCodeList.add(judgeId);
         JudgeRequestDTO judgeRequestDto =
@@ -66,17 +68,36 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
                 );
             }
 
-            log.info("RefData Judicial call completed successfully" + judgeDetailList);
+            log.info(
+                "RefData Judicial call completed successfully for judgeId={}, resultCount={}",
+                judgeId,
+                judgeDetailList == null ? 0 : judgeDetailList.size()
+            );
 
-            if (!judgeDetailList.isEmpty()) {
+            if (judgeDetailList != null && !judgeDetailList.isEmpty()) {
                 judgeDetail = judgeDetailList.get(0);
-                log.info("Judge details filtered" + judgeDetail.getHearingJudgeName());
+                log.info(
+                    "Judge details found for judgeId={}, hearingJudgeName={}",
+                    judgeId,
+                    judgeDetail.getHearingJudgeName()
+                );
+            } else {
+                log.warn("No RefData Judicial details found for judgeId={}", judgeId);
             }
         } catch (HttpClientErrorException | HttpServerErrorException exception) {
-            log.info("RefData Judicial call HttpClientError exception {}", exception.getMessage());
+            log.error("RefData Judicial HTTP exception for judgeId={}", judgeId, exception);
             throw new RefDataException("RefData", exception.getStatusCode(), exception);
         } catch (FeignException exception) {
-            log.info("RefData Judicial call Feign exception {}", exception.getMessage());
+            log.error(
+                "RefData Judicial Feign exception for judgeId={}, status={}",
+                judgeId,
+                exception.status(),
+                exception
+            );
+            HttpStatusCode status = exception.status() > 0
+                ? HttpStatusCode.valueOf(exception.status())
+                : HttpStatus.BAD_GATEWAY;
+            throw new RefDataException("RefData", status, exception);
         }
         return judgeDetail;
     }
