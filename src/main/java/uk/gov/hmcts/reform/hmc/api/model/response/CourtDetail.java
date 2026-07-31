@@ -36,6 +36,9 @@ public class CourtDetail {
     @JsonProperty("court_type_id")
     private String courtTypeId;
 
+    @JsonProperty("service_code")
+    private String serviceCode;
+
     @JsonProperty("region_id")
     private String regionId;
 

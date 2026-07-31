@@ -30,7 +30,10 @@ public interface RefDataApi {
     List<CourtDetail> getCourtDetails(
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
-            @RequestParam("epimms_id") final String epimmsId);
+            @RequestParam("epimms_id") final String epimmsId,
+            @RequestParam("service_code") final String serviceCode);
+
+
 
     @RequestMapping(
             method = RequestMethod.GET,
