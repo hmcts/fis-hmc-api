@@ -14,14 +14,16 @@ public class HmcServiceBusProcessorManager {
     private final LaunchDarklyClient launchDarklyClient;
     private final ServiceBusProcessorClient processorClient;
 
+    public static final String HMC_SERVICEBUS_DISABLED = "hmc-servicebus-disabled";
+
     @Scheduled(fixedDelayString = "${hmc.servicebus.flag-check-delay:300000}")
     public void refreshProcessorState() {
-        boolean enabled = launchDarklyClient.isFeatureEnabled("hmc-servicebus-enabled");
+        boolean disabled = launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_DISABLED);
 
-        if (enabled && !processorClient.isRunning()) {
+        if (!disabled && !processorClient.isRunning()) {
             log.info("Starting HMC Service Bus processor");
             processorClient.start();
-        } else if (!enabled && processorClient.isRunning()) {
+        } else if (disabled && processorClient.isRunning()) {
             log.info("Stopping HMC Service Bus processor");
             processorClient.stop();
         }

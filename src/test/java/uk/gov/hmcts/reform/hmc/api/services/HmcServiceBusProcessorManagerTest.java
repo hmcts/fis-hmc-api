@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HmcServiceBusProcessorManagerTest {
-    public static final String HMC_SERVICEBUS_ENABLED = "hmc-servicebus-enabled";
+    public static final String HMC_SERVICEBUS_DISABLED = "hmc-servicebus-disabled";
     @Mock
     private LaunchDarklyClient launchDarklyClient;
 
@@ -25,9 +25,9 @@ class HmcServiceBusProcessorManagerTest {
     private HmcServiceBusProcessorManager scheduler;
 
     @Test
-    void shouldStartProcessorWhenFeatureEnabledAndProcessorNotRunning() {
-        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_ENABLED))
-            .thenReturn(true);
+    void shouldStartProcessorWhenFeatureDisabledAndProcessorNotRunning() {
+        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_DISABLED))
+            .thenReturn(false);
         when(processorClient.isRunning()).thenReturn(false);
 
         scheduler.refreshProcessorState();
@@ -37,9 +37,9 @@ class HmcServiceBusProcessorManagerTest {
     }
 
     @Test
-    void shouldStopProcessorWhenFeatureDisabledAndProcessorRunning() {
-        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_ENABLED))
-            .thenReturn(false);
+    void shouldStopProcessorWhenFeatureEnabledAndProcessorRunning() {
+        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_DISABLED))
+            .thenReturn(true);
         when(processorClient.isRunning()).thenReturn(true);
 
         scheduler.refreshProcessorState();
@@ -49,9 +49,9 @@ class HmcServiceBusProcessorManagerTest {
     }
 
     @Test
-    void shouldDoNothingWhenFeatureEnabledAndProcessorAlreadyRunning() {
-        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_ENABLED))
-            .thenReturn(true);
+    void shouldDoNothingWhenFeatureDisabledAndProcessorAlreadyRunning() {
+        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_DISABLED))
+            .thenReturn(false);
         when(processorClient.isRunning()).thenReturn(true);
 
         scheduler.refreshProcessorState();
@@ -61,9 +61,9 @@ class HmcServiceBusProcessorManagerTest {
     }
 
     @Test
-    void shouldDoNothingWhenFeatureDisabledAndProcessorAlreadyStopped() {
-        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_ENABLED))
-            .thenReturn(false);
+    void shouldDoNothingWhenFeatureEnabledAndProcessorAlreadyStopped() {
+        when(launchDarklyClient.isFeatureEnabled(HMC_SERVICEBUS_DISABLED))
+            .thenReturn(true);
         when(processorClient.isRunning()).thenReturn(false);
 
         scheduler.refreshProcessorState();
