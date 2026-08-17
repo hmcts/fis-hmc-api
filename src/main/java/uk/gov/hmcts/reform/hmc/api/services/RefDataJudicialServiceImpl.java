@@ -75,11 +75,10 @@ public class RefDataJudicialServiceImpl implements RefDataJudicialService {
             );
 
             if (judgeDetailList != null && !judgeDetailList.isEmpty()) {
-                judgeDetail = judgeDetailList.get(0);
+                judgeDetail = judgeDetailList.getFirst();
                 log.info(
-                    "Judge details found for judgeId={}, hearingJudgeName={}",
-                    judgeId,
-                    judgeDetail.getHearingJudgeName()
+                    "Judge details found for judgeId={}",
+                    judgeId
                 );
             } else {
                 log.warn("No RefData Judicial details found for judgeId={}", judgeId);
