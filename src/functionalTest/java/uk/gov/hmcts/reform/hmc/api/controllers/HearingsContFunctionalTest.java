@@ -14,12 +14,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.TestConfig;
 import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
 
 @SpringBootTest
@@ -27,6 +29,7 @@ import uk.gov.hmcts.reform.hmc.api.utils.ServiceAuthenticationGenerator;
 @ContextConfiguration
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application_e2e.yaml")
+@Import(TestConfig.class)
 public class HearingsContFunctionalTest {
 
     public static final String SERV_AUTH_HEADER = "ServiceAuthorization";

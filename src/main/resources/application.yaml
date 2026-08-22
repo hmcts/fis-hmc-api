@@ -146,3 +146,7 @@ private-law:
 
 launchdarkly:
   sdk-key: ${LAUNCH_DARKLY_SDK_KEY:}
+
+hmc:
+  servicebus:
+    flag-check-delay: ${HMC_SERVICEBUS_FLAG_CHECK_DELAY:300000}
