@@ -4,7 +4,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.DECISION_OUTCOME;
 import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AWAITING_HEARING_DETAILS;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LISTED;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -173,73 +175,39 @@ class NextHearingDetailsServiceTest {
     }
 
     @Test
-    void shouldReturnNextHearingDetailsTest() {
-        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
-
-        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
-
+    void shouldReturnNextHearingDetailsTestWhenHmcStatusIsListed() {
+        // given
         LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
+        Hearings hearings = setupNextHearingDetails(testNextHearingDate3, LISTED);
 
-        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
-
-        HearingDaySchedule hearingDaySchedule1 =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingStartDateTime(testNextHearingDate1)
-                        .build();
-
-        HearingDaySchedule hearingDaySchedule2 =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingStartDateTime(testNextHearingDate2)
-                        .build();
-
-        List<HearingDaySchedule> hearingDayScheduleList1 = new ArrayList<>();
-        hearingDayScheduleList1.add(hearingDaySchedule1);
-        hearingDayScheduleList1.add(hearingDaySchedule2);
-
-        HearingDaySchedule hearingDaySchedule3 =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingStartDateTime(testNextHearingDate3)
-                        .build();
-
-        HearingDaySchedule hearingDaySchedule4 =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingStartDateTime(testNextHearingDate4)
-                        .build();
-        List<HearingDaySchedule> hearingDayScheduleList2 = new ArrayList<>();
-        hearingDayScheduleList2.add(hearingDaySchedule3);
-        hearingDayScheduleList2.add(hearingDaySchedule4);
-
-        CaseHearing caseHearing1 =
-                CaseHearing.caseHearingWith()
-                    .hearingID(123L)
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList1)
-                        .build();
-
-        CaseHearing caseHearing2 =
-                CaseHearing.caseHearingWith()
-                    .hearingID(456L)
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList2)
-                        .build();
-
-        List<CaseHearing> caseHearingList = new ArrayList<>();
-        caseHearingList.add(caseHearing1);
-        caseHearingList.add(caseHearing2);
-
-        Hearings hearings =
-                Hearings.hearingsWith()
-                        .caseRef("123")
-                        .caseHearings(caseHearingList)
-                        .hmctsServiceCode("BBA3")
-                        .build();
-
+        // when
         NextHearingDetails nextHearingDetailsResponse =
                 nextHearingDetailsService.getNextHearingDate(hearings);
+
+        // then
         Assertions.assertEquals(
                 testNextHearingDate3, nextHearingDetailsResponse.getHearingDateTime());
         Assertions.assertEquals(123L, nextHearingDetailsResponse.getHearingID());
     }
+
+
+    @Test
+    void shouldReturnNextHearingDetailsTestWhenHmcStatusIsAwaitingHearingDetails() {
+        // given
+        LocalDateTime testNextHearingDate3 = LocalDateTime.now().plusDays(5).withNano(1);
+        Hearings hearings = setupNextHearingDetails(testNextHearingDate3, AWAITING_HEARING_DETAILS);
+
+        // when
+        NextHearingDetails nextHearingDetailsResponse =
+            nextHearingDetailsService.getNextHearingDate(hearings);
+
+        // then
+        Assertions.assertEquals(
+            testNextHearingDate3, nextHearingDetailsResponse.getHearingDateTime());
+        Assertions.assertEquals(123L, nextHearingDetailsResponse.getHearingID());
+    }
+
+
 
     @Test
     void shouldFetchStateToUpdateWhenCurrHmcIsCompletedButSomeHearingInFuture() {
@@ -581,5 +549,68 @@ class NextHearingDetailsServiceTest {
         State finalCaseState =
                 nextHearingDetailsService.fetchStateForUpdate(hearings, currHearingHmcStatus);
         Assertions.assertEquals(PREPARE_FOR_HEARING_CONDUCT_HEARING, finalCaseState);
+    }
+
+
+    private Hearings setupNextHearingDetails(LocalDateTime testNextHearingDate3, String hmcStatus) {
+
+        LocalDateTime testNextHearingDate1 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        LocalDateTime testNextHearingDate2 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        LocalDateTime testNextHearingDate4 = LocalDateTime.now().plusDays(5).withNano(1);
+
+        HearingDaySchedule hearingDaySchedule1 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate1)
+                .build();
+
+        HearingDaySchedule hearingDaySchedule2 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate2)
+                .build();
+
+        List<HearingDaySchedule> hearingDayScheduleList1 = new ArrayList<>();
+        hearingDayScheduleList1.add(hearingDaySchedule1);
+        hearingDayScheduleList1.add(hearingDaySchedule2);
+
+        HearingDaySchedule hearingDaySchedule3 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate3)
+                .build();
+
+        HearingDaySchedule hearingDaySchedule4 =
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingStartDateTime(testNextHearingDate4)
+                .build();
+        List<HearingDaySchedule> hearingDayScheduleList2 = new ArrayList<>();
+        hearingDayScheduleList2.add(hearingDaySchedule3);
+        hearingDayScheduleList2.add(hearingDaySchedule4);
+
+        CaseHearing caseHearing1 =
+            CaseHearing.caseHearingWith()
+                .hearingID(123L)
+                .hmcStatus(hmcStatus)
+                .hearingDaySchedule(hearingDayScheduleList1)
+                .build();
+
+        CaseHearing caseHearing2 =
+            CaseHearing.caseHearingWith()
+                .hearingID(456L)
+                .hmcStatus(hmcStatus)
+                .hearingDaySchedule(hearingDayScheduleList2)
+                .build();
+
+        List<CaseHearing> caseHearingList = new ArrayList<>();
+        caseHearingList.add(caseHearing1);
+        caseHearingList.add(caseHearing2);
+
+        Hearings hearings =
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .caseHearings(caseHearingList)
+                .hmctsServiceCode("BBA3")
+                .build();
+        return hearings;
     }
 }
