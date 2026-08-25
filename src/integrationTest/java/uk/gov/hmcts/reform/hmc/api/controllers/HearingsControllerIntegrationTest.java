@@ -1,6 +1,34 @@
 package uk.gov.hmcts.reform.hmc.api.controllers;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.web.context.WebApplicationContext;
+import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
+import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
+import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
+import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
+import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
+import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
+import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
+import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
+import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -22,76 +50,43 @@ import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_CASE_REFERENC
 import static uk.gov.hmcts.reform.hmc.api.utils.TestConstants.TEST_SERVICE_AUTH_TOKEN;
 import static uk.gov.hmcts.reform.hmc.api.utils.TestResourceUtil.readFileFrom;
 
-import groovy.util.logging.Slf4j;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.context.WebApplicationContext;
-import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
-import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
-import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
-import uk.gov.hmcts.reform.hmc.api.model.response.CaseHearing;
-import uk.gov.hmcts.reform.hmc.api.model.response.HearingDaySchedule;
-import uk.gov.hmcts.reform.hmc.api.model.response.Hearings;
-import uk.gov.hmcts.reform.hmc.api.model.response.ServiceHearingValues;
-import uk.gov.hmcts.reform.hmc.api.model.response.linkdata.HearingLinkData;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsDataService;
-import uk.gov.hmcts.reform.hmc.api.services.HearingsService;
-import uk.gov.hmcts.reform.hmc.api.services.IdamAuthService;
-
-@Slf4j
 @SpringBootTest
-@RunWith(SpringRunner.class)
-@ContextConfiguration
-@SuppressWarnings("unchecked")
-public class HearingsControllerIntegrationTest {
+@AutoConfigureMockMvc
+class HearingsControllerIntegrationTest {
 
     private MockMvc mockMvc;
 
-    @Autowired private WebApplicationContext webApplicationContext;
+    @Autowired
+    private WebApplicationContext webApplicationContext;
 
-    @MockitoBean private CoreCaseDataApi coreCaseDataApi;
+    @MockitoBean
+    private CoreCaseDataApi coreCaseDataApi;
 
-    @MockitoBean private AuthTokenGenerator authTokenGenerator;
+    @MockitoBean
+    private AuthTokenGenerator authTokenGenerator;
 
-    @MockitoBean private IdamAuthService idamAuthService;
+    @MockitoBean
+    private IdamAuthService idamAuthService;
 
-    @MockitoBean private HearingsDataService hearingsDataService;
+    @MockitoBean
+    private HearingsDataService hearingsDataService;
 
-    @MockitoBean private HearingsService hearingsService;
+    @MockitoBean
+    private HearingsService hearingsService;
 
-    private static final String HEARING_VALUES_REQUEST_BODY_JSON =
-            "classpath:requests/hearing-values.json";
+    private static final String HEARING_VALUES_REQUEST_BODY_JSON = "classpath:requests/hearing-values.json";
 
-    private static final String LIST_OF_CASE_IDS_REQUEST_BODY_JSON =
-            "classpath:requests/list-of-case-ids.json";
-
-    @Before
+    @BeforeEach
     public void setUp() {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
-    public void givenHearingServiceRequestHearingsControllerReturnOkStatus() throws Exception {
-
-        LinkedHashMap applicantMap = new LinkedHashMap();
+    void givenHearingServiceRequestHearingsControllerReturnOkStatus() throws Exception {
+        Map<String, String> applicantMap = new HashMap<>();
         applicantMap.put("lastName", "lastName");
 
-        LinkedHashMap respondentMap = new LinkedHashMap();
+        Map<String, String> respondentMap = new HashMap<>();
         respondentMap.put("lastName", "lastName");
 
         Map<String, Object> caseDataMap = new HashMap<>();
@@ -101,152 +96,161 @@ public class HearingsControllerIntegrationTest {
         caseDataMap.put("fl401ApplicantTable", applicantMap);
         caseDataMap.put("fl401RespondentTable", respondentMap);
         CaseDetails caseDetails =
-                CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
+            CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build();
 
         ServiceHearingValues hearingsData =
-                ServiceHearingValues.hearingsDataWith()
-                        .hmctsServiceID("ABA5")
-                        .hmctsInternalCaseName("123")
-                        .publicCaseName("John Smith")
-                        .caseAdditionalSecurityFlag(false)
-                        .build();
+            ServiceHearingValues.hearingsDataWith()
+                .hmctsServiceID("ABA5")
+                .hmctsInternalCaseName("123")
+                .publicCaseName("John Smith")
+                .caseAdditionalSecurityFlag(false)
+                .build();
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         Mockito.when(hearingsDataService.getCaseData(any(), anyString(), anyString()))
-                .thenReturn(hearingsData);
+            .thenReturn(hearingsData);
         Mockito.when(coreCaseDataApi.getCase(anyString(), anyString(), anyString()))
-                .thenReturn(caseDetails);
+            .thenReturn(caseDetails);
 
         String hearingValuesRequestBody = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         MvcResult res =
-                mockMvc.perform(
-                                post(SERVICE_HEARING_VALUES_ENDPOINT)
-                                        .contentType(APPLICATION_JSON)
-                                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
-                                        .header(
-                                                SERVICE_AUTHORISATION_HEADER,
-                                                TEST_SERVICE_AUTH_TOKEN)
-                                        .content(hearingValuesRequestBody)
-                                        .accept(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn();
+            mockMvc.perform(
+                    post(SERVICE_HEARING_VALUES_ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                        .header(
+                            SERVICE_AUTHORISATION_HEADER,
+                            TEST_SERVICE_AUTH_TOKEN
+                        )
+                        .content(hearingValuesRequestBody)
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("ABA5"));
     }
 
     @Test
-    public void givenCaseReferenceNoHearingsControllerReturnOkStatus() throws Exception {
+    void givenCaseReferenceNoHearingsControllerReturnOkStatus() throws Exception {
         HearingDaySchedule hearingDaySchedule =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingVenueId("testVenueId")
-                        .hearingJudgeId("testJudgeId")
-                        .build();
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId("testVenueId")
+                .hearingJudgeId("testJudgeId")
+                .build();
         List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
         hearingDayScheduleList.add(hearingDaySchedule);
 
         CaseHearing caseHearing =
-                CaseHearing.caseHearingWith()
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList)
-                        .build();
+            CaseHearing.caseHearingWith()
+                .hmcStatus("LISTED")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
         List<CaseHearing> caseHearingList = new ArrayList<>();
         caseHearingList.add(caseHearing);
 
         Hearings caseHearings =
-                Hearings.hearingsWith()
-                        .caseRef("123")
-                        .hmctsServiceCode("ABA5")
-                        .caseHearings(caseHearingList)
-                        .build();
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .build();
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         Mockito.when(
-                        hearingsService.getHearingsByCaseRefNo(
-                                anyString(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
-                .thenReturn(caseHearings);
+                hearingsService.getHearingsByCaseRefNo(
+                    anyString(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
+            .thenReturn(caseHearings);
 
         MvcResult res =
-                mockMvc.perform(
-                                get(HEARINGS_ENDPOINT)
-                                        .contentType(APPLICATION_JSON)
-                                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
-                                        .header(
-                                                SERVICE_AUTHORISATION_HEADER,
-                                                TEST_SERVICE_AUTH_TOKEN)
-                                        .header(CASE_REFERENCE, TEST_CASE_REFERENCE)
-                                        .accept(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn();
+            mockMvc.perform(
+                    get(HEARINGS_ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                        .header(
+                            SERVICE_AUTHORISATION_HEADER,
+                            TEST_SERVICE_AUTH_TOKEN
+                        )
+                        .header(CASE_REFERENCE, TEST_CASE_REFERENCE)
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("testJudgeId"));
         assertTrue(json.contains("testVenueId"));
     }
 
     @Test
-    public void givenListOfCaseIdsToFetchHearingsControllerReturnOkStatus() throws Exception {
+    void givenListOfCaseIdsToFetchHearingsControllerReturnOkStatus() throws Exception {
         HearingDaySchedule hearingDaySchedule =
-                HearingDaySchedule.hearingDayScheduleWith()
-                        .hearingVenueId("testVenueId")
-                        .hearingJudgeId("testJudgeId")
-                        .build();
+            HearingDaySchedule.hearingDayScheduleWith()
+                .hearingVenueId("testVenueId")
+                .hearingJudgeId("testJudgeId")
+                .build();
         List<HearingDaySchedule> hearingDayScheduleList = new ArrayList<>();
         hearingDayScheduleList.add(hearingDaySchedule);
 
         CaseHearing caseHearing =
-                CaseHearing.caseHearingWith()
-                        .hmcStatus("LISTED")
-                        .hearingDaySchedule(hearingDayScheduleList)
-                        .build();
+            CaseHearing.caseHearingWith()
+                .hmcStatus("LISTED")
+                .hearingDaySchedule(hearingDayScheduleList)
+                .build();
         List<CaseHearing> caseHearingList = new ArrayList<>();
         caseHearingList.add(caseHearing);
 
         Hearings caseHearings =
-                Hearings.hearingsWith()
-                        .caseRef("123")
-                        .hmctsServiceCode("ABA5")
-                        .caseHearings(caseHearingList)
-                        .build();
+            Hearings.hearingsWith()
+                .caseRef("123")
+                .hmctsServiceCode("ABA5")
+                .caseHearings(caseHearingList)
+                .build();
         List<Hearings> listOfHearings = new ArrayList<>();
         listOfHearings.add(caseHearings);
 
-        String listOfCaseIdsRequestBody = readFileFrom(LIST_OF_CASE_IDS_REQUEST_BODY_JSON);
+        String caseIdsWithRegionIdJson = """
+                {
+                  "1677257319683138": "region1",
+                  "1675769286249067": "region2",
+                  "1676541625982073": "region2"
+                }
+            """;
 
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(idamAuthService.authoriseUser(any())).thenReturn(Boolean.TRUE);
         Mockito.when(
-                        hearingsService.getHearingsByListOfCaseIds(
-                                anyMap(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
-                .thenReturn(listOfHearings);
+                hearingsService.getHearingsByListOfCaseIds(
+                    anyMap(), eq(TEST_AUTH_TOKEN), eq(TEST_SERVICE_AUTH_TOKEN)))
+            .thenReturn(listOfHearings);
 
         MvcResult res =
-                mockMvc.perform(
-                                get(HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT)
-                                        .contentType(APPLICATION_JSON)
-                                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
-                                        .header(
-                                                SERVICE_AUTHORISATION_HEADER,
-                                                TEST_SERVICE_AUTH_TOKEN)
-                                        .content(listOfCaseIdsRequestBody)
-                                        .accept(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn();
+            mockMvc.perform(
+                    post(HEARINGS_BY_LIST_OF_CASE_IDS_ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                        .header(
+                            SERVICE_AUTHORISATION_HEADER,
+                            TEST_SERVICE_AUTH_TOKEN
+                        )
+                        .content(caseIdsWithRegionIdJson)
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("testJudgeId"));
         assertTrue(json.contains("testVenueId"));
     }
 
     @Test
-    public void givenHearingServiceRequestToFetchLinkedCaseDataHearingsControllerReturnOkStatus()
-            throws Exception {
+    void givenHearingServiceRequestToFetchLinkedCaseDataHearingsControllerReturnOkStatus()
+        throws Exception {
 
         HearingLinkData hearingLinkData =
-                HearingLinkData.hearingLinkDataWith()
-                        .caseReference("testCaseRefNo")
-                        .reasonsForLink(Arrays.asList())
-                        .caseName("testCaseRefName")
-                        .build();
+            HearingLinkData.hearingLinkDataWith()
+                .caseReference("testCaseRefNo")
+                .reasonsForLink(Collections.emptyList())
+                .caseName("testCaseRefName")
+                .build();
 
         List<HearingLinkData> hearingLinkDataList = new ArrayList<>();
         hearingLinkDataList.add(hearingLinkData);
@@ -254,20 +258,21 @@ public class HearingsControllerIntegrationTest {
         Mockito.when(idamAuthService.authoriseService(any())).thenReturn(Boolean.TRUE);
         Mockito.when(authTokenGenerator.generate()).thenReturn(TEST_SERVICE_AUTH_TOKEN);
         Mockito.when(hearingsDataService.getHearingLinkData(any(), anyString(), anyString()))
-                .thenReturn(hearingLinkDataList);
+            .thenReturn(hearingLinkDataList);
         String hearingValuesRequestBody = readFileFrom(HEARING_VALUES_REQUEST_BODY_JSON);
         MvcResult res =
-                mockMvc.perform(
-                                post(SERVICE_LINKED_CASES_ENDPOINT)
-                                        .contentType(APPLICATION_JSON)
-                                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
-                                        .header(
-                                                SERVICE_AUTHORISATION_HEADER,
-                                                TEST_SERVICE_AUTH_TOKEN)
-                                        .content(hearingValuesRequestBody)
-                                        .accept(APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn();
+            mockMvc.perform(
+                    post(SERVICE_LINKED_CASES_ENDPOINT)
+                        .contentType(APPLICATION_JSON)
+                        .header(AUTHORISATION_HEADER, TEST_AUTH_TOKEN)
+                        .header(
+                            SERVICE_AUTHORISATION_HEADER,
+                            TEST_SERVICE_AUTH_TOKEN
+                        )
+                        .content(hearingValuesRequestBody)
+                        .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
         String json = res.getResponse().getContentAsString();
         assertTrue(json.contains("testCaseRefNo"));
         assertTrue(json.contains("testCaseRefName"));
