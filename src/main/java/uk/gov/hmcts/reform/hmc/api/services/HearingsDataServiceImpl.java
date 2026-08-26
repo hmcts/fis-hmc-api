@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -159,13 +158,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 .hmctsInternalCaseName(caseDetails.getData().get(APPLICANT_CASE_NAME).toString())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(FALSE)
-                .caseCategories(getCaseCategories(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION).toString()))
+                .caseCategories(getCaseCategories())
                 .caseDeepLink(
                     ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
                 .caseRestrictedFlag(FALSE)
-                .externalCaseReference(Optional.ofNullable(caseDetails.getData()
-                                                               .get("familymanCaseNumber")).orElse("")
-                                           .toString())
+                .externalCaseReference(EMPTY)
                 .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
                 .caseSlaStartDate(caseSlaStartDateMapper)
                 .autoListFlag(FALSE)
@@ -218,7 +215,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return serviceHearingValues;
     }
 
-    private List<CaseCategories> getCaseCategories(String caseType) {
+    private List<CaseCategories> getCaseCategories() {
         List<CaseCategories> caseCategoriesList = new ArrayList<>();
         CaseCategories caseCategories =
             CaseCategories.caseCategoriesWith()
@@ -229,7 +226,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseCategories caseSubCategories =
             CaseCategories.caseCategoriesWith()
                 .categoryType(CASE_SUB_TYPE)
-                .categoryValue(ABA5 + "-" + caseType)
+                .categoryValue(CATEGORY_VALUE)
                 .categoryParent(CATEGORY_VALUE)
                 .build();
 
