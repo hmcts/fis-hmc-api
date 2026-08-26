@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -158,11 +159,13 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 .hmctsInternalCaseName(caseDetails.getData().get(APPLICANT_CASE_NAME).toString())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(FALSE)
-                .caseCategories(getCaseCategories())
+                .caseCategories(getCaseCategories(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION).toString()))
                 .caseDeepLink(
                     ccdBaseUrl + hearingValues.getCaseReference() + CASE_FILE_VIEW)
                 .caseRestrictedFlag(FALSE)
-                .externalCaseReference(EMPTY)
+                .externalCaseReference(Optional.ofNullable(caseDetails.getData()
+                                                               .get("familymanCaseNumber")).orElse("")
+                                           .toString())
                 .caseManagementLocationCode(CASE_MANAGEMENT_LOCATION)
                 .caseSlaStartDate(caseSlaStartDateMapper)
                 .autoListFlag(FALSE)
@@ -215,7 +218,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         return serviceHearingValues;
     }
 
-    private List<CaseCategories> getCaseCategories() {
+    private List<CaseCategories> getCaseCategories(String caseType) {
         List<CaseCategories> caseCategoriesList = new ArrayList<>();
         CaseCategories caseCategories =
             CaseCategories.caseCategoriesWith()
@@ -226,7 +229,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseCategories caseSubCategories =
             CaseCategories.caseCategoriesWith()
                 .categoryType(CASE_SUB_TYPE)
-                .categoryValue(CATEGORY_VALUE)
+                .categoryValue(ABA5 + "-" + caseType)
                 .categoryParent(CATEGORY_VALUE)
                 .build();
 
