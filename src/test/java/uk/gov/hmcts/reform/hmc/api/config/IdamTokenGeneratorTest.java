@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
@@ -19,7 +19,10 @@ import static org.mockito.Mockito.verify;
 import static uk.gov.hmcts.reform.hmc.api.config.CacheConfiguration.REF_DATA_USER_CACHE;
 import static uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator.REF_DATA_USER_TOKEN_CACHE_KEY;
 
-@ActiveProfiles("test")
+@TestPropertySource(properties = {
+    "idam.refDataUserAuth.username=dummy",
+    "idam.refDataUserAuth.password=dummy"
+})
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = {IdamTokenGenerator.class, CacheConfiguration.class})
 class IdamTokenGeneratorTest {
