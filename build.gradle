@@ -183,8 +183,8 @@ pitest {
   threads = 10
   outputFormats = ['XML', 'HTML']
   timestampedReports = true
+  verbose = true
   mutationThreshold = 75
-  junit5PluginVersion.set('1.2.3')
 }
 
 jacocoTestReport {
