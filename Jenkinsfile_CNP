@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure@2.5.0")
+@Library("Infrastructure@2.5.4")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.AppPipelineConfig
@@ -96,6 +96,15 @@ withPipeline(type, product, component) {
       reportDir            : "build/reports/tests/test",
       reportFiles          : "index.html",
       reportName           : "Unit Tests Report"
+    ]
+
+    publishHTML target: [
+      allowMissing         : true,
+      alwaysLinkToLastBuild: true,
+      keepAll              : true,
+      reportDir            : "build/reports/tests/integration",
+      reportFiles          : "index.html",
+      reportName           : "Integration Tests Report"
     ]
   }
 

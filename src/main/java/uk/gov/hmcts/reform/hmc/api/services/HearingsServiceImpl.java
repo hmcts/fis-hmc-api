@@ -526,6 +526,16 @@ public class HearingsServiceImpl implements HearingsService {
         final String s2sToken = authTokenGenerator.generate();
         AutomatedHearingRequest hearingRequest = automatedHearingService.mapCaseDataToAutoHearingRequest(
             caseData, ccdBaseUrl);
+        log.info(
+            "Creating automated hearing in HMC for case {} with hearingRequester={}, hearingLocations={}, "
+                + "panelRequirements={}, hearingType={}, autoListFlag={}",
+            hearingRequest.getCaseDetails().getCaseRef(),
+            hearingRequest.getHearingDetails().getHearingRequester(),
+            hearingRequest.getHearingDetails().getHearingLocations(),
+            hearingRequest.getHearingDetails().getPanelRequirements(),
+            hearingRequest.getHearingDetails().getHearingType(),
+            hearingRequest.getHearingDetails().getAutoListFlag()
+        );
         HearingResponse hearingResponse = hearingApiClient.createHearingDetails(
             userToken,
             s2sToken,
