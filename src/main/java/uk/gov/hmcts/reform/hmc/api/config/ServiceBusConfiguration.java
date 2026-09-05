@@ -29,7 +29,7 @@ import uk.gov.hmcts.reform.hmc.api.services.RefDataService;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
+import java.util.Set;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
@@ -86,6 +86,7 @@ public class ServiceBusConfiguration {
             .connectionString(connectionString)
             .processor()
             .topicName(topic)
+            .disableAutoComplete()
             .subscriptionName(subscription)
             .receiveMode(ServiceBusReceiveMode.PEEK_LOCK)
             .processMessage(this::processMessage)
@@ -188,9 +189,11 @@ public class ServiceBusConfiguration {
                             hearingDto, caseState);
                     if (isPrlSuccess) {
                         context.complete();
+                        return;
                     }
                 }
                 context.abandon();
+                return;
             }
             context.complete();
         } catch (Exception e) {
@@ -205,7 +208,7 @@ public class ServiceBusConfiguration {
     }
 
     private boolean isHearingStateConsumptionRequired(String hearingStatus) {
-        List<String> allowedHmcStatus = List.of(
+        Set<String> allowedHmcStatus = Set.of(
             LISTED,
             COMPLETED,
             POSTPONED,
