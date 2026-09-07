@@ -9,11 +9,13 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.TestConfig;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignment;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentAttributesResource;
 import uk.gov.hmcts.reform.hmc.api.model.request.RoleAssignmentRequestResource;
@@ -49,6 +51,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ROLE_ASSIGNMENT_ROLE_T
 @ExtendWith({MockitoExtension.class})
 @ActiveProfiles("test")
 @PropertySource("classpath:application.yaml")
+@Import(TestConfig.class)
 public class RoleAssignmentServiceTest {
 
     @InjectMocks RoleAssignmentServiceImpl roleAssignmentService;

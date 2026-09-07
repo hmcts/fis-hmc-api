@@ -4,11 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.hmc.api.config.IdamTokenGenerator;
+import uk.gov.hmcts.reform.hmc.api.config.TestConfig;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.Address;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.AttendHearing;
 import uk.gov.hmcts.reform.hmc.api.model.ccd.CaseData;
@@ -46,6 +48,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.NO;
 @SpringBootTest
 @ActiveProfiles("test")
 @PropertySource("classpath:application.yaml")
+@Import(TestConfig.class)
 class AutomateHearingServiceTest {
 
     @Autowired
