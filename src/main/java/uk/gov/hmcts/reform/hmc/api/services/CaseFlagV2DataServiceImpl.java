@@ -125,7 +125,9 @@ public class CaseFlagV2DataServiceImpl extends CaseFlagDataServiceImpl {
             serviceHearingValues.setCaseFlags(caseFlags);
             serviceHearingValues.setParties(partyDetailsModelList);
             serviceHearingValues.setCaseAdditionalSecurityFlag(isCaseAdditionalSecurityFlag(partiesFlagsModelList));
-            serviceHearingValues.setListingComments(getListingComment(caseFlags.getFlags()));
+            serviceHearingValues.setListingComments(Optional.ofNullable(
+                serviceHearingValues.getListingComments()).orElse(EMPTY)
+                                                        + "; " + getListingComment(caseFlags.getFlags()));
         }
     }
 
