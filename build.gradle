@@ -147,6 +147,21 @@ task smoke(type: Test) {
   failFast = true
 }
 
+task contractTest(type: Test) {
+  description = "Runs provider contract tests"
+  group = "Verification"
+  testClassesDirs = sourceSets.contractTest.output.classesDirs
+  classpath = sourceSets.contractTest.runtimeClasspath
+  include "**/provider/**"
+  systemProperty "pact.provider.version",
+    project.findProperty("pact.provider.version") ?: getCheckedOutGitCommitHash()
+  systemProperty "pact.provider.branch",
+    project.findProperty("pact.provider.branch") ?: System.getenv("PACT_BRANCH_NAME") ?: "master"
+  if (project.hasProperty("pact.verifier.publishResults")) {
+    systemProperty "pact.verifier.publishResults", project.property("pact.verifier.publishResults")
+  }
+}
+
 task fortifyScan(type: JavaExec)  {
   main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
@@ -488,6 +503,8 @@ dependencies {
   contractTestRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
   contractTestImplementation sourceSets.main.runtimeClasspath
   contractTestImplementation sourceSets.test.runtimeClasspath
+  contractTestImplementation group: 'au.com.dius.pact.provider', name: 'junit5', version: '4.6.20'
+  contractTestImplementation group: 'au.com.dius.pact.provider', name: 'junit5spring', version: '4.6.20'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.hmc.api.Application'
@@ -514,4 +531,8 @@ rootProject.tasks.named("processIntegrationTestResources") {
 
 wrapper {
   distributionType = Wrapper.DistributionType.ALL
+}
+
+static def getCheckedOutGitCommitHash() {
+  'git rev-parse --verify --short HEAD'.execute().text.trim()
 }
