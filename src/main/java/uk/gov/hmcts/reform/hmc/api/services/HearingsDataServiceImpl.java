@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -184,7 +185,8 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                             .locationId(CASE_MANAGEMENT_LOCATION)
                             .build()))
                 .facilitiesRequired(List.of())
-                .listingComments(EMPTY)
+                .listingComments(Optional.ofNullable(caseDetails.getData()
+                                                         .get("familymanCaseNumber")).orElse("").toString())
                 .hearingRequester(EMPTY)
                 .privateHearingRequiredFlag(privateHearingRequiredFlagMapper)
                 .caseInterpreterRequiredFlag(FALSE)
