@@ -40,7 +40,7 @@ public final class Constants {
 
     public static final String HMCTS_SERVICE_ID = "ABA5";
 
-    public static final String AND = " and ";
+    public static final String VERSUS = " v ";
 
     public static final String COURT = "court";
 

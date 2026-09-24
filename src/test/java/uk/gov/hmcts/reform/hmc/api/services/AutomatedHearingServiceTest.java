@@ -148,7 +148,7 @@ class AutomatedHearingServiceTest {
             .caseRef("12345")
             .caseDeepLink("http://ccd/12345#Case File View")
             .hmctsInternalCaseName("Applicant Name")
-            .publicCaseName("Smith and Jones")
+            .publicCaseName("12345 S v J")
             .externalCaseReference("")
             .caseAdditionalSecurityFlag(false)
             .caseInterpreterRequiredFlag(false)
