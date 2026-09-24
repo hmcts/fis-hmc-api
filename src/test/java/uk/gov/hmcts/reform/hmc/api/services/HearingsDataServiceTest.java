@@ -109,7 +109,7 @@ class HearingsDataServiceTest {
             hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
-        Assertions.assertEquals("123 L and L", hearingsResponse.getPublicCaseName());
+        Assertions.assertEquals("123 L v L", hearingsResponse.getPublicCaseName());
         Assertions.assertEquals(
             "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/123#Case File View",
             hearingsResponse.getCaseDeepLink()
@@ -185,7 +185,7 @@ class HearingsDataServiceTest {
             HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
         ServiceHearingValues response = getFl401HearingValues(hearingValues, "  éclair", "Łukasz");
 
-        Assertions.assertEquals("123 É and Ł", response.getPublicCaseName());
+        Assertions.assertEquals("123 É v Ł", response.getPublicCaseName());
     }
 
     private ServiceHearingValues getFl401HearingValues(

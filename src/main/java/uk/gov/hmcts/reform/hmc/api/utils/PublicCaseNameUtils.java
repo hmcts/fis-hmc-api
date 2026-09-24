@@ -2,9 +2,9 @@ package uk.gov.hmcts.reform.hmc.api.utils;
 
 import java.util.Locale;
 
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.EMPTY_STRING;
+import static uk.gov.hmcts.reform.hmc.api.utils.Constants.VERSUS;
 
 public final class PublicCaseNameUtils {
 
@@ -24,7 +24,7 @@ public final class PublicCaseNameUtils {
             return EMPTY;
         }
 
-        return caseReference + EMPTY_STRING + applicantInitial + AND + respondentInitial;
+        return caseReference + EMPTY_STRING + applicantInitial + VERSUS + respondentInitial;
     }
 
     private static String getSurnameInitial(String surname) {

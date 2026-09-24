@@ -10,13 +10,13 @@ class PublicCaseNameUtilsTest {
     @Test
     void shouldBuildPublicCaseNameFromCaseReferenceAndSurnameInitials() {
         assertThat(buildFl401PublicCaseName("12345", "Smith", "Jones"))
-            .isEqualTo("12345 S and J");
+            .isEqualTo("12345 S v J");
     }
 
     @Test
     void shouldTrimSurnamesAndSupportUnicodeInitials() {
         assertThat(buildFl401PublicCaseName("12345", "  éclair", "Łukasz"))
-            .isEqualTo("12345 É and Ł");
+            .isEqualTo("12345 É v Ł");
     }
 
     @Test
