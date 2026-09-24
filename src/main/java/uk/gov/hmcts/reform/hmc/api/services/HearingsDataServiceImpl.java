@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.hmc.api.services;
 
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ABA5;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT_CASE_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
@@ -26,6 +25,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.LAST_NAME;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.SCREEN_FLOW;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.TRUE;
+import static uk.gov.hmcts.reform.hmc.api.utils.PublicCaseNameUtils.buildFl401PublicCaseName;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,12 +124,11 @@ public class HearingsDataServiceImpl implements HearingsDataService {
                 (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_APPLICANT_TABLE);
             Map<String, String> respondentTableMap =
                 (LinkedHashMap<String, String>) caseDetails.getData().get(FL401_RESPONDENT_TABLE);
-            if (applicantMap != null && respondentTableMap != null) {
-                publicCaseNameMapper =
-                    applicantMap.get(LAST_NAME) + AND + respondentTableMap.get(LAST_NAME);
-            } else {
-                publicCaseNameMapper = EMPTY;
-            }
+            publicCaseNameMapper = buildFl401PublicCaseName(
+                hearingValues.getCaseReference(),
+                applicantMap == null ? null : applicantMap.get(LAST_NAME),
+                respondentTableMap == null ? null : respondentTableMap.get(LAST_NAME)
+            );
         } else if (C100.equals(caseDetails.getData().get(CASE_TYPE_OF_APPLICATION))) {
             publicCaseNameMapper = RE_MINOR;
             privateHearingRequiredFlagMapper = TRUE;

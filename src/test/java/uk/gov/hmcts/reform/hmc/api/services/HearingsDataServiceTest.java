@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,13 +109,106 @@ class HearingsDataServiceTest {
             hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         hearingservice.getCaseData(hearingValues, authorisation, serviceAuthorisation);
         Assertions.assertEquals("ABA5", hearingsResponse.getHmctsServiceID());
-        Assertions.assertEquals("lastName and lastName", hearingsResponse.getPublicCaseName());
+        Assertions.assertEquals("123 L and L", hearingsResponse.getPublicCaseName());
         Assertions.assertEquals(
             "https://manage-case-hearings-int.demo.platform.hmcts.net/cases/case-details/123#Case File View",
             hearingsResponse.getCaseDeepLink()
         );
         Assertions.assertFalse(hearingsResponse.getCaseCategories().isEmpty());
 
+    }
+
+    @Test
+    void shouldReturnEmptyPublicCaseNameForInvalidFl401Surnames() throws IOException {
+        ReflectionTestUtils.setField(
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
+        ReflectionTestUtils.setField(hearingservice, "resourceLoader", resourceLoader);
+
+        when(resourceLoader.getResource(any())).thenReturn(mockResource);
+        when(mockResource.getInputStream()).thenAnswer(
+            invocation -> getClass().getResourceAsStream("/ScreenFlow.json")
+        );
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+
+        for (String invalidSurname : Arrays.asList(null, "", " ", "1Smith", "-Smith")) {
+            ServiceHearingValues response = getFl401HearingValues(
+                hearingValues,
+                invalidSurname,
+                "Jones"
+            );
+
+            Assertions.assertEquals("", response.getPublicCaseName());
+        }
+    }
+
+    @Test
+    void shouldReturnEmptyPublicCaseNameForInvalidFl401RespondentSurname() throws IOException {
+        ReflectionTestUtils.setField(
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
+        ReflectionTestUtils.setField(hearingservice, "resourceLoader", resourceLoader);
+
+        when(resourceLoader.getResource(any())).thenReturn(mockResource);
+        when(mockResource.getInputStream()).thenAnswer(
+            invocation -> getClass().getResourceAsStream("/ScreenFlow.json")
+        );
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+        ServiceHearingValues response = getFl401HearingValues(hearingValues, "Smith", "9Jones");
+
+        Assertions.assertEquals("", response.getPublicCaseName());
+    }
+
+    @Test
+    void shouldSupportUnicodeFl401SurnameInitials() throws IOException {
+        ReflectionTestUtils.setField(
+            hearingservice,
+            "ccdBaseUrl",
+            "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
+        );
+        ReflectionTestUtils.setField(hearingservice, "resourceLoader", resourceLoader);
+
+        when(resourceLoader.getResource(any())).thenReturn(mockResource);
+        when(mockResource.getInputStream()).thenAnswer(
+            invocation -> getClass().getResourceAsStream("/ScreenFlow.json")
+        );
+
+        HearingValues hearingValues =
+            HearingValues.hearingValuesWith().hearingId("123").caseReference("123").build();
+        ServiceHearingValues response = getFl401HearingValues(hearingValues, "  éclair", "Łukasz");
+
+        Assertions.assertEquals("123 É and Ł", response.getPublicCaseName());
+    }
+
+    private ServiceHearingValues getFl401HearingValues(
+        HearingValues hearingValues,
+        String applicantSurname,
+        String respondentSurname
+    ) throws IOException {
+        Map<String, String> applicantMap = new LinkedHashMap<>();
+        applicantMap.put("lastName", applicantSurname);
+        Map<String, String> respondentMap = new LinkedHashMap<>();
+        respondentMap.put("lastName", respondentSurname);
+
+        Map<String, Object> caseDataMap = new HashMap<>();
+        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseTypeOfApplication", "FL401");
+        caseDataMap.put("issueDate", "test date");
+        caseDataMap.put("fl401ApplicantTable", applicantMap);
+        caseDataMap.put("fl401RespondentTable", respondentMap);
+
+        when(caseApiService.getCaseDetails(anyString(), anyString(), anyString()))
+            .thenReturn(CaseDetails.builder().id(123L).caseTypeId("PrivateLaw").data(caseDataMap).build());
+
+        return hearingservice.getCaseData(hearingValues, "xyz", "xyz");
     }
 
     @Test
