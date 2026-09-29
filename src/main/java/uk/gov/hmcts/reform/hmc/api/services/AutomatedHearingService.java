@@ -42,7 +42,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
-import static uk.gov.hmcts.reform.hmc.api.utils.Constants.AND;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.APPLICANT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.C100;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CASE_FILE_VIEW;
@@ -56,6 +55,7 @@ import static uk.gov.hmcts.reform.hmc.api.utils.Constants.HMCTS_SERVICE_ID;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RESPONDENT;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.RE_MINOR;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.YES;
+import static uk.gov.hmcts.reform.hmc.api.utils.PublicCaseNameUtils.buildFl401PublicCaseName;
 
 @Slf4j
 @Service
@@ -74,8 +74,11 @@ public class AutomatedHearingService {
         } else if (FL401.equals(CaseUtils.getCaseTypeOfApplication(caseData))) {
             PartyDetails applicantMap = caseData.getApplicantsFL401();
             PartyDetails respondentTableMap = caseData.getRespondentsFL401();
-            publicCaseNameMapper = (applicantMap != null && respondentTableMap != null)
-                ? applicantMap.getLastName() + AND + respondentTableMap.getLastName() : EMPTY;
+            publicCaseNameMapper = buildFl401PublicCaseName(
+                Objects.toString(caseData.getId(), null),
+                applicantMap == null ? null : applicantMap.getLastName(),
+                respondentTableMap == null ? null : respondentTableMap.getLastName()
+            );
         }
 
         List<PartyFlagsModel> partyFlags = new ArrayList<>();

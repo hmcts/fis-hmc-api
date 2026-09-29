@@ -24,6 +24,7 @@ plugins {
   id 'hmcts.ccd.sdk' version '5.6.1'
   id 'au.com.dius.pact' version '4.1.7'
   id 'info.solidsoft.pitest' version '1.19.0'
+  id 'uk.gov.hmcts.reform.coverage-gate' version '1.0.1'
 }
 
 def versions = [
@@ -226,6 +227,13 @@ def sonarExclusions = [
   '**/uk/gov/hmcts/reform/hmc/api/mapper/**',
   '**/uk/gov/hmcts/reform/hmc/api/restclient/**'
 ]
+
+coverageGate {
+  threshold = 80
+  baseBranch = 'origin/master'
+  fallbackBaseBranch = 'master'
+  exclusions = sonarExclusions
+}
 
 sonarqube {
   properties {
