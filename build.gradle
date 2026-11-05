@@ -327,7 +327,7 @@ dependencyManagement {
     dependencySet(group: 'com.google.guava', version: '33.7.2-jre') {
       entry 'guava'
     }
-    dependencySet(group: 'org.apache.tomcat.embed', version: '10.1.60') {
+    dependencySet(group: 'org.apache.tomcat.embed', version: '10.1.61') {
       entry 'tomcat-embed-core'
       entry 'tomcat-embed-el'
       entry 'tomcat-embed-websocket'
