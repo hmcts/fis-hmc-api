@@ -293,7 +293,7 @@ ext {
   log4JVersion = '2.25.4'
   set('springCloudAzureVersion', "6.5.0")
   set('springCloudVersion', "2025.0.2")
-  junitBomVersion = '6.0.3'
+  junitBomVersion = '6.1.3'
 }
 
 dependencyManagement {
