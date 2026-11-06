@@ -459,7 +459,7 @@ dependencies {
   implementation group: 'au.com.dius.pact.consumer', name: 'java8', version: '4.1.43'
   implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
-  implementation group: 'org.apache.tika', name: 'tika-core', version: '3.2.3'
+  implementation group: 'org.apache.tika', name: 'tika-core', version: '3.3.3'
   // pin specific version of beanutils as pact not updated
   implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.11.0'
   // pin due to CVE-2025-489
