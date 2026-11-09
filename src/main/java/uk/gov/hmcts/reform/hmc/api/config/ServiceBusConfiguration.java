@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
 
+import static uk.gov.hmcts.reform.hmc.api.enums.State.PREPARE_FOR_HEARING_CONDUCT_HEARING;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.ADJOURNED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.CANCELLED;
 import static uk.gov.hmcts.reform.hmc.api.utils.Constants.COMPLETED;
@@ -179,14 +180,10 @@ public class ServiceBusConfiguration {
 
                         hearingDto.setNextHearingDateRequest(nextHearingDetailsDTO);
                     }
-                    caseState =
-                        nextHearingDetailsService.fetchStateForUpdate(
-                            hearings,
-                            hearingDto.getHearingUpdate().getHmcStatus());
                     Boolean isPrlSuccess = false;
                     isPrlSuccess =
                         prlUpdateService.updatePrlServiceWithHearing(
-                            hearingDto, caseState);
+                            hearingDto, PREPARE_FOR_HEARING_CONDUCT_HEARING);
                     if (isPrlSuccess) {
                         context.complete();
                         return;
