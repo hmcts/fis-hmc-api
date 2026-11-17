@@ -111,9 +111,6 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
             caseApiService.getCaseDetails(
                 hearingValues.getCaseReference(), authorisation, serviceAuthorization);
-
-        log.info("LR Test debug.");
-
         log.info(
             "Retrieved CCD case details for service hearing values caseReference={}, caseTypeOfApplication={}, issueDate={}",
             hearingValues.getCaseReference(),
@@ -153,7 +150,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         if (null != ccdBaseUrl && ccdBaseUrl.contains(DEMO)) {
             ccdBaseUrl = CCD_DEMO_LINK;
         }
-
+        log.info("LR Test debug: getCaseData");
         ServiceHearingValues serviceHearingValues =
             ServiceHearingValues.hearingsDataWith()
                 .hmctsServiceID(ABA5)
@@ -264,7 +261,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
             final SearchResult searchResult =
                 getCaseNameForCaseReference(authorisation, caseReferences);
-
+            log.info("LR Test debug: getHearingLinkData");
             for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
                 CaseLinkData caseLinkData = caseLinkDataObj.getValue();
                 if (caseLinkData.getReasonForLink() != null) {

@@ -92,7 +92,7 @@ public class AutomatedHearingService {
             .toList();
 
         Boolean caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partyFlags);
-
+        log.info("LR Test debug: mapCaseDataToAutoHearingRequest");
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode(HMCTS_SERVICE_ID) //Hardcoded in prl-cos-api
                 .caseRef(String.valueOf(caseData.getId()))
