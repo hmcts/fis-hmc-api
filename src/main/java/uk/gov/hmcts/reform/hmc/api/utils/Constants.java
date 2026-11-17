@@ -18,6 +18,7 @@ public final class Constants {
     public static final String FL401_APPLICANT_TABLE = "fl401ApplicantTable";
     public static final String FL401_RESPONDENT_TABLE = "fl401RespondentTable";
     public static final String APPLICANT_CASE_NAME = "applicantCaseName";
+    public static final String CASE_NAME_HMCTS_INTERNAL = "caseNameHmctsInternal";
 
     public static final String APPLICANTS_FL401 = "applicantsFL401";
 

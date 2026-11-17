@@ -92,14 +92,13 @@ public class AutomatedHearingService {
             .toList();
 
         Boolean caseAdditionalSecurityFlag = CaseFlagDataServiceImpl.isCaseAdditionalSecurityFlag(partyFlags);
-
         AutomatedHearingCaseDetails caseDetail = AutomatedHearingCaseDetails.automatedHearingCaseDetailsWith()
                 .hmctsServiceCode(HMCTS_SERVICE_ID) //Hardcoded in prl-cos-api
                 .caseRef(String.valueOf(caseData.getId()))
                 // .requestTimeStamp(LocalDateTime.now())
                 .externalCaseReference("") //Need to verify
                 .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW)
-                .hmctsInternalCaseName(caseData.getApplicantCaseName())
+                .hmctsInternalCaseName(caseData.getCaseNameHmctsInternal())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
                 .caseInterpreterRequiredFlag(YES.equalsIgnoreCase(caseData.getAttendHearing().getIsInterpreterNeeded()))
