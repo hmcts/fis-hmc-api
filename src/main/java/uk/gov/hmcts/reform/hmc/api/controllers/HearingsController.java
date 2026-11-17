@@ -81,7 +81,6 @@ public class HearingsController {
             @RequestBody final HearingValues hearingValues)
             throws IOException, ParseException {
         try {
-            log.info("LR Test debug: /serviceHearingValues");
             log.info(
                 "Received service hearing values request from COS/HMC for caseReference={}, hearingId={}",
                 hearingValues.getCaseReference(),
@@ -280,7 +279,6 @@ public class HearingsController {
             @RequestHeader(AUTHORIZATION) String authorization,
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final HearingValues hearingValues) {
-        log.info("LR Test debug: /serviceLinkedCases");
         try {
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))) {
                 log.info(PROCESSING_REQUEST_AFTER_AUTHORIZATION);
@@ -421,7 +419,6 @@ public class HearingsController {
             @RequestHeader(SERVICE_AUTHORIZATION) String serviceAuthorization,
             @RequestBody final CaseData caseData) {
         try {
-            log.info("LR Test debug: /automated-hearing");
             if (Boolean.TRUE.equals(idamAuthService.authoriseService(serviceAuthorization))
                     && Boolean.TRUE.equals(idamAuthService.authoriseUser(authorization))) {
                 HearingResponse hearingsResponse = hearingsService.createAutomatedHearings(caseData);

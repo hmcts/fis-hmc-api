@@ -134,7 +134,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             publicCaseNameMapper = RE_MINOR;
             privateHearingRequiredFlagMapper = TRUE;
         }
-        log.info("LR Test debug: getCaseData");
+
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
@@ -263,7 +263,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
 
             final SearchResult searchResult =
                 getCaseNameForCaseReference(authorisation, caseReferences);
-            log.info("LR Test debug: getHearingLinkData");
+
             for (CaseLinkElement<CaseLinkData> caseLinkDataObj : caseLinkDataList) {
                 CaseLinkData caseLinkData = caseLinkDataObj.getValue();
                 if (caseLinkData.getReasonForLink() != null) {
