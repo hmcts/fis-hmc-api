@@ -133,6 +133,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
             publicCaseNameMapper = RE_MINOR;
             privateHearingRequiredFlagMapper = TRUE;
         }
+        log.info("LR Test debug: getCaseData");
         String caseSlaStartDateMapper = (String) caseDetails.getData().get(ISSUE_DATE);
         JSONObject screenFlowJson = null;
         JSONParser parser = new JSONParser();
@@ -150,7 +151,7 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         if (null != ccdBaseUrl && ccdBaseUrl.contains(DEMO)) {
             ccdBaseUrl = CCD_DEMO_LINK;
         }
-        log.info("LR Test debug: getCaseData");
+
         ServiceHearingValues serviceHearingValues =
             ServiceHearingValues.hearingsDataWith()
                 .hmctsServiceID(ABA5)
