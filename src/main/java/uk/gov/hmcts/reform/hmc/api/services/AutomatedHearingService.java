@@ -99,7 +99,7 @@ public class AutomatedHearingService {
                 // .requestTimeStamp(LocalDateTime.now())
                 .externalCaseReference("") //Need to verify
                 .caseDeepLink(ccdBaseUrl + caseData.getId() + CASE_FILE_VIEW)
-                .hmctsInternalCaseName(caseData.getApplicantCaseName())
+                .hmctsInternalCaseName(caseData.getCaseNameHmctsInternal())
                 .publicCaseName(publicCaseNameMapper)
                 .caseAdditionalSecurityFlag(caseAdditionalSecurityFlag)
                 .caseInterpreterRequiredFlag(YES.equalsIgnoreCase(caseData.getAttendHearing().getIsInterpreterNeeded()))

@@ -91,7 +91,7 @@ class HearingsDataServiceTest {
         respondentMap.put("lastName", "lastName");
 
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseNameHmctsInternal", "hmcts Internal Case Name");
         caseDataMap.put("caseTypeOfApplication", "FL401");
         caseDataMap.put("issueDate", "test date");
         caseDataMap.put("fl401ApplicantTable", applicantMap);
@@ -199,7 +199,7 @@ class HearingsDataServiceTest {
         respondentMap.put("lastName", respondentSurname);
 
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseNameHmctsInternal", "hmcts Internal Case Name");
         caseDataMap.put("caseTypeOfApplication", "FL401");
         caseDataMap.put("issueDate", "test date");
         caseDataMap.put("fl401ApplicantTable", applicantMap);
@@ -222,7 +222,7 @@ class HearingsDataServiceTest {
 
 
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseNameHmctsInternal", "hmcts Internal Case Name");
         caseDataMap.put("caseTypeOfApplication", "FL401");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
@@ -251,7 +251,7 @@ class HearingsDataServiceTest {
             "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
         );
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseNameHmctsInternal", "hmcts Internal Case Name");
         caseDataMap.put("caseTypeOfApplication", "C100");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
@@ -280,7 +280,7 @@ class HearingsDataServiceTest {
             "https://manage-case.demo.platform.hmcts.net/cases/case-details/"
         );
         Map<String, Object> caseDataMap = new HashMap<>();
-        caseDataMap.put("applicantCaseName", "PrivateLaw");
+        caseDataMap.put("caseNameHmctsInternal", "hmcts Internal Case Name");
         caseDataMap.put("caseTypeOfApplication", "other");
         caseDataMap.put("issueDate", "test date");
         CaseDetails caseDetails =
