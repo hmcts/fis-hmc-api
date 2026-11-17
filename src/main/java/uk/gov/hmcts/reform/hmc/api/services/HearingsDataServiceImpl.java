@@ -111,6 +111,9 @@ public class HearingsDataServiceImpl implements HearingsDataService {
         CaseDetails caseDetails =
             caseApiService.getCaseDetails(
                 hearingValues.getCaseReference(), authorisation, serviceAuthorization);
+
+        log.info("LR Test debug.");
+
         log.info(
             "Retrieved CCD case details for service hearing values caseReference={}, caseTypeOfApplication={}, issueDate={}",
             hearingValues.getCaseReference(),
